@@ -11,6 +11,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
@@ -103,6 +104,7 @@ internal class
 
         // Create new or use existing external API object
         AccountAndTransactionModelsPublic.OBReadConsentResponse1? externalApiResponse;
+        ExternalApiResponseInfo? externalApiResponseInfo;
         string externalApiId;
         if (request.ExternalApiObject is null)
         {
@@ -168,7 +170,8 @@ internal class
                       """,
                 BankProfile = bankProfile.BankProfileEnum
             };
-            (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
+            (externalApiResponse, string? xFapiInteractionId,
+                    IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.PostAsync(
                     externalApiUrl,
                     createParams.ExtraHeaders,
@@ -179,6 +182,7 @@ internal class
                     apiClient,
                     _mapper);
             nonErrorMessages.AddRange(newNonErrorMessages);
+            externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
             externalApiId = externalApiResponse.Data.ConsentId;
 
             // Transform links
@@ -232,6 +236,7 @@ internal class
         else
         {
             externalApiResponse = null;
+            externalApiResponseInfo = null;
             externalApiId = request.ExternalApiObject.ExternalApiId;
         }
 
@@ -286,7 +291,8 @@ internal class
                 ExternalApiUserId = persistedConsent.ExternalApiUserId,
                 AuthContextModified = persistedConsent.AuthContextModified,
                 AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
-                ExternalApiResponse = externalApiResponse
+                ExternalApiResponse = externalApiResponse,
+                ExternalApiResponseInfo = externalApiResponseInfo
             };
 
 
@@ -313,6 +319,7 @@ internal class
         bool includeExternalApiOperation =
             readParams.IncludeExternalApiOperation;
         AccountAndTransactionModelsPublic.OBReadConsentResponse1? externalApiResponse;
+        ExternalApiResponseInfo? externalApiResponseInfo;
         if (includeExternalApiOperation)
         {
             // Get bank profile
@@ -366,7 +373,8 @@ internal class
                       """,
                 BankProfile = bankProfile.BankProfileEnum
             };
-            (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
+            (externalApiResponse, string? xFapiInteractionId,
+                    IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.GetAsync(
                     externalApiUrl,
                     readParams.ExtraHeaders,
@@ -375,6 +383,7 @@ internal class
                     apiClient,
                     _mapper);
             nonErrorMessages.AddRange(newNonErrorMessages);
+            externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
 
             // Transform links 
             if (externalApiResponse.Links is not null)
@@ -418,6 +427,7 @@ internal class
         else
         {
             externalApiResponse = null;
+            externalApiResponseInfo = null;
         }
 
         // Create response
@@ -433,7 +443,8 @@ internal class
                 ExternalApiUserId = persistedConsent.ExternalApiUserId,
                 AuthContextModified = persistedConsent.AuthContextModified,
                 AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
-                ExternalApiResponse = externalApiResponse
+                ExternalApiResponse = externalApiResponse,
+                ExternalApiResponseInfo = externalApiResponseInfo
             };
 
         return (response, nonErrorMessages);

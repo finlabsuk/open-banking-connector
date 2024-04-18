@@ -12,6 +12,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
@@ -147,7 +148,7 @@ internal class
             BankProfile = bankProfile.BankProfileEnum
         };
 
-        (AccountAndTransactionModelsPublic.OBReadTransaction6 apiResponse,
+        (AccountAndTransactionModelsPublic.OBReadTransaction6 apiResponse, string? xFapiInteractionId,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 apiRequestUrl,
@@ -187,7 +188,10 @@ internal class
                 apiResponse.Links.Last = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Last);
             }
         }
-        var response = new TransactionsResponse(apiResponse, null);
+        var response = new TransactionsResponse(
+            apiResponse,
+            new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId },
+            null);
 
         return (response, nonErrorMessages);
     }

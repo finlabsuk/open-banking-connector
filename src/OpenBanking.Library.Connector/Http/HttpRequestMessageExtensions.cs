@@ -9,7 +9,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http;
 
 internal static class HttpRequestMessageExtensions
 {
-    public static Task<T> SendExpectingJsonResponseAsync<T>(
+    public static Task<(T response, string? xFapiInteractionId)> SendExpectingJsonResponseAsync<T>(
         this HttpRequestMessage request,
         IApiClient client,
         TppReportingRequestInfo? tppReportingRequestInfo,

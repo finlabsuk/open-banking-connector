@@ -15,7 +15,8 @@ internal interface IApiPostRequests<in TApiRequest, TApiResponse>
     where TApiRequest : class
     where TApiResponse : class, ISupportsValidation
 {
-    Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> PostAsync(
+    Task<(TApiResponse response, string? xFapiInteractionId, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages
+        )> PostAsync(
         Uri uri,
         IEnumerable<HttpHeader>? extraHeaders,
         TApiRequest request,

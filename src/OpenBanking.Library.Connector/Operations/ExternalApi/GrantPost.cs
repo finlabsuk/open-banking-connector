@@ -528,11 +528,11 @@ internal class GrantPost : IGrantPost
         Jwks jwks = responseHasNoRootProperty
             ? new Jwks
             {
-                Keys = await message.SendExpectingJsonResponseAsync<List<JsonWebKey>>(
+                Keys = (await message.SendExpectingJsonResponseAsync<List<JsonWebKey>>(
                     _apiClient,
-                    tppReportingRequestInfo)
+                    tppReportingRequestInfo)).response
             }
-            : await message.SendExpectingJsonResponseAsync<Jwks>(_apiClient, tppReportingRequestInfo);
+            : (await message.SendExpectingJsonResponseAsync<Jwks>(_apiClient, tppReportingRequestInfo)).response;
 
         return jwks;
     }
@@ -758,7 +758,7 @@ internal class GrantPost : IGrantPost
             }
             : null;
 
-        var response = await postRequestProcessor.PostAsync<TokenEndpointResponse>(
+        (TokenEndpointResponse response, _) = await postRequestProcessor.PostAsync<TokenEndpointResponse>(
             uri,
             null,
             keyValuePairs,

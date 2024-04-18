@@ -111,10 +111,11 @@ public class ApiClientTests
             var api = new ApiClient(
                 Substitute.For<IInstrumentationClient>(),
                 http);
-            var result = await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
-                req,
-                null,
-                null);
+            (SerialisedEntity result, string? xFapiInteractionId) =
+                await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
+                    req,
+                    null,
+                    null);
 
             result.Message.Should().Be(entity.Message);
         }

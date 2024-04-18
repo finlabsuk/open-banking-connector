@@ -162,7 +162,7 @@ internal class DomesticVrp :
                   """,
             BankProfile = bankProfile.BankProfileEnum
         };
-        (VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse externalApiResponse,
+        (VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse externalApiResponse, string? xFapiInteractionId,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.PostAsync(
                 externalApiUrl,
@@ -244,7 +244,7 @@ internal class DomesticVrp :
                   """,
             BankProfile = bankProfile.BankProfileEnum
         };
-        (VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse externalApiResponse,
+        (VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse externalApiResponse, string? xFapiInteractionId,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 externalApiUrl,

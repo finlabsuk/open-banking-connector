@@ -15,6 +15,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
@@ -161,7 +162,7 @@ internal class DirectDebitGet : IAccountAccessConsentExternalRead<DirectDebitsRe
                 : "GET {AispBaseUrl}/accounts/{AccountId}/direct-debits",
             BankProfile = bankProfile.BankProfileEnum
         };
-        (AccountAndTransactionModelsPublic.OBReadDirectDebit2 apiResponse,
+        (AccountAndTransactionModelsPublic.OBReadDirectDebit2 apiResponse, string? xFapiInteractionId,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 apiRequestUrl,
@@ -200,7 +201,10 @@ internal class DirectDebitGet : IAccountAccessConsentExternalRead<DirectDebitsRe
                 apiResponse.Links.Last = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Last);
             }
         }
-        var response = new DirectDebitsResponse(apiResponse, null);
+        var response = new DirectDebitsResponse(
+            apiResponse,
+            null,
+            new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId });
 
         return (response, nonErrorMessages);
     }

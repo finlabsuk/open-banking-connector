@@ -63,7 +63,7 @@ public class ApiClient(
         DateParseHandling = DateParseHandling.None
     };
 
-    public async Task<T> SendExpectingJsonResponseAsync<T>(
+    public async Task<(T response, string? xFapiInteractionId)> SendExpectingJsonResponseAsync<T>(
         HttpRequestMessage request,
         TppReportingRequestInfo? tppReportingRequestInfo,
         JsonSerializerSettings? jsonSerializerSettings)
@@ -102,7 +102,7 @@ public class ApiClient(
             throw new HttpRequestException("Could not de-serialise HTTP body");
         }
 
-        return responseBodyTyped;
+        return (responseBodyTyped, xFapiInteractionId);
     }
 
     public async Task SendExpectingNoResponseAsync(

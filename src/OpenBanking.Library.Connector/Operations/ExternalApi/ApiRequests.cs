@@ -34,7 +34,8 @@ internal class
                 postRequestProcessor);
     }
 
-    public Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> GetAsync(
+    public Task<(TApiResponse response, string? xFapiInteractionId, IList<IFluentResponseInfoOrWarningMessage>
+        nonErrorMessages)> GetAsync(
         Uri uri,
         IEnumerable<HttpHeader>? extraHeaders,
         TppReportingRequestInfo? tppReportingRequestInfo,
@@ -48,7 +49,8 @@ internal class
         apiClient,
         mapper);
 
-    public Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> PostAsync(
+    public Task<(TApiResponse response, string? xFapiInteractionId, IList<IFluentResponseInfoOrWarningMessage>
+        nonErrorMessages)> PostAsync(
         Uri uri,
         IEnumerable<HttpHeader>? extraHeaders,
         TApiRequest request,

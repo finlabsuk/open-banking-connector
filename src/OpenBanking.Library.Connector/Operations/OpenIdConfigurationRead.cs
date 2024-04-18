@@ -56,7 +56,7 @@ public class OpenIdConfigurationRead : IOpenIdConfigurationRead
                 """,
             BankProfile = bankProfile
         };
-        var openIdConfiguration = await new HttpRequestBuilder()
+        (OpenIdConfiguration openIdConfiguration, string? xFapiInteractionId) = await new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
             .SetUri(openIdConfigurationUrl)
             .Create()

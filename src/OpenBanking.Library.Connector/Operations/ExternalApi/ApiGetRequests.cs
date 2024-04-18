@@ -26,8 +26,9 @@ internal class
         _getRequestProcessor = getRequestProcessor;
     }
 
-    public async Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-        GetAsync(
+    public async
+        Task<(TApiResponse response, string? xFapiInteractionId, IList<IFluentResponseInfoOrWarningMessage>
+            nonErrorMessages)> GetAsync(
             Uri uri,
             IEnumerable<HttpHeader>? extraHeaders,
             TppReportingRequestInfo? tppReportingRequestInfo,
@@ -38,12 +39,13 @@ internal class
         var nonErrorMessages = new List<IFluentResponseInfoOrWarningMessage>();
 
         // Process request
-        var variantResponse = await _getRequestProcessor.GetAsync<TVariantApiResponse>(
-            uri,
-            tppReportingRequestInfo,
-            jsonSerializerSettings,
-            apiClient,
-            extraHeaders);
+        (TVariantApiResponse variantResponse, string? xFapiInteractionId) =
+            await _getRequestProcessor.GetAsync<TVariantApiResponse>(
+                uri,
+                tppReportingRequestInfo,
+                jsonSerializerSettings,
+                apiClient,
+                extraHeaders);
 
         // Map response type if necessary
         if (!(variantResponse is TApiResponse response))
@@ -56,6 +58,6 @@ internal class
         IEnumerable<IFluentResponseInfoOrWarningMessage> responseNonErrorMessages =
             responseValidationResult.ProcessValidationResultsAndRaiseErrors("prefix");
         nonErrorMessages.AddRange(responseNonErrorMessages);
-        return (response, nonErrorMessages);
+        return (response, xFapiInteractionId, nonErrorMessages);
     }
 }

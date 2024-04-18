@@ -165,7 +165,7 @@ internal class DomesticPayment :
                   """,
             BankProfile = bankProfile.BankProfileEnum
         };
-        (PaymentInitiationModelsPublic.OBWriteDomesticResponse5 externalApiResponse,
+        (PaymentInitiationModelsPublic.OBWriteDomesticResponse5 externalApiResponse, string? xFapiInteractionId,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.PostAsync(
                 externalApiUrl,
@@ -249,7 +249,7 @@ internal class DomesticPayment :
             BankProfile = bankProfile.BankProfileEnum
         };
 
-        (PaymentInitiationModelsPublic.OBWriteDomesticResponse5 externalApiResponse,
+        (PaymentInitiationModelsPublic.OBWriteDomesticResponse5 externalApiResponse, string? xFapiInteractionId,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 externalApiUrl,

@@ -18,5 +18,10 @@ public class AccountAccessConsentCreateResponse : ConsentBaseResponse
     ///     v3.1.10 <a />. Open Banking Connector will automatically
     ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
     /// </summary>
-    public AccountAndTransactionModelsPublic.OBReadConsentResponse1? ExternalApiResponse { get; init; }
+    public required AccountAndTransactionModelsPublic.OBReadConsentResponse1? ExternalApiResponse { get; init; }
+
+    /// <summary>
+    ///     Additional info relating to response from external (bank) API.
+    /// </summary>
+    public required ExternalApiResponseInfo? ExternalApiResponseInfo { get; init; }
 }

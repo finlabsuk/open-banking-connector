@@ -13,13 +13,20 @@ public class MonzoPotsResponse
 {
     internal MonzoPotsResponse(
         ReadMonzoPot externalApiResponse,
-        IList<string>? warnings)
+        IList<string>? warnings,
+        ExternalApiResponseInfo externalApiResponseInfo)
     {
         ExternalApiResponse = externalApiResponse;
         Warnings = warnings;
+        ExternalApiResponseInfo = externalApiResponseInfo;
     }
 
     public ReadMonzoPot ExternalApiResponse { get; }
+
+    /// <summary>
+    ///     Additional info relating to response from external (bank) API.
+    /// </summary>
+    public ExternalApiResponseInfo ExternalApiResponseInfo { get; }
 
     /// <summary>
     ///     Optional list of warning messages from Open Banking Connector.

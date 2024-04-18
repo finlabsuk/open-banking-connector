@@ -168,7 +168,8 @@ internal class
                       """,
                 BankProfile = bankProfile.BankProfileEnum
             };
-            (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
+            (externalApiResponse, string? xFapiInteractionId,
+                    IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.PostAsync(
                     externalApiUrl,
                     createParams.ExtraHeaders,
@@ -353,7 +354,7 @@ internal class
                       """,
                 BankProfile = bankProfile.BankProfileEnum
             };
-            (externalApiResponse,
+            (externalApiResponse, string? xFapiInteractionId,
                     IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.GetAsync(
                     externalApiUrl,
@@ -513,6 +514,7 @@ internal class
 
 
         (VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse externalApiResponse,
+                string? xFapiInteractionId,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.PostAsync(
                 externalApiUrl,

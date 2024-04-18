@@ -14,7 +14,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 internal interface IApiGetRequests<TApiResponse>
     where TApiResponse : class, ISupportsValidation
 {
-    Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> GetAsync(
+    Task<(TApiResponse response, string? xFapiInteractionId, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages
+        )> GetAsync(
         Uri uri,
         IEnumerable<HttpHeader>? extraHeaders,
         TppReportingRequestInfo? tppReportingRequestInfo,

@@ -24,7 +24,7 @@ internal interface IPostRequestProcessor<in TRequest>
         string requestDescription,
         IEnumerable<HttpHeader>? extraHeaders);
 
-    public async Task<TResponse> PostAsync<TResponse>(
+    public async Task<(TResponse response, string? xFapiInteractionId)> PostAsync<TResponse>(
         Uri uri,
         IEnumerable<HttpHeader>? extraHeaders,
         TRequest request,
@@ -39,7 +39,7 @@ internal interface IPostRequestProcessor<in TRequest>
             HttpPostRequestData(request, requestJsonSerializerSettings, $"POST {uri})", extraHeaders);
 
         // POST request
-        var response = await new HttpRequestBuilder()
+        (TResponse response, string? xFapiInteractionId) = await new HttpRequestBuilder()
             .SetMethod(HttpMethod.Post)
             .SetUri(uri)
             .SetHeaders(headers)
@@ -51,6 +51,6 @@ internal interface IPostRequestProcessor<in TRequest>
                 tppReportingRequestInfo,
                 responseJsonSerializerSettings);
 
-        return response;
+        return (response, xFapiInteractionId);
     }
 }

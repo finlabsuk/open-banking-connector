@@ -11,10 +11,12 @@ public class AccountsResponse
 {
     internal AccountsResponse(
         AccountAndTransactionModelsPublic.OBReadAccount6 externalApiResponse,
-        IList<string>? warnings)
+        IList<string>? warnings,
+        ExternalApiResponseInfo externalApiResponseInfo)
     {
         ExternalApiResponse = externalApiResponse;
         Warnings = warnings;
+        ExternalApiResponseInfo = externalApiResponseInfo;
     }
 
     /// <summary>
@@ -25,6 +27,11 @@ public class AccountsResponse
     ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
     /// </summary>
     public AccountAndTransactionModelsPublic.OBReadAccount6 ExternalApiResponse { get; }
+
+    /// <summary>
+    ///     Additional info relating to response from external (bank) API.
+    /// </summary>
+    public ExternalApiResponseInfo ExternalApiResponseInfo { get; }
 
     /// <summary>
     ///     Optional list of warning messages from Open Banking Connector.
