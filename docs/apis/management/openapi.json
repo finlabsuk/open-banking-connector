@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "9.1.0"
+    "version": "10.1.0"
   },
   "paths": {
     "/manage/bank-registrations": {
@@ -570,6 +570,7 @@
           "Barclays_Business",
           "Barclays_Corporate",
           "Barclays_BarclaycardCommercialPayments",
+          "Danske_Sandbox",
           "Obie_Modelo",
           "Obie_Model2023",
           "NatWest_NatWestSandbox",
@@ -607,13 +608,10 @@
           "Hsbc_UkKinetic",
           "Hsbc_UkPersonal",
           "Hsbc_HsbcNetUk",
-          "Danske",
-          "AlliedIrish",
           "Monzo_Monzo",
           "Monzo_Sandbox",
           "Revolut_Revolut",
-          "Starling_Starling",
-          "Tsb"
+          "Starling_Starling"
         ],
         "type": "string",
         "description": "Banks for which bank profiles have been created. Called BankProfileEnum to avoid confusion with the associated\r\nclass BankProfile."
@@ -1185,7 +1183,8 @@
       },
       "SecretSource": {
         "enum": [
-          "Configuration"
+          "Configuration",
+          "AwsSsmParameterStore"
         ],
         "type": "string"
       },
