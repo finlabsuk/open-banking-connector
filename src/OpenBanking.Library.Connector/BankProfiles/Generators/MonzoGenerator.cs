@@ -27,8 +27,8 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
         var grantPostCustomBehaviour =
             new AuthCodeAndRefreshTokenGrantPostCustomBehaviour
             {
-                TokenTypeResponseStartsWithLowerCaseLetter = true,
-                ScopeResponseMayIncludeExtraValues = true
+                ResponseTokenTypeCaseMayBeIncorrect = true,
+                ResponseScopeMayIncludeExtraValues = true
             };
         var pispSandboxAdditionalProperties = new Dictionary<string, object>
         {
@@ -62,11 +62,7 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
                             SubjectDnOrgIdEncoding.DottedDecimalAttributeType
                     },
                 ClientCredentialsGrantPost =
-                    new ClientCredentialsGrantPostCustomBehaviour
-                    {
-                        ScopeResponseIsEmptyString = true,
-                        TokenTypeResponseStartsWithLowerCaseLetter = true
-                    },
+                    new ClientCredentialsGrantPostCustomBehaviour { ResponseTokenTypeCaseMayBeIncorrect = true },
                 AuthCodeGrantPost = grantPostCustomBehaviour,
                 RefreshTokenGrantPost = grantPostCustomBehaviour
             },

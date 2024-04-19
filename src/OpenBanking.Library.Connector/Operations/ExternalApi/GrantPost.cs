@@ -127,7 +127,7 @@ internal class GrantPost : IGrantPost
     }
 
     public async Task<string> PostClientCredentialsGrantAsync(
-        string? scope,
+        string? requestScope,
         OBSealKey obSealKey,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
@@ -146,9 +146,9 @@ internal class GrantPost : IGrantPost
         {
             var keyValuePairs = new Dictionary<string, string> { { "grant_type", "client_credentials" } };
 
-            if (scope is not null)
+            if (requestScope is not null)
             {
-                keyValuePairs["scope"] = scope;
+                keyValuePairs["scope"] = requestScope;
             }
 
             if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt)
@@ -181,7 +181,7 @@ internal class GrantPost : IGrantPost
                     jsonSerializerSettings,
                     bankProfileForTppReportingMetrics,
                     mtlsApiClient,
-                    scope,
+                    requestScope,
                     clientCredentialsGrantPostCustomBehaviour);
 
             if (response.IdToken is not null)
@@ -193,7 +193,7 @@ internal class GrantPost : IGrantPost
         }
 
         // Get or create cache entry
-        string cacheKey = string.Join(":", "token", "client", cacheKeyId, scope ?? "");
+        string cacheKey = string.Join(":", "token", "client", cacheKeyId, requestScope ?? "");
         string accessToken =
             (await _memoryCache.GetOrCreateAsync(
                 cacheKey,
@@ -221,7 +221,7 @@ internal class GrantPost : IGrantPost
         string externalApiConsentId,
         string? externalApiUserId,
         string expectedNonce,
-        string? requestScope,
+        string requestScope,
         OBSealKey obSealKey,
         string jwksUri,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
@@ -311,7 +311,7 @@ internal class GrantPost : IGrantPost
         string externalApiConsentId,
         string? externalApiUserId,
         string expectedNonce,
-        string? requestScope,
+        string refreshTokenScope,
         OBSealKey obSealKey,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
@@ -354,7 +354,7 @@ internal class GrantPost : IGrantPost
             jsonSerializerSettings,
             bankProfileForTppReportingMetrics,
             mtlsApiClient,
-            requestScope,
+            refreshTokenScope,
             refreshTokenGrantPostCustomBehaviour);
 
         IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour =
@@ -735,11 +735,11 @@ internal class GrantPost : IGrantPost
         JsonSerializerSettings? responseJsonSerializerSettings,
         BankProfileEnum? bankProfileForTppReportingMetrics,
         IApiClient mtlsApiClient,
-        string? requestScope,
+        string? implicitOrExplicitRequestScope,
         GrantPostCustomBehaviour? grantPostCustomBehaviour)
         where TokenEndpointResponse : TokenEndpointResponseBase
     {
-        // POST request
+        // POST grant to token endpoint
         var uri = new Uri(tokenEndpoint);
         IPostRequestProcessor<Dictionary<string, string>> postRequestProcessor =
             new AuthGrantPostRequestProcessor<Dictionary<string, string>>(
@@ -753,7 +753,6 @@ internal class GrantPost : IGrantPost
                 BankProfile = bankProfileForTppReportingMetrics.Value
             }
             : null;
-
         (TokenEndpointResponse response, _) = await postRequestProcessor.PostAsync<TokenEndpointResponse>(
             uri,
             null,
@@ -763,63 +762,50 @@ internal class GrantPost : IGrantPost
             responseJsonSerializerSettings,
             mtlsApiClient);
 
-        // Check token endpoint response
-        bool tokenTypeResponseStartsWithLowerCaseLetter =
-            grantPostCustomBehaviour?.TokenTypeResponseStartsWithLowerCaseLetter ?? false;
-        string expectedTokenTypeResponse = tokenTypeResponseStartsWithLowerCaseLetter ? "bearer" : "Bearer";
-
-        if (!string.Equals(response.TokenType, expectedTokenTypeResponse, StringComparison.Ordinal))
+        // Validate response "token_type"
+        bool responseTokenTypeCaseMayBeIncorrect =
+            grantPostCustomBehaviour?.ResponseTokenTypeCaseMayBeIncorrect ?? false;
+        StringComparison stringComparison = responseTokenTypeCaseMayBeIncorrect
+            ? StringComparison.OrdinalIgnoreCase
+            : StringComparison.Ordinal;
+        if (!string.Equals(response.TokenType, "Bearer", stringComparison))
         {
-            throw new InvalidDataException("Access token received does not have token type equal to Bearer.");
+            throw new InvalidDataException("Received access token with token type not equal to Bearer.");
         }
 
-        // Ensure received token scope when provided matches that requested
-        bool expectedScopeResponseIsEmptyString = grantPostCustomBehaviour?.ScopeResponseIsEmptyString ?? false;
-        if (requestScope is not null)
+        // Validate response "scope"
+        bool responseScopeMayIncludeExtraValues =
+            grantPostCustomBehaviour?.ResponseScopeMayIncludeExtraValues ?? false;
+        if (string.IsNullOrEmpty(implicitOrExplicitRequestScope))
         {
-            if (response.Scope is not null)
+            // Check for unexpected value(s)
+            if (string.IsNullOrEmpty(response.Scope))
             {
-                if (expectedScopeResponseIsEmptyString)
-                {
-                    if (response.Scope != string.Empty)
-                    {
-                        throw new Exception("Received scope for access token unexpectedly non-empty.");
-                    }
-                }
-                else
-                {
-                    IOrderedEnumerable<string> requestScopeOrdered = requestScope.Split(" ").OrderBy(t => t);
-                    IOrderedEnumerable<string> responseScopeOrdered = response.Scope.Split(" ").OrderBy(t => t);
-
-                    bool scopeResponseMayIncludeExtraValues =
-                        grantPostCustomBehaviour?.ScopeResponseMayIncludeExtraValues ?? false;
-
-                    if (scopeResponseMayIncludeExtraValues)
-                    {
-                        foreach (string requestScopeValue in requestScopeOrdered)
-                        {
-                            if (!responseScopeOrdered.Contains(requestScopeValue))
-                            {
-                                throw new Exception(
-                                    $"Requested scope {requestScopeValue} for access token not obtained.");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (!requestScopeOrdered.SequenceEqual(responseScopeOrdered))
-                        {
-                            throw new Exception("Requested and received scope for access token differ.");
-                        }
-                    }
-                }
+                throw new Exception("Received access token without scope and unable to infer scope.");
             }
         }
         else
         {
-            if (response.Scope is not null)
+            // If response scope provided, check it. (Missing response scope implies value equal to requested scope.)
+            if (!string.IsNullOrEmpty(response.Scope))
             {
-                throw new Exception("Received scope for access token but none requested.");
+                string[] expectedScopeArray = implicitOrExplicitRequestScope.Split(" ");
+                string[] responseScopeArray = response.Scope.Split(" ");
+
+                // Check for missing values
+                string[] missingScopeValues = expectedScopeArray.Except(responseScopeArray).ToArray();
+                if (missingScopeValues.Any())
+                {
+                    throw new Exception($"Access token scope does not contain expected values {missingScopeValues}.");
+                }
+
+                // Check for extra values
+                string[] extraScopeValues = responseScopeArray.Except(expectedScopeArray).ToArray();
+                if (!responseScopeMayIncludeExtraValues &&
+                    extraScopeValues.Any())
+                {
+                    throw new Exception($"Access token scope contains extra values {extraScopeValues}.");
+                }
             }
         }
 

@@ -48,7 +48,7 @@ internal class ConsentAccessTokenGet
     public async Task<string> GetAccessTokenAndUpdateConsent<TConsentEntity>(
         TConsentEntity consent,
         string bankIssuerUrl,
-        string? requestScope,
+        string requestScope,
         BankRegistrationEntity bankRegistration,
         AccessTokenEntity? storedAccessTokenEntity,
         RefreshTokenEntity? storedRefreshTokenEntity,

@@ -6,9 +6,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehav
 
 public abstract class GrantPostCustomBehaviour
 {
-    public bool? ScopeResponseIsEmptyString { get; set; }
+    public bool? ResponseScopeMayIncludeExtraValues { get; set; }
 
-    public bool? ScopeResponseMayIncludeExtraValues { get; set; }
-
-    public bool? TokenTypeResponseStartsWithLowerCaseLetter { get; set; }
+    public bool? ResponseTokenTypeCaseMayBeIncorrect { get; set; }
 }

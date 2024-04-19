@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 internal interface IGrantPost
 {
     Task<string> PostClientCredentialsGrantAsync(
-        string? scope,
+        string? requestScope,
         OBSealKey obSealKey,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
@@ -41,7 +41,7 @@ internal interface IGrantPost
         string externalApiConsentId,
         string? externalApiUserId,
         string expectedNonce,
-        string? requestScope,
+        string requestScope,
         OBSealKey obSealKey,
         string jwksUri,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
@@ -63,7 +63,7 @@ internal interface IGrantPost
         string externalApiConsentId,
         string? externalApiUserId,
         string expectedNonce,
-        string? requestScope,
+        string refreshTokenScope,
         OBSealKey obSealKey,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,

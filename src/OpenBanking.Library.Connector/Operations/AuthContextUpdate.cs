@@ -151,7 +151,7 @@ internal class AuthContextUpdate :
 
         // Get consent info
         (BaseConsent consent,
-                string? tokenRequestScope,
+                string tokenRequestScope,
                 AccessTokenEntity? storedAccessToken,
                 RefreshTokenEntity? storedRefreshToken) =
             authContext switch
