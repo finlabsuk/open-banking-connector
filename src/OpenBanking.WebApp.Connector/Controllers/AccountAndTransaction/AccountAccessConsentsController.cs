@@ -37,7 +37,8 @@ public class AccountAccessConsentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<
         AccountAccessConsentCreateResponse>> PostAsync(
-        [FromBody] AccountAccessConsentRequest request,
+        [FromBody]
+        AccountAccessConsentRequest request,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {

@@ -21,7 +21,7 @@ public class BankRegistrationDeleteRequestProcessor : IDeleteRequestProcessor
     {
         // Assemble headers and body
         var headers = new List<HttpHeader> { new("Authorization", "Bearer " + _accessToken) };
-        
+
         if (extraHeaders is not null)
         {
             foreach (HttpHeader header in extraHeaders)

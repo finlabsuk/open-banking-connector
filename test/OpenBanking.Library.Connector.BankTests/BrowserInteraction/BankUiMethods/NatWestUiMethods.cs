@@ -45,8 +45,7 @@ public class NatWestUiMethods : IBankUiMethods
                 {
                     case NatWestBank.NatWestSandbox:
                         await page.Locator("dl")
-                            .Filter(
-                                new LocatorFilterOptions { HasText = "Personal Savings" })
+                            .Filter(new LocatorFilterOptions { HasText = "Personal Savings" })
                             .GetByRole(AriaRole.Button)
                             .ClickAsync();
                         break;

@@ -64,6 +64,6 @@ internal class SharedContext : ISharedContext
     public ObSealCertificateMethods ObSealCertificateMethods { get; }
 
     public ObWacCertificateMethods ObWacCertificateMethods { get; }
-    
+
     public TppReportingMetrics TppReportingMetrics { get; }
 }

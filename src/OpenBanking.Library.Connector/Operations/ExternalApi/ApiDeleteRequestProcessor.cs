@@ -27,7 +27,7 @@ public class ApiDeleteRequestProcessor : IDeleteRequestProcessor
             new("Authorization", "Bearer " + _accessToken),
             new("x-fapi-financial-id", _financialId)
         };
-        
+
         if (extraHeaders is not null)
         {
             foreach (HttpHeader header in extraHeaders)

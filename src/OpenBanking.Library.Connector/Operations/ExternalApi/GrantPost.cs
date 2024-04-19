@@ -788,9 +788,6 @@ internal class GrantPost : IGrantPost
                 }
                 else
                 {
-                    // accounts openid
-                    // accounts openid payments
-
                     IOrderedEnumerable<string> requestScopeOrdered = requestScope.Split(" ").OrderBy(t => t);
                     IOrderedEnumerable<string> responseScopeOrdered = response.Scope.Split(" ").OrderBy(t => t);
 
@@ -803,7 +800,8 @@ internal class GrantPost : IGrantPost
                         {
                             if (!responseScopeOrdered.Contains(requestScopeValue))
                             {
-                                throw new Exception($"Requested scope {requestScopeValue} for access token not obtained.");
+                                throw new Exception(
+                                    $"Requested scope {requestScopeValue} for access token not obtained.");
                             }
                         }
                     }

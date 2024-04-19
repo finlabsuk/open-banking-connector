@@ -34,7 +34,6 @@ internal class
     IObjectRead<AccountAccessConsentCreateResponse, ConsentReadParams>
 {
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
-
     private readonly IBankProfileService _bankProfileService;
 
     private readonly ConsentCommon<AccountAccessConsentPersisted,
@@ -44,7 +43,6 @@ internal class
         AccountAndTransactionModelsPublic.OBReadConsentResponse1> _consentCommon;
 
     private readonly IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _consentEntityMethods;
-
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
@@ -294,7 +292,6 @@ internal class
                 ExternalApiResponse = externalApiResponse,
                 ExternalApiResponseInfo = externalApiResponseInfo
             };
-
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
         await _dbSaveChangesMethod.SaveChangesAsync();

@@ -25,7 +25,7 @@ public interface ISharedContext
 
     IBankProfileService BankProfileService { get; }
     IDbService DbService { get; }
-    
+
     IEncryptionKeyInfo EncryptionKeyInfo { get; }
 
     IApiVariantMapper ApiVariantMapper { get; }
