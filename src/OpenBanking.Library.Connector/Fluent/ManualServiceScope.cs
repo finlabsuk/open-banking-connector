@@ -12,39 +12,36 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
-public interface IRequestBuilderContainer : IDisposable
-{
-    IRequestBuilder RequestBuilder { get; }
-}
-
-public class RequestBuilderContainer : IRequestBuilderContainer
+public class ManualServiceScope : IServiceScopeContainer
 {
     private readonly BaseDbContext _dbContext;
 
-    public RequestBuilderContainer(
+    public ManualServiceScope(
         ITimeProvider timeProvider,
         IApiVariantMapper apiVariantMapper,
         IInstrumentationClient instrumentationClient,
         IApiClient apiClient,
         IEncryptionKeyInfo encryptionKeyInfo,
-        BaseDbContext dbContext,
+        DbContextOptions<SqliteDbContext> dbContextOptions,
         IBankProfileService bankProfileService,
         IMemoryCache memoryCache,
         ISecretProvider secretProvider,
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
         TppReportingMetrics ttpReportingMetrics)
     {
-        _dbContext = dbContext;
+        _dbContext = new SqliteDbContext(dbContextOptions);
+        DbService = new DbService(_dbContext);
         RequestBuilder = new RequestBuilder(
             timeProvider,
             apiVariantMapper,
             instrumentationClient,
             apiClient,
-            new DbService(dbContext),
+            DbService,
             bankProfileService,
             memoryCache,
             encryptionKeyInfo,
@@ -59,4 +56,6 @@ public class RequestBuilderContainer : IRequestBuilderContainer
     }
 
     public IRequestBuilder RequestBuilder { get; }
+
+    public IDbService DbService { get; }
 }

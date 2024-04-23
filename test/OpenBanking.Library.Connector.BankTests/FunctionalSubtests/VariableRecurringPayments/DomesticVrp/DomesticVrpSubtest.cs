@@ -30,8 +30,7 @@ public static class DomesticVrpSubtest
         Guid bankRegistrationId,
         OAuth2ResponseMode defaultResponseMode,
         VariableRecurringPaymentsApiSettings variableRecurringPaymentsApiSettings,
-        IRequestBuilder requestBuilderIn,
-        Func<IRequestBuilderContainer> requestBuilderGenerator,
+        Func<IServiceScopeContainer> serviceScopeGenerator,
         string testNameUnique,
         string modifiedBy,
         FilePathBuilder vrpFluentRequestLogging,
@@ -49,7 +48,9 @@ public static class DomesticVrpSubtest
             return;
         }
 
-        IRequestBuilder requestBuilder = requestBuilderIn;
+        // Get request builder
+        using IServiceScopeContainer serviceScopeContainer = serviceScopeGenerator();
+        IRequestBuilder requestBuilder = serviceScopeContainer.RequestBuilder;
 
         // Create DomesticVrpConsent request
         var domesticVrpTemplateRequest = new DomesticVrpTemplateRequest
@@ -182,8 +183,8 @@ public static class DomesticVrpSubtest
                 AuthIsComplete);
 
             // Refresh scope to ensure user token acquired following consent is available
-            using IRequestBuilderContainer scopedRequestBuilderNew = requestBuilderGenerator();
-            IRequestBuilder requestBuilderNew = scopedRequestBuilderNew.RequestBuilder;
+            using IServiceScopeContainer scopedServiceScopeNew = serviceScopeGenerator();
+            IRequestBuilder requestBuilderNew = scopedServiceScopeNew.RequestBuilder;
 
             if (variableRecurringPaymentsApiSettings.UseConsentGetFundsConfirmationEndpoint)
             {

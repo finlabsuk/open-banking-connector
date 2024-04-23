@@ -35,7 +35,7 @@ public class GenericHostAppTests : AppTests
         await TestAllInner(
             testGroup,
             bankProfile,
-            () => new ScopedRequestBuilderContainer(_serviceProvider),
+            () => new ServiceScopeFromDependencyInjection(_serviceProvider),
             true);
 
         UnsetTestLogging();

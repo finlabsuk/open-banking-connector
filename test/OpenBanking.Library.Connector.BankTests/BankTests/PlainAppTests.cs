@@ -53,8 +53,6 @@ public class PlainAppTests : AppTests, IDisposable
         _connection.Close(); // Deletes DB
     }
 
-    private BaseDbContext GetDbContext() => new SqliteDbContext(_dbContextOptions);
-
     [Theory]
     [MemberData(
         nameof(TestedSkippedBanksById),
@@ -71,12 +69,6 @@ public class PlainAppTests : AppTests, IDisposable
         // Collect settings from configuration (to ensure common settings with Generic Host tests;
         // a "plain app" might get settings from environment variables or a custom system;
         // see comment in next section).
-        var softwareStatementProfilesSettings =
-            AppConfiguration.GetSettings<SoftwareStatementProfilesSettings>();
-        var obTransportCertificateProfilesSettings =
-            AppConfiguration.GetSettings<TransportCertificateProfilesSettings>();
-        var obSigningCertificateProfilesSettings =
-            AppConfiguration.GetSettings<SigningCertificateProfilesSettings>();
         var bankProfilesSettings =
             AppConfiguration.GetSettings<BankProfilesSettings>();
         var keysSettings = AppConfiguration.GetSettings<KeysSettings>();
@@ -85,12 +77,6 @@ public class PlainAppTests : AppTests, IDisposable
         // Create providers from settings
         // TODO: update to write settings to environment variables and then use EnvironmentVariablesSettingsProvider to get
         // settings as might be done in a "plain app".
-        var softwareStatementProfilesSettingsProvider =
-            new DefaultSettingsProvider<SoftwareStatementProfilesSettings>(softwareStatementProfilesSettings);
-        var obTransportCertificateProfilesSettingsProvider =
-            new DefaultSettingsProvider<TransportCertificateProfilesSettings>(obTransportCertificateProfilesSettings);
-        var obSigningCertificateProfilesSettingsProvider =
-            new DefaultSettingsProvider<SigningCertificateProfilesSettings>(obSigningCertificateProfilesSettings);
         var bankProfilesSettingsProvider =
             new DefaultSettingsProvider<BankProfilesSettings>(bankProfilesSettings);
         var keySettingsProvider = new DefaultSettingsProvider<KeysSettings>(keysSettings);
@@ -116,26 +102,25 @@ public class PlainAppTests : AppTests, IDisposable
             httpClientSettings.PooledConnectionLifetimeSeconds,
             tppReportingMetrics);
         var memoryCache = new MemoryCache(new MemoryCacheOptions());
-
-        // Set up software statement store
         var encryptionKeyInfo = new EncryptionKeyInfo(keySettingsProvider);
-
         var apiVariantMapper = new ApiVariantMapper();
+        var bankProfileService = new BankProfileService(bankProfilesSettingsProvider, instrumentationClient);
+        var secretProvider = new SecretProvider(AppConfiguration.Configuration);
 
         // Run test            
         await TestAllInner(
             testGroup,
             bankProfile,
-            () => new RequestBuilderContainer(
+            () => new ManualServiceScope(
                 timeProvider,
                 apiVariantMapper,
                 instrumentationClient,
                 apiClient,
                 encryptionKeyInfo,
-                GetDbContext(),
-                new BankProfileService(bankProfilesSettingsProvider, instrumentationClient),
+                _dbContextOptions,
+                bankProfileService,
                 memoryCache,
-                new SecretProvider(AppConfiguration.Configuration),
+                secretProvider,
                 httpClientSettingsProvider,
                 tppReportingMetrics),
             false);

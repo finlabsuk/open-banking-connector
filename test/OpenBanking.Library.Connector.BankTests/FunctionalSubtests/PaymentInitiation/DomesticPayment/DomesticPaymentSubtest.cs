@@ -30,8 +30,7 @@ public static class DomesticPaymentSubtest
         Guid bankRegistrationId,
         OAuth2ResponseMode defaultResponseMode,
         PaymentInitiationApiSettings paymentInitiationApiSettings,
-        IRequestBuilder requestBuilderIn,
-        Func<IRequestBuilderContainer> requestBuilderGenerator,
+        Func<IServiceScopeContainer> serviceScopeGenerator,
         string testNameUnique,
         string modifiedBy,
         FilePathBuilder pispFluentRequestLogging,
@@ -51,7 +50,9 @@ public static class DomesticPaymentSubtest
             return;
         }
 
-        IRequestBuilder requestBuilder = requestBuilderIn;
+        // Get request builder
+        using IServiceScopeContainer serviceScopeContainer = serviceScopeGenerator();
+        IRequestBuilder requestBuilder = serviceScopeContainer.RequestBuilder;
 
         // Create DomesticPaymentConsent request
         var domesticPaymentTemplateRequest = new DomesticPaymentTemplateRequest
@@ -168,8 +169,8 @@ public static class DomesticPaymentSubtest
                 AuthIsComplete);
 
             // Refresh scope to ensure user token acquired following consent is available
-            using IRequestBuilderContainer scopedRequestBuilderNew = requestBuilderGenerator();
-            IRequestBuilder requestBuilderNew = scopedRequestBuilderNew.RequestBuilder;
+            using IServiceScopeContainer scopedServiceScopeNew = serviceScopeGenerator();
+            IRequestBuilder requestBuilderNew = scopedServiceScopeNew.RequestBuilder;
 
             if (paymentInitiationApiSettings.UseDomesticPaymentConsentGetFundsConfirmationEndpoint)
             {

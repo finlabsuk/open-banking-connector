@@ -323,12 +323,19 @@ internal class AuthContextUpdate :
                     customBehaviour?.JwksGet,
                     apiClient);
 
-            // Update consent with nonce, token
+            // Update consent with state, nonce
             consent.UpdateAuthContext(
                 authContext.State,
                 nonce,
                 modified,
                 modifiedBy);
+
+            // Delete old cached/stored access token if exists
+            _memoryCache.Remove(consent.GetCacheKey());
+            storedAccessToken?.UpdateIsDeleted(true, modified, modifiedBy);
+
+            // Delete old stored refresh token if exists
+            storedRefreshToken?.UpdateIsDeleted(true, modified, modifiedBy);
 
             // Create cache entry
             MemoryCacheEntryOptions cacheEntryOptions =
@@ -341,9 +348,6 @@ internal class AuthContextUpdate :
                 consent.GetCacheKey(),
                 tokenEndpointResponse.AccessToken,
                 cacheEntryOptions);
-
-            // Delete old stored access token if exists
-            storedAccessToken?.UpdateIsDeleted(true, modified, modifiedBy);
 
             // Conditionally store new access token
             const int expiryThresholdForSaving = 24 * 60 * 60; // one day
@@ -371,42 +375,26 @@ internal class AuthContextUpdate :
                     currentKeyId);
             }
 
-            // Store new refresh token if available and different from old stored refresh token
+            // Store new refresh token if available
             if (tokenEndpointResponse.RefreshToken is not null)
             {
-                string? storedRefreshTokenValue = null;
-                if (storedRefreshToken is not null)
-                {
-                    // Extract token
-                    byte[] encryptionKey = _encryptionKeyInfo.GetEncryptionKey(storedRefreshToken.KeyId);
-                    storedRefreshTokenValue =
-                        storedRefreshToken
-                            .GetRefreshToken(consentAssociatedData, encryptionKey);
-                }
-
-                if (tokenEndpointResponse.RefreshToken != storedRefreshTokenValue)
-                {
-                    // Delete old refresh token if exists
-                    storedRefreshToken?.UpdateIsDeleted(true, modified, modifiedBy);
-
-                    // Store new refresh token
-                    RefreshTokenEntity newRefreshTokenObject = consent.AddNewRefreshToken(
-                        Guid.NewGuid(),
-                        null,
-                        false,
-                        modified,
-                        modifiedBy,
-                        modified,
-                        modifiedBy);
-                    string? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
-                    newRefreshTokenObject.UpdateRefreshToken(
-                        tokenEndpointResponse.RefreshToken,
-                        consentAssociatedData,
-                        _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
-                        modified,
-                        modifiedBy,
-                        currentKeyId);
-                }
+                // Store new refresh token
+                RefreshTokenEntity newRefreshTokenObject = consent.AddNewRefreshToken(
+                    Guid.NewGuid(),
+                    null,
+                    false,
+                    modified,
+                    modifiedBy,
+                    modified,
+                    modifiedBy);
+                string? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
+                newRefreshTokenObject.UpdateRefreshToken(
+                    tokenEndpointResponse.RefreshToken,
+                    consentAssociatedData,
+                    _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
+                    modified,
+                    modifiedBy,
+                    currentKeyId);
             }
 
             // Create response (may involve additional processing based on entity)
