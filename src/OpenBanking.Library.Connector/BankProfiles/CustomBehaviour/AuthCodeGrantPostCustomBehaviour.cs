@@ -4,9 +4,11 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 
-public class AuthCodeAndRefreshTokenGrantPostCustomBehaviour : GrantPostCustomBehaviour
+public class AuthCodeGrantPostCustomBehaviour : GrantPostCustomBehaviour
 {
-    public bool? AllowNullResponseRefreshToken { get; set; }
+    public bool? ExpectedResponseRefreshTokenMayBeAbsent { get; set; }
+
+    public bool? UnexpectedResponseRefreshTokenMayBePresent { get; set; }
 
     public IdTokenProcessingCustomBehaviour? IdTokenProcessingCustomBehaviour { get; set; }
 }

@@ -24,12 +24,17 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
         MonzoBank bank,
         IInstrumentationClient instrumentationClient)
     {
-        var grantPostCustomBehaviour =
-            new AuthCodeAndRefreshTokenGrantPostCustomBehaviour
+        var authCodeGrantPostCustomBehaviour =
+            new AuthCodeGrantPostCustomBehaviour
             {
                 ResponseTokenTypeCaseMayBeIncorrect = true,
                 ResponseScopeMayIncludeExtraValues = true
             };
+        var refreshTokenGrantPostCustomBehaviour = new RefreshTokenGrantPostCustomBehaviour
+        {
+            ResponseTokenTypeCaseMayBeIncorrect = true,
+            ResponseScopeMayIncludeExtraValues = true
+        };
         var pispSandboxAdditionalProperties = new Dictionary<string, object>
         {
             ["DesiredStatus"] = "Authorised",
@@ -63,8 +68,10 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
                     },
                 ClientCredentialsGrantPost =
                     new ClientCredentialsGrantPostCustomBehaviour { ResponseTokenTypeCaseMayBeIncorrect = true },
-                AuthCodeGrantPost = grantPostCustomBehaviour,
-                RefreshTokenGrantPost = grantPostCustomBehaviour
+                AccountAccessConsentAuthCodeGrantPost = authCodeGrantPostCustomBehaviour,
+                DomesticPaymentConsentAuthCodeGrantPost = authCodeGrantPostCustomBehaviour,
+                DomesticVrpConsentAuthCodeGrantPost = authCodeGrantPostCustomBehaviour,
+                AccountAccessConsentRefreshTokenGrantPost = refreshTokenGrantPostCustomBehaviour
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {

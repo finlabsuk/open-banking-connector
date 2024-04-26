@@ -142,8 +142,8 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                             new IdTokenProcessingCustomBehaviour { DoNotValidateIdToken = true }
                     }
                     : null,
-                AuthCodeGrantPost = bank is BarclaysBank.Sandbox
-                    ? new AuthCodeAndRefreshTokenGrantPostCustomBehaviour
+                AccountAccessConsentAuthCodeGrantPost = bank is BarclaysBank.Sandbox
+                    ? new AuthCodeGrantPostCustomBehaviour
                     {
                         IdTokenProcessingCustomBehaviour =
                             new IdTokenProcessingCustomBehaviour { DoNotValidateIdToken = true }

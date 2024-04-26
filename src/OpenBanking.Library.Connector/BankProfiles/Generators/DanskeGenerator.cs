@@ -58,9 +58,9 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
                     IdTokenProcessingCustomBehaviour =
                         new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
                 },
-                AuthCodeGrantPost = new AuthCodeAndRefreshTokenGrantPostCustomBehaviour
+                DomesticPaymentConsentAuthCodeGrantPost = new AuthCodeGrantPostCustomBehaviour
                 {
-                    AllowNullResponseRefreshToken = true, // required for PISP case
+                    ExpectedResponseRefreshTokenMayBeAbsent = true,
                     IdTokenProcessingCustomBehaviour =
                         new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
                 }

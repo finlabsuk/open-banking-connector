@@ -131,7 +131,7 @@ internal class DomesticPayment :
                 supportsSca,
                 bankProfile.BankProfileEnum,
                 idTokenSubClaimType,
-                customBehaviour?.RefreshTokenGrantPost,
+                customBehaviour?.DomesticPaymentConsentRefreshTokenGrantPost,
                 customBehaviour?.JwksGet,
                 request.ModifiedBy);
 

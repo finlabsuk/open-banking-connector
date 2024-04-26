@@ -128,7 +128,7 @@ internal class DomesticVrp :
                 supportsSca,
                 bankProfile.BankProfileEnum,
                 idTokenSubClaimType,
-                customBehaviour?.RefreshTokenGrantPost,
+                customBehaviour?.DomesticVrpConsentRefreshTokenGrantPost,
                 customBehaviour?.JwksGet,
                 request.ModifiedBy);
 

@@ -289,6 +289,16 @@ internal class AuthContextUpdate :
         {
             // Obtain token for consent
             JsonSerializerSettings? jsonSerializerSettings = null;
+            (AuthCodeGrantPostCustomBehaviour? consentAuthCodeGrantPostCustomBehaviour, bool expectRefreshToken) =
+                authContext switch
+                {
+                    AccountAccessConsentAuthContext => (customBehaviour?.AccountAccessConsentAuthCodeGrantPost, true),
+                    DomesticPaymentConsentAuthContext => (customBehaviour?.DomesticPaymentConsentAuthCodeGrantPost,
+                        true),
+                    DomesticVrpConsentAuthContext => (customBehaviour?.DomesticVrpConsentAuthCodeGrantPost, true),
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+
             TokenEndpointResponseAuthCodeGrant tokenEndpointResponse =
                 await _grantPost.PostAuthCodeGrantAsync(
                     request.RedirectData.Code,
@@ -305,10 +315,11 @@ internal class AuthContextUpdate :
                     tokenEndpointAuthMethod,
                     tokenEndpoint,
                     supportsSca,
+                    expectRefreshToken,
                     bankProfile.BankProfileEnum,
                     idTokenSubClaimType,
                     jsonSerializerSettings,
-                    customBehaviour?.AuthCodeGrantPost,
+                    consentAuthCodeGrantPostCustomBehaviour,
                     customBehaviour?.JwksGet,
                     apiClient);
 

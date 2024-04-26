@@ -227,10 +227,11 @@ internal class GrantPost : IGrantPost
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
+        bool expectRefreshToken,
         BankProfileEnum? bankProfileForTppReportingMetrics,
         IdTokenSubClaimType idTokenSubClaimType,
         JsonSerializerSettings? jsonSerializerSettings,
-        AuthCodeAndRefreshTokenGrantPostCustomBehaviour? authCodeGrantPostCustomBehaviour,
+        AuthCodeGrantPostCustomBehaviour? authCodeGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         IApiClient matlsApiClient)
     {
@@ -269,14 +270,29 @@ internal class GrantPost : IGrantPost
             requestScope,
             authCodeGrantPostCustomBehaviour);
 
-        // Check for refresh token
-        bool allowNullRefreshTokenResponse = authCodeGrantPostCustomBehaviour?.AllowNullResponseRefreshToken ?? false;
-        if (!allowNullRefreshTokenResponse &&
-            response.RefreshToken is null)
+        // Validate response refresh token
+        if (expectRefreshToken)
         {
-            throw new Exception("Did not receive refresh token when using auth code grant.");
+            bool expectedResponseRefreshTokenMayBeAbsent =
+                authCodeGrantPostCustomBehaviour?.ExpectedResponseRefreshTokenMayBeAbsent ?? false;
+            if (!expectedResponseRefreshTokenMayBeAbsent &&
+                response.RefreshToken is null)
+            {
+                throw new Exception("Expected and did not receive refresh token when using auth code grant.");
+            }
+        }
+        else
+        {
+            bool unexpectedResponseRefreshTokenMayBePresent =
+                authCodeGrantPostCustomBehaviour?.UnexpectedResponseRefreshTokenMayBePresent ?? false;
+            if (!unexpectedResponseRefreshTokenMayBePresent &&
+                response.RefreshToken is not null)
+            {
+                throw new Exception("Did not expect but received refresh token when using auth code grant.");
+            }
         }
 
+        // Validate response ID token
         IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour =
             authCodeGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour;
         bool doNotValidateIdToken =
@@ -319,7 +335,7 @@ internal class GrantPost : IGrantPost
         BankProfileEnum? bankProfileForTppReportingMetrics,
         IdTokenSubClaimType idTokenSubClaimType,
         JsonSerializerSettings? jsonSerializerSettings,
-        AuthCodeAndRefreshTokenGrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
+        RefreshTokenGrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         IApiClient mtlsApiClient)
     {

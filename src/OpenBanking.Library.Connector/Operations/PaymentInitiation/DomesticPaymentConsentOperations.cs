@@ -487,7 +487,7 @@ internal class
                 supportsSca,
                 bankProfile.BankProfileEnum,
                 idTokenSubClaimType,
-                customBehaviour?.RefreshTokenGrantPost,
+                customBehaviour?.DomesticPaymentConsentRefreshTokenGrantPost,
                 customBehaviour?.JwksGet,
                 readParams.ModifiedBy);
 

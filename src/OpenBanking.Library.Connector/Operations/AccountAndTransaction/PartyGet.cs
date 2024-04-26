@@ -106,7 +106,7 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Acc
                 supportsSca,
                 bankProfile.BankProfileEnum,
                 idTokenSubClaimType,
-                customBehaviour?.RefreshTokenGrantPost,
+                customBehaviour?.AccountAccessConsentRefreshTokenGrantPost,
                 customBehaviour?.JwksGet,
                 readParams.ModifiedBy);
 

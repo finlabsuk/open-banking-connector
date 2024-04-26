@@ -48,10 +48,10 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                         IdTokenProcessingCustomBehaviour =
                             new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
                     },
-                AuthCodeGrantPost =
-                    new AuthCodeAndRefreshTokenGrantPostCustomBehaviour
+                AccountAccessConsentAuthCodeGrantPost =
+                    new AuthCodeGrantPostCustomBehaviour
                     {
-                        AllowNullResponseRefreshToken = true,
+                        ExpectedResponseRefreshTokenMayBeAbsent = true,
                         IdTokenProcessingCustomBehaviour =
                             new IdTokenProcessingCustomBehaviour
                             {

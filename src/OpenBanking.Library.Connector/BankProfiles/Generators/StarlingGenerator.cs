@@ -46,8 +46,8 @@ public class StarlingGenerator : BankProfileGeneratorBase<StarlingBank>
                             new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAcrClaim = true }
                     },
                 AccountAccessConsentPost = new AccountAccessConsentPostCustomBehaviour { ResponseLinksOmitId = true },
-                AuthCodeGrantPost =
-                    new AuthCodeAndRefreshTokenGrantPostCustomBehaviour
+                AccountAccessConsentAuthCodeGrantPost =
+                    new AuthCodeGrantPostCustomBehaviour
                     {
                         IdTokenProcessingCustomBehaviour =
                             new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAcrClaim = true }

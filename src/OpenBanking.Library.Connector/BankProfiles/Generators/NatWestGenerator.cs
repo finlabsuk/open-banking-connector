@@ -187,8 +187,8 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                         IdTokenProcessingCustomBehaviour =
                             new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
                     },
-                    AuthCodeGrantPost =
-                        new AuthCodeAndRefreshTokenGrantPostCustomBehaviour
+                    AccountAccessConsentAuthCodeGrantPost =
+                        new AuthCodeGrantPostCustomBehaviour
                         {
                             IdTokenProcessingCustomBehaviour =
                                 new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }

@@ -27,8 +27,18 @@ public class CustomBehaviourClass
     public ConsentAuthGetCustomBehaviour? AccountAccessConsentAuthGet { get; set; }
     public ConsentAuthGetCustomBehaviour? DomesticPaymentConsentAuthGet { get; set; }
     public ConsentAuthGetCustomBehaviour? DomesticVrpConsentAuthGet { get; set; }
-    public AuthCodeAndRefreshTokenGrantPostCustomBehaviour? AuthCodeGrantPost { get; set; }
-    public AuthCodeAndRefreshTokenGrantPostCustomBehaviour? RefreshTokenGrantPost { get; set; }
+
+    public AuthCodeGrantPostCustomBehaviour? AccountAccessConsentAuthCodeGrantPost { get; set; }
+
+    public AuthCodeGrantPostCustomBehaviour? DomesticPaymentConsentAuthCodeGrantPost { get; set; }
+
+    public AuthCodeGrantPostCustomBehaviour? DomesticVrpConsentAuthCodeGrantPost { get; set; }
+
+    public RefreshTokenGrantPostCustomBehaviour? AccountAccessConsentRefreshTokenGrantPost { get; set; }
+
+    public RefreshTokenGrantPostCustomBehaviour? DomesticPaymentConsentRefreshTokenGrantPost { get; set; }
+
+    public RefreshTokenGrantPostCustomBehaviour? DomesticVrpConsentRefreshTokenGrantPost { get; set; }
 
     // Account and Transaction API endpoints
     public AccountAccessConsentPostCustomBehaviour? AccountAccessConsentPost { get; set; }

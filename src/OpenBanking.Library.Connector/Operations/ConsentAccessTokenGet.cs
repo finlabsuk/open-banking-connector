@@ -59,7 +59,7 @@ internal class ConsentAccessTokenGet
         bool supportsSca,
         BankProfileEnum bankProfile,
         IdTokenSubClaimType idTokenSubClaimType,
-        AuthCodeAndRefreshTokenGrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
+        RefreshTokenGrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         string? modifiedBy)
         where TConsentEntity : BaseConsent

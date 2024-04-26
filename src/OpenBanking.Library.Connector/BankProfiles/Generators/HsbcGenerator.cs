@@ -52,7 +52,7 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                 "https://api.ob.hsbcnet.com/obie/open-banking/v3.1/aisp"),
             _ => throw new ArgumentOutOfRangeException()
         };
-        var sandboxGrantPostCustomBehaviour = new AuthCodeAndRefreshTokenGrantPostCustomBehaviour
+        var sandboxGrantPostCustomBehaviour = new AuthCodeGrantPostCustomBehaviour
         {
             IdTokenProcessingCustomBehaviour = new IdTokenProcessingCustomBehaviour { DoNotValidateIdToken = true }
         };
@@ -90,10 +90,7 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                             new IdTokenProcessingCustomBehaviour { DoNotValidateIdToken = true }
                     }
                     : null,
-                AuthCodeGrantPost = bank is HsbcBank.Sandbox
-                    ? sandboxGrantPostCustomBehaviour
-                    : null,
-                RefreshTokenGrantPost = bank is HsbcBank.Sandbox
+                AccountAccessConsentAuthCodeGrantPost = bank is HsbcBank.Sandbox
                     ? sandboxGrantPostCustomBehaviour
                     : null
             },
