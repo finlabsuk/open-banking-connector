@@ -193,6 +193,8 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                             IdTokenProcessingCustomBehaviour =
                                 new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
                         },
+                    AccountAccessConsentRefreshTokenGrantPost =
+                        new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
                     AccountAccessConsentPost = bank is NatWestBank.Coutts
                         ? new AccountAccessConsentPostCustomBehaviour { ResponseLinksAddSlash = true }
                         : null,

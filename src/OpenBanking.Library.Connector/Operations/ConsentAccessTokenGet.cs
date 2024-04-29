@@ -85,13 +85,12 @@ internal class ConsentAccessTokenGet
                 storedRefreshTokenEntity
                     .GetRefreshToken(consentAssociatedData, encryptionKey);
 
-            // Obtain new refresh and access tokens
+            // POST refresh token grant
             string externalApiClientId = bankRegistration.ExternalApiId;
             JsonSerializerSettings? jsonSerializerSettings = null;
             TokenEndpointResponseRefreshTokenGrant tokenEndpointResponse =
                 await _grantPost.PostRefreshTokenGrantAsync(
                     storedRefreshToken,
-                    bankRegistration.JwksUri,
                     bankIssuerUrl,
                     externalApiClientId,
                     bankRegistration.ExternalApiSecret,
@@ -100,6 +99,7 @@ internal class ConsentAccessTokenGet
                     nonce,
                     requestScope,
                     obSealKey,
+                    bankRegistration.JwksUri,
                     tokenEndpointAuthMethod,
                     tokenEndpoint,
                     supportsSca,
@@ -110,12 +110,9 @@ internal class ConsentAccessTokenGet
                     jwksGetCustomBehaviour,
                     apiClient);
 
-            // Delete old access token (is expired else would have been used)
+            // Delete old stored access token if exists
             DateTimeOffset modified = _timeProvider.GetUtcNow();
-            if (storedAccessTokenEntity is not null)
-            {
-                storedAccessTokenEntity.UpdateIsDeleted(true, modified, modifiedBy);
-            }
+            storedAccessTokenEntity?.UpdateIsDeleted(true, modified, modifiedBy);
 
             // Conditionally store new access token
             var newAccessToken = new AccessToken(tokenEndpointResponse.AccessToken, tokenEndpointResponse.ExpiresIn);
@@ -141,8 +138,8 @@ internal class ConsentAccessTokenGet
                     currentKeyId);
             }
 
-            // Store new refresh token if different from old stored refresh token
-            if (tokenEndpointResponse.RefreshToken != storedRefreshToken)
+            // Replace refresh token if rotated (i.e. new one provided)
+            if (tokenEndpointResponse.RefreshToken is not null)
             {
                 // Delete old refresh token
                 storedRefreshTokenEntity.UpdateIsDeleted(true, modified, modifiedBy);

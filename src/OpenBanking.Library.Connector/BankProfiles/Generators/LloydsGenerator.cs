@@ -135,7 +135,9 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                             DateTimeOffsetConverterEnum.JsonInvalidStringBecomesNull
                     },
                 DomesticPaymentConsentAuthCodeGrantPost =
-                    new AuthCodeGrantPostCustomBehaviour { ExpectedResponseRefreshTokenMayBeAbsent = true }
+                    new AuthCodeGrantPostCustomBehaviour { ExpectedResponseRefreshTokenMayBeAbsent = true },
+                AccountAccessConsentRefreshTokenGrantPost =
+                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {

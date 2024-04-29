@@ -53,11 +53,10 @@ internal interface IGrantPost
         JsonSerializerSettings? jsonSerializerSettings,
         AuthCodeGrantPostCustomBehaviour? authCodeGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
-        IApiClient matlsApiClient);
+        IApiClient mtlsApiClient);
 
     Task<TokenEndpointResponseRefreshTokenGrant> PostRefreshTokenGrantAsync(
         string refreshToken,
-        string jwksUri,
         string bankIssuerUrl,
         string externalApiClientId,
         string? externalApiClientSecret,
@@ -66,6 +65,7 @@ internal interface IGrantPost
         string expectedNonce,
         string refreshTokenScope,
         OBSealKey obSealKey,
+        string jwksUri,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,

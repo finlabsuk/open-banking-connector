@@ -43,8 +43,8 @@ public class TokenEndpointResponseAuthCodeGrant : TokenEndpointResponseBase
 
 public class TokenEndpointResponseRefreshTokenGrant : TokenEndpointResponseBase
 {
-    [JsonProperty("refresh_token", Required = Required.Always)]
-    public string RefreshToken { get; set; } = null!;
+    [JsonProperty("refresh_token")]
+    public string? RefreshToken { get; set; }
 
     [JsonProperty("id_token")]
     public string? IdToken { get; set; }

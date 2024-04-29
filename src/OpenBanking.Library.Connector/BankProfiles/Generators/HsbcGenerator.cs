@@ -92,7 +92,9 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                     : null,
                 AccountAccessConsentAuthCodeGrantPost = bank is HsbcBank.Sandbox
                     ? sandboxGrantPostCustomBehaviour
-                    : null
+                    : null,
+                AccountAccessConsentRefreshTokenGrantPost =
+                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings { UseRegistrationGetEndpoint = true },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings

@@ -233,7 +233,7 @@ internal class GrantPost : IGrantPost
         JsonSerializerSettings? jsonSerializerSettings,
         AuthCodeGrantPostCustomBehaviour? authCodeGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
-        IApiClient matlsApiClient)
+        IApiClient mtlsApiClient)
     {
         var keyValuePairs = new Dictionary<string, string>
         {
@@ -266,7 +266,7 @@ internal class GrantPost : IGrantPost
             externalApiClientSecret,
             jsonSerializerSettings,
             bankProfileForTppReportingMetrics,
-            matlsApiClient,
+            mtlsApiClient,
             requestScope,
             authCodeGrantPostCustomBehaviour);
 
@@ -320,7 +320,6 @@ internal class GrantPost : IGrantPost
 
     public async Task<TokenEndpointResponseRefreshTokenGrant> PostRefreshTokenGrantAsync(
         string refreshToken,
-        string jwksUri,
         string bankIssuerUrl,
         string externalApiClientId,
         string? externalApiClientSecret,
@@ -329,6 +328,7 @@ internal class GrantPost : IGrantPost
         string expectedNonce,
         string refreshTokenScope,
         OBSealKey obSealKey,
+        string jwksUri,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
@@ -373,13 +373,21 @@ internal class GrantPost : IGrantPost
             refreshTokenScope,
             refreshTokenGrantPostCustomBehaviour);
 
+        // Validate response ID token
+        string? responseIdToken = string.IsNullOrEmpty(response.IdToken) ? null : response.IdToken;
+        bool idTokenMayBeAbsent = refreshTokenGrantPostCustomBehaviour?.IdTokenMayBeAbsent ?? false;
+        if (!idTokenMayBeAbsent &&
+            responseIdToken is null)
+        {
+            throw new Exception("Expected but did not receive ID token when using refresh token grant.");
+        }
+
         IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour =
             refreshTokenGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour;
         bool doNotValidateIdToken =
             idTokenProcessingCustomBehaviour?.DoNotValidateIdToken ?? false;
-        string? responseIdToken = response.IdToken;
-        if (doNotValidateIdToken is false &&
-            responseIdToken is not null)
+        if (responseIdToken is not null &&
+            doNotValidateIdToken is false)
         {
             await ValidateIdTokenTokenEndpoint(
                 responseIdToken,

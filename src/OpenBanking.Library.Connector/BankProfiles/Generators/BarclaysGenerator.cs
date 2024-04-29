@@ -149,6 +149,8 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                             new IdTokenProcessingCustomBehaviour { DoNotValidateIdToken = true }
                     }
                     : null,
+                AccountAccessConsentRefreshTokenGrantPost =
+                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
                 BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                 {
                     TransportCertificateSubjectDnOrgIdEncoding = SubjectDnOrgIdEncoding.DottedDecimalAttributeType

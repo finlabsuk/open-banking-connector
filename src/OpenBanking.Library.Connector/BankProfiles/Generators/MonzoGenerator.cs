@@ -33,7 +33,8 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
         var refreshTokenGrantPostCustomBehaviour = new RefreshTokenGrantPostCustomBehaviour
         {
             ResponseTokenTypeCaseMayBeIncorrect = true,
-            ResponseScopeMayIncludeExtraValues = true
+            ResponseScopeMayIncludeExtraValues = true,
+            IdTokenMayBeAbsent = true
         };
         var pispSandboxAdditionalProperties = new Dictionary<string, object>
         {
