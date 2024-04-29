@@ -52,6 +52,11 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                     Url =
                         "https://obonline.nationwide.co.uk/open-banking/.well-known/openid-configuration" // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
                 },
+                AccountAccessConsentRefreshTokenGrantPost = new RefreshTokenGrantPostCustomBehaviour
+                {
+                    IdTokenProcessingCustomBehaviour =
+                        new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
+                },
                 AccountAccessConsentPost =
                     new ConsentPostCustomBehaviour { ResponseLinksOmitId = true }
             },
