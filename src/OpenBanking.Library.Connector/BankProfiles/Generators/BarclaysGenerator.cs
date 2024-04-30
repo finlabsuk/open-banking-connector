@@ -134,7 +134,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             CustomBehaviour = new CustomBehaviourClass
             {
                 AccountAccessConsentPost =
-                    new AccountAccessConsentPostCustomBehaviour { ResponseLinksOmitId = true },
+                    new ConsentPostCustomBehaviour { ResponseLinksOmitId = true },
                 AccountAccessConsentAuthGet = bank is BarclaysBank.Sandbox
                     ? new ConsentAuthGetCustomBehaviour
                     {

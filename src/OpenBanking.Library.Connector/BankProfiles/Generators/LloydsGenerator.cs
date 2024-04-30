@@ -126,7 +126,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                     : new ConsentAuthGetCustomBehaviour { AddRedundantOAuth2NonceRequestParameter = true },
                 AccountAccessConsentPost = bank is LloydsBank.Sandbox
                     ? null
-                    : new AccountAccessConsentPostCustomBehaviour { ResponseLinksOmitId = true },
+                    : new ConsentPostCustomBehaviour { ResponseLinksOmitId = true },
                 DirectDebitGet = bank is LloydsBank.Sandbox
                     ? null
                     : new DirectDebitGetCustomBehaviour

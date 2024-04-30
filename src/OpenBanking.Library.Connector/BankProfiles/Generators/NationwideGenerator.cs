@@ -53,7 +53,7 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                         "https://obonline.nationwide.co.uk/open-banking/.well-known/openid-configuration" // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
                 },
                 AccountAccessConsentPost =
-                    new AccountAccessConsentPostCustomBehaviour { ResponseLinksOmitId = true }
+                    new ConsentPostCustomBehaviour { ResponseLinksOmitId = true }
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {

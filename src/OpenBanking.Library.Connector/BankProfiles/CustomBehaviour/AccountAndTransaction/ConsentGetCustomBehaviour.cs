@@ -4,9 +4,7 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 
-public class AccountAccessConsentPostCustomBehaviour
+public class ConsentGetCustomBehaviour
 {
-    public bool? ResponseLinksOmitId { get; set; }
-
     public bool? ResponseLinksAddSlash { get; set; }
 }

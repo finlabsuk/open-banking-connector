@@ -41,9 +41,19 @@ public class CustomBehaviourClass
     public RefreshTokenGrantPostCustomBehaviour? DomesticVrpConsentRefreshTokenGrantPost { get; set; }
 
     // Account and Transaction API endpoints
-    public AccountAccessConsentPostCustomBehaviour? AccountAccessConsentPost { get; set; }
+    public ConsentPostCustomBehaviour? AccountAccessConsentPost { get; set; }
 
-    public AccountAccessConsentGetCustomBehaviour? AccountAccessConsentGet { get; set; }
+    public ConsentGetCustomBehaviour? AccountAccessConsentGet { get; set; }
 
     public DirectDebitGetCustomBehaviour? DirectDebitGet { get; set; }
+
+    // Payment Initiation API endpoints
+    public ConsentPostCustomBehaviour? DomesticPaymentConsentPost { get; set; }
+
+    public ConsentGetCustomBehaviour? DomesticPaymentConsentGet { get; set; }
+
+    // Variable Recurring Payments API endpoints
+    public ConsentPostCustomBehaviour? DomesticVrpConsentPost { get; set; }
+
+    public ConsentGetCustomBehaviour? DomesticVrpConsentGet { get; set; }
 }

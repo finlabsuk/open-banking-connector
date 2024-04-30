@@ -196,10 +196,10 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     AccountAccessConsentRefreshTokenGrantPost =
                         new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
                     AccountAccessConsentPost = bank is NatWestBank.Coutts
-                        ? new AccountAccessConsentPostCustomBehaviour { ResponseLinksAddSlash = true }
+                        ? new ConsentPostCustomBehaviour { ResponseLinksAddSlash = true }
                         : null,
                     AccountAccessConsentGet = bank is NatWestBank.Coutts
-                        ? new AccountAccessConsentGetCustomBehaviour { ResponseLinksAddSlash = true }
+                        ? new ConsentGetCustomBehaviour { ResponseLinksAddSlash = true }
                         : null
                 },
             AspspBrandId = bank switch
