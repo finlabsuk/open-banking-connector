@@ -184,11 +184,6 @@ internal class GrantPost : IGrantPost
                     requestScope,
                     clientCredentialsGrantPostCustomBehaviour);
 
-            if (response.IdToken is not null)
-            {
-                throw new Exception("Unexpectedly received ID token with client credentials grant.");
-            }
-
             return response;
         }
 

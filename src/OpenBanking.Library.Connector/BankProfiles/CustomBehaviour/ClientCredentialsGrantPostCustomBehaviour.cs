@@ -4,4 +4,7 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 
-public class ClientCredentialsGrantPostCustomBehaviour : GrantPostCustomBehaviour { }
+public class ClientCredentialsGrantPostCustomBehaviour : GrantPostCustomBehaviour
+{
+    public IdTokenProcessingCustomBehaviour? IdTokenProcessingCustomBehaviour { get; set; }
+}
