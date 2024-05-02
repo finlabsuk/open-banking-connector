@@ -25,7 +25,7 @@ using AccountAccessConsentPersisted =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 
-internal class AccountGet : IAccountAccessConsentExternalRead<AccountsResponse, ExternalEntityReadParams>
+internal class AccountGet : IAccountAccessConsentExternalRead<AccountsResponse, AccountAccessConsentExternalReadParams>
 {
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
     private readonly IBankProfileService _bankProfileService;
@@ -54,7 +54,7 @@ internal class AccountGet : IAccountAccessConsentExternalRead<AccountsResponse, 
     }
 
     public async Task<(AccountsResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-        ReadAsync(ExternalEntityReadParams readParams)
+        ReadAsync(AccountAccessConsentExternalReadParams readParams)
     {
         // Create non-error list
         var nonErrorMessages =

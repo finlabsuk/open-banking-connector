@@ -23,7 +23,8 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 
-internal class StandingOrderGet : IAccountAccessConsentExternalRead<StandingOrdersResponse, ExternalEntityReadParams>
+internal class StandingOrderGet : IAccountAccessConsentExternalRead<StandingOrdersResponse,
+    AccountAccessConsentExternalReadParams>
 {
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
     private readonly IBankProfileService _bankProfileService;
@@ -52,7 +53,7 @@ internal class StandingOrderGet : IAccountAccessConsentExternalRead<StandingOrde
     }
 
     public async Task<(StandingOrdersResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-        ReadAsync(ExternalEntityReadParams readParams)
+        ReadAsync(AccountAccessConsentExternalReadParams readParams)
     {
         // Create non-error list
         var nonErrorMessages =

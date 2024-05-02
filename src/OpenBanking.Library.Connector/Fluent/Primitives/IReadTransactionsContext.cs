@@ -51,14 +51,16 @@ internal interface
         string? queryString,
         string? requestUrlWithoutQuery)
     {
-        var transactionsReadParams = new TransactionsReadParams(
-            consentId,
-            modifiedBy,
-            extraHeaders,
-            externalApiAccountId,
-            requestUrlWithoutQuery,
-            queryString,
-            externalApiStatementId);
+        var transactionsReadParams = new TransactionsReadParams
+        {
+            ConsentId = consentId,
+            ModifiedBy = modifiedBy,
+            ExtraHeaders = extraHeaders,
+            PublicRequestUrlWithoutQuery = requestUrlWithoutQuery,
+            ExternalApiAccountId = externalApiAccountId,
+            QueryString = queryString,
+            ExternalApiStatementId = externalApiStatementId
+        };
         (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
             await ReadObject.ReadAsync(transactionsReadParams);
 

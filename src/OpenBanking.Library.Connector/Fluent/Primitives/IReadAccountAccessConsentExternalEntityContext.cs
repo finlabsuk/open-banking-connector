@@ -36,10 +36,10 @@ public interface IReadAccountAccessConsentExternalEntityContext<TPublicResponse>
 
 internal interface
     IReadAccountAccessConsentExternalEntityContextInternal<TPublicResponse> :
-        IReadAccountAccessConsentExternalEntityContext<TPublicResponse>
+    IReadAccountAccessConsentExternalEntityContext<TPublicResponse>
     where TPublicResponse : class
 {
-    IAccountAccessConsentExternalRead<TPublicResponse, ExternalEntityReadParams> ReadObject { get; }
+    IAccountAccessConsentExternalRead<TPublicResponse, AccountAccessConsentExternalReadParams> ReadObject { get; }
 
     async Task<TPublicResponse> IReadAccountAccessConsentExternalEntityContext<TPublicResponse>.ReadAsync(
         Guid consentId,
@@ -49,13 +49,15 @@ internal interface
         string? queryString,
         string? requestUrlWithoutQuery)
     {
-        var externalEntityReadParams = new ExternalEntityReadParams(
-            consentId,
-            modifiedBy,
-            extraHeaders,
-            externalApiAccountId,
-            requestUrlWithoutQuery,
-            queryString);
+        var externalEntityReadParams = new AccountAccessConsentExternalReadParams
+        {
+            ConsentId = consentId,
+            ModifiedBy = modifiedBy,
+            ExtraHeaders = extraHeaders,
+            PublicRequestUrlWithoutQuery = requestUrlWithoutQuery,
+            ExternalApiAccountId = externalApiAccountId,
+            QueryString = queryString
+        };
         (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
             await ReadObject.ReadAsync(externalEntityReadParams);
 

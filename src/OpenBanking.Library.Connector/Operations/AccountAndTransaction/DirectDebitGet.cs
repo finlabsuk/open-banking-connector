@@ -26,7 +26,8 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 
-internal class DirectDebitGet : IAccountAccessConsentExternalRead<DirectDebitsResponse, ExternalEntityReadParams>
+internal class
+    DirectDebitGet : IAccountAccessConsentExternalRead<DirectDebitsResponse, AccountAccessConsentExternalReadParams>
 {
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
     private readonly IBankProfileService _bankProfileService;
@@ -55,7 +56,7 @@ internal class DirectDebitGet : IAccountAccessConsentExternalRead<DirectDebitsRe
     }
 
     public async Task<(DirectDebitsResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-        ReadAsync(ExternalEntityReadParams readParams)
+        ReadAsync(AccountAccessConsentExternalReadParams readParams)
     {
         // Create non-error list
         var nonErrorMessages =

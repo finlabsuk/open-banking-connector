@@ -130,7 +130,8 @@ public class ReadMonzoPot : ISupportsValidation
         Task.FromResult(new ValidationResult());
 }
 
-internal class MonzoPotGet : IAccountAccessConsentExternalRead<MonzoPotsResponse, ExternalEntityReadParams>
+internal class
+    MonzoPotGet : IAccountAccessConsentExternalRead<MonzoPotsResponse, AccountAccessConsentExternalReadParams>
 {
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
     private readonly IBankProfileService _bankProfileService;
@@ -159,7 +160,7 @@ internal class MonzoPotGet : IAccountAccessConsentExternalRead<MonzoPotsResponse
     }
 
     public async Task<(MonzoPotsResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-        ReadAsync(ExternalEntityReadParams readParams)
+        ReadAsync(AccountAccessConsentExternalReadParams readParams)
     {
         // Create non-error list
         var nonErrorMessages =

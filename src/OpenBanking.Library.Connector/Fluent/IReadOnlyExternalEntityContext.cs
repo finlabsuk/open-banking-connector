@@ -25,10 +25,13 @@ internal class ReadOnlyExternalEntityContextInternal<TPublicResponse> :
     where TPublicResponse : class
 {
     public ReadOnlyExternalEntityContextInternal(
-        IAccountAccessConsentExternalRead<TPublicResponse, ExternalEntityReadParams> readObject)
+        IAccountAccessConsentExternalRead<TPublicResponse, AccountAccessConsentExternalReadParams> readObject)
     {
         ReadObject = readObject;
     }
 
-    public IAccountAccessConsentExternalRead<TPublicResponse, ExternalEntityReadParams> ReadObject { get; }
+    public IAccountAccessConsentExternalRead<TPublicResponse, AccountAccessConsentExternalReadParams> ReadObject
+    {
+        get;
+    }
 }
