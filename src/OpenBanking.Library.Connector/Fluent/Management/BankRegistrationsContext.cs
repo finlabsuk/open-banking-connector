@@ -10,7 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Management;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Management;
 
 public interface IBankRegistrationsContext :
     ICreateBankRegistrationContext<BankRegistration, BankRegistrationResponse>,

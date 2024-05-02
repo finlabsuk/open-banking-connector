@@ -12,3 +12,11 @@ internal interface IObjectUpdate<in TPublicRequest, TPublicResponse>
         TPublicRequest request,
         string? modifiedBy);
 }
+
+internal interface IObjectUpdate2<in TPublicRequest, TPublicResponse>
+{
+    Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+        UpdateAsync(
+            TPublicRequest request,
+            LocalReadParams readParams);
+}

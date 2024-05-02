@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "10.1.0"
+    "version": "10.2.0"
   },
   "paths": {
     "/manage/bank-registrations": {
@@ -486,6 +486,64 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoftwareStatementResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoftwareStatementResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoftwareStatementResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Software Statements"
+        ],
+        "summary": "Update software statement",
+        "parameters": [
+          {
+            "name": "softwareStatementId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-obc-modified-by",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SoftwareStatementUpdate"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Success",
@@ -1310,6 +1368,34 @@
         },
         "additionalProperties": false,
         "description": "Response to SoftwareStatement read and create requests."
+      },
+      "SoftwareStatementUpdate": {
+        "type": "object",
+        "properties": {
+          "DefaultObWacCertificateId": {
+            "type": "string",
+            "description": "ID of default ObWacCertificate to use for mutual TLS with this software statement.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "DefaultObSealCertificateId": {
+            "type": "string",
+            "description": "ID of default ObSealCertificate to use for signing JWTs etc with this software statement.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "DefaultQueryRedirectUrl": {
+            "type": "string",
+            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = query.",
+            "nullable": true
+          },
+          "DefaultFragmentRedirectUrl": {
+            "type": "string",
+            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "SupportedAlgorithmsEnum": {
         "enum": [

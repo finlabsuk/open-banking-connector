@@ -5,7 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransaction;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Utility;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurringPayments;

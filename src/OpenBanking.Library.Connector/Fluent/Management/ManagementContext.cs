@@ -9,10 +9,8 @@ using ObSealCertificate =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.ObSealCertificate;
 using ObWacCertificate =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.ObWacCertificate;
-using SoftwareStatement =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.SoftwareStatement;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Management;
 
 public interface IManagementContext
 {
@@ -31,8 +29,7 @@ public interface IManagementContext
             ObSealCertificateResponse, ObSealCertificateResponse>
         ObSealCertificates { get; }
 
-    ILocalEntityContext<SoftwareStatement, ISoftwareStatementPublicQuery,
-            SoftwareStatementResponse, SoftwareStatementResponse>
+    ISoftwareStatementsContext
         SoftwareStatements { get; }
 }
 
@@ -76,14 +73,19 @@ internal class ManagementContext : IManagementContext
                 _sharedContext.MemoryCache,
                 _sharedContext.SecretProvider));
 
-    public ILocalEntityContext<SoftwareStatement, ISoftwareStatementPublicQuery, SoftwareStatementResponse,
-        SoftwareStatementResponse> SoftwareStatements =>
-        new LocalEntityContextInternal<SoftwareStatementEntity, SoftwareStatement, ISoftwareStatementPublicQuery,
-            SoftwareStatementResponse, SoftwareStatementResponse>(
-            _sharedContext,
-            new SoftwareStatementPost(
+    public ISoftwareStatementsContext SoftwareStatements
+    {
+        get
+        {
+            var softwareStatementOperations = new SoftwareStatementOperations(
                 _sharedContext.DbService.GetDbEntityMethodsClass<SoftwareStatementEntity>(),
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
-                _sharedContext.Instrumentation));
+                _sharedContext.Instrumentation);
+            return new SoftwareStatementsContextInternal(
+                _sharedContext,
+                softwareStatementOperations,
+                softwareStatementOperations);
+        }
+    }
 }

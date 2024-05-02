@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.Management;
@@ -68,6 +69,33 @@ public class SoftwareStatementsController : ControllerBase
             .ReadLocalAsync(
                 softwareStatementId,
                 modifiedBy);
+
+        return Ok(fluentResponse);
+    }
+
+    /// <summary>
+    ///     Update software statement
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="softwareStatementId"></param>
+    /// <param name="modifiedBy"></param>
+    /// <returns></returns>
+    [HttpPut("{softwareStatementId:guid}")]
+    [Consumes("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<
+        SoftwareStatementResponse>> PutAsync(
+        [FromBody]
+        SoftwareStatementUpdate request,
+        Guid softwareStatementId,
+        [FromHeader(Name = "x-obc-modified-by")]
+        string? modifiedBy)
+    {
+        // Operation
+        SoftwareStatementResponse fluentResponse = await _requestBuilder
+            .Management
+            .SoftwareStatements
+            .UpdateAsync(request, new LocalReadParams(softwareStatementId, modifiedBy));
 
         return Ok(fluentResponse);
     }

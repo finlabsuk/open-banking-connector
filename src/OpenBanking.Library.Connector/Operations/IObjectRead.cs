@@ -8,7 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
-internal class LocalReadParams
+public class LocalReadParams
 {
     public LocalReadParams(Guid id, string? modifiedBy)
     {
