@@ -24,9 +24,9 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="13.0.1"/>
-        <PackageReference Include="Azure.Core" Version="1.38.0"/>
+        <PackageReference Include="Azure.Core" Version="1.39.0"/>
         <PackageReference Include="Microsoft.Azure.AutoRest.CSharp" Version="3.0.0-beta.20210604.3" PrivateAssets="All"/>
-        <PackageReference Include="FluentValidation" Version="11.9.0"/>
+        <PackageReference Include="FluentValidation" Version="11.9.1"/>
         <PackageReference Include="jose-jwt" Version="5.0.0"/>
         <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.24"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
