@@ -12,9 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
 public class DomesticVrpConsentFundsConfirmationRequest : ISupportsValidation
 {
     /// <summary>
-    ///     Request object from recent version of UK Open Banking spec. Where applicable, Open Banking Connector can be
-    ///     configured
-    ///     to translate this for banks supporting an earlier spec version.
+    ///     Request object OBVRPFundsConfirmationRequest from UK Open Banking Read-Write Variable Recurring Payments API spec.
     /// </summary>
     [JsonProperty(Required = Required.Always)]
     public required VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationRequest ExternalApiRequest

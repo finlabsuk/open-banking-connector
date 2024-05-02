@@ -2,59 +2,35 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-using FluentValidation;
-using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
+
+public class ConsentExternalCreateParams
+{
+    public required IEnumerable<HttpHeader>? ExtraHeaders { get; init; }
+
+    public required string? PublicRequestUrlWithoutQuery { get; init; }
+}
 
 /// <summary>
 ///     Fluent interface methods for Create.
 /// </summary>
 /// <typeparam name="TPublicRequest"></typeparam>
 /// <typeparam name="TPublicResponse"></typeparam>
-public interface ICreateExternalEntityContext<in TPublicRequest, TPublicResponse>
+/// <typeparam name="TCreateParams"></typeparam>
+public interface ICreateExternalEntityContext<in TPublicRequest, TPublicResponse, in TCreateParams>
     where TPublicResponse : class
+    where TCreateParams : ConsentExternalCreateParams
 {
     /// <summary>
     ///     CREATE object (includes POSTing object to bank API).
     ///     Object will be created at bank and also in local database if it is a Bank Registration or Consent.
     /// </summary>
     /// <param name="request"></param>
-    /// <param name="extraHeaders"></param>
+    /// <param name="consentExternalCreateParams"></param>
     /// <returns></returns>
     Task<TPublicResponse> CreateAsync(
         TPublicRequest request,
-        IEnumerable<HttpHeader>? extraHeaders);
-}
-
-internal interface
-    ICreateExternalEntityContextInternal<in TPublicRequest, TPublicResponse> :
-    ICreateExternalEntityContext<TPublicRequest, TPublicResponse>
-    where TPublicRequest : class, ISupportsValidation
-    where TPublicResponse : class
-{
-    IExternalCreate<TPublicRequest, TPublicResponse> CreateObject { get; }
-
-    async Task<TPublicResponse> ICreateExternalEntityContext<TPublicRequest, TPublicResponse>.CreateAsync(
-        TPublicRequest request,
-        IEnumerable<HttpHeader>? extraHeaders)
-    {
-        request.ArgNotNull(nameof(request));
-
-        // Validate request data and convert to messages
-        ValidationResult validationResult = await request.ValidateAsync();
-        if (validationResult.Errors.Any(failure => failure.Severity == Severity.Error))
-        {
-            throw new ValidationException(validationResult.Errors);
-        }
-
-        // Execute operation catching errors 
-        (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-            await CreateObject.CreateAsync(request, extraHeaders);
-
-        return response;
-    }
+        TCreateParams consentExternalCreateParams);
 }

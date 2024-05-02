@@ -4,17 +4,17 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 
 /// <summary>
-///     Response to DomesticVrp Read and Create requests
+///     Response to DomesticPayment ReadPaymentDetails requests.
 /// </summary>
-public class DomesticVrpResponse : BaseResponse
+public class DomesticPaymentPaymentDetailsResponse : BaseResponse
 {
     /// <summary>
-    ///     Response object OBDomesticVRPResponse from UK Open Banking Read-Write Variable Recurring Payments API spec.
+    ///     Response object OBWritePaymentDetailsResponse1 from UK Open Banking Read-Write Payment Initiation API spec.
     /// </summary>
-    public required VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse ExternalApiResponse { get; init; }
+    public required PaymentInitiationModelsPublic.OBWritePaymentDetailsResponse1 ExternalApiResponse { get; init; }
 
     /// <summary>
     ///     Additional info relating to response from external (bank) API.

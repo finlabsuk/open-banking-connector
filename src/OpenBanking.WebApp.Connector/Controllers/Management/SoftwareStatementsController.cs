@@ -95,7 +95,13 @@ public class SoftwareStatementsController : ControllerBase
         SoftwareStatementResponse fluentResponse = await _requestBuilder
             .Management
             .SoftwareStatements
-            .UpdateAsync(request, new LocalReadParams(softwareStatementId, modifiedBy));
+            .UpdateAsync(
+                request,
+                new LocalReadParams
+                {
+                    Id = softwareStatementId,
+                    ModifiedBy = modifiedBy
+                });
 
         return Ok(fluentResponse);
     }

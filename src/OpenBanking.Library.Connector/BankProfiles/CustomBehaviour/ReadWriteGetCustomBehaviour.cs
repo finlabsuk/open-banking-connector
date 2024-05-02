@@ -7,4 +7,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehav
 public class ReadWriteGetCustomBehaviour
 {
     public bool? ResponseLinksAddSlash { get; set; }
+
+    public bool? ResponseLinksMayHaveIncorrectUrlBeforeQuery { get; set; }
 }

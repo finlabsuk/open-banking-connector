@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -26,53 +27,49 @@ public interface IPaymentInitiationContext
     ///     A DomesticPayment corresponds to a domestic payment and may be created once a DomesticPaymentConsent is approved by
     ///     a user.
     /// </summary>
-    IExternalEntityContext<DomesticPaymentRequest, DomesticPaymentResponse> DomesticPayments { get; }
+    IDomesticPaymentContext<DomesticPaymentRequest, DomesticPaymentResponse, DomesticPaymentPaymentDetailsResponse,
+            ConsentExternalCreateParams,
+            ConsentExternalEntityReadParams>
+        DomesticPayments { get; }
 }
 
 internal class PaymentInitiationContext : IPaymentInitiationContext
 {
+    private readonly DomesticPaymentOperations _domesticPayments;
     private readonly ISharedContext _sharedContext;
 
     public PaymentInitiationContext(ISharedContext sharedContext)
     {
         _sharedContext = sharedContext;
+        var grantPost = new GrantPost(
+            _sharedContext.ApiClient,
+            _sharedContext.Instrumentation,
+            _sharedContext.MemoryCache,
+            _sharedContext.TimeProvider);
+        _domesticPayments = new DomesticPaymentOperations(
+            _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentPersisted>(),
+            _sharedContext.Instrumentation,
+            _sharedContext.ApiVariantMapper,
+            _sharedContext.TimeProvider,
+            grantPost,
+            new ConsentAccessTokenGet(
+                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.TimeProvider,
+                grantPost,
+                _sharedContext.Instrumentation,
+                _sharedContext.MemoryCache,
+                _sharedContext.EncryptionKeyInfo),
+            _sharedContext.BankProfileService,
+            _sharedContext.ObWacCertificateMethods,
+            _sharedContext.ObSealCertificateMethods);
     }
 
     public IDomesticPaymentConsentsContext DomesticPaymentConsents =>
         new DomesticPaymentConsentsConsentContext(_sharedContext);
 
-    public IExternalEntityContext<DomesticPaymentRequest, DomesticPaymentResponse> DomesticPayments
-    {
-        get
-        {
-            var domesticPayment = new DomesticPaymentOperations(
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentPersisted>(),
-                _sharedContext.Instrumentation,
-                _sharedContext.ApiVariantMapper,
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                _sharedContext.TimeProvider,
-                new GrantPost(
-                    _sharedContext.ApiClient,
-                    _sharedContext.Instrumentation,
-                    _sharedContext.MemoryCache,
-                    _sharedContext.TimeProvider),
-                new ConsentAccessTokenGet(
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    _sharedContext.TimeProvider,
-                    new GrantPost(
-                        _sharedContext.ApiClient,
-                        _sharedContext.Instrumentation,
-                        _sharedContext.MemoryCache,
-                        _sharedContext.TimeProvider),
-                    _sharedContext.Instrumentation,
-                    _sharedContext.MemoryCache,
-                    _sharedContext.EncryptionKeyInfo),
-                _sharedContext.BankProfileService,
-                _sharedContext.ObWacCertificateMethods,
-                _sharedContext.ObSealCertificateMethods);
-            return new ExternalEntityContextInternal<DomesticPaymentRequest, DomesticPaymentResponse>(
-                domesticPayment,
-                domesticPayment);
-        }
-    }
+    public IDomesticPaymentContext<DomesticPaymentRequest, DomesticPaymentResponse,
+            DomesticPaymentPaymentDetailsResponse, ConsentExternalCreateParams,
+            ConsentExternalEntityReadParams>
+        DomesticPayments =>
+        _domesticPayments;
 }

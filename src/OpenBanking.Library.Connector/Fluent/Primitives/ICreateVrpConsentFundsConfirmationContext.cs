@@ -2,11 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.BankApiModels;
-using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-using FluentValidation;
-using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 
@@ -22,54 +18,9 @@ public interface ICreateVrpConsentFundsConfirmationContext<in TPublicRequest, TP
     ///     CREATE funds confirmation for consent (includes POSTing object to bank API).
     /// </summary>
     /// <param name="request"></param>
-    /// <param name="id"></param>
-    /// <param name="publicRequestUrlWithoutQuery"></param>
-    /// <param name="extraHeaders"></param>
+    /// <param name="createParams"></param>
     /// <returns></returns>
     Task<TPublicResponse> CreateFundsConfirmationAsync(
         TPublicRequest request,
-        Guid id,
-        string? publicRequestUrlWithoutQuery = null,
-        IEnumerable<HttpHeader>? extraHeaders = null);
-}
-
-internal interface
-    ICreateVrpConsentFundsConfirmationContextInternal<in TPublicRequest, TPublicResponse> :
-    ICreateVrpConsentFundsConfirmationContext<TPublicRequest, TPublicResponse>
-    where TPublicRequest : class, ISupportsValidation
-    where TPublicResponse : class
-{
-    IVrpConsentFundsConfirmationCreate<TPublicRequest, TPublicResponse> CreateVrpConsentFundsConfirmation { get; }
-
-    async Task<TPublicResponse> ICreateVrpConsentFundsConfirmationContext<TPublicRequest, TPublicResponse>.
-        CreateFundsConfirmationAsync(
-            TPublicRequest request,
-            Guid id,
-            string? publicRequestUrlWithoutQuery,
-            IEnumerable<HttpHeader>? extraHeaders)
-    {
-        request.ArgNotNull(nameof(request));
-
-        // Validate request data and convert to messages
-        ValidationResult validationResult = await request.ValidateAsync();
-        if (validationResult.Errors.Any(failure => failure.Severity == Severity.Error))
-        {
-            throw new ValidationException(validationResult.Errors);
-        }
-
-        // Execute operation catching errors
-        var vrpConsentFundsConfirmationCreateParams =
-            new VrpConsentFundsConfirmationCreateParams
-            {
-                PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery,
-                Id = id,
-                ExtraHeaders = extraHeaders
-            };
-        (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-            await CreateVrpConsentFundsConfirmation.CreateFundsConfirmationAsync(
-                request,
-                vrpConsentFundsConfirmationCreateParams);
-
-        return response;
-    }
+        VrpConsentFundsConfirmationCreateParams createParams);
 }

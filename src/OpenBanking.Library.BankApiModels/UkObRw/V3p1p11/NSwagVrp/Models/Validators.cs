@@ -26,3 +26,9 @@ public partial class OBDomesticVRPResponse : ISupportsValidation
     public async Task<ValidationResult> ValidateAsync() =>
          await Task.FromResult(new ValidationResult());
 }
+
+public partial class OBDomesticVRPDetails : ISupportsValidation
+{
+    public async Task<ValidationResult> ValidateAsync() =>
+        await Task.FromResult(new ValidationResult());
+}

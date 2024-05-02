@@ -12,9 +12,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
 public class DomesticVrpConsentFundsConfirmationResponse : BaseResponse
 
 {
+    /// <summary>
+    ///     Response object OBVRPFundsConfirmationResponse from UK Open Banking Read-Write Variable Recurring Payments API
+    ///     spec.
+    /// </summary>
     public required VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse ExternalApiResponse
     {
         get;
         init;
     }
+
+    /// <summary>
+    ///     Additional info relating to response from external (bank) API.
+    /// </summary>
+    public required ExternalApiResponseInfo ExternalApiResponseInfo { get; init; }
 }

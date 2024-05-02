@@ -42,19 +42,18 @@ internal interface IDomesticVrpConsentsContextInternal :
     IDomesticVrpConsentsContext,
     IConsentContextInternal<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse,
         DomesticVrpConsentCreateResponse>,
-    ICreateVrpConsentFundsConfirmationContextInternal<DomesticVrpConsentFundsConfirmationRequest,
-        DomesticVrpConsentFundsConfirmationResponse>,
     IDeleteConsentContextInternal { }
 
 internal class DomesticVrpConsentsContext :
     IDomesticVrpConsentsContextInternal
 {
+    private readonly DomesticVrpConsentOperations _domesticVrpConsentOperations;
     private readonly ISharedContext _sharedContext;
 
     public DomesticVrpConsentsContext(ISharedContext sharedContext)
     {
         _sharedContext = sharedContext;
-        var domesticVrpConsentOperations = new DomesticVrpConsentOperations(
+        _domesticVrpConsentOperations = new DomesticVrpConsentOperations(
             sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
             sharedContext.TimeProvider,
@@ -80,9 +79,8 @@ internal class DomesticVrpConsentsContext :
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
             _sharedContext.ObWacCertificateMethods,
             _sharedContext.ObSealCertificateMethods);
-        CreateObject = domesticVrpConsentOperations;
-        ReadObject = domesticVrpConsentOperations;
-        CreateVrpConsentFundsConfirmation = domesticVrpConsentOperations;
+        CreateObject = _domesticVrpConsentOperations;
+        ReadObject = _domesticVrpConsentOperations;
         DeleteObject =
             new DomesticVrpConsentDelete(
                 sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
@@ -125,6 +123,8 @@ internal class DomesticVrpConsentsContext :
 
     public IObjectDelete<ConsentDeleteParams> DeleteObject { get; }
 
-    public IVrpConsentFundsConfirmationCreate<DomesticVrpConsentFundsConfirmationRequest,
-        DomesticVrpConsentFundsConfirmationResponse> CreateVrpConsentFundsConfirmation { get; }
+    public Task<DomesticVrpConsentFundsConfirmationResponse> CreateFundsConfirmationAsync(
+        DomesticVrpConsentFundsConfirmationRequest request,
+        VrpConsentFundsConfirmationCreateParams createParams) =>
+        _domesticVrpConsentOperations.CreateFundsConfirmationAsync(request, createParams);
 }

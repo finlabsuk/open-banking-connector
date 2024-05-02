@@ -45,12 +45,14 @@ internal interface
         bool includeExternalApiOperation,
         string? publicRequestUrlWithoutQuery)
     {
-        var readParams = new ConsentReadParams(
-            id,
-            modifiedBy,
-            extraHeaders,
-            publicRequestUrlWithoutQuery,
-            includeExternalApiOperation);
+        var readParams = new ConsentReadParams
+        {
+            Id = id,
+            ModifiedBy = modifiedBy,
+            ExtraHeaders = extraHeaders,
+            PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery,
+            IncludeExternalApiOperation = includeExternalApiOperation
+        };
         (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
             await ReadObject.ReadAsync(readParams);
 

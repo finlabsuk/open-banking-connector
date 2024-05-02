@@ -6,19 +6,15 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Validators;
 using FluentValidation.Results;
-using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 
 public class DomesticVrpConsentRequest : ConsentBase, ISupportsValidation
 {
     /// <summary>
-    ///     Request object from recent version of UK Open Banking spec. Where applicable, Open Banking Connector can be
-    ///     configured
-    ///     to translate this for banks supporting an earlier spec version.
+    ///     Request object OBDomesticVRPConsentRequest from UK Open Banking Read-Write Variable Recurring Payments API spec.
     /// </summary>
-    [JsonProperty(Required = Required.Always)]
-    public required VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest ExternalApiRequest { get; init; }
+    public VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest? ExternalApiRequest { get; init; }
 
     public async Task<ValidationResult> ValidateAsync() =>
         await new DomesticVrpConsentValidator()

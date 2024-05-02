@@ -8,38 +8,57 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 internal class LinksUrlOperations
 {
+    /// <summary>
+    ///     Provided to support requests returning multiple objects where pagination via query parameters may be used to limit
+    ///     size of
+    ///     response. In such pagination the URL without query remains unchanged and pages are specified via query parameters.
+    /// </summary>
     private readonly bool _allowLinkUrlQueryParameters;
 
-    private readonly Uri _expectedLinkUrl;
-    private readonly string _publicUrlWithoutQuery;
-    private readonly IList<string> _validQueryParameters;
+    /// <summary>
+    ///     Expected link URL without query before transformation
+    /// </summary>
+    private readonly Uri _expectedLinkUrlWithoutQuery;
 
-    public LinksUrlOperations(
-        Uri expectedLinkUrl,
+    /// <summary>
+    ///     Ignore expected link URL without query (limits validation)
+    /// </summary>
+    private readonly bool _ignoreExpectedUrlWithoutQuery;
+
+    /// <summary>
+    ///     Specified link URL without query after transformation
+    /// </summary>
+    private readonly string _publicUrlWithoutQuery;
+
+    private LinksUrlOperations(
+        Uri expectedLinkUrlWithoutQuery,
+        bool ignoreExpectedUrlWithoutQuery,
         string? publicUrlWithoutQuery,
-        bool allowLinkUrlQueryParameters,
-        IList<string> validQueryParameters)
+        bool allowLinkUrlQueryParameters)
     {
-        _expectedLinkUrl = expectedLinkUrl;
+        _expectedLinkUrlWithoutQuery = expectedLinkUrlWithoutQuery;
         _publicUrlWithoutQuery = publicUrlWithoutQuery ?? "https://localhost/placeholder";
         _allowLinkUrlQueryParameters = allowLinkUrlQueryParameters;
-        _validQueryParameters = validQueryParameters;
+        _ignoreExpectedUrlWithoutQuery = ignoreExpectedUrlWithoutQuery;
     }
 
     public Uri ValidateAndTransformUrl(Uri linkUrl)
     {
-        int urlsMatch = Uri.Compare(
-            linkUrl,
-            _expectedLinkUrl,
-            UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path,
-            UriFormat.Unescaped,
-            StringComparison.InvariantCulture);
-
-        // Check URLs without fragment and query parameters match
-        if (urlsMatch != 0)
+        if (!_ignoreExpectedUrlWithoutQuery)
         {
-            throw new InvalidOperationException(
-                $"Request URL {_expectedLinkUrl} and link URL {linkUrl} have different base URLs!");
+            int urlsMatch = Uri.Compare(
+                linkUrl,
+                _expectedLinkUrlWithoutQuery,
+                UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path,
+                UriFormat.Unescaped,
+                StringComparison.InvariantCulture);
+
+            // Check URLs without fragment and query parameters match
+            if (urlsMatch != 0)
+            {
+                throw new InvalidOperationException(
+                    $"Base component of link URL is {linkUrl} but was expected to be {_expectedLinkUrlWithoutQuery}.");
+            }
         }
 
         // Check there are no fragment parameters
@@ -58,11 +77,8 @@ internal class LinksUrlOperations
             }
         }
 
-        // Return absolute URL
-        var uriBuilder = new UriBuilder(_publicUrlWithoutQuery);
-        uriBuilder.Query = linkUrl.Query;
-        Uri fullUri = uriBuilder.Uri;
-        return fullUri;
+        // Return URL with query
+        return new UriBuilder(_publicUrlWithoutQuery) { Query = linkUrl.Query }.Uri;
     }
 
     public static LinksUrlOperations CreateLinksUrlOperations(
@@ -76,14 +92,24 @@ internal class LinksUrlOperations
         {
             expectedLinkUrl = new Uri(expectedLinkUrl + "/");
         }
+        bool responseLinksMayHaveIncorrectUrlBeforeQuery =
+            readWriteGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false;
         var linksUrlOperations = new LinksUrlOperations(
             expectedLinkUrl,
+            responseLinksMayHaveIncorrectUrlBeforeQuery,
             transformedLinkUrlWithoutQuery,
-            allowQueryParameters,
-            new List<string>());
+            allowQueryParameters);
         return linksUrlOperations;
     }
 
+    /// <summary>
+    ///     For POST requests to external API, expected link URL without query formed by adding ID of newly-created object to
+    ///     request URL
+    /// </summary>
+    /// <param name="readWritePostCustomBehaviour"></param>
+    /// <param name="externalApiUrl"></param>
+    /// <param name="externalApiId"></param>
+    /// <returns></returns>
     public static Uri GetExpectedLinkUrlWithoutQuery(
         ReadWritePostCustomBehaviour? readWritePostCustomBehaviour,
         Uri externalApiUrl,

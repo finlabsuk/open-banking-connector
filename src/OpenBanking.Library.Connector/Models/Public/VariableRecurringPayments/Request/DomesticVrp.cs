@@ -20,8 +20,7 @@ public class DomesticVrpRequest : ISupportsValidation
     public required Guid DomesticVrpConsentId { get; set; }
 
     /// <summary>
-    ///     Request object from recent version of UK Open Banking spec. Open Banking Connector can be configured
-    ///     to translate this for banks supporting an earlier spec version.
+    ///     Request object OBDomesticVRPRequest from UK Open Banking Read-Write Variable Recurring Payments API spec.
     ///     This request object can also be generated from the Open Banking consent request object via a type mapping.
     ///     The value of "Data.ConsentId" should be consistent with the external API ID (bank ID) for the supplied
     ///     DomesticVrpConsent or simply

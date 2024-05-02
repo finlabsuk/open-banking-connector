@@ -4,6 +4,8 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 
@@ -66,16 +68,24 @@ public class CustomBehaviourClass
 
     public ReadWriteGetCustomBehaviour? DomesticPaymentConsentGet { get; set; }
 
+    public ReadWriteGetCustomBehaviour? DomesticPaymentConsentGetFundsConfirmation { get; set; }
+
     public ReadWritePostCustomBehaviour? DomesticPaymentPost { get; set; }
 
-    public ReadWriteGetCustomBehaviour? DomesticPaymentGet { get; set; }
+    public DomesticPaymentGetCustomBehaviour? DomesticPaymentGet { get; set; }
+
+    public DomesticPaymentGetCustomBehaviour? DomesticPaymentGetPaymentDetails { get; set; }
 
     // Variable Recurring Payments API endpoints
     public ReadWritePostCustomBehaviour? DomesticVrpConsentPost { get; set; }
 
+    public ReadWritePostCustomBehaviour? DomesticVrpConsentPostFundsConfirmation { get; set; }
+
     public ReadWriteGetCustomBehaviour? DomesticVrpConsentGet { get; set; }
 
-    public ReadWritePostCustomBehaviour? DomesticVrpPost { get; set; }
+    public DomesticVrpPostCustomBehaviour? DomesticVrpPost { get; set; }
 
-    public ReadWriteGetCustomBehaviour? DomesticVrpGet { get; set; }
+    public DomesticVrpGetCustomBehaviour? DomesticVrpGet { get; set; }
+
+    public DomesticVrpGetCustomBehaviour? DomesticVrpGetPaymentDetails { get; set; }
 }

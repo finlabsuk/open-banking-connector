@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -12,6 +13,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
@@ -23,6 +25,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using FluentValidation;
+using FluentValidation.Results;
 using Newtonsoft.Json;
 using DomesticVrpConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent;
@@ -33,7 +37,7 @@ internal class
     DomesticVrpConsentOperations :
     IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse, ConsentCreateParams>,
     IObjectRead<DomesticVrpConsentCreateResponse, ConsentReadParams>,
-    IVrpConsentFundsConfirmationCreate<DomesticVrpConsentFundsConfirmationRequest,
+    ICreateVrpConsentFundsConfirmationContext<DomesticVrpConsentFundsConfirmationRequest,
         DomesticVrpConsentFundsConfirmationResponse>
 {
     private readonly IBankProfileService _bankProfileService;
@@ -46,7 +50,6 @@ internal class
         VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> _consentCommon;
 
     private readonly IDbReadWriteEntityMethods<DomesticVrpConsentPersisted> _consentEntityMethods;
-
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly DomesticVrpConsentCommon _domesticVrpConsentCommon;
     private readonly IGrantPost _grantPost;
@@ -95,6 +98,139 @@ internal class
     private string RelativePathBeforeId => "/domestic-vrp-consents";
 
     public async
+        Task<DomesticVrpConsentFundsConfirmationResponse> CreateFundsConfirmationAsync(
+            DomesticVrpConsentFundsConfirmationRequest request,
+            VrpConsentFundsConfirmationCreateParams createParams)
+    {
+        // Create non-error list
+        var nonErrorMessages =
+            new List<IFluentResponseInfoOrWarningMessage>();
+
+        // Validate request data and convert to messages
+        ValidationResult validationResult = await request.ValidateAsync();
+        if (validationResult.Errors.Any(failure => failure.Severity == Severity.Error))
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
+        // Load DomesticVrpConsent and related
+        (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
+                DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
+                SoftwareStatementEntity softwareStatement) =
+            await _domesticVrpConsentCommon.GetDomesticVrpConsent(createParams.Id, true);
+        string externalApiConsentId = persistedConsent.ExternalApiId;
+
+        // Validate consent ID
+        if (string.IsNullOrEmpty(request.ExternalApiRequest.Data.ConsentId))
+        {
+            request.ExternalApiRequest.Data.ConsentId = externalApiConsentId;
+        }
+        else if (request.ExternalApiRequest.Data.ConsentId != externalApiConsentId)
+        {
+            throw new ArgumentException(
+                $"ExternalApiRequest contains consent ID that differs from {externalApiConsentId} " +
+                "inferred from URL path.");
+        }
+
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        VariableRecurringPaymentsApi variableRecurringPaymentsApi =
+            bankProfile.GetRequiredVariableRecurringPaymentsApi();
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
+            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+        bool supportsSca = bankProfile.SupportsSca;
+        string bankFinancialId = bankProfile.FinancialId;
+        string issuerUrl = bankProfile.IssuerUrl;
+        IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
+        RefreshTokenGrantPostCustomBehaviour? domesticVrpConsentRefreshTokenGrantPostCustomBehaviour =
+            bankProfile.CustomBehaviour?.DomesticVrpConsentRefreshTokenGrantPost;
+        JwksGetCustomBehaviour? jwksGetCustomBehaviour = bankProfile.CustomBehaviour?.JwksGet;
+        ConsentAuthGetCustomBehaviour? domesticVrpConsentAuthGetCustomBehaviour = bankProfile.CustomBehaviour
+            ?.DomesticVrpConsentAuthGet;
+
+        // Get IApiClient
+        IApiClient apiClient = bankRegistration.UseSimulatedBank
+            ? bankProfile.ReplayApiClient
+            : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+
+        // Get OBSeal key
+        OBSealKey obSealKey =
+            (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
+
+        // Get access token
+        string bankTokenIssuerClaim = domesticVrpConsentAuthGetCustomBehaviour
+            ?.AudClaim ?? issuerUrl; // Get bank token issuer ("iss") claim
+        string accessToken =
+            await _consentAccessTokenGet.GetAccessTokenAndUpdateConsent(
+                persistedConsent,
+                bankTokenIssuerClaim,
+                "openid payments",
+                bankRegistration,
+                storedAccessToken,
+                storedRefreshToken,
+                tokenEndpointAuthMethod,
+                bankRegistration.TokenEndpoint,
+                apiClient,
+                obSealKey,
+                supportsSca,
+                bankProfile.BankProfileEnum,
+                idTokenSubClaimType,
+                domesticVrpConsentRefreshTokenGrantPostCustomBehaviour,
+                jwksGetCustomBehaviour,
+                request.ModifiedBy);
+
+        // Read object from external API
+        JsonSerializerSettings? requestJsonSerializerSettings = null;
+        JsonSerializerSettings? responseJsonSerializerSettings = null;
+        IApiPostRequests<VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationRequest,
+            VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse> apiRequests =
+            ApiRequestsFundsConfirmation(
+                variableRecurringPaymentsApi.ApiVersion,
+                bankFinancialId,
+                accessToken,
+                softwareStatement,
+                obSealKey);
+        var externalApiUrl = new Uri(
+            variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}" +
+            "/funds-confirmation");
+        var tppReportingRequestInfo = new TppReportingRequestInfo
+        {
+            EndpointDescription =
+                $$"""
+                  POST {VrpBaseUrl}{{RelativePathBeforeId}}/{ConsentId}/funds-confirmation
+                  """,
+            BankProfile = bankProfile.BankProfileEnum
+        };
+
+        (VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse externalApiResponse,
+                string? xFapiInteractionId,
+                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
+            await apiRequests.PostAsync(
+                externalApiUrl,
+                createParams.ExtraHeaders,
+                request.ExternalApiRequest,
+                tppReportingRequestInfo,
+                requestJsonSerializerSettings,
+                responseJsonSerializerSettings,
+                apiClient,
+                _mapper);
+        nonErrorMessages.AddRange(newNonErrorMessages);
+        var externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
+
+        // No link URLs to transform
+
+        // Create response
+        var response =
+            new DomesticVrpConsentFundsConfirmationResponse
+            {
+                ExternalApiResponse = externalApiResponse,
+                ExternalApiResponseInfo = externalApiResponseInfo
+            };
+
+        return response;
+    }
+
+    public async
         Task<(DomesticVrpConsentCreateResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
         CreateAsync(DomesticVrpConsentRequest request, ConsentCreateParams createParams)
     {
@@ -107,6 +243,7 @@ internal class
 
         // Create new or use existing external API object
         VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? externalApiResponse;
+        ExternalApiResponseInfo? externalApiResponseInfo;
         string externalApiId;
         if (request.ExternalApiObject is null)
         {
@@ -121,8 +258,11 @@ internal class
                 bankProfile.GetRequiredVariableRecurringPaymentsApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
-            CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
             string bankFinancialId = bankProfile.FinancialId;
+            ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
+                bankProfile.CustomBehaviour?.ClientCredentialsGrantPost;
+            ReadWritePostCustomBehaviour? readWritePostCustomBehaviour =
+                bankProfile.CustomBehaviour?.DomesticVrpConsentPost;
 
             // Get IApiClient
             IApiClient apiClient = bankRegistration.UseSimulatedBank
@@ -144,7 +284,7 @@ internal class
                     bankRegistration.ExternalApiSecret,
                     bankRegistration.Id.ToString(),
                     null,
-                    customBehaviour?.ClientCredentialsGrantPost,
+                    clientCredentialsGrantPostCustomBehaviour,
                     apiClient,
                     bankProfile.BankProfileEnum);
 
@@ -160,6 +300,10 @@ internal class
                     softwareStatement,
                     obSealKey);
             var externalApiUrl = new Uri(variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId);
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest externalApiRequest =
+                request.ExternalApiRequest ??
+                throw new InvalidOperationException(
+                    "ExternalApiRequest specified as null so not possible to create external API request.");
             var tppReportingRequestInfo = new TppReportingRequestInfo
             {
                 EndpointDescription =
@@ -173,28 +317,29 @@ internal class
                 await apiRequests.PostAsync(
                     externalApiUrl,
                     createParams.ExtraHeaders,
-                    request.ExternalApiRequest,
+                    externalApiRequest,
                     tppReportingRequestInfo,
                     requestJsonSerializerSettings,
                     responseJsonSerializerSettings,
                     apiClient,
                     _mapper);
             nonErrorMessages.AddRange(newNonErrorMessages);
+            externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
             externalApiId = externalApiResponse.Data.ConsentId;
 
             // Transform links
-            var expectedLinkUrlWithoutQuery = new Uri(externalApiUrl + $"/{externalApiId}");
-            string? transformedLinkUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery switch
-            {
-                { } x => x + $"/{entityId}",
-                null => null
-            };
-            var validQueryParameters = new List<string>();
-            var linksUrlOperations = new LinksUrlOperations(
+            string? transformedLinkUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery is { } x
+                ? $"{x}/{entityId}"
+                : null;
+            Uri expectedLinkUrlWithoutQuery = LinksUrlOperations.GetExpectedLinkUrlWithoutQuery(
+                readWritePostCustomBehaviour,
+                externalApiUrl,
+                externalApiId);
+            var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
                 expectedLinkUrlWithoutQuery,
                 transformedLinkUrlWithoutQuery,
-                true,
-                validQueryParameters);
+                readWritePostCustomBehaviour,
+                false);
             externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
             if (externalApiResponse.Links.First is not null)
             {
@@ -220,6 +365,7 @@ internal class
         else
         {
             externalApiResponse = null;
+            externalApiResponseInfo = null;
             externalApiId = request.ExternalApiObject.ExternalApiId;
         }
 
@@ -274,7 +420,8 @@ internal class
                 ExternalApiUserId = persistedConsent.ExternalApiUserId,
                 AuthContextModified = persistedConsent.AuthContextModified,
                 AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
-                ExternalApiResponse = externalApiResponse
+                ExternalApiResponse = externalApiResponse,
+                ExternalApiResponseInfo = externalApiResponseInfo
             };
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
@@ -300,6 +447,7 @@ internal class
         bool includeExternalApiOperation =
             readParams.IncludeExternalApiOperation;
         VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? externalApiResponse;
+        ExternalApiResponseInfo? externalApiResponseInfo;
         if (includeExternalApiOperation)
         {
             // Get bank profile
@@ -364,14 +512,18 @@ internal class
                     apiClient,
                     _mapper);
             nonErrorMessages.AddRange(newNonErrorMessages);
+            externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
 
             // Transform links 
-            var validQueryParameters = new List<string>();
-            var linksUrlOperations = new LinksUrlOperations(
-                externalApiUrl,
-                readParams.PublicRequestUrlWithoutQuery,
-                true,
-                validQueryParameters);
+            ReadWriteGetCustomBehaviour? readWriteGetCustomBehaviour =
+                customBehaviour?.DomesticVrpConsentGet;
+            string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
+            Uri expectedLinkUrlWithoutQuery = externalApiUrl;
+            var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
+                expectedLinkUrlWithoutQuery,
+                transformedLinkUrlWithoutQuery,
+                readWriteGetCustomBehaviour,
+                false);
             externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
             if (externalApiResponse.Links.First is not null)
             {
@@ -397,6 +549,7 @@ internal class
         else
         {
             externalApiResponse = null;
+            externalApiResponseInfo = null;
         }
 
         // Create response
@@ -412,124 +565,9 @@ internal class
                 ExternalApiUserId = persistedConsent.ExternalApiUserId,
                 AuthContextModified = persistedConsent.AuthContextModified,
                 AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
-                ExternalApiResponse = externalApiResponse
+                ExternalApiResponse = externalApiResponse,
+                ExternalApiResponseInfo = externalApiResponseInfo
             };
-
-        return (response, nonErrorMessages);
-    }
-
-    public async
-        Task<(DomesticVrpConsentFundsConfirmationResponse response, IList<IFluentResponseInfoOrWarningMessage>
-            nonErrorMessages)> CreateFundsConfirmationAsync(
-            DomesticVrpConsentFundsConfirmationRequest request,
-            VrpConsentFundsConfirmationCreateParams createParams)
-    {
-        // Create non-error list
-        var nonErrorMessages =
-            new List<IFluentResponseInfoOrWarningMessage>();
-
-        // Load DomesticVrpConsent and related
-        (DomesticVrpConsentPersisted persistedObject, BankRegistrationEntity bankRegistration,
-                DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
-                SoftwareStatementEntity softwareStatement) =
-            await _domesticVrpConsentCommon.GetDomesticVrpConsent(createParams.Id, true);
-        string externalApiConsentId = persistedObject.ExternalApiId;
-
-        // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-        VariableRecurringPaymentsApi variableRecurringPaymentsApi =
-            bankProfile.GetRequiredVariableRecurringPaymentsApi();
-        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
-            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
-        bool supportsSca = bankProfile.SupportsSca;
-        CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
-        string bankFinancialId = bankProfile.FinancialId;
-        string issuerUrl = bankProfile.IssuerUrl;
-        IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
-
-        // Get IApiClient
-        IApiClient apiClient = bankRegistration.UseSimulatedBank
-            ? bankProfile.ReplayApiClient
-            : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
-
-        // Get OBSeal key
-        OBSealKey obSealKey =
-            (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
-
-        // Get access token
-        string bankTokenIssuerClaim = DomesticVrpConsentCommon.GetBankTokenIssuerClaim(
-            customBehaviour,
-            issuerUrl); // Get bank token issuer ("iss") claim
-        string accessToken =
-            await _consentAccessTokenGet.GetAccessTokenAndUpdateConsent(
-                persistedObject,
-                bankTokenIssuerClaim,
-                "openid payments",
-                bankRegistration,
-                storedAccessToken,
-                storedRefreshToken,
-                tokenEndpointAuthMethod,
-                persistedObject.BankRegistrationNavigation.TokenEndpoint,
-                apiClient,
-                obSealKey,
-                supportsSca,
-                bankProfile.BankProfileEnum,
-                idTokenSubClaimType,
-                customBehaviour?.DomesticVrpConsentRefreshTokenGrantPost,
-                customBehaviour?.JwksGet,
-                request.ModifiedBy);
-
-        // Read object from external API
-        JsonSerializerSettings? requestJsonSerializerSettings = null;
-        JsonSerializerSettings? responseJsonSerializerSettings = null;
-        IApiPostRequests<VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationRequest,
-            VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse> apiRequests =
-            ApiRequestsFundsConfirmation(
-                variableRecurringPaymentsApi.ApiVersion,
-                bankFinancialId,
-                accessToken,
-                softwareStatement,
-                obSealKey);
-        var externalApiUrl = new Uri(
-            variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}" +
-            "/funds-confirmation");
-        if (string.IsNullOrEmpty(request.ExternalApiRequest.Data.ConsentId))
-        {
-            request.ExternalApiRequest.Data.ConsentId = externalApiConsentId;
-        }
-        else if (request.ExternalApiRequest.Data.ConsentId != externalApiConsentId)
-        {
-            throw new ArgumentException(
-                $"ExternalApiRequest contains consent ID that differs from {externalApiConsentId} " +
-                "inferred from specified DomesticVrpConsent.");
-        }
-        var tppReportingRequestInfo = new TppReportingRequestInfo
-        {
-            EndpointDescription =
-                $$"""
-                  POST {VrpBaseUrl}{{RelativePathBeforeId}}/{ConsentId}/funds-confirmation
-                  """,
-            BankProfile = bankProfile.BankProfileEnum
-        };
-
-
-        (VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse externalApiResponse,
-                string? xFapiInteractionId,
-                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
-            await apiRequests.PostAsync(
-                externalApiUrl,
-                createParams.ExtraHeaders,
-                request.ExternalApiRequest,
-                tppReportingRequestInfo,
-                requestJsonSerializerSettings,
-                responseJsonSerializerSettings,
-                apiClient,
-                _mapper);
-        nonErrorMessages.AddRange(newNonErrorMessages);
-
-        // Create response
-        var response =
-            new DomesticVrpConsentFundsConfirmationResponse { ExternalApiResponse = externalApiResponse };
 
         return (response, nonErrorMessages);
     }

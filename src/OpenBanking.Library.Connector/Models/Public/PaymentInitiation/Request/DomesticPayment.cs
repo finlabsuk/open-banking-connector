@@ -20,8 +20,7 @@ public class DomesticPaymentRequest : ISupportsValidation
     public required Guid DomesticPaymentConsentId { get; set; }
 
     /// <summary>
-    ///     Request object from recent version of UK Open Banking spec. Open Banking Connector can be configured
-    ///     to translate this for banks supporting an earlier spec version.
+    ///     Request object OBWriteDomestic2 from UK Open Banking Read-Write Payment Initiation API spec.
     ///     This request object can also be generated from the Open Banking consent request object via a type mapping.
     ///     The value of "Data.ConsentId" should be consistent with the external API ID (bank ID) for the supplied
     ///     DomesticPaymentConsent or simply

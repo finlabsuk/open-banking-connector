@@ -7,10 +7,12 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.Payme
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 using FluentAssertions;
 
@@ -29,7 +31,6 @@ public static class DomesticPaymentSubtest
         BankProfile bankProfile,
         Guid bankRegistrationId,
         OAuth2ResponseMode defaultResponseMode,
-        PaymentInitiationApiSettings paymentInitiationApiSettings,
         Func<IServiceScopeContainer> serviceScopeGenerator,
         string testNameUnique,
         string modifiedBy,
@@ -172,18 +173,22 @@ public static class DomesticPaymentSubtest
             using IServiceScopeContainer scopedServiceScopeNew = serviceScopeGenerator();
             IRequestBuilder requestBuilderNew = scopedServiceScopeNew.RequestBuilder;
 
-            if (paymentInitiationApiSettings.UseDomesticPaymentConsentGetFundsConfirmationEndpoint)
-            {
-                // GET consent funds confirmation
-                DomesticPaymentConsentReadFundsConfirmationResponse domesticPaymentConsentResp4 =
-                    await requestBuilderNew.PaymentInitiation.DomesticPaymentConsents
-                        .ReadFundsConfirmationAsync(domesticPaymentConsentId);
+            // GET consent funds confirmation
+            DomesticPaymentConsentFundsConfirmationResponse domesticPaymentConsentResp4 =
+                await requestBuilderNew.PaymentInitiation.DomesticPaymentConsents
+                    .ReadFundsConfirmationAsync(
+                        new ConsentBaseReadParams
+                        {
+                            ExtraHeaders = null,
+                            PublicRequestUrlWithoutQuery = null,
+                            Id = domesticPaymentConsentId,
+                            ModifiedBy = null
+                        });
 
-                // Checks
-                domesticPaymentConsentResp4.Should().NotBeNull();
-                domesticPaymentConsentResp4.Warnings.Should().BeNull();
-                domesticPaymentConsentResp4.ExternalApiResponse.Should().NotBeNull();
-            }
+            // Checks
+            domesticPaymentConsentResp4.Should().NotBeNull();
+            domesticPaymentConsentResp4.Warnings.Should().BeNull();
+            domesticPaymentConsentResp4.ExternalApiResponse.Should().NotBeNull();
 
             // Create DomesticPayment request
             var domesticPaymentRequest = new DomesticPaymentRequest
@@ -210,7 +215,13 @@ public static class DomesticPaymentSubtest
             domesticPaymentRequest.ModifiedBy = modifiedBy;
             DomesticPaymentResponse domesticPaymentResp =
                 await requestBuilderNew.PaymentInitiation.DomesticPayments
-                    .CreateAsync(domesticPaymentRequest, null);
+                    .CreateAsync(
+                        domesticPaymentRequest,
+                        new ConsentExternalCreateParams
+                        {
+                            ExtraHeaders = null,
+                            PublicRequestUrlWithoutQuery = null
+                        });
 
             // Checks
             domesticPaymentResp.Should().NotBeNull();
@@ -221,12 +232,41 @@ public static class DomesticPaymentSubtest
             // GET domestic payment
             DomesticPaymentResponse domesticPaymentResp2 =
                 await requestBuilderNew.PaymentInitiation.DomesticPayments
-                    .ReadAsync(domesticPaymentExternalId, domesticPaymentConsentId, null);
+                    .ReadAsync(
+                        new ConsentExternalEntityReadParams
+                        {
+                            ConsentId = domesticPaymentConsentId,
+                            ModifiedBy = null,
+                            ExtraHeaders = null,
+                            PublicRequestUrlWithoutQuery = null,
+                            ExternalApiId = domesticPaymentExternalId
+                        });
 
             // Checks
             domesticPaymentResp2.Should().NotBeNull();
             domesticPaymentResp2.Warnings.Should().BeNull();
             domesticPaymentResp2.ExternalApiResponse.Should().NotBeNull();
+
+            // GET domestic payment payment details
+            if (bankProfile.PaymentInitiationApiSettings.UseDomesticPaymentGetPaymentDetailsEndpoint)
+            {
+                DomesticPaymentPaymentDetailsResponse paymentDetailsResponse =
+                    await requestBuilderNew.PaymentInitiation.DomesticPayments
+                        .ReadPaymentDetailsAsync(
+                            new ConsentExternalEntityReadParams
+                            {
+                                ConsentId = domesticPaymentConsentId,
+                                ModifiedBy = null,
+                                ExtraHeaders = null,
+                                PublicRequestUrlWithoutQuery = null,
+                                ExternalApiId = domesticPaymentExternalId
+                            });
+
+                // Checks
+                paymentDetailsResponse.Should().NotBeNull();
+                paymentDetailsResponse.Warnings.Should().BeNull();
+                paymentDetailsResponse.ExternalApiResponse.Should().NotBeNull();
+            }
         }
 
         // DELETE domestic payment consent

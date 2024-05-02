@@ -27,3 +27,9 @@ public partial class OBWriteDomesticResponse5 : ISupportsValidation
     public async Task<ValidationResult> ValidateAsync() =>
         await Task.FromResult(new ValidationResult());
 }
+
+public partial class OBWritePaymentDetailsResponse1 : ISupportsValidation
+{
+    public async Task<ValidationResult> ValidateAsync() =>
+        await Task.FromResult(new ValidationResult());
+}

@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.VariableRecurringPayments;
@@ -71,8 +72,6 @@ public class DomesticVrpConsentsController : ControllerBase
     ///     Read domestic VRP consent
     /// </summary>
     /// <param name="domesticVrpConsentId">ID of DomesticVrpConsent</param>
-    /// <param name="modifiedBy"></param>
-    /// <param name="includeExternalApiOperation"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpGet("{domesticVrpConsentId:guid}")]
@@ -80,10 +79,6 @@ public class DomesticVrpConsentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<DomesticVrpConsentCreateResponse>> GetAsync(
         Guid domesticVrpConsentId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy,
-        [FromHeader(Name = "x-include-external-api-operation")]
-        bool? includeExternalApiOperation,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
@@ -108,10 +103,58 @@ public class DomesticVrpConsentsController : ControllerBase
             .DomesticVrpConsents
             .ReadAsync(
                 domesticVrpConsentId,
-                modifiedBy,
+                null,
                 extraHeaders,
-                includeExternalApiOperation ?? true,
+                true,
                 requestUrlWithoutQuery);
+
+        return Ok(fluentResponse);
+    }
+
+    /// <summary>
+    ///     Create domestic VRP consent funds confirmation
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="domesticVrpConsentId">ID of DomesticVrpConsent</param>
+    /// <param name="xFapiCustomerIpAddress"></param>
+    /// <returns></returns>
+    [HttpPost("{domesticVrpConsentId:guid}/funds-confirmation")]
+    [Consumes("application/json")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<ActionResult<DomesticVrpConsentFundsConfirmationResponse>> PostFundsConfirmationAsync(
+        [FromBody]
+        DomesticVrpConsentFundsConfirmationRequest request,
+        Guid domesticVrpConsentId,
+        [FromHeader(Name = "x-fapi-customer-ip-address")]
+        string? xFapiCustomerIpAddress)
+    {
+        string requestUrlWithoutQuery =
+            _linkGenerator.GetUriByAction(HttpContext) ??
+            throw new InvalidOperationException("Can't generate calling URL.");
+
+        // Determine extra headers
+        IEnumerable<HttpHeader>? extraHeaders;
+        if (xFapiCustomerIpAddress is not null)
+        {
+            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+        }
+        else
+        {
+            extraHeaders = null;
+        }
+
+        // Operation
+        DomesticVrpConsentFundsConfirmationResponse fluentResponse = await _requestBuilder
+            .VariableRecurringPayments
+            .DomesticVrpConsents
+            .CreateFundsConfirmationAsync(
+                request,
+                new VrpConsentFundsConfirmationCreateParams
+                {
+                    PublicRequestUrlWithoutQuery = requestUrlWithoutQuery,
+                    ExtraHeaders = extraHeaders,
+                    Id = domesticVrpConsentId
+                });
 
         return Ok(fluentResponse);
     }
@@ -120,18 +163,12 @@ public class DomesticVrpConsentsController : ControllerBase
     ///     Delete domestic VRP consent
     /// </summary>
     /// <param name="domesticVrpConsentId">ID of DomesticVrpConsent</param>
-    /// <param name="modifiedBy"></param>
-    /// <param name="includeExternalApiOperation"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpDelete("{domesticVrpConsentId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<BaseResponse>> DeleteAsync(
         Guid domesticVrpConsentId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy,
-        [FromHeader(Name = "x-include-external-api-operation")]
-        bool? includeExternalApiOperation,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
@@ -150,7 +187,7 @@ public class DomesticVrpConsentsController : ControllerBase
         BaseResponse fluentResponse = await _requestBuilder
             .VariableRecurringPayments
             .DomesticVrpConsents
-            .DeleteAsync(domesticVrpConsentId, modifiedBy, extraHeaders, includeExternalApiOperation ?? true);
+            .DeleteAsync(domesticVrpConsentId, null, extraHeaders);
 
         return Ok(fluentResponse);
     }

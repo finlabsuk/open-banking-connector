@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -16,11 +17,13 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.PaymentInitia
 [Tags("Domestic Payments")]
 public class DomesticPaymentsController : ControllerBase
 {
+    private readonly LinkGenerator _linkGenerator;
     private readonly IRequestBuilder _requestBuilder;
 
-    public DomesticPaymentsController(IRequestBuilder requestBuilder)
+    public DomesticPaymentsController(IRequestBuilder requestBuilder, LinkGenerator linkGenerator)
     {
         _requestBuilder = requestBuilder;
+        _linkGenerator = linkGenerator;
     }
 
     /// <summary>
@@ -38,6 +41,10 @@ public class DomesticPaymentsController : ControllerBase
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
+        string requestUrlWithoutQuery =
+            _linkGenerator.GetUriByAction(HttpContext) ??
+            throw new InvalidOperationException("Can't generate calling URL.");
+
         // Determine extra headers
         IEnumerable<HttpHeader>? extraHeaders;
         if (xFapiCustomerIpAddress is not null)
@@ -52,7 +59,13 @@ public class DomesticPaymentsController : ControllerBase
         DomesticPaymentResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
             .DomesticPayments
-            .CreateAsync(request, extraHeaders);
+            .CreateAsync(
+                request,
+                new ConsentExternalCreateParams
+                {
+                    ExtraHeaders = extraHeaders,
+                    PublicRequestUrlWithoutQuery = requestUrlWithoutQuery
+                });
 
         return CreatedAtAction(
             nameof(GetAsync),
@@ -78,6 +91,10 @@ public class DomesticPaymentsController : ControllerBase
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
+        string requestUrlWithoutQuery =
+            _linkGenerator.GetUriByAction(HttpContext) ??
+            throw new InvalidOperationException("Can't generate calling URL.");
+
         // Determine extra headers
         IEnumerable<HttpHeader>? extraHeaders;
         if (xFapiCustomerIpAddress is not null)
@@ -93,7 +110,63 @@ public class DomesticPaymentsController : ControllerBase
         DomesticPaymentResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
             .DomesticPayments
-            .ReadAsync(externalApiId, domesticPaymentConsentId, extraHeaders);
+            .ReadAsync(
+                new ConsentExternalEntityReadParams
+                {
+                    ConsentId = domesticPaymentConsentId,
+                    ModifiedBy = null,
+                    ExtraHeaders = extraHeaders,
+                    PublicRequestUrlWithoutQuery = requestUrlWithoutQuery,
+                    ExternalApiId = externalApiId
+                });
+
+        return Ok(fluentResponse);
+    }
+
+    /// <summary>
+    ///     Read domestic payment payment details
+    /// </summary>
+    /// <param name="externalApiId">External (bank) API ID of Domestic Payment</param>
+    /// <param name="domesticPaymentConsentId"></param>
+    /// <param name="xFapiCustomerIpAddress"></param>
+    /// <returns></returns>
+    [HttpGet("{externalApiId}/payment-details")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<DomesticPaymentPaymentDetailsResponse>> GetPaymentDetailsAsync(
+        string externalApiId,
+        [FromHeader(Name = "x-obc-domestic-payment-consent-id")]
+        Guid domesticPaymentConsentId,
+        [FromHeader(Name = "x-fapi-customer-ip-address")]
+        string? xFapiCustomerIpAddress)
+    {
+        string requestUrlWithoutQuery =
+            _linkGenerator.GetUriByAction(HttpContext) ??
+            throw new InvalidOperationException("Can't generate calling URL.");
+
+        // Determine extra headers
+        IEnumerable<HttpHeader>? extraHeaders;
+        if (xFapiCustomerIpAddress is not null)
+        {
+            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+        }
+        else
+        {
+            extraHeaders = null;
+        }
+
+        // Operation
+        DomesticPaymentPaymentDetailsResponse fluentResponse = await _requestBuilder
+            .PaymentInitiation
+            .DomesticPayments
+            .ReadPaymentDetailsAsync(
+                new ConsentExternalEntityReadParams
+                {
+                    ConsentId = domesticPaymentConsentId,
+                    ModifiedBy = null,
+                    ExtraHeaders = extraHeaders,
+                    PublicRequestUrlWithoutQuery = requestUrlWithoutQuery,
+                    ExternalApiId = externalApiId
+                });
 
         return Ok(fluentResponse);
     }

@@ -10,60 +10,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 public class LocalReadParams
 {
-    public LocalReadParams(Guid id, string? modifiedBy)
-    {
-        Id = id;
-        ModifiedBy = modifiedBy;
-    }
-
-    public Guid Id { get; }
-    public string? ModifiedBy { get; }
+    public required Guid Id { get; init; }
+    public required string? ModifiedBy { get; init; }
 }
 
 internal class BankRegistrationReadParams : LocalReadParams
 {
-    public BankRegistrationReadParams(
-        Guid id,
-        string? modifiedBy,
-        bool? includeExternalApiOperation) : base(id, modifiedBy)
-    {
-        IncludeExternalApiOperation = includeExternalApiOperation;
-    }
-
-    public bool? IncludeExternalApiOperation { get; }
+    public required bool? IncludeExternalApiOperation { get; init; }
 }
 
-internal class ConsentBaseReadParams : LocalReadParams
+public class ConsentBaseReadParams : LocalReadParams
 {
-    public ConsentBaseReadParams(
-        Guid id,
-        string? modifiedBy,
-        IEnumerable<HttpHeader>? extraHeaders,
-        string? publicRequestUrlWithoutQuery) : base(
-        id,
-        modifiedBy)
-    {
-        ExtraHeaders = extraHeaders;
-        PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery;
-    }
-
-    public IEnumerable<HttpHeader>? ExtraHeaders { get; }
-    public string? PublicRequestUrlWithoutQuery { get; }
+    public required IEnumerable<HttpHeader>? ExtraHeaders { get; init; }
+    public required string? PublicRequestUrlWithoutQuery { get; init; }
 }
 
 internal class ConsentReadParams : ConsentBaseReadParams
 {
-    public ConsentReadParams(
-        Guid id,
-        string? modifiedBy,
-        IEnumerable<HttpHeader>? extraHeaders,
-        string? publicRequestUrlWithoutQuery,
-        bool includeExternalApiOperation) : base(id, modifiedBy, extraHeaders, publicRequestUrlWithoutQuery)
-    {
-        IncludeExternalApiOperation = includeExternalApiOperation;
-    }
-
-    public bool IncludeExternalApiOperation { get; }
+    public required bool IncludeExternalApiOperation { get; init; }
 }
 
 internal interface IObjectRead<TPublicResponse, in TReadParams>
@@ -71,13 +35,6 @@ internal interface IObjectRead<TPublicResponse, in TReadParams>
 {
     Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ReadAsync(
         TReadParams readParams);
-}
-
-internal interface IObjectReadFundsConfirmation<TPublicResponse, in TReadParams>
-    where TReadParams : ConsentBaseReadParams
-{
-    Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-        ReadFundsConfirmationAsync(TReadParams readParams);
 }
 
 internal interface

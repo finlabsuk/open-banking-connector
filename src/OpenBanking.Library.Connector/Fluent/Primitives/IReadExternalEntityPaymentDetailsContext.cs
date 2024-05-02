@@ -1,22 +1,15 @@
-// Licensed to Finnovation Labs Limited under one or more agreements.
+﻿// Licensed to Finnovation Labs Limited under one or more agreements.
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 
-public class ConsentExternalEntityReadParams : ConsentExternalReadParams
-{
-    public required string ExternalApiId { get; init; }
-}
-
 /// <summary>
-///     Fluent interface methods for Read.
+///     Fluent interface methods for ReadPaymentDetails
 /// </summary>
 /// <typeparam name="TPublicResponse"></typeparam>
 /// <typeparam name="TReadParams"></typeparam>
-public interface IReadExternalEntityContext<TPublicResponse, in TReadParams>
+public interface IReadExternalEntityPaymentDetailsContext<TPublicResponse, in TReadParams>
     where TPublicResponse : class
     where TReadParams : ConsentExternalEntityReadParams
 {
@@ -26,6 +19,6 @@ public interface IReadExternalEntityContext<TPublicResponse, in TReadParams>
     /// </summary>
     /// <param name="readParams"></param>
     /// <returns></returns>
-    Task<TPublicResponse> ReadAsync(
+    Task<TPublicResponse> ReadPaymentDetailsAsync(
         TReadParams readParams);
 }

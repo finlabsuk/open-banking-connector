@@ -136,19 +136,17 @@ public class AccountAndTransactionApiSettings
 
 public class PaymentInitiationApiSettings
 {
-    public bool UseDomesticPaymentConsentGetFundsConfirmationEndpoint { get; set; } = true;
-
     public DomesticPaymentConsentExternalApiRequestAdjustments
         DomesticPaymentConsentExternalApiRequestAdjustments { get; set; } = x => x;
 
     public DomesticPaymentExternalApiRequestAdjustments
         DomesticPaymentExternalApiRequestAdjustments { get; set; } = x => x;
+
+    public bool UseDomesticPaymentGetPaymentDetailsEndpoint { get; set; } = false;
 }
 
 public class VariableRecurringPaymentsApiSettings
 {
-    public bool UseConsentGetFundsConfirmationEndpoint { get; set; } = true;
-
     public DomesticVrpConsentExternalApiRequestAdjustments
         DomesticVrpConsentExternalApiRequestAdjustments { get; set; } = x => x;
 
@@ -157,6 +155,8 @@ public class VariableRecurringPaymentsApiSettings
 
     public DomesticVrpExternalApiRequestAdjustments
         DomesticVrpExternalApiRequestAdjustments { get; set; } = x => x;
+
+    public bool UseDomesticVrpGetPaymentDetailsEndpoint { get; set; } = false;
 }
 
 /// <summary>

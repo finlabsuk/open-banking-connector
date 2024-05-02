@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -28,53 +29,48 @@ public interface IVariableRecurringPaymentsContext
     ///     A DomesticVrp corresponds to a domestic variable recurring payment and may be created once a DomesticVrpConsent is
     ///     approved by a user.
     /// </summary>
-    IExternalEntityContext<DomesticVrpRequest, DomesticVrpResponse> DomesticVrps { get; }
+    IDomesticVrpContext<DomesticVrpRequest, DomesticVrpResponse, DomesticVrpPaymentDetailsResponse,
+        ConsentExternalCreateParams,
+        ConsentExternalEntityReadParams> DomesticVrps { get; }
 }
 
 internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsContext
 {
+    private readonly DomesticVrpOperations _domesticVrp;
     private readonly ISharedContext _sharedContext;
 
     public VariableRecurringPaymentsContext(ISharedContext sharedContext)
     {
         _sharedContext = sharedContext;
+        var grantPost = new GrantPost(
+            _sharedContext.ApiClient,
+            _sharedContext.Instrumentation,
+            _sharedContext.MemoryCache,
+            _sharedContext.TimeProvider);
+        _domesticVrp = new DomesticVrpOperations(
+            _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
+            _sharedContext.Instrumentation,
+            _sharedContext.ApiVariantMapper,
+            _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            _sharedContext.TimeProvider,
+            grantPost,
+            new ConsentAccessTokenGet(
+                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.TimeProvider,
+                grantPost,
+                _sharedContext.Instrumentation,
+                _sharedContext.MemoryCache,
+                _sharedContext.EncryptionKeyInfo),
+            _sharedContext.BankProfileService,
+            _sharedContext.ObWacCertificateMethods,
+            _sharedContext.ObSealCertificateMethods);
     }
 
     public IDomesticVrpConsentsContext DomesticVrpConsents =>
         new DomesticVrpConsentsContext(_sharedContext);
 
-    public IExternalEntityContext<DomesticVrpRequest, DomesticVrpResponse> DomesticVrps
-    {
-        get
-        {
-            var domesticVrp = new DomesticVrpOperations(
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
-                _sharedContext.Instrumentation,
-                _sharedContext.ApiVariantMapper,
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                _sharedContext.TimeProvider,
-                new GrantPost(
-                    _sharedContext.ApiClient,
-                    _sharedContext.Instrumentation,
-                    _sharedContext.MemoryCache,
-                    _sharedContext.TimeProvider),
-                new ConsentAccessTokenGet(
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    _sharedContext.TimeProvider,
-                    new GrantPost(
-                        _sharedContext.ApiClient,
-                        _sharedContext.Instrumentation,
-                        _sharedContext.MemoryCache,
-                        _sharedContext.TimeProvider),
-                    _sharedContext.Instrumentation,
-                    _sharedContext.MemoryCache,
-                    _sharedContext.EncryptionKeyInfo),
-                _sharedContext.BankProfileService,
-                _sharedContext.ObWacCertificateMethods,
-                _sharedContext.ObSealCertificateMethods);
-            return new ExternalEntityContextInternal<DomesticVrpRequest, DomesticVrpResponse>(
-                domesticVrp,
-                domesticVrp);
-        }
-    }
+    public IDomesticVrpContext<DomesticVrpRequest, DomesticVrpResponse, DomesticVrpPaymentDetailsResponse,
+            ConsentExternalCreateParams,
+            ConsentExternalEntityReadParams>
+        DomesticVrps => _domesticVrp;
 }

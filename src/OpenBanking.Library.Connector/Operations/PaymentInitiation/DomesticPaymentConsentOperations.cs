@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -12,6 +13,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
@@ -36,7 +38,7 @@ internal class
     IObjectCreate<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse,
         ConsentCreateParams>,
     IObjectRead<DomesticPaymentConsentCreateResponse, ConsentReadParams>,
-    IObjectReadFundsConfirmation<DomesticPaymentConsentReadFundsConfirmationResponse, ConsentBaseReadParams>
+    IReadFundsConfirmationContext<DomesticPaymentConsentFundsConfirmationResponse, ConsentBaseReadParams>
 {
     private readonly IBankProfileService _bankProfileService;
     private readonly ConsentAccessTokenGet _consentAccessTokenGet;
@@ -48,7 +50,6 @@ internal class
         PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> _consentCommon;
 
     private readonly IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> _consentEntityMethods;
-
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly DomesticPaymentConsentCommon _domesticPaymentConsentCommon;
     private readonly IGrantPost _grantPost;
@@ -59,7 +60,7 @@ internal class
     private readonly ITimeProvider _timeProvider;
 
     public DomesticPaymentConsentOperations(
-        IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> entityMethods,
+        IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> consentEntityMethods,
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
@@ -71,14 +72,14 @@ internal class
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods)
     {
-        _consentEntityMethods = entityMethods;
+        _consentEntityMethods = consentEntityMethods;
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
         _consentAccessTokenGet = consentAccessTokenGet;
         _obWacCertificateMethods = obWacCertificateMethods;
         _obSealCertificateMethods = obSealCertificateMethods;
         _domesticPaymentConsentCommon = new DomesticPaymentConsentCommon(
-            entityMethods,
+            consentEntityMethods,
             instrumentationClient);
         _mapper = mapper;
         _dbSaveChangesMethod = dbSaveChangesMethod;
@@ -111,6 +112,7 @@ internal class
 
         // Create new or use existing external API object
         PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? externalApiResponse;
+        ExternalApiResponseInfo? externalApiResponseInfo;
         string externalApiId;
         if (request.ExternalApiObject is null)
         {
@@ -124,13 +126,15 @@ internal class
             PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
-            CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
             string bankFinancialId = bankProfile.FinancialId;
+            ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
+                bankProfile.CustomBehaviour?.ClientCredentialsGrantPost;
+            ReadWritePostCustomBehaviour? readWritePostCustomBehaviour =
+                bankProfile.CustomBehaviour?.DomesticPaymentConsentPost;
 
             // Get IApiClient
-            IApiClient apiClient = bankRegistration.UseSimulatedBank
-                ? bankProfile.ReplayApiClient
-                : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+            IApiClient apiClient =
+                (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
 
             // Get OBSeal key
             OBSealKey obSealKey =
@@ -147,7 +151,7 @@ internal class
                     bankRegistration.ExternalApiSecret,
                     bankRegistration.Id.ToString(),
                     null,
-                    customBehaviour?.ClientCredentialsGrantPost,
+                    clientCredentialsGrantPostCustomBehaviour,
                     apiClient,
                     bankProfile.BankProfileEnum);
 
@@ -163,6 +167,9 @@ internal class
                     softwareStatement,
                     obSealKey);
             var externalApiUrl = new Uri(paymentInitiationApi.BaseUrl + RelativePathBeforeId);
+            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 externalApiRequest = request.ExternalApiRequest ??
+                throw new InvalidOperationException(
+                    "ExternalApiRequest specified as null so not possible to create external API request.");
             var tppReportingRequestInfo = new TppReportingRequestInfo
             {
                 EndpointDescription =
@@ -171,36 +178,36 @@ internal class
                       """,
                 BankProfile = bankProfile.BankProfileEnum
             };
-
             (externalApiResponse, string? xFapiInteractionId,
                     IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.PostAsync(
                     externalApiUrl,
                     createParams.ExtraHeaders,
-                    request.ExternalApiRequest,
+                    externalApiRequest,
                     tppReportingRequestInfo,
                     requestJsonSerializerSettings,
                     responseJsonSerializerSettings,
                     apiClient,
                     _mapper);
             nonErrorMessages.AddRange(newNonErrorMessages);
+            externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
             externalApiId = externalApiResponse.Data.ConsentId;
 
             // Transform links
             if (externalApiResponse.Links is not null)
             {
-                var expectedLinkUrlWithoutQuery = new Uri(externalApiUrl + $"/{externalApiId}");
-                string? transformedLinkUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery switch
-                {
-                    { } x => x + $"/{entityId}",
-                    null => null
-                };
-                var validQueryParameters = new List<string>();
-                var linksUrlOperations = new LinksUrlOperations(
+                string? transformedLinkUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery is { } x
+                    ? $"{x}/{entityId}"
+                    : null;
+                Uri expectedLinkUrlWithoutQuery = LinksUrlOperations.GetExpectedLinkUrlWithoutQuery(
+                    readWritePostCustomBehaviour,
+                    externalApiUrl,
+                    externalApiId);
+                var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
                     expectedLinkUrlWithoutQuery,
                     transformedLinkUrlWithoutQuery,
-                    true,
-                    validQueryParameters);
+                    readWritePostCustomBehaviour,
+                    false);
                 externalApiResponse.Links.Self =
                     linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
                 if (externalApiResponse.Links.First is not null)
@@ -228,6 +235,7 @@ internal class
         else
         {
             externalApiResponse = null;
+            externalApiResponseInfo = null;
             externalApiId = request.ExternalApiObject.ExternalApiId;
         }
 
@@ -282,7 +290,8 @@ internal class
                 ExternalApiUserId = persistedConsent.ExternalApiUserId,
                 AuthContextModified = persistedConsent.AuthContextModified,
                 AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
-                ExternalApiResponse = externalApiResponse
+                ExternalApiResponse = externalApiResponse,
+                ExternalApiResponseInfo = externalApiResponseInfo
             };
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
@@ -309,6 +318,7 @@ internal class
         bool includeExternalApiOperation =
             readParams.IncludeExternalApiOperation;
         PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? externalApiResponse;
+        ExternalApiResponseInfo? externalApiResponseInfo;
         if (includeExternalApiOperation)
         {
             // Get bank profile
@@ -320,9 +330,8 @@ internal class
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
             // Get IApiClient
-            IApiClient apiClient = bankRegistration.UseSimulatedBank
-                ? bankProfile.ReplayApiClient
-                : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+            IApiClient apiClient =
+                (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
 
             // Get OBSeal key
             OBSealKey obSealKey =
@@ -362,7 +371,6 @@ internal class
                       """,
                 BankProfile = bankProfile.BankProfileEnum
             };
-
             (externalApiResponse, string? xFapiInteractionId,
                     IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.GetAsync(
@@ -373,16 +381,20 @@ internal class
                     apiClient,
                     _mapper);
             nonErrorMessages.AddRange(newNonErrorMessages);
+            externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
 
             // Transform links 
             if (externalApiResponse.Links is not null)
             {
-                var validQueryParameters = new List<string>();
-                var linksUrlOperations = new LinksUrlOperations(
-                    externalApiUrl,
-                    readParams.PublicRequestUrlWithoutQuery,
-                    true,
-                    validQueryParameters);
+                ReadWriteGetCustomBehaviour? readWriteGetCustomBehaviour =
+                    customBehaviour?.DomesticPaymentConsentGet;
+                string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
+                Uri expectedLinkUrlWithoutQuery = externalApiUrl;
+                var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
+                    expectedLinkUrlWithoutQuery,
+                    transformedLinkUrlWithoutQuery,
+                    readWriteGetCustomBehaviour,
+                    false);
                 externalApiResponse.Links.Self =
                     linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
                 if (externalApiResponse.Links.First is not null)
@@ -410,6 +422,7 @@ internal class
         else
         {
             externalApiResponse = null;
+            externalApiResponseInfo = null;
         }
 
         // Create response
@@ -425,15 +438,15 @@ internal class
                 ExternalApiUserId = persistedConsent.ExternalApiUserId,
                 AuthContextModified = persistedConsent.AuthContextModified,
                 AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
-                ExternalApiResponse = externalApiResponse
+                ExternalApiResponse = externalApiResponse,
+                ExternalApiResponseInfo = externalApiResponseInfo
             };
 
         return (response, nonErrorMessages);
     }
 
     public async
-        Task<(DomesticPaymentConsentReadFundsConfirmationResponse response,
-            IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ReadFundsConfirmationAsync(
+        Task<DomesticPaymentConsentFundsConfirmationResponse> ReadFundsConfirmationAsync(
             ConsentBaseReadParams readParams)
     {
         // Create non-error list
@@ -441,12 +454,12 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticPaymentConsent and related
-        (DomesticPaymentConsentPersisted persistedObject, BankRegistrationEntity bankRegistration,
+        (DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 DomesticPaymentConsentAccessToken? storedAccessToken,
                 DomesticPaymentConsentRefreshToken? storedRefreshToken,
                 SoftwareStatementEntity softwareStatement) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id, true);
-        string externalApiConsentId = persistedObject.ExternalApiId;
+        string externalApiConsentId = persistedConsent.ExternalApiId;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
@@ -454,10 +467,16 @@ internal class
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         bool supportsSca = bankProfile.SupportsSca;
-        CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
         string bankFinancialId = bankProfile.FinancialId;
         string issuerUrl = bankProfile.IssuerUrl;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
+        ReadWriteGetCustomBehaviour? readWriteGetCustomBehaviour =
+            bankProfile.CustomBehaviour?.DomesticPaymentConsentGetFundsConfirmation;
+        RefreshTokenGrantPostCustomBehaviour? domesticPaymentConsentRefreshTokenGrantPostCustomBehaviour =
+            bankProfile.CustomBehaviour?.DomesticPaymentConsentRefreshTokenGrantPost;
+        JwksGetCustomBehaviour? jwksGetCustomBehaviour = bankProfile.CustomBehaviour?.JwksGet;
+        ConsentAuthGetCustomBehaviour? domesticPaymentConsentAuthGetCustomBehaviour = bankProfile.CustomBehaviour
+            ?.DomesticPaymentConsentAuthGet;
 
         // Get IApiClient
         IApiClient apiClient = bankRegistration.UseSimulatedBank
@@ -469,26 +488,25 @@ internal class
             (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
 
         // Get access token
-        string bankTokenIssuerClaim = DomesticPaymentConsentCommon.GetBankTokenIssuerClaim(
-            customBehaviour,
-            issuerUrl); // Get bank token issuer ("iss") claim
+        string bankTokenIssuerClaim = domesticPaymentConsentAuthGetCustomBehaviour
+            ?.AudClaim ?? issuerUrl; // Get bank token issuer ("iss") claim
         string accessToken =
             await _consentAccessTokenGet.GetAccessTokenAndUpdateConsent(
-                persistedObject,
+                persistedConsent,
                 bankTokenIssuerClaim,
                 "openid payments",
                 bankRegistration,
                 storedAccessToken,
                 storedRefreshToken,
                 tokenEndpointAuthMethod,
-                persistedObject.BankRegistrationNavigation.TokenEndpoint,
+                bankRegistration.TokenEndpoint,
                 apiClient,
                 obSealKey,
                 supportsSca,
                 bankProfile.BankProfileEnum,
                 idTokenSubClaimType,
-                customBehaviour?.DomesticPaymentConsentRefreshTokenGrantPost,
-                customBehaviour?.JwksGet,
+                domesticPaymentConsentRefreshTokenGrantPostCustomBehaviour,
+                jwksGetCustomBehaviour,
                 readParams.ModifiedBy);
 
         // Read object from external API
@@ -519,12 +537,51 @@ internal class
                 apiClient,
                 _mapper);
         nonErrorMessages.AddRange(newNonErrorMessages);
+        var externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
+
+        // Transform links 
+        if (externalApiResponse.Links is not null)
+        {
+            string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
+            Uri expectedLinkUrlWithoutQuery = externalApiUrl;
+            var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
+                expectedLinkUrlWithoutQuery,
+                transformedLinkUrlWithoutQuery,
+                readWriteGetCustomBehaviour,
+                false);
+            externalApiResponse.Links.Self =
+                linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
+            if (externalApiResponse.Links.First is not null)
+            {
+                externalApiResponse.Links.First =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
+            }
+            if (externalApiResponse.Links.Prev is not null)
+            {
+                externalApiResponse.Links.Prev =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
+            }
+            if (externalApiResponse.Links.Next is not null)
+            {
+                externalApiResponse.Links.Next =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
+            }
+            if (externalApiResponse.Links.Last is not null)
+            {
+                externalApiResponse.Links.Last =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+            }
+        }
 
         // Create response
         var response =
-            new DomesticPaymentConsentReadFundsConfirmationResponse { ExternalApiResponse = externalApiResponse };
+            new DomesticPaymentConsentFundsConfirmationResponse
+            {
+                ExternalApiResponse = externalApiResponse,
+                ExternalApiResponseInfo = externalApiResponseInfo
+            };
 
-        return (response, nonErrorMessages);
+        return response;
     }
 
     private IApiRequests<PaymentInitiationModelsPublic.OBWriteDomesticConsent4,

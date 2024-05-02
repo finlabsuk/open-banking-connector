@@ -1106,8 +1106,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// OB: Unique identification as assigned by the ASPSP to uniquely identify the consent resource.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("ConsentId", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(128, MinimumLength = 1)]
         public string ConsentId { get; set; } = default!;
 
         /// <summary>

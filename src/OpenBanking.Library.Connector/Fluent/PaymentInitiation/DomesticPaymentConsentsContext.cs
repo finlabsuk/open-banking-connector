@@ -22,7 +22,7 @@ public interface IDomesticPaymentConsentsContext :
     IConsentContext<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse,
         DomesticPaymentConsentCreateResponse>,
     IDeleteLocalContext,
-    IReadFundsConfirmationContext<DomesticPaymentConsentReadFundsConfirmationResponse>
+    IReadFundsConfirmationContext<DomesticPaymentConsentFundsConfirmationResponse, ConsentBaseReadParams>
 {
     /// <summary>
     ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
@@ -39,18 +39,18 @@ internal interface IDomesticPaymentConsentsContextInternal :
     IDomesticPaymentConsentsContext,
     IConsentContextInternal<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse,
         DomesticPaymentConsentCreateResponse>,
-    IDeleteLocalContextInternal,
-    IReadFundsConfirmationContextInternal<DomesticPaymentConsentReadFundsConfirmationResponse> { }
+    IDeleteLocalContextInternal { }
 
 internal class DomesticPaymentConsentsConsentContext :
     IDomesticPaymentConsentsContextInternal
 {
+    private readonly DomesticPaymentConsentOperations _domesticPaymentConsentOperations;
     private readonly ISharedContext _sharedContext;
 
     public DomesticPaymentConsentsConsentContext(ISharedContext sharedContext)
     {
         _sharedContext = sharedContext;
-        var domesticPaymentConsentOperations = new DomesticPaymentConsentOperations(
+        _domesticPaymentConsentOperations = new DomesticPaymentConsentOperations(
             sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
             sharedContext.TimeProvider,
@@ -76,9 +76,8 @@ internal class DomesticPaymentConsentsConsentContext :
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
             _sharedContext.ObWacCertificateMethods,
             _sharedContext.ObSealCertificateMethods);
-        CreateObject = domesticPaymentConsentOperations;
-        ReadObject = domesticPaymentConsentOperations;
-        ReadFundsConfirmationObject = domesticPaymentConsentOperations;
+        CreateObject = _domesticPaymentConsentOperations;
+        ReadObject = _domesticPaymentConsentOperations;
         DeleteLocalObject = new LocalEntityDelete<DomesticPaymentConsent, LocalDeleteParams>(
             sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
@@ -107,11 +106,12 @@ internal class DomesticPaymentConsentsConsentContext :
 
     public IObjectRead<DomesticPaymentConsentCreateResponse, ConsentReadParams> ReadObject { get; }
 
-    public IObjectReadFundsConfirmation<DomesticPaymentConsentReadFundsConfirmationResponse, ConsentBaseReadParams>
-        ReadFundsConfirmationObject { get; }
 
     public IObjectCreate<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse, ConsentCreateParams>
         CreateObject { get; }
 
     public IObjectDelete<LocalDeleteParams> DeleteLocalObject { get; }
+
+    public Task<DomesticPaymentConsentFundsConfirmationResponse> ReadFundsConfirmationAsync(
+        ConsentBaseReadParams readParams) => _domesticPaymentConsentOperations.ReadFundsConfirmationAsync(readParams);
 }

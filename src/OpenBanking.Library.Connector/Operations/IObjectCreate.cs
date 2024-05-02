@@ -7,18 +7,18 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
-internal class LocalCreateParams { }
+public class LocalCreateParams { }
 
 internal class BankRegistrationCreateParams : LocalCreateParams { }
 
-internal class ConsentCreateParams : LocalCreateParams
+public class ConsentCreateParams : LocalCreateParams
 {
     public required string? PublicRequestUrlWithoutQuery { get; init; }
 
     public required IEnumerable<HttpHeader>? ExtraHeaders { get; init; }
 }
 
-internal class VrpConsentFundsConfirmationCreateParams : ConsentCreateParams
+public class VrpConsentFundsConfirmationCreateParams : ConsentCreateParams
 {
     public required Guid Id { get; init; }
 }
@@ -29,12 +29,4 @@ internal interface IObjectCreate<in TPublicRequest, TPublicResponse, in TCreateP
     Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> CreateAsync(
         TPublicRequest request,
         TCreateParams createParams);
-}
-
-internal interface IVrpConsentFundsConfirmationCreate<in TPublicRequest, TPublicResponse>
-{
-    Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-        CreateFundsConfirmationAsync(
-            TPublicRequest request,
-            VrpConsentFundsConfirmationCreateParams createParams);
 }

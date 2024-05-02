@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.PaymentInitiation;
@@ -71,8 +72,6 @@ public class DomesticPaymentConsentsController : ControllerBase
     ///     Read domestic payment consent
     /// </summary>
     /// <param name="domesticPaymentConsentId">ID of DomesticPaymentConsent</param>
-    /// <param name="modifiedBy"></param>
-    /// <param name="includeExternalApiOperation"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpGet("{domesticPaymentConsentId:guid}")]
@@ -81,10 +80,6 @@ public class DomesticPaymentConsentsController : ControllerBase
     public async Task<ActionResult<
         DomesticPaymentConsentCreateResponse>> GetAsync(
         Guid domesticPaymentConsentId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy,
-        [FromHeader(Name = "x-include-external-api-operation")]
-        bool? includeExternalApiOperation,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
@@ -109,10 +104,55 @@ public class DomesticPaymentConsentsController : ControllerBase
             .DomesticPaymentConsents
             .ReadAsync(
                 domesticPaymentConsentId,
-                modifiedBy,
+                null,
                 extraHeaders,
-                includeExternalApiOperation ?? true,
+                true,
                 requestUrlWithoutQuery);
+
+        return Ok(fluentResponse);
+    }
+
+    /// <summary>
+    ///     Read domestic payment consent funds confirmation
+    /// </summary>
+    /// <param name="domesticPaymentConsentId">ID of DomesticPaymentConsent</param>
+    /// <param name="xFapiCustomerIpAddress"></param>
+    /// <returns></returns>
+    [HttpGet("{domesticPaymentConsentId:guid}/funds-confirmation")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<
+        DomesticPaymentConsentFundsConfirmationResponse>> GetFundsConfirmationAsync(
+        Guid domesticPaymentConsentId,
+        [FromHeader(Name = "x-fapi-customer-ip-address")]
+        string? xFapiCustomerIpAddress)
+    {
+        string requestUrlWithoutQuery =
+            _linkGenerator.GetUriByAction(HttpContext) ??
+            throw new InvalidOperationException("Can't generate calling URL.");
+
+        // Determine extra headers
+        IEnumerable<HttpHeader>? extraHeaders;
+        if (xFapiCustomerIpAddress is not null)
+        {
+            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+        }
+        else
+        {
+            extraHeaders = null;
+        }
+
+        // Operation
+        DomesticPaymentConsentFundsConfirmationResponse fluentResponse = await _requestBuilder
+            .PaymentInitiation
+            .DomesticPaymentConsents
+            .ReadFundsConfirmationAsync(
+                new ConsentBaseReadParams
+                {
+                    Id = domesticPaymentConsentId,
+                    ModifiedBy = null,
+                    ExtraHeaders = extraHeaders,
+                    PublicRequestUrlWithoutQuery = requestUrlWithoutQuery
+                });
 
         return Ok(fluentResponse);
     }

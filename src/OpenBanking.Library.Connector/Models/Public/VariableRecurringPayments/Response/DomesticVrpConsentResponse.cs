@@ -11,5 +11,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
 /// </summary>
 public class DomesticVrpConsentCreateResponse : ConsentBaseResponse
 {
+    /// <summary>
+    ///     Response object OBDomesticVRPConsentResponse from UK Open Banking Read-Write Variable Recurring Payments API spec.
+    /// </summary>
     public VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? ExternalApiResponse { get; init; }
+
+    /// <summary>
+    ///     Additional info relating to response from external (bank) API.
+    /// </summary>
+    public required ExternalApiResponseInfo? ExternalApiResponseInfo { get; init; }
 }

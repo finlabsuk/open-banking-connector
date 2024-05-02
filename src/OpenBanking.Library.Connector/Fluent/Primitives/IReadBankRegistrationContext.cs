@@ -38,10 +38,12 @@ internal interface
         string? modifiedBy,
         bool? includeExternalApiOperation)
     {
-        var readParams = new BankRegistrationReadParams(
-            id,
-            modifiedBy,
-            includeExternalApiOperation);
+        var readParams = new BankRegistrationReadParams
+        {
+            Id = id,
+            ModifiedBy = modifiedBy,
+            IncludeExternalApiOperation = includeExternalApiOperation
+        };
         (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
             await ReadObject.ReadAsync(readParams);
 

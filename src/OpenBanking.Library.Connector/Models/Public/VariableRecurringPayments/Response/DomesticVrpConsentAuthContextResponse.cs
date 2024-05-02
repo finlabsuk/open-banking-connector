@@ -9,6 +9,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
 public interface IDomesticVrpConsentAuthContextPublicQuery : IEntityBaseQuery
 {
     public Guid DomesticVrpConsentId { get; }
+
+    public string State { get; }
 }
 
 /// <summary>

@@ -52,7 +52,11 @@ internal interface
         string? apiResponseWriteFile,
         string? apiResponseOverrideFile)
     {
-        var readParams = new LocalReadParams(id, modifiedBy);
+        var readParams = new LocalReadParams
+        {
+            Id = id,
+            ModifiedBy = modifiedBy
+        };
         (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
             await ReadLocalObject.ReadAsync(readParams);
 

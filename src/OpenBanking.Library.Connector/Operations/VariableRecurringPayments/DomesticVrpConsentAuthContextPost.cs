@@ -30,7 +30,7 @@ internal class
     DomesticVrpConsentAuthContextCreateResponse>
 {
     private readonly IBankProfileService _bankProfileService;
-    protected readonly IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> _domesticPaymentConsentMethods;
+    protected readonly IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> _domesticVrpConsentMethods;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
 
     public DomesticVrpConsentAuthContextPost(
@@ -38,7 +38,7 @@ internal class
             entityMethods,
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
-        IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> domesticPaymentConsentMethods,
+        IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> domesticVrpConsentMethods,
         IInstrumentationClient instrumentationClient,
         IBankProfileService bankProfileService,
         ObSealCertificateMethods obSealCertificateMethods) : base(
@@ -47,7 +47,7 @@ internal class
         timeProvider,
         instrumentationClient)
     {
-        _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
+        _domesticVrpConsentMethods = domesticVrpConsentMethods;
         _bankProfileService = bankProfileService;
         _obSealCertificateMethods = obSealCertificateMethods;
     }
@@ -58,7 +58,7 @@ internal class
     {
         // Load relevant data objects
         DomesticVrpConsentPersisted domesticVrpConsent =
-            _domesticPaymentConsentMethods
+            _domesticVrpConsentMethods
                 .DbSetNoTracking
                 .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
                 .SingleOrDefault(x => x.Id == request.DomesticVrpConsentId) ??

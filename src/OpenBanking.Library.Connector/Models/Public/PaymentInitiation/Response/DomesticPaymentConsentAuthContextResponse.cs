@@ -9,6 +9,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
 public interface IDomesticPaymentConsentAuthContextPublicQuery : IEntityBaseQuery
 {
     public Guid DomesticPaymentConsentId { get; }
+
+    public string State { get; }
 }
 
 /// <summary>
