@@ -39,14 +39,17 @@ internal class SoftwareStatementPost(
             utcNow,
             request.CreatedBy,
             utcNow,
-            request.CreatedBy,
-            request.OrganisationId,
-            request.SoftwareId,
-            request.SandboxEnvironment,
-            request.DefaultObWacCertificateId,
-            request.DefaultObSealCertificateId,
-            request.DefaultQueryRedirectUrl,
-            request.DefaultFragmentRedirectUrl);
+            request.CreatedBy)
+        {
+            OrganisationId = request.OrganisationId,
+            SoftwareId = request.SoftwareId,
+            SandboxEnvironment = request.SandboxEnvironment,
+            DefaultObWacCertificateId = request.DefaultObWacCertificateId,
+            DefaultObSealCertificateId = request.DefaultObSealCertificateId,
+            DefaultQueryRedirectUrl = request.DefaultQueryRedirectUrl,
+            DefaultFragmentRedirectUrl = request.DefaultFragmentRedirectUrl,
+            Modified = utcNow
+        };
 
         // Add entity
         await entityMethods.AddAsync(entity);

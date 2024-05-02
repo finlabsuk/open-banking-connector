@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Manage
 ///     Persisted type.
 ///     Internal to help ensure public request and response types used on public API.
 /// </summary>
-public partial class SoftwareStatementEntity :
+internal partial class SoftwareStatementEntity :
     BaseEntity,
     ISoftwareStatementPublicQuery
 {
@@ -24,32 +24,14 @@ public partial class SoftwareStatementEntity :
         DateTimeOffset isDeletedModified,
         string? isDeletedModifiedBy,
         DateTimeOffset created,
-        string? createdBy,
-        string organisationId,
-        string softwareId,
-        bool sandboxEnvironment,
-        Guid defaultObWacCertificateId,
-        Guid defaultObSealCertificateId,
-        string defaultQueryRedirectUrl,
-        string defaultFragmentRedirectUrl) : base(
+        string? createdBy) : base(
         id,
         reference,
         isDeleted,
         isDeletedModified,
         isDeletedModifiedBy,
         created,
-        createdBy)
-    {
-        OrganisationId = organisationId ?? throw new ArgumentNullException(nameof(organisationId));
-        SoftwareId = softwareId ?? throw new ArgumentNullException(nameof(softwareId));
-        SandboxEnvironment = sandboxEnvironment;
-        DefaultObWacCertificateId = defaultObWacCertificateId;
-        DefaultObSealCertificateId = defaultObSealCertificateId;
-        DefaultQueryRedirectUrl =
-            defaultQueryRedirectUrl ?? throw new ArgumentNullException(nameof(defaultQueryRedirectUrl));
-        DefaultFragmentRedirectUrl = defaultFragmentRedirectUrl ??
-                                     throw new ArgumentNullException(nameof(defaultFragmentRedirectUrl));
-    }
+        createdBy) { }
 
     [ForeignKey(nameof(DefaultObWacCertificateId))]
     public ObWacCertificateEntity DefaultObWacCertificateNavigation { get; private set; } = null!;
@@ -57,40 +39,42 @@ public partial class SoftwareStatementEntity :
     [ForeignKey(nameof(DefaultObSealCertificateId))]
     public ObSealCertificateEntity DefaultObSealCertificateNavigation { get; private set; } = null!;
 
+    public required DateTimeOffset Modified { get; set; }
+
     /// <summary>
     ///     Organisation ID from UK Open Banking directory as string.
     /// </summary>
-    public string OrganisationId { get; }
+    public required string OrganisationId { get; init; }
 
     /// <summary>
     ///     Software statement ID from UK Open Banking directory as string.
     /// </summary>
-    public string SoftwareId { get; }
+    public required string SoftwareId { get; init; }
 
     /// <summary>
     ///     When true, denotes software statement is defined in UK OB directory sandbox (not production) environment.
     /// </summary>
-    public bool SandboxEnvironment { get; }
+    public required bool SandboxEnvironment { get; init; }
 
     /// <summary>
     ///     ID of default <see cref="ObWacCertificateEntity" /> to use for mutual TLS with this software statement.
     /// </summary>
-    public Guid DefaultObWacCertificateId { get; }
+    public required Guid DefaultObWacCertificateId { get; set; }
 
     /// <summary>
     ///     ID of default <see cref="ObSealCertificateEntity" /> to use for signing JWTs etc with this software statement.
     /// </summary>
-    public Guid DefaultObSealCertificateId { get; }
+    public required Guid DefaultObSealCertificateId { get; set; }
 
     /// <summary>
     ///     Default redirect URL for consent authorisation when OAuth2 response_mode = query.
     /// </summary>
-    public string DefaultQueryRedirectUrl { get; }
+    public required string DefaultQueryRedirectUrl { get; set; }
 
     /// <summary>
     ///     Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.
     /// </summary>
-    public string DefaultFragmentRedirectUrl { get; }
+    public required string DefaultFragmentRedirectUrl { get; set; }
 
     public string GetRedirectUri(
         OAuth2ResponseMode responseMode,
@@ -105,7 +89,7 @@ public partial class SoftwareStatementEntity :
         };
 }
 
-public partial class SoftwareStatementEntity :
+internal partial class SoftwareStatementEntity :
     ISupportsFluentLocalEntityGet<SoftwareStatementResponse>
 {
     public SoftwareStatementResponse PublicGetLocalResponse => new()

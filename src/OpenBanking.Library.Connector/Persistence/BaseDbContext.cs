@@ -52,7 +52,7 @@ public abstract class BaseDbContext : DbContext
     public DbSet<ObSealCertificateEntity> ObSealCertificate =>
         Set<ObSealCertificateEntity>();
 
-    public DbSet<SoftwareStatementEntity> SoftwareStatement =>
+    internal DbSet<SoftwareStatementEntity> SoftwareStatement =>
         Set<SoftwareStatementEntity>();
 
     // Deprecated objects

@@ -28,13 +28,5 @@ internal class SoftwareStatementConfig : BaseConfig<SoftwareStatementEntity>
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.SandboxEnvironment)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property(e => e.DefaultObWacCertificateId)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property(e => e.DefaultObSealCertificateId)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property(e => e.DefaultQueryRedirectUrl)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property(e => e.DefaultFragmentRedirectUrl)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
     }
 }
