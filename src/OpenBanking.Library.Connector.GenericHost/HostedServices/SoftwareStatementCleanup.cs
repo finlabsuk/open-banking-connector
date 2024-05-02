@@ -55,6 +55,15 @@ public class SoftwareStatementCleanup
                     "on this ObWacCertificate will not be able to be used.";
                 instrumentationClient.Warning(fullMessage);
             }
+            catch (System.Security.Cryptography.CryptographicException ex)
+            {
+                string fullMessage =
+                    $"ObWacCertificate record with ID {obWac.Id} " +
+                    $"specifies AssociatedKey with Source {obWac.AssociatedKey.Source} " +
+                    $"and Name {obWac.AssociatedKey.Name}. {ex.Message} " + "Any SoftwareStatement records depending " +
+                    "on this ObWacCertificate will not be able to be used.";
+                instrumentationClient.Warning(fullMessage);
+            }
         }
 
         foreach (ObSealCertificateEntity obSeal in obSealList)
