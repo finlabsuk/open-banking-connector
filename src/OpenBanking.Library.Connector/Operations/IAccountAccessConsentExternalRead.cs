@@ -11,13 +11,30 @@ public abstract class ConsentExternalReadParams
 {
     public required Guid ConsentId { get; init; }
     public required string? ModifiedBy { get; init; }
+
+    /// <summary>
+    ///     Enables pass-through of supported headers such as "x-fapi-customer-ip-address" to external API (bank) request.
+    /// </summary>
     public required IEnumerable<HttpHeader>? ExtraHeaders { get; init; }
+
+    /// <summary>
+    ///     URL of request which enables link URLs in external API response to be transformed into links that work with Open
+    ///     Banking Connector.
+    /// </summary>
     public required string? PublicRequestUrlWithoutQuery { get; init; }
 }
 
 internal class AccountAccessConsentExternalReadParams : ConsentExternalReadParams
 {
+    /// <summary>
+    ///     Account ID associated with external object(s)
+    /// </summary>
     public required string? ExternalApiAccountId { get; init; }
+
+    /// <summary>
+    ///     Enables pass-through of query parameters to external API (bank) request. This is useful in situations where
+    ///     pagination is used and pages are specified via query parameters.
+    /// </summary>
     public required string? QueryString { get; init; }
 }
 

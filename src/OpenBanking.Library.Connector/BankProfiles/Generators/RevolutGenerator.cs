@@ -5,7 +5,6 @@
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
@@ -35,7 +34,7 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
         {
             CustomBehaviour = new CustomBehaviourClass
             {
-                AccountAccessConsentPost = new ConsentPostCustomBehaviour { ResponseLinksOmitId = true },
+                AccountAccessConsentPost = new ReadWritePostCustomBehaviour { ResponseLinksOmitId = true },
                 OpenIdConfigurationGet = new OpenIdConfigurationGetCustomBehaviour
                 {
                     Url =

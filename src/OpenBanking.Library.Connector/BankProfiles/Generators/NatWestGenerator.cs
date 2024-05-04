@@ -5,7 +5,6 @@
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -196,10 +195,10 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     AccountAccessConsentRefreshTokenGrantPost =
                         new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
                     AccountAccessConsentPost = bank is NatWestBank.Coutts
-                        ? new ConsentPostCustomBehaviour { ResponseLinksAddSlash = true }
+                        ? new ReadWritePostCustomBehaviour { ResponseLinksAddSlash = true }
                         : null,
                     AccountAccessConsentGet = bank is NatWestBank.Coutts
-                        ? new ConsentGetCustomBehaviour { ResponseLinksAddSlash = true }
+                        ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
                         : null
                 },
             AspspBrandId = bank switch

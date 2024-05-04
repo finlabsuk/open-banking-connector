@@ -5,7 +5,6 @@
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -58,7 +57,7 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                         new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
                 },
                 AccountAccessConsentPost =
-                    new ConsentPostCustomBehaviour { ResponseLinksOmitId = true }
+                    new ReadWritePostCustomBehaviour { ResponseLinksOmitId = true }
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {

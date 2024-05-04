@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -46,7 +45,7 @@ public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistration
                         "https://openbanking.santander.co.uk/sanuk/external/open-banking/openid-connect-provider/v1/.well-known/openid-configuration" // from https://developer.santander.co.uk/sanuk/external/faq-page#t4n553
                 },
                 AccountAccessConsentPost =
-                    new ConsentPostCustomBehaviour { ResponseLinksOmitId = true }
+                    new ReadWritePostCustomBehaviour { ResponseLinksOmitId = true }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {

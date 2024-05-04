@@ -41,19 +41,41 @@ public class CustomBehaviourClass
     public RefreshTokenGrantPostCustomBehaviour? DomesticVrpConsentRefreshTokenGrantPost { get; set; }
 
     // Account and Transaction API endpoints
-    public ConsentPostCustomBehaviour? AccountAccessConsentPost { get; set; }
+    public ReadWritePostCustomBehaviour? AccountAccessConsentPost { get; set; }
 
-    public ConsentGetCustomBehaviour? AccountAccessConsentGet { get; set; }
+    public ReadWriteGetCustomBehaviour? AccountAccessConsentGet { get; set; }
+
+    public ReadWriteGetCustomBehaviour? AccountGet { get; set; }
+
+    public ReadWriteGetCustomBehaviour? BalanceGet { get; set; }
 
     public DirectDebitGetCustomBehaviour? DirectDebitGet { get; set; }
 
-    // Payment Initiation API endpoints
-    public ConsentPostCustomBehaviour? DomesticPaymentConsentPost { get; set; }
+    public ReadWriteGetCustomBehaviour? MonzoPotGet { get; set; }
 
-    public ConsentGetCustomBehaviour? DomesticPaymentConsentGet { get; set; }
+    public ReadWriteGetCustomBehaviour? Party2Get { get; set; }
+
+    public ReadWriteGetCustomBehaviour? PartyGet { get; set; }
+
+    public ReadWriteGetCustomBehaviour? StandingOrderGet { get; set; }
+
+    public ReadWriteGetCustomBehaviour? TransactionGet { get; set; }
+
+    // Payment Initiation API endpoints
+    public ReadWritePostCustomBehaviour? DomesticPaymentConsentPost { get; set; }
+
+    public ReadWriteGetCustomBehaviour? DomesticPaymentConsentGet { get; set; }
+
+    public ReadWritePostCustomBehaviour? DomesticPaymentPost { get; set; }
+
+    public ReadWriteGetCustomBehaviour? DomesticPaymentGet { get; set; }
 
     // Variable Recurring Payments API endpoints
-    public ConsentPostCustomBehaviour? DomesticVrpConsentPost { get; set; }
+    public ReadWritePostCustomBehaviour? DomesticVrpConsentPost { get; set; }
 
-    public ConsentGetCustomBehaviour? DomesticVrpConsentGet { get; set; }
+    public ReadWriteGetCustomBehaviour? DomesticVrpConsentGet { get; set; }
+
+    public ReadWritePostCustomBehaviour? DomesticVrpPost { get; set; }
+
+    public ReadWriteGetCustomBehaviour? DomesticVrpGet { get; set; }
 }

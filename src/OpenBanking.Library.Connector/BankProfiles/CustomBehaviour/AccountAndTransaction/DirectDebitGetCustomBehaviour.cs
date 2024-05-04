@@ -6,7 +6,7 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 
-public class DirectDebitGetCustomBehaviour
+public class DirectDebitGetCustomBehaviour : ReadWriteGetCustomBehaviour
 {
     // JsonConverter to use for PreviousPaymentDateTime response
     public DateTimeOffsetConverterEnum? PreviousPaymentDateTimeJsonConverter { get; set; }

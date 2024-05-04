@@ -12,11 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
 public class AccountAccessConsentCreateResponse : ConsentBaseResponse
 {
     /// <summary>
-    ///     Response object OBReadConsentResponse1 from UK Open Banking Read-Write Account and Transaction API spec
-    ///     <a
-    ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.10r6/dist/openapi/account-info-openapi.yaml" />
-    ///     v3.1.10 <a />. Open Banking Connector will automatically
-    ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
+    ///     Response object OBReadConsentResponse1 from UK Open Banking Read-Write Account and Transaction API spec.
     /// </summary>
     public required AccountAndTransactionModelsPublic.OBReadConsentResponse1? ExternalApiResponse { get; init; }
 

@@ -186,27 +186,19 @@ internal class
             // Transform links
             if (externalApiResponse.Links is not null)
             {
-                bool responseLinksOmitId = customBehaviour?.AccountAccessConsentPost?.ResponseLinksOmitId ?? false;
-                bool responseLinksAddSlash = customBehaviour?.AccountAccessConsentPost?.ResponseLinksAddSlash ?? false;
-                Uri expectedLinkUrlWithoutQuery = responseLinksOmitId
-                    ? externalApiUrl
-                    : new Uri(externalApiUrl + $"/{externalApiId}");
-                if (responseLinksAddSlash)
-                {
-                    expectedLinkUrlWithoutQuery = new Uri(expectedLinkUrlWithoutQuery + "/");
-                }
-
-                string? transformedLinkUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery switch
-                {
-                    { } x => x + $"/{entityId}",
-                    null => null
-                };
-                var validQueryParameters = new List<string>();
-                var linksUrlOperations = new LinksUrlOperations(
+                ReadWritePostCustomBehaviour? readWritePostCustomBehaviour = customBehaviour?.AccountAccessConsentPost;
+                string? transformedLinkUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery is { } x
+                    ? $"{x}/{entityId}"
+                    : null;
+                Uri expectedLinkUrlWithoutQuery = LinksUrlOperations.GetExpectedLinkUrlWithoutQuery(
+                    readWritePostCustomBehaviour,
+                    externalApiUrl,
+                    externalApiId);
+                var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
                     expectedLinkUrlWithoutQuery,
                     transformedLinkUrlWithoutQuery,
-                    true,
-                    validQueryParameters);
+                    readWritePostCustomBehaviour,
+                    false);
                 externalApiResponse.Links.Self =
                     linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
                 if (externalApiResponse.Links.First is not null)
@@ -385,18 +377,15 @@ internal class
             // Transform links 
             if (externalApiResponse.Links is not null)
             {
-                bool responseLinksAddSlash = customBehaviour?.AccountAccessConsentGet?.ResponseLinksAddSlash ?? false;
+                ReadWriteGetCustomBehaviour? readWriteGetCustomBehaviour =
+                    customBehaviour?.AccountAccessConsentGet;
+                string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
                 Uri expectedLinkUrlWithoutQuery = externalApiUrl;
-                if (responseLinksAddSlash)
-                {
-                    expectedLinkUrlWithoutQuery = new Uri(expectedLinkUrlWithoutQuery + "/");
-                }
-                var validQueryParameters = new List<string>();
-                var linksUrlOperations = new LinksUrlOperations(
+                var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
                     expectedLinkUrlWithoutQuery,
-                    readParams.PublicRequestUrlWithoutQuery,
-                    true,
-                    validQueryParameters);
+                    transformedLinkUrlWithoutQuery,
+                    readWriteGetCustomBehaviour,
+                    false);
                 externalApiResponse.Links.Self =
                     linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
                 if (externalApiResponse.Links.First is not null)

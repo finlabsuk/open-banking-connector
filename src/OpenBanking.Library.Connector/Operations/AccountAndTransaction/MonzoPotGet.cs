@@ -181,6 +181,8 @@ internal class
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+        ReadWriteGetCustomBehaviour?
+            readWriteGetCustomBehaviour = customBehaviour?.MonzoPotGet;
         string bankFinancialId = bankProfile.FinancialId;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
 
@@ -217,12 +219,13 @@ internal class
                 readParams.ModifiedBy);
 
         // Retrieve endpoint URL
-        string urlString = readParams.ExternalApiAccountId switch
+        string urlStringWihoutQuery = readParams.ExternalApiAccountId switch
         {
             null => $"{accountAndTransactionApi.BaseUrl}/pots",
             { } extAccountId => $"{accountAndTransactionApi.BaseUrl}/accounts/{extAccountId}/pots"
         };
-        Uri apiRequestUrl = new UriBuilder(urlString) { Query = readParams.QueryString ?? string.Empty }.Uri;
+        Uri externalApiUrl =
+            new UriBuilder(urlStringWihoutQuery) { Query = readParams.QueryString ?? string.Empty }.Uri;
 
         // Get external object from bank API
         JsonSerializerSettings jsonSerializerSettings = ApiClient.GetDefaultJsonSerializerSettings;
@@ -245,10 +248,10 @@ internal class
                 : "GET {AispBaseUrl}/accounts/{AccountId}/pots",
             BankProfile = bankProfile.BankProfileEnum
         };
-        (ReadMonzoPot apiResponse, string? xFapiInteractionId,
+        (ReadMonzoPot externalApiResponse, string? xFapiInteractionId,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
-                apiRequestUrl,
+                externalApiUrl,
                 readParams.ExtraHeaders,
                 tppReportingRequestInfo,
                 jsonSerializerSettings,
@@ -256,33 +259,36 @@ internal class
                 _mapper);
         nonErrorMessages.AddRange(newNonErrorMessages);
 
-        // Create response
-        var validQueryParameters = new List<string>();
+        // Transform links 
+        string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
+        var expectedLinkUrlWithoutQuery = new Uri(urlStringWihoutQuery);
+        var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
+            expectedLinkUrlWithoutQuery,
+            transformedLinkUrlWithoutQuery,
+            readWriteGetCustomBehaviour,
+            true);
+        externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
+        if (externalApiResponse.Links.First is not null)
+        {
+            externalApiResponse.Links.First =
+                linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
+        }
+        if (externalApiResponse.Links.Prev is not null)
+        {
+            externalApiResponse.Links.Prev = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
+        }
+        if (externalApiResponse.Links.Next is not null)
+        {
+            externalApiResponse.Links.Next = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
+        }
+        if (externalApiResponse.Links.Last is not null)
+        {
+            externalApiResponse.Links.Last = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+        }
 
-        var linksUrlOperations = new LinksUrlOperations(
-            apiRequestUrl,
-            readParams.PublicRequestUrlWithoutQuery,
-            false,
-            validQueryParameters);
-        apiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Self);
-        if (apiResponse.Links.First is not null)
-        {
-            apiResponse.Links.First = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.First);
-        }
-        if (apiResponse.Links.Prev is not null)
-        {
-            apiResponse.Links.Prev = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Prev);
-        }
-        if (apiResponse.Links.Next is not null)
-        {
-            apiResponse.Links.Next = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Next);
-        }
-        if (apiResponse.Links.Last is not null)
-        {
-            apiResponse.Links.Last = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Last);
-        }
+        // Create response
         var response = new MonzoPotsResponse(
-            apiResponse,
+            externalApiResponse,
             null,
             new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId });
 

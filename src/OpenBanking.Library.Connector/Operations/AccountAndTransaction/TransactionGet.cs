@@ -76,6 +76,8 @@ internal class
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+        ReadWriteGetCustomBehaviour?
+            readWriteGetCustomBehaviour = customBehaviour?.TransactionGet;
         string bankFinancialId = bankProfile.FinancialId;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
 
@@ -112,7 +114,7 @@ internal class
                 readParams.ModifiedBy);
 
         // Retrieve endpoint URL
-        string urlString = (externalAccountId: readParams.ExternalApiAccountId,
+        string urlStringWihoutQuery = (externalAccountId: readParams.ExternalApiAccountId,
                 externalStatementId: readParams.ExternalApiStatementId) switch
             {
                 (null, null) => $"{accountAndTransactionApi.BaseUrl}/transactions",
@@ -122,7 +124,8 @@ internal class
                     $"{accountAndTransactionApi.BaseUrl}/accounts/{extAccountId}/statements/{extStatementId}/transactions",
                 _ => throw new ArgumentOutOfRangeException()
             };
-        Uri apiRequestUrl = new UriBuilder(urlString) { Query = readParams.QueryString ?? string.Empty }.Uri;
+        Uri externalApiUrl =
+            new UriBuilder(urlStringWihoutQuery) { Query = readParams.QueryString ?? string.Empty }.Uri;
 
         // Get external object from bank API
         JsonSerializerSettings? jsonSerializerSettings = null;
@@ -148,10 +151,10 @@ internal class
             BankProfile = bankProfile.BankProfileEnum
         };
 
-        (AccountAndTransactionModelsPublic.OBReadTransaction6 apiResponse, string? xFapiInteractionId,
+        (AccountAndTransactionModelsPublic.OBReadTransaction6 externalApiResponse, string? xFapiInteractionId,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
-                apiRequestUrl,
+                externalApiUrl,
                 readParams.ExtraHeaders,
                 tppReportingRequestInfo,
                 jsonSerializerSettings,
@@ -159,37 +162,42 @@ internal class
                 _mapper);
         nonErrorMessages.AddRange(newNonErrorMessages);
 
-        // Create response
-        var validQueryParameters = new List<string>();
-
-        // Get link queries
-        var linksUrlOperations = new LinksUrlOperations(
-            apiRequestUrl,
-            readParams.PublicRequestUrlWithoutQuery,
-            false,
-            validQueryParameters);
-        if (apiResponse.Links is not null)
+        // Transform links 
+        if (externalApiResponse.Links is not null)
         {
-            apiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Self);
-            if (apiResponse.Links.First is not null)
+            string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
+            var expectedLinkUrlWithoutQuery = new Uri(urlStringWihoutQuery);
+            var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
+                expectedLinkUrlWithoutQuery,
+                transformedLinkUrlWithoutQuery,
+                readWriteGetCustomBehaviour,
+                true);
+            externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
+            if (externalApiResponse.Links.First is not null)
             {
-                apiResponse.Links.First = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.First);
+                externalApiResponse.Links.First =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
             }
-            if (apiResponse.Links.Prev is not null)
+            if (externalApiResponse.Links.Prev is not null)
             {
-                apiResponse.Links.Prev = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Prev);
+                externalApiResponse.Links.Prev =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
             }
-            if (apiResponse.Links.Next is not null)
+            if (externalApiResponse.Links.Next is not null)
             {
-                apiResponse.Links.Next = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Next);
+                externalApiResponse.Links.Next =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
             }
-            if (apiResponse.Links.Last is not null)
+            if (externalApiResponse.Links.Last is not null)
             {
-                apiResponse.Links.Last = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Last);
+                externalApiResponse.Links.Last =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
             }
         }
+
+        // Create response
         var response = new TransactionsResponse(
-            apiResponse,
+            externalApiResponse,
             new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId },
             null);
 

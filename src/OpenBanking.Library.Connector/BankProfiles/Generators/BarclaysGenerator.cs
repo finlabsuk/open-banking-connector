@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -134,7 +133,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             CustomBehaviour = new CustomBehaviourClass
             {
                 AccountAccessConsentPost =
-                    new ConsentPostCustomBehaviour { ResponseLinksOmitId = true },
+                    new ReadWritePostCustomBehaviour { ResponseLinksOmitId = true },
                 AccountAccessConsentAuthGet = bank is BarclaysBank.Sandbox
                     ? new ConsentAuthGetCustomBehaviour
                     {

@@ -2,9 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 
-public class ConsentGetCustomBehaviour
+public class ReadWritePostCustomBehaviour : ReadWriteGetCustomBehaviour
 {
-    public bool? ResponseLinksAddSlash { get; set; }
+    public bool? ResponseLinksOmitId { get; set; }
 }

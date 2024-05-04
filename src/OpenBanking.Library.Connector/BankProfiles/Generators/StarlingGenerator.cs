@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -45,7 +44,7 @@ public class StarlingGenerator : BankProfileGeneratorBase<StarlingBank>
                         IdTokenProcessingCustomBehaviour =
                             new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAcrClaim = true }
                     },
-                AccountAccessConsentPost = new ConsentPostCustomBehaviour { ResponseLinksOmitId = true },
+                AccountAccessConsentPost = new ReadWritePostCustomBehaviour { ResponseLinksOmitId = true },
                 AccountAccessConsentAuthCodeGrantPost =
                     new AuthCodeGrantPostCustomBehaviour
                     {
