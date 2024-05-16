@@ -3,7 +3,7 @@
   "info": {
     "title": "Payment Initiation API",
     "description": "Payment Initiation API for Open Banking Connector Web App",
-    "version": "9.1.0"
+    "version": "11.0.0"
   },
   "paths": {
     "/pisp/domestic-payment-consent-auth-contexts": {
@@ -66,7 +66,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -94,6 +94,16 @@
           "Domestic Payment Consents"
         ],
         "summary": "Create domestic payment consent",
+        "parameters": [
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "description": "",
           "content": {
@@ -146,25 +156,17 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
+            "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "x-include-external-api-operation",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "boolean"
-            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -186,6 +188,56 @@
         }
       }
     },
+    "/pisp/domestic-payment-consents/{domesticPaymentConsentId}/funds-confirmation": {
+      "get": {
+        "tags": [
+          "Domestic Payment Consents"
+        ],
+        "summary": "Read domestic payment consent funds confirmation",
+        "parameters": [
+          {
+            "name": "domesticPaymentConsentId",
+            "in": "path",
+            "description": "ID of DomesticPaymentConsent",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticPaymentConsentFundsConfirmationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticPaymentConsentFundsConfirmationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticPaymentConsentFundsConfirmationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/pisp/domestic-payments": {
       "post": {
         "tags": [
@@ -194,12 +246,11 @@
         "summary": "Create domestic payment",
         "parameters": [
           {
-            "name": "x-obc-domestic-payment-consent-id",
+            "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "type": "string"
             }
           }
         ],
@@ -263,7 +314,7 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
+            "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
             "schema": {
@@ -273,7 +324,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -294,10 +345,99 @@
           }
         }
       }
+    },
+    "/pisp/domestic-payments/{externalApiId}/payment-details": {
+      "get": {
+        "tags": [
+          "Domestic Payments"
+        ],
+        "summary": "Read domestic payment payment details",
+        "parameters": [
+          {
+            "name": "externalApiId",
+            "in": "path",
+            "description": "External (bank) API ID of Domestic Payment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-obc-domestic-payment-consent-id",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticPaymentPaymentDetailsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticPaymentPaymentDetailsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticPaymentPaymentDetailsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "Account": {
+        "required": [
+          "Identification",
+          "Name",
+          "SchemeName"
+        ],
+        "type": "object",
+        "properties": {
+          "SchemeName": {
+            "type": "string"
+          },
+          "Identification": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "Name": {
+            "maxLength": 350,
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the account, as assigned by the account servicing institution.\r\n<br />Usage: The account name is the name or names of the account owner(s) represented at an account level. The account name is not the product name or the nickname of the account.\r\n<br />OB: ASPSPs may carry out name validation for Confirmation of Payee, but it is not mandatory."
+          },
+          "SecondaryIdentification": {
+            "maxLength": 34,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "AuthContextRequest": {
         "type": "object",
         "properties": {
@@ -318,62 +458,641 @@
         },
         "additionalProperties": false
       },
-      "BankProfileEnum": {
-        "enum": [
-          "Barclays_Sandbox",
-          "Barclays_Personal",
-          "Barclays_Wealth",
-          "Barclays_Barclaycard",
-          "Barclays_Business",
-          "Barclays_Corporate",
-          "Barclays_BarclaycardCommercialPayments",
-          "Obie_Modelo",
-          "Obie_Model2023",
-          "NatWest_NatWestSandbox",
-          "NatWest_NatWest",
-          "NatWest_NatWestBankline",
-          "NatWest_NatWestClearSpend",
-          "NatWest_RoyalBankOfScotlandSandbox",
-          "NatWest_RoyalBankOfScotland",
-          "NatWest_RoyalBankOfScotlandBankline",
-          "NatWest_RoyalBankOfScotlandClearSpend",
-          "NatWest_TheOne",
-          "NatWest_NatWestOne",
-          "NatWest_VirginOne",
-          "NatWest_UlsterBankNI",
-          "NatWest_UlsterBankNiBankline",
-          "NatWest_UlsterBankNiClearSpend",
-          "NatWest_Mettle",
-          "NatWest_Coutts",
-          "VrpHackathon",
-          "Santander_Santander",
-          "NewDayAmazon",
-          "Nationwide_Nationwide",
-          "Lloyds_Sandbox",
-          "Lloyds_LloydsPersonal",
-          "Lloyds_LloydsBusiness",
-          "Lloyds_LloydsCommerical",
-          "Lloyds_HalifaxPersonal",
-          "Lloyds_BankOfScotlandPersonal",
-          "Lloyds_BankOfScotlandBusiness",
-          "Lloyds_BankOfScotlandCommerical",
-          "Lloyds_MbnaPersonal",
-          "Hsbc_FirstDirect",
-          "Hsbc_Sandbox",
-          "Hsbc_UkBusiness",
-          "Hsbc_UkKinetic",
-          "Hsbc_UkPersonal",
-          "Hsbc_HsbcNetUk",
-          "Danske",
-          "AlliedIrish",
-          "Monzo_Monzo",
-          "Monzo_Sandbox",
-          "Revolut_Revolut",
-          "Starling_Starling",
-          "Tsb"
+      "Authorisation": {
+        "required": [
+          "AuthorisationType"
         ],
-        "type": "string",
-        "description": "Banks for which bank profiles have been created. Called BankProfileEnum to avoid confusion with the associated\r\nclass BankProfile."
+        "type": "object",
+        "properties": {
+          "AuthorisationType": {
+            "$ref": "#/components/schemas/AuthorisationType"
+          },
+          "CompletionDateTime": {
+            "type": "string",
+            "description": "Date and time at which the requested authorisation flow must be completed.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Authorisation2": {
+        "required": [
+          "AuthorisationType"
+        ],
+        "type": "object",
+        "properties": {
+          "AuthorisationType": {
+            "$ref": "#/components/schemas/Authorisation2AuthorisationType"
+          },
+          "CompletionDateTime": {
+            "type": "string",
+            "description": "Date and time at which the requested authorisation flow must be completed.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Authorisation2AuthorisationType": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "AuthorisationType": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Charges": {
+        "required": [
+          "Amount",
+          "ChargeBearer",
+          "Type"
+        ],
+        "type": "object",
+        "properties": {
+          "ChargeBearer": {
+            "$ref": "#/components/schemas/OBChargeBearerType1Code"
+          },
+          "Type": {
+            "type": "string"
+          },
+          "Amount": {
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Set of elements used to provide details of a charge for the payment initiation."
+      },
+      "Charges2": {
+        "required": [
+          "Amount",
+          "ChargeBearer",
+          "Type"
+        ],
+        "type": "object",
+        "properties": {
+          "ChargeBearer": {
+            "$ref": "#/components/schemas/OBChargeBearerType1Code"
+          },
+          "Type": {
+            "type": "string"
+          },
+          "Amount": {
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Set of elements used to provide details of a charge for the payment initiation."
+      },
+      "CreditorAccount": {
+        "required": [
+          "Identification",
+          "Name",
+          "SchemeName"
+        ],
+        "type": "object",
+        "properties": {
+          "SchemeName": {
+            "type": "string"
+          },
+          "Identification": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "Name": {
+            "maxLength": 350,
+            "minLength": 1,
+            "type": "string",
+            "description": "The account name is the name or names of the account owner(s) represented at an account level.\r\n<br />Note, the account name is not the product name or the nickname of the account.\r\n<br />OB: ASPSPs may carry out name validation for Confirmation of Payee, but it is not mandatory."
+          },
+          "SecondaryIdentification": {
+            "maxLength": 34,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreditorAccount2": {
+        "required": [
+          "Identification",
+          "Name",
+          "SchemeName"
+        ],
+        "type": "object",
+        "properties": {
+          "SchemeName": {
+            "type": "string"
+          },
+          "Identification": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "Name": {
+            "maxLength": 350,
+            "minLength": 1,
+            "type": "string",
+            "description": "The account name is the name or names of the account owner(s) represented at an account level.\r\n<br />Note, the account name is not the product name or the nickname of the account.\r\n<br />OB: ASPSPs may carry out name validation for Confirmation of Payee, but it is not mandatory."
+          },
+          "SecondaryIdentification": {
+            "maxLength": 34,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreditorAccount3": {
+        "required": [
+          "Identification",
+          "Name",
+          "SchemeName"
+        ],
+        "type": "object",
+        "properties": {
+          "SchemeName": {
+            "type": "string"
+          },
+          "Identification": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "Name": {
+            "maxLength": 350,
+            "minLength": 1,
+            "type": "string",
+            "description": "The account name is the name or names of the account owner(s) represented at an account level.\r\n<br />Note, the account name is not the product name or the nickname of the account.\r\n<br />OB: ASPSPs may carry out name validation for Confirmation of Payee, but it is not mandatory."
+          },
+          "SecondaryIdentification": {
+            "maxLength": 34,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreditorAccount4": {
+        "required": [
+          "Identification",
+          "Name",
+          "SchemeName"
+        ],
+        "type": "object",
+        "properties": {
+          "SchemeName": {
+            "type": "string"
+          },
+          "Identification": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "Name": {
+            "maxLength": 350,
+            "minLength": 1,
+            "type": "string",
+            "description": "The account name is the name or names of the account owner(s) represented at an account level.\r\n<br />Note, the account name is not the product name or the nickname of the account.\r\n<br />OB: ASPSPs may carry out name validation for Confirmation of Payee, but it is not mandatory."
+          },
+          "SecondaryIdentification": {
+            "maxLength": 34,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Data": {
+        "required": [
+          "ConsentId",
+          "Initiation"
+        ],
+        "type": "object",
+        "properties": {
+          "ConsentId": {
+            "type": "string",
+            "description": "OB: Unique identification as assigned by the ASPSP to uniquely identify the consent resource."
+          },
+          "Initiation": {
+            "$ref": "#/components/schemas/Initiation"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Data17": {
+        "type": "object",
+        "properties": {
+          "FundsAvailableResult": {
+            "$ref": "#/components/schemas/FundsAvailableResult"
+          },
+          "SupplementaryData": {
+            "$ref": "#/components/schemas/OBSupplementaryData1"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Data2": {
+        "required": [
+          "Initiation"
+        ],
+        "type": "object",
+        "properties": {
+          "ReadRefundAccount": {
+            "$ref": "#/components/schemas/Data2ReadRefundAccount"
+          },
+          "Initiation": {
+            "$ref": "#/components/schemas/Initiation2"
+          },
+          "Authorisation": {
+            "$ref": "#/components/schemas/Authorisation"
+          },
+          "SCASupportData": {
+            "$ref": "#/components/schemas/OBSCASupportData1"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Data2ReadRefundAccount": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Data3": {
+        "required": [
+          "ConsentId",
+          "CreationDateTime",
+          "Initiation",
+          "Status",
+          "StatusUpdateDateTime"
+        ],
+        "type": "object",
+        "properties": {
+          "ConsentId": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string",
+            "description": "OB: Unique identification as assigned by the ASPSP to uniquely identify the consent resource."
+          },
+          "CreationDateTime": {
+            "type": "string",
+            "description": "Date and time at which the resource was created.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "format": "date-time"
+          },
+          "Status": {
+            "$ref": "#/components/schemas/Data3Status"
+          },
+          "StatusUpdateDateTime": {
+            "type": "string",
+            "description": "Date and time at which the resource status was updated.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "format": "date-time"
+          },
+          "ReadRefundAccount": {
+            "$ref": "#/components/schemas/Data3ReadRefundAccount"
+          },
+          "CutOffDateTime": {
+            "type": "string",
+            "description": "Specified cut-off date and time for the payment consent.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpectedExecutionDateTime": {
+            "type": "string",
+            "description": "Expected execution date and time for the payment resource.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpectedSettlementDateTime": {
+            "type": "string",
+            "description": "Expected settlement date and time for the payment resource.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Charges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Charges"
+            },
+            "nullable": true
+          },
+          "Initiation": {
+            "$ref": "#/components/schemas/Initiation3"
+          },
+          "Authorisation": {
+            "$ref": "#/components/schemas/Authorisation2"
+          },
+          "SCASupportData": {
+            "$ref": "#/components/schemas/OBSCASupportData1"
+          },
+          "Debtor": {
+            "$ref": "#/components/schemas/OBCashAccountDebtor4"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Data30": {
+        "type": "object",
+        "properties": {
+          "PaymentStatus": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentStatus"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Data3ReadRefundAccount": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Data3Status": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Data4": {
+        "required": [
+          "ConsentId",
+          "CreationDateTime",
+          "DomesticPaymentId",
+          "Initiation",
+          "Status",
+          "StatusUpdateDateTime"
+        ],
+        "type": "object",
+        "properties": {
+          "DomesticPaymentId": {
+            "maxLength": 40,
+            "minLength": 1,
+            "type": "string",
+            "description": "OB: Unique identification as assigned by the ASPSP to uniquely identify the domestic payment resource."
+          },
+          "ConsentId": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string",
+            "description": "OB: Unique identification as assigned by the ASPSP to uniquely identify the consent resource."
+          },
+          "CreationDateTime": {
+            "type": "string",
+            "description": "Date and time at which the message was created.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "format": "date-time"
+          },
+          "Status": {
+            "$ref": "#/components/schemas/Data4Status"
+          },
+          "StatusUpdateDateTime": {
+            "type": "string",
+            "description": "Date and time at which the resource status was updated.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "format": "date-time"
+          },
+          "ExpectedExecutionDateTime": {
+            "type": "string",
+            "description": "Expected execution date and time for the payment resource.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpectedSettlementDateTime": {
+            "type": "string",
+            "description": "Expected settlement date and time for the payment resource.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Refund": {
+            "$ref": "#/components/schemas/Refund"
+          },
+          "Charges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Charges2"
+            },
+            "nullable": true
+          },
+          "Initiation": {
+            "$ref": "#/components/schemas/Initiation4"
+          },
+          "MultiAuthorisation": {
+            "$ref": "#/components/schemas/MultiAuthorisation"
+          },
+          "Debtor": {
+            "$ref": "#/components/schemas/OBCashAccountDebtor4"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Data4Status": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "DebtorAccount": {
+        "required": [
+          "Identification",
+          "SchemeName"
+        ],
+        "type": "object",
+        "properties": {
+          "SchemeName": {
+            "type": "string"
+          },
+          "Identification": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "Name": {
+            "maxLength": 350,
+            "minLength": 1,
+            "type": "string",
+            "description": "The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels.\r\n<br />Note, the account name is not the product name or the nickname of the account.",
+            "nullable": true
+          },
+          "SecondaryIdentification": {
+            "maxLength": 34,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DebtorAccount2": {
+        "required": [
+          "Identification",
+          "SchemeName"
+        ],
+        "type": "object",
+        "properties": {
+          "SchemeName": {
+            "type": "string"
+          },
+          "Identification": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "Name": {
+            "maxLength": 350,
+            "minLength": 1,
+            "type": "string",
+            "description": "The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels.\r\n<br />Note, the account name is not the product name or the nickname of the account.",
+            "nullable": true
+          },
+          "SecondaryIdentification": {
+            "maxLength": 34,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DebtorAccount3": {
+        "required": [
+          "Identification",
+          "SchemeName"
+        ],
+        "type": "object",
+        "properties": {
+          "SchemeName": {
+            "type": "string"
+          },
+          "Identification": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "Name": {
+            "maxLength": 350,
+            "minLength": 1,
+            "type": "string",
+            "description": "The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels.\r\n<br />Note, the account name is not the product name or the nickname of the account.",
+            "nullable": true
+          },
+          "SecondaryIdentification": {
+            "maxLength": 34,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DebtorAccount4": {
+        "required": [
+          "Identification",
+          "SchemeName"
+        ],
+        "type": "object",
+        "properties": {
+          "SchemeName": {
+            "type": "string"
+          },
+          "Identification": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "Name": {
+            "maxLength": 350,
+            "minLength": 1,
+            "type": "string",
+            "description": "The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels.\r\n<br />Note, the account name is not the product name or the nickname of the account.",
+            "nullable": true
+          },
+          "SecondaryIdentification": {
+            "maxLength": 34,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeliveryAddress": {
+        "required": [
+          "Country",
+          "TownName"
+        ],
+        "type": "object",
+        "properties": {
+          "AddressLine": {
+            "maxItems": 2,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "StreetName": {
+            "maxLength": 70,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "BuildingNumber": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "PostCode": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "TownName": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string"
+          },
+          "CountrySubDivision": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "Country": {
+            "pattern": "^[A-Z]{2,2}$",
+            "type": "string"
+          }
+        },
+        "additionalProperties": { }
       },
       "DomesticPaymentConsentAuthContext": {
         "required": [
@@ -399,21 +1118,29 @@
         "additionalProperties": false
       },
       "DomesticPaymentConsentAuthContextCreateResponse": {
+        "required": [
+          "AppSessionId",
+          "AuthUrl",
+          "Created",
+          "DomesticPaymentConsentId",
+          "Id",
+          "State"
+        ],
         "type": "object",
         "properties": {
           "AuthUrl": {
+            "minLength": 1,
             "type": "string",
-            "description": "Time-sensitive URL to enable end-user authentication via website or mobile app",
-            "nullable": true
+            "description": "Time-sensitive URL to enable end-user authentication via website or mobile app"
           },
           "AppSessionId": {
+            "minLength": 1,
             "type": "string",
-            "description": "App session ID that can be checked when processing post-auth redirect",
-            "nullable": true
+            "description": "App session ID that can be checked when processing post-auth redirect"
           },
           "State": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "DomesticPaymentConsentId": {
             "type": "string",
@@ -452,11 +1179,17 @@
         "description": "Response to create requests."
       },
       "DomesticPaymentConsentAuthContextReadResponse": {
+        "required": [
+          "Created",
+          "DomesticPaymentConsentId",
+          "Id",
+          "State"
+        ],
         "type": "object",
         "properties": {
           "State": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "DomesticPaymentConsentId": {
             "type": "string",
@@ -495,20 +1228,22 @@
         "description": "Response to Read requests."
       },
       "DomesticPaymentConsentCreateResponse": {
+        "required": [
+          "AuthContextModified",
+          "BankRegistrationId",
+          "Created",
+          "ExternalApiId",
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo",
+          "Id"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
             "$ref": "#/components/schemas/OBWriteDomesticConsentResponse5"
           },
-          "BankRegistrationId": {
-            "type": "string",
-            "description": "ID of associated BankRegistration object",
-            "format": "uuid"
-          },
-          "ExternalApiId": {
-            "type": "string",
-            "description": "External (bank) API ID. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks.",
-            "nullable": true
+          "ExternalApiResponseInfo": {
+            "$ref": "#/components/schemas/ExternalApiResponseInfo"
           },
           "ExternalApiUserId": {
             "type": "string",
@@ -522,6 +1257,16 @@
           "AuthContextModifiedBy": {
             "type": "string",
             "nullable": true
+          },
+          "BankRegistrationId": {
+            "type": "string",
+            "description": "ID of associated BankRegistration object",
+            "format": "uuid"
+          },
+          "ExternalApiId": {
+            "minLength": 1,
+            "type": "string",
+            "description": "External (bank) API ID. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks."
           },
           "Id": {
             "type": "string",
@@ -553,7 +1298,32 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response to DomesticPaymentConsent Create and Read requests"
+        "description": "Response to DomesticPaymentConsent Create and Read requests."
+      },
+      "DomesticPaymentConsentFundsConfirmationResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
+        "type": "object",
+        "properties": {
+          "ExternalApiResponse": {
+            "$ref": "#/components/schemas/OBWriteFundsConfirmationResponse1"
+          },
+          "ExternalApiResponseInfo": {
+            "$ref": "#/components/schemas/ExternalApiResponseInfo"
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response to DomesticPaymentConsent ReadFundsConfirmation requests"
       },
       "DomesticPaymentConsentRequest": {
         "required": [
@@ -561,9 +1331,6 @@
         ],
         "type": "object",
         "properties": {
-          "TemplateRequest": {
-            "$ref": "#/components/schemas/DomesticPaymentTemplateRequest"
-          },
           "ExternalApiRequest": {
             "$ref": "#/components/schemas/OBWriteDomesticConsent4"
           },
@@ -593,36 +1360,18 @@
         },
         "additionalProperties": false
       },
-      "DomesticPaymentRequest": {
-        "type": "object",
-        "properties": {
-          "BankProfile": {
-            "$ref": "#/components/schemas/BankProfileEnum"
-          },
-          "TemplateRequest": {
-            "$ref": "#/components/schemas/DomesticPaymentTemplateRequest"
-          },
-          "ExternalApiRequest": {
-            "$ref": "#/components/schemas/OBWriteDomestic2"
-          },
-          "Reference": {
-            "type": "string",
-            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
-            "nullable": true
-          },
-          "CreatedBy": {
-            "type": "string",
-            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "DomesticPaymentResponse": {
+      "DomesticPaymentPaymentDetailsResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
-            "$ref": "#/components/schemas/OBWriteDomesticResponse5"
+            "$ref": "#/components/schemas/OBWritePaymentDetailsResponse1"
+          },
+          "ExternalApiResponseInfo": {
+            "$ref": "#/components/schemas/ExternalApiResponseInfo"
           },
           "Warnings": {
             "type": "array",
@@ -634,40 +1383,54 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response to Read and Create requests"
+        "description": "Response to DomesticPayment ReadPaymentDetails requests."
       },
-      "DomesticPaymentTemplateParameters": {
-        "type": "object",
-        "properties": {
-          "InstructionIdentification": {
-            "type": "string",
-            "nullable": true
-          },
-          "EndToEndIdentification": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "DomesticPaymentTemplateRequest": {
-        "type": "object",
-        "properties": {
-          "Type": {
-            "$ref": "#/components/schemas/DomesticPaymentTemplateType"
-          },
-          "Parameters": {
-            "$ref": "#/components/schemas/DomesticPaymentTemplateParameters"
-          }
-        },
-        "additionalProperties": false
-      },
-      "DomesticPaymentTemplateType": {
-        "enum": [
-          "PersonToPersonExample",
-          "PersonToMerchantExample"
+      "DomesticPaymentRequest": {
+        "required": [
+          "DomesticPaymentConsentId",
+          "ExternalApiRequest"
         ],
-        "type": "string"
+        "type": "object",
+        "properties": {
+          "DomesticPaymentConsentId": {
+            "type": "string",
+            "description": "Specifies Domestic Payment Consent to use when creating payment.\r\nIf domestic payment consent has been successfully authorised, a token will be associated with the consent which can\r\nbe used to create the payment.",
+            "format": "uuid"
+          },
+          "ExternalApiRequest": {
+            "$ref": "#/components/schemas/OBWriteDomestic2"
+          },
+          "ModifiedBy": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DomesticPaymentResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
+        "type": "object",
+        "properties": {
+          "ExternalApiResponse": {
+            "$ref": "#/components/schemas/OBWriteDomesticResponse5"
+          },
+          "ExternalApiResponseInfo": {
+            "$ref": "#/components/schemas/ExternalApiResponseInfo"
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response to DomesticPayment Read and Create requests."
       },
       "ExternalApiConsent": {
         "type": "object",
@@ -683,32 +1446,322 @@
         },
         "additionalProperties": false
       },
+      "ExternalApiResponseInfo": {
+        "required": [
+          "XFapiInteractionId"
+        ],
+        "type": "object",
+        "properties": {
+          "XFapiInteractionId": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundsAvailableResult": {
+        "required": [
+          "FundsAvailable",
+          "FundsAvailableDateTime"
+        ],
+        "type": "object",
+        "properties": {
+          "FundsAvailableDateTime": {
+            "type": "string",
+            "description": "Date and time at which the funds availability check was generated.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "format": "date-time"
+          },
+          "FundsAvailable": {
+            "type": "boolean",
+            "description": "Flag to indicate the availability of funds given the Amount in the consent request."
+          }
+        },
+        "additionalProperties": false
+      },
+      "Initiation": {
+        "required": [
+          "CreditorAccount",
+          "EndToEndIdentification",
+          "InstructedAmount",
+          "InstructionIdentification"
+        ],
+        "type": "object",
+        "properties": {
+          "InstructionIdentification": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identification as assigned by an instructing party for an instructed party to unambiguously identify the instruction.\r\n<br />Usage: the  instruction identification is a point to point reference that can be used between the instructing party and the instructed party to refer to the individual instruction. It can be included in several messages related to the instruction."
+          },
+          "EndToEndIdentification": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identification assigned by the initiating party to unambiguously identify the transaction. This identification is passed on, unchanged, throughout the entire end-to-end chain.\r\n<br />Usage: The end-to-end identification can be used for reconciliation or to link tasks relating to the transaction. It can be included in several messages related to the transaction.\r\n<br />OB: The Faster Payments Scheme can only access 31 characters for the EndToEndIdentification field."
+          },
+          "LocalInstrument": {
+            "type": "string",
+            "nullable": true
+          },
+          "InstructedAmount": {
+            "$ref": "#/components/schemas/InstructedAmount"
+          },
+          "DebtorAccount": {
+            "$ref": "#/components/schemas/DebtorAccount"
+          },
+          "CreditorAccount": {
+            "$ref": "#/components/schemas/CreditorAccount"
+          },
+          "CreditorPostalAddress": {
+            "$ref": "#/components/schemas/OBPostalAddress6"
+          },
+          "RemittanceInformation": {
+            "$ref": "#/components/schemas/RemittanceInformation"
+          },
+          "SupplementaryData": {
+            "$ref": "#/components/schemas/OBSupplementaryData1"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Initiation2": {
+        "required": [
+          "CreditorAccount",
+          "EndToEndIdentification",
+          "InstructedAmount",
+          "InstructionIdentification"
+        ],
+        "type": "object",
+        "properties": {
+          "InstructionIdentification": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identification as assigned by an instructing party for an instructed party to unambiguously identify the instruction.\r\n<br />Usage: the  instruction identification is a point to point reference that can be used between the instructing party and the instructed party to refer to the individual instruction. It can be included in several messages related to the instruction."
+          },
+          "EndToEndIdentification": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identification assigned by the initiating party to unambiguously identify the transaction. This identification is passed on, unchanged, throughout the entire end-to-end chain.\r\n<br />Usage: The end-to-end identification can be used for reconciliation or to link tasks relating to the transaction. It can be included in several messages related to the transaction.\r\n<br />OB: The Faster Payments Scheme can only access 31 characters for the EndToEndIdentification field."
+          },
+          "LocalInstrument": {
+            "type": "string",
+            "nullable": true
+          },
+          "InstructedAmount": {
+            "$ref": "#/components/schemas/InstructedAmount2"
+          },
+          "DebtorAccount": {
+            "$ref": "#/components/schemas/DebtorAccount2"
+          },
+          "CreditorAccount": {
+            "$ref": "#/components/schemas/CreditorAccount2"
+          },
+          "CreditorPostalAddress": {
+            "$ref": "#/components/schemas/OBPostalAddress6"
+          },
+          "RemittanceInformation": {
+            "$ref": "#/components/schemas/RemittanceInformation2"
+          },
+          "SupplementaryData": {
+            "$ref": "#/components/schemas/OBSupplementaryData1"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Initiation3": {
+        "required": [
+          "CreditorAccount",
+          "EndToEndIdentification",
+          "InstructedAmount",
+          "InstructionIdentification"
+        ],
+        "type": "object",
+        "properties": {
+          "InstructionIdentification": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identification as assigned by an instructing party for an instructed party to unambiguously identify the instruction.\r\n<br />Usage: the  instruction identification is a point to point reference that can be used between the instructing party and the instructed party to refer to the individual instruction. It can be included in several messages related to the instruction."
+          },
+          "EndToEndIdentification": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identification assigned by the initiating party to unambiguously identify the transaction. This identification is passed on, unchanged, throughout the entire end-to-end chain.\r\n<br />Usage: The end-to-end identification can be used for reconciliation or to link tasks relating to the transaction. It can be included in several messages related to the transaction.\r\n<br />OB: The Faster Payments Scheme can only access 31 characters for the EndToEndIdentification field."
+          },
+          "LocalInstrument": {
+            "type": "string",
+            "nullable": true
+          },
+          "InstructedAmount": {
+            "$ref": "#/components/schemas/InstructedAmount3"
+          },
+          "DebtorAccount": {
+            "$ref": "#/components/schemas/DebtorAccount3"
+          },
+          "CreditorAccount": {
+            "$ref": "#/components/schemas/CreditorAccount3"
+          },
+          "CreditorPostalAddress": {
+            "$ref": "#/components/schemas/OBPostalAddress6"
+          },
+          "RemittanceInformation": {
+            "$ref": "#/components/schemas/RemittanceInformation3"
+          },
+          "SupplementaryData": {
+            "$ref": "#/components/schemas/OBSupplementaryData1"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Initiation4": {
+        "required": [
+          "CreditorAccount",
+          "EndToEndIdentification",
+          "InstructedAmount",
+          "InstructionIdentification"
+        ],
+        "type": "object",
+        "properties": {
+          "InstructionIdentification": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identification as assigned by an instructing party for an instructed party to unambiguously identify the instruction.\r\n<br />Usage: the  instruction identification is a point to point reference that can be used between the instructing party and the instructed party to refer to the individual instruction. It can be included in several messages related to the instruction."
+          },
+          "EndToEndIdentification": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identification assigned by the initiating party to unambiguously identify the transaction. This identification is passed on, unchanged, throughout the entire end-to-end chain.\r\n<br />Usage: The end-to-end identification can be used for reconciliation or to link tasks relating to the transaction. It can be included in several messages related to the transaction.\r\n<br />OB: The Faster Payments Scheme can only access 31 characters for the EndToEndIdentification field."
+          },
+          "LocalInstrument": {
+            "type": "string",
+            "nullable": true
+          },
+          "InstructedAmount": {
+            "$ref": "#/components/schemas/InstructedAmount4"
+          },
+          "DebtorAccount": {
+            "$ref": "#/components/schemas/DebtorAccount4"
+          },
+          "CreditorAccount": {
+            "$ref": "#/components/schemas/CreditorAccount4"
+          },
+          "CreditorPostalAddress": {
+            "$ref": "#/components/schemas/OBPostalAddress6"
+          },
+          "RemittanceInformation": {
+            "$ref": "#/components/schemas/RemittanceInformation4"
+          },
+          "SupplementaryData": {
+            "$ref": "#/components/schemas/OBSupplementaryData1"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InstructedAmount": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
+          },
+          "Currency": {
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InstructedAmount2": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
+          },
+          "Currency": {
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InstructedAmount3": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
+          },
+          "Currency": {
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InstructedAmount4": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
+          },
+          "Currency": {
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "Links": {
+        "required": [
+          "Self"
+        ],
         "type": "object",
         "properties": {
           "Self": {
             "type": "string",
-            "description": "",
-            "nullable": true
+            "format": "uri"
           },
           "First": {
             "type": "string",
-            "description": "",
+            "format": "uri",
             "nullable": true
           },
           "Prev": {
             "type": "string",
-            "description": "",
+            "format": "uri",
             "nullable": true
           },
           "Next": {
             "type": "string",
-            "description": "",
+            "format": "uri",
             "nullable": true
           },
           "Last": {
             "type": "string",
-            "description": "",
+            "format": "uri",
             "nullable": true
           }
         },
@@ -720,1234 +1773,634 @@
         "properties": {
           "TotalPages": {
             "type": "integer",
-            "description": "",
             "format": "int32",
             "nullable": true
           },
           "FirstAvailableDateTime": {
             "type": "string",
-            "description": "",
             "format": "date-time",
             "nullable": true
           },
           "LastAvailableDateTime": {
             "type": "string",
-            "description": "",
             "format": "date-time",
             "nullable": true
           }
         },
         "additionalProperties": false,
-        "description": "MetaData"
+        "description": "Meta Data relevant to the payload"
       },
-      "OBActiveOrHistoricCurrencyAndAmount": {
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Currency": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Amount of money associated with the charge type."
-      },
-      "OBAddressTypeCodeEnum": {
-        "enum": [
-          "Business",
-          "Correspondence",
-          "DeliveryTo",
-          "MailTo",
-          "POBox",
-          "Postal",
-          "Residential",
-          "Statement"
+      "MultiAuthorisation": {
+        "required": [
+          "Status"
         ],
-        "type": "string",
-        "description": "Defines values for OBAddressTypeCodeEnum."
-      },
-      "OBChargeBearerType1CodeEnum": {
-        "enum": [
-          "BorneByCreditor",
-          "BorneByDebtor",
-          "FollowingServiceLevel",
-          "Shared"
-        ],
-        "type": "string",
-        "description": "Defines values for OBChargeBearerType1CodeEnum."
-      },
-      "OBDebtorIdentification1": {
-        "type": "object",
-        "properties": {
-          "Name": {
-            "type": "string",
-            "description": "Gets or sets the account name is the name or names of the account\r\nowner(s) represented at an account level, as displayed by the\r\nASPSP's online channels. Note, the account name is not the product\r\nname or the nickname of the account.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Set of elements used to identify a person or an organisation."
-      },
-      "OBPostalAddress6": {
-        "type": "object",
-        "properties": {
-          "AddressType": {
-            "$ref": "#/components/schemas/OBAddressTypeCodeEnum"
-          },
-          "Department": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "SubDepartment": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "StreetName": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "BuildingNumber": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "PostCode": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "TownName": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "CountrySubDivision": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Country": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "AddressLine": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Information that locates and identifies a specific address, as defined\r\nby postal services."
-      },
-      "OBRisk1": {
-        "type": "object",
-        "properties": {
-          "PaymentContextCode": {
-            "$ref": "#/components/schemas/OBRisk1PaymentContextCodeEnum"
-          },
-          "MerchantCategoryCode": {
-            "type": "string",
-            "description": "Gets or sets category code conform to ISO 18245, related to the\r\ntype of services or goods the merchant provides for the\r\ntransaction.",
-            "nullable": true
-          },
-          "MerchantCustomerIdentification": {
-            "type": "string",
-            "description": "Gets or sets the unique customer identifier of the PSU with the\r\nmerchant.",
-            "nullable": true
-          },
-          "DeliveryAddress": {
-            "$ref": "#/components/schemas/OBRisk1DeliveryAddress"
-          }
-        },
-        "additionalProperties": false,
-        "description": "The Risk section is sent by the initiating party to the ASPSP. It is\r\nused to specify additional details for risk scoring for Payments."
-      },
-      "OBRisk1DeliveryAddress": {
-        "type": "object",
-        "properties": {
-          "AddressLine": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "",
-            "nullable": true
-          },
-          "StreetName": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "BuildingNumber": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "PostCode": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "TownName": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "CountrySubDivision": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Country": {
-            "type": "string",
-            "description": "Gets or sets nation with its own government, occupying a particular\r\nterritory.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Information that locates and identifies a specific address, as defined\r\nby postal services or in free format text."
-      },
-      "OBRisk1PaymentContextCodeEnum": {
-        "enum": [
-          "BillPayment",
-          "EcommerceGoods",
-          "EcommerceServices",
-          "Other",
-          "PartyToParty"
-        ],
-        "type": "string",
-        "description": "Defines values for OBRisk1PaymentContextCodeEnum."
-      },
-      "OBWriteDomestic2": {
-        "type": "object",
-        "properties": {
-          "Data": {
-            "$ref": "#/components/schemas/OBWriteDomestic2Data"
-          },
-          "Risk": {
-            "$ref": "#/components/schemas/OBRisk1"
-          }
-        },
-        "additionalProperties": false
-      },
-      "OBWriteDomestic2Data": {
-        "type": "object",
-        "properties": {
-          "ConsentId": {
-            "type": "string",
-            "description": "Gets or sets OB: Unique identification as assigned by the ASPSP to\r\nuniquely identify the consent resource.",
-            "nullable": true
-          },
-          "Initiation": {
-            "$ref": "#/components/schemas/OBWriteDomestic2DataInitiation"
-          }
-        },
-        "additionalProperties": false
-      },
-      "OBWriteDomestic2DataInitiation": {
-        "type": "object",
-        "properties": {
-          "InstructionIdentification": {
-            "type": "string",
-            "description": "Gets or sets unique identification as assigned by an instructing\r\nparty for an instructed party to unambiguously identify the\r\ninstruction.\r\nUsage: the  instruction identification is a point to point\r\nreference that can be used between the instructing party and the\r\ninstructed party to refer to the individual instruction. It can be\r\nincluded in several messages related to the instruction.",
-            "nullable": true
-          },
-          "EndToEndIdentification": {
-            "type": "string",
-            "description": "Gets or sets unique identification assigned by the initiating party\r\nto unambiguously identify the transaction. This identification is\r\npassed on, unchanged, throughout the entire end-to-end chain.\r\nUsage: The end-to-end identification can be used for reconciliation\r\nor to link tasks relating to the transaction. It can be included in\r\nseveral messages related to the transaction.\r\nOB: The Faster Payments Scheme can only access 31 characters for\r\nthe EndToEndIdentification field.",
-            "nullable": true
-          },
-          "LocalInstrument": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "InstructedAmount": {
-            "$ref": "#/components/schemas/OBWriteDomestic2DataInitiationInstructedAmount"
-          },
-          "DebtorAccount": {
-            "$ref": "#/components/schemas/OBWriteDomestic2DataInitiationDebtorAccount"
-          },
-          "CreditorAccount": {
-            "$ref": "#/components/schemas/OBWriteDomestic2DataInitiationCreditorAccount"
-          },
-          "CreditorPostalAddress": {
-            "$ref": "#/components/schemas/OBPostalAddress6"
-          },
-          "RemittanceInformation": {
-            "$ref": "#/components/schemas/OBWriteDomestic2DataInitiationRemittanceInformation"
-          },
-          "SupplementaryData": {
-            "type": "object",
-            "additionalProperties": { },
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "The Initiation payload is sent by the initiating party to the ASPSP. It\r\nis used to request movement of funds from the debtor account to a\r\ncreditor for a single domestic payment."
-      },
-      "OBWriteDomestic2DataInitiationCreditorAccount": {
-        "type": "object",
-        "properties": {
-          "SchemeName": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Identification": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Name": {
-            "type": "string",
-            "description": "Gets or sets the account name is the name or names of the account\r\nowner(s) represented at an account level.\r\nNote, the account name is not the product name or the nickname of\r\nthe account.\r\nOB: ASPSPs may carry out name validation for Confirmation of Payee,\r\nbut it is not mandatory.",
-            "nullable": true
-          },
-          "SecondaryIdentification": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Unambiguous identification of the account of the creditor to which a\r\ncredit entry will be posted as a result of the payment transaction."
-      },
-      "OBWriteDomestic2DataInitiationDebtorAccount": {
-        "type": "object",
-        "properties": {
-          "SchemeName": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Identification": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Name": {
-            "type": "string",
-            "description": "Gets or sets the account name is the name or names of the account\r\nowner(s) represented at an account level, as displayed by the\r\nASPSP's online channels.\r\nNote, the account name is not the product name or the nickname of\r\nthe account.",
-            "nullable": true
-          },
-          "SecondaryIdentification": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Unambiguous identification of the account of the debtor to which a\r\ndebit entry will be made as a result of the transaction."
-      },
-      "OBWriteDomestic2DataInitiationInstructedAmount": {
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Currency": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Amount of money to be moved between the debtor and creditor, before\r\ndeduction of charges, expressed in the currency as ordered by the\r\ninitiating party.\r\nUsage: This amount has to be transported unchanged through the\r\ntransaction chain."
-      },
-      "OBWriteDomestic2DataInitiationRemittanceInformation": {
-        "type": "object",
-        "properties": {
-          "Unstructured": {
-            "type": "string",
-            "description": "Gets or sets information supplied to enable the\r\nmatching/reconciliation of an entry with the items that the payment\r\nis intended to settle, such as commercial invoices in an accounts'\r\nreceivable system, in an unstructured form.",
-            "nullable": true
-          },
-          "Reference": {
-            "type": "string",
-            "description": "Gets or sets unique reference, as assigned by the creditor, to\r\nunambiguously refer to the payment transaction.\r\nUsage: If available, the initiating party should provide this\r\nreference in the structured remittance information, to enable\r\nreconciliation by the creditor upon receipt of the amount of money.\r\nIf the business context requires the use of a creditor reference or\r\na payment remit identification, and only one identifier can be\r\npassed through the end-to-end chain, the creditor's reference or\r\npayment remittance identification should be quoted in the\r\nend-to-end transaction identification.\r\nOB: The Faster Payments Scheme can only accept 18 characters for\r\nthe ReferenceInformation field - which is where this ISO field will\r\nbe mapped.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Information supplied to enable the matching of an entry with the items\r\nthat the transfer is intended to settle, such as commercial invoices in\r\nan accounts' receivable system."
-      },
-      "OBWriteDomesticConsent4": {
-        "type": "object",
-        "properties": {
-          "Data": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsent4Data"
-          },
-          "Risk": {
-            "$ref": "#/components/schemas/OBRisk1"
-          }
-        },
-        "additionalProperties": false
-      },
-      "OBWriteDomesticConsent4Data": {
-        "type": "object",
-        "properties": {
-          "ReadRefundAccount": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsent4DataReadRefundAccountEnum"
-          },
-          "Initiation": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsent4DataInitiation"
-          },
-          "Authorisation": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsent4DataAuthorisation"
-          },
-          "SCASupportData": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsent4DataSCASupportData"
-          }
-        },
-        "additionalProperties": false
-      },
-      "OBWriteDomesticConsent4DataAuthorisation": {
-        "type": "object",
-        "properties": {
-          "AuthorisationType": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsent4DataAuthorisationAuthorisationTypeEnum"
-          },
-          "CompletionDateTime": {
-            "type": "string",
-            "description": "Gets or sets date and time at which the requested authorisation\r\nflow must be completed.All dates in the JSON payloads are\r\nrepresented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An\r\nexample is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "The authorisation type request from the TPP."
-      },
-      "OBWriteDomesticConsent4DataAuthorisationAuthorisationTypeEnum": {
-        "enum": [
-          "Any",
-          "Single"
-        ],
-        "type": "string",
-        "description": "Defines values for\r\nOBWriteDomesticConsent4DataAuthorisationAuthorisationTypeEnum."
-      },
-      "OBWriteDomesticConsent4DataInitiation": {
-        "type": "object",
-        "properties": {
-          "InstructionIdentification": {
-            "type": "string",
-            "description": "Gets or sets unique identification as assigned by an instructing\r\nparty for an instructed party to unambiguously identify the\r\ninstruction.\r\nUsage: the  instruction identification is a point to point\r\nreference that can be used between the instructing party and the\r\ninstructed party to refer to the individual instruction. It can be\r\nincluded in several messages related to the instruction.",
-            "nullable": true
-          },
-          "EndToEndIdentification": {
-            "type": "string",
-            "description": "Gets or sets unique identification assigned by the initiating party\r\nto unambiguously identify the transaction. This identification is\r\npassed on, unchanged, throughout the entire end-to-end chain.\r\nUsage: The end-to-end identification can be used for reconciliation\r\nor to link tasks relating to the transaction. It can be included in\r\nseveral messages related to the transaction.\r\nOB: The Faster Payments Scheme can only access 31 characters for\r\nthe EndToEndIdentification field.",
-            "nullable": true
-          },
-          "LocalInstrument": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "InstructedAmount": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsent4DataInitiationInstructedAmount"
-          },
-          "DebtorAccount": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsent4DataInitiationDebtorAccount"
-          },
-          "CreditorAccount": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsent4DataInitiationCreditorAccount"
-          },
-          "CreditorPostalAddress": {
-            "$ref": "#/components/schemas/OBPostalAddress6"
-          },
-          "RemittanceInformation": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsent4DataInitiationRemittanceInformation"
-          },
-          "SupplementaryData": {
-            "type": "object",
-            "additionalProperties": { },
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "The Initiation payload is sent by the initiating party to the ASPSP. It\r\nis used to request movement of funds from the debtor account to a\r\ncreditor for a single domestic payment."
-      },
-      "OBWriteDomesticConsent4DataInitiationCreditorAccount": {
-        "type": "object",
-        "properties": {
-          "SchemeName": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Identification": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Name": {
-            "type": "string",
-            "description": "Gets or sets the account name is the name or names of the account\r\nowner(s) represented at an account level.\r\nNote, the account name is not the product name or the nickname of\r\nthe account.\r\nOB: ASPSPs may carry out name validation for Confirmation of Payee,\r\nbut it is not mandatory.",
-            "nullable": true
-          },
-          "SecondaryIdentification": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Unambiguous identification of the account of the creditor to which a\r\ncredit entry will be posted as a result of the payment transaction."
-      },
-      "OBWriteDomesticConsent4DataInitiationDebtorAccount": {
-        "type": "object",
-        "properties": {
-          "SchemeName": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Identification": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Name": {
-            "type": "string",
-            "description": "Gets or sets the account name is the name or names of the account\r\nowner(s) represented at an account level, as displayed by the\r\nASPSP's online channels.\r\nNote, the account name is not the product name or the nickname of\r\nthe account.",
-            "nullable": true
-          },
-          "SecondaryIdentification": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Unambiguous identification of the account of the debtor to which a\r\ndebit entry will be made as a result of the transaction."
-      },
-      "OBWriteDomesticConsent4DataInitiationInstructedAmount": {
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Currency": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Amount of money to be moved between the debtor and creditor, before\r\ndeduction of charges, expressed in the currency as ordered by the\r\ninitiating party.\r\nUsage: This amount has to be transported unchanged through the\r\ntransaction chain."
-      },
-      "OBWriteDomesticConsent4DataInitiationRemittanceInformation": {
-        "type": "object",
-        "properties": {
-          "Unstructured": {
-            "type": "string",
-            "description": "Gets or sets information supplied to enable the\r\nmatching/reconciliation of an entry with the items that the payment\r\nis intended to settle, such as commercial invoices in an accounts'\r\nreceivable system, in an unstructured form.",
-            "nullable": true
-          },
-          "Reference": {
-            "type": "string",
-            "description": "Gets or sets unique reference, as assigned by the creditor, to\r\nunambiguously refer to the payment transaction.\r\nUsage: If available, the initiating party should provide this\r\nreference in the structured remittance information, to enable\r\nreconciliation by the creditor upon receipt of the amount of money.\r\nIf the business context requires the use of a creditor reference or\r\na payment remit identification, and only one identifier can be\r\npassed through the end-to-end chain, the creditor's reference or\r\npayment remittance identification should be quoted in the\r\nend-to-end transaction identification.\r\nOB: The Faster Payments Scheme can only accept 18 characters for\r\nthe ReferenceInformation field - which is where this ISO field will\r\nbe mapped.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Information supplied to enable the matching of an entry with the items\r\nthat the transfer is intended to settle, such as commercial invoices in\r\nan accounts' receivable system."
-      },
-      "OBWriteDomesticConsent4DataReadRefundAccountEnum": {
-        "enum": [
-          "No",
-          "Yes"
-        ],
-        "type": "string",
-        "description": "Defines values for OBWriteDomesticConsent4DataReadRefundAccountEnum."
-      },
-      "OBWriteDomesticConsent4DataSCASupportData": {
-        "type": "object",
-        "properties": {
-          "RequestedSCAExemptionType": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsent4DataSCASupportDataRequestedSCAExemptionTypeEnum"
-          },
-          "AppliedAuthenticationApproach": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsent4DataSCASupportDataAppliedAuthenticationApproachEnum"
-          },
-          "ReferencePaymentOrderId": {
-            "type": "string",
-            "description": "Gets or sets specifies a character string with a maximum length of\r\n140 characters.\r\nUsage: If the payment is recurring then the transaction identifier\r\nof the previous payment occurrence so that the ASPSP can verify\r\nthat the PISP, amount and the payee are the same as the previous\r\noccurrence.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Supporting Data provided by TPP, when requesting SCA Exemption."
-      },
-      "OBWriteDomesticConsent4DataSCASupportDataAppliedAuthenticationApproachEnum": {
-        "enum": [
-          "CA",
-          "SCA"
-        ],
-        "type": "string",
-        "description": "Defines values for\r\nOBWriteDomesticConsent4DataSCASupportDataAppliedAuthenticationApproachEnum."
-      },
-      "OBWriteDomesticConsent4DataSCASupportDataRequestedSCAExemptionTypeEnum": {
-        "enum": [
-          "BillPayment",
-          "ContactlessTravel",
-          "EcommerceGoods",
-          "EcommerceServices",
-          "Kiosk",
-          "Parking",
-          "PartyToParty"
-        ],
-        "type": "string",
-        "description": "Defines values for\r\nOBWriteDomesticConsent4DataSCASupportDataRequestedSCAExemptionTypeEnum."
-      },
-      "OBWriteDomesticConsentResponse5": {
-        "type": "object",
-        "properties": {
-          "Data": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsentResponse5Data"
-          },
-          "Risk": {
-            "$ref": "#/components/schemas/OBRisk1"
-          },
-          "Links": {
-            "$ref": "#/components/schemas/Links"
-          },
-          "Meta": {
-            "$ref": "#/components/schemas/Meta"
-          }
-        },
-        "additionalProperties": false
-      },
-      "OBWriteDomesticConsentResponse5Data": {
-        "type": "object",
-        "properties": {
-          "ConsentId": {
-            "type": "string",
-            "description": "Gets or sets OB: Unique identification as assigned by the ASPSP to\r\nuniquely identify the consent resource.",
-            "nullable": true
-          },
-          "CreationDateTime": {
-            "type": "string",
-            "description": "Gets or sets date and time at which the resource was created.All\r\ndates in the JSON payloads are represented in ISO 8601 date-time\r\nformat.\r\nAll date-time fields in responses must include the timezone. An\r\nexample is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time"
-          },
-          "Status": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsentResponse5DataStatusEnum"
-          },
-          "StatusUpdateDateTime": {
-            "type": "string",
-            "description": "Gets or sets date and time at which the resource status was\r\nupdated.All dates in the JSON payloads are represented in ISO 8601\r\ndate-time format.\r\nAll date-time fields in responses must include the timezone. An\r\nexample is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time"
-          },
-          "ReadRefundAccount": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsentResponse5DataReadRefundAccountEnum"
-          },
-          "CutOffDateTime": {
-            "type": "string",
-            "description": "Gets or sets specified cut-off date and time for the payment\r\nconsent.All dates in the JSON payloads are represented in ISO 8601\r\ndate-time format.\r\nAll date-time fields in responses must include the timezone. An\r\nexample is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time",
-            "nullable": true
-          },
-          "ExpectedExecutionDateTime": {
-            "type": "string",
-            "description": "Gets or sets expected execution date and time for the payment\r\nresource.All dates in the JSON payloads are represented in ISO 8601\r\ndate-time format.\r\nAll date-time fields in responses must include the timezone. An\r\nexample is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time",
-            "nullable": true
-          },
-          "ExpectedSettlementDateTime": {
-            "type": "string",
-            "description": "Gets or sets expected settlement date and time for the payment\r\nresource.All dates in the JSON payloads are represented in ISO 8601\r\ndate-time format.\r\nAll date-time fields in responses must include the timezone. An\r\nexample is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time",
-            "nullable": true
-          },
-          "Charges": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OBWriteDomesticConsentResponse5DataChargesItem"
-            },
-            "description": "",
-            "nullable": true
-          },
-          "Initiation": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsentResponse5DataInitiation"
-          },
-          "Authorisation": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsentResponse5DataAuthorisation"
-          },
-          "SCASupportData": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsentResponse5DataSCASupportData"
-          },
-          "Debtor": {
-            "$ref": "#/components/schemas/OBDebtorIdentification1"
-          }
-        },
-        "additionalProperties": false
-      },
-      "OBWriteDomesticConsentResponse5DataAuthorisation": {
-        "type": "object",
-        "properties": {
-          "AuthorisationType": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsentResponse5DataAuthorisationAuthorisationTypeEnum"
-          },
-          "CompletionDateTime": {
-            "type": "string",
-            "description": "Gets or sets date and time at which the requested authorisation\r\nflow must be completed.All dates in the JSON payloads are\r\nrepresented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An\r\nexample is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "The authorisation type request from the TPP."
-      },
-      "OBWriteDomesticConsentResponse5DataAuthorisationAuthorisationTypeEnum": {
-        "enum": [
-          "Any",
-          "Single"
-        ],
-        "type": "string",
-        "description": "Defines values for\r\nOBWriteDomesticConsentResponse5DataAuthorisationAuthorisationTypeEnum."
-      },
-      "OBWriteDomesticConsentResponse5DataChargesItem": {
-        "type": "object",
-        "properties": {
-          "ChargeBearer": {
-            "$ref": "#/components/schemas/OBChargeBearerType1CodeEnum"
-          },
-          "Type": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Amount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Set of elements used to provide details of a charge for the payment\r\ninitiation."
-      },
-      "OBWriteDomesticConsentResponse5DataInitiation": {
-        "type": "object",
-        "properties": {
-          "InstructionIdentification": {
-            "type": "string",
-            "description": "Gets or sets unique identification as assigned by an instructing\r\nparty for an instructed party to unambiguously identify the\r\ninstruction.\r\nUsage: the  instruction identification is a point to point\r\nreference that can be used between the instructing party and the\r\ninstructed party to refer to the individual instruction. It can be\r\nincluded in several messages related to the instruction.",
-            "nullable": true
-          },
-          "EndToEndIdentification": {
-            "type": "string",
-            "description": "Gets or sets unique identification assigned by the initiating party\r\nto unambiguously identify the transaction. This identification is\r\npassed on, unchanged, throughout the entire end-to-end chain.\r\nUsage: The end-to-end identification can be used for reconciliation\r\nor to link tasks relating to the transaction. It can be included in\r\nseveral messages related to the transaction.\r\nOB: The Faster Payments Scheme can only access 31 characters for\r\nthe EndToEndIdentification field.",
-            "nullable": true
-          },
-          "LocalInstrument": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "InstructedAmount": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsentResponse5DataInitiationInstructedAmount"
-          },
-          "DebtorAccount": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsentResponse5DataInitiationDebtorAccount"
-          },
-          "CreditorAccount": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsentResponse5DataInitiationCreditorAccount"
-          },
-          "CreditorPostalAddress": {
-            "$ref": "#/components/schemas/OBPostalAddress6"
-          },
-          "RemittanceInformation": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsentResponse5DataInitiationRemittanceInformation"
-          },
-          "SupplementaryData": {
-            "type": "object",
-            "additionalProperties": { },
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "The Initiation payload is sent by the initiating party to the ASPSP. It\r\nis used to request movement of funds from the debtor account to a\r\ncreditor for a single domestic payment."
-      },
-      "OBWriteDomesticConsentResponse5DataInitiationCreditorAccount": {
-        "type": "object",
-        "properties": {
-          "SchemeName": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Identification": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Name": {
-            "type": "string",
-            "description": "Gets or sets the account name is the name or names of the account\r\nowner(s) represented at an account level.\r\nNote, the account name is not the product name or the nickname of\r\nthe account.\r\nOB: ASPSPs may carry out name validation for Confirmation of Payee,\r\nbut it is not mandatory.",
-            "nullable": true
-          },
-          "SecondaryIdentification": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Unambiguous identification of the account of the creditor to which a\r\ncredit entry will be posted as a result of the payment transaction."
-      },
-      "OBWriteDomesticConsentResponse5DataInitiationDebtorAccount": {
-        "type": "object",
-        "properties": {
-          "SchemeName": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Identification": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Name": {
-            "type": "string",
-            "description": "Gets or sets the account name is the name or names of the account\r\nowner(s) represented at an account level, as displayed by the\r\nASPSP's online channels.\r\nNote, the account name is not the product name or the nickname of\r\nthe account.",
-            "nullable": true
-          },
-          "SecondaryIdentification": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Unambiguous identification of the account of the debtor to which a\r\ndebit entry will be made as a result of the transaction."
-      },
-      "OBWriteDomesticConsentResponse5DataInitiationInstructedAmount": {
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Currency": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Amount of money to be moved between the debtor and creditor, before\r\ndeduction of charges, expressed in the currency as ordered by the\r\ninitiating party.\r\nUsage: This amount has to be transported unchanged through the\r\ntransaction chain."
-      },
-      "OBWriteDomesticConsentResponse5DataInitiationRemittanceInformation": {
-        "type": "object",
-        "properties": {
-          "Unstructured": {
-            "type": "string",
-            "description": "Gets or sets information supplied to enable the\r\nmatching/reconciliation of an entry with the items that the payment\r\nis intended to settle, such as commercial invoices in an accounts'\r\nreceivable system, in an unstructured form.",
-            "nullable": true
-          },
-          "Reference": {
-            "type": "string",
-            "description": "Gets or sets unique reference, as assigned by the creditor, to\r\nunambiguously refer to the payment transaction.\r\nUsage: If available, the initiating party should provide this\r\nreference in the structured remittance information, to enable\r\nreconciliation by the creditor upon receipt of the amount of money.\r\nIf the business context requires the use of a creditor reference or\r\na payment remit identification, and only one identifier can be\r\npassed through the end-to-end chain, the creditor's reference or\r\npayment remittance identification should be quoted in the\r\nend-to-end transaction identification.\r\nOB: The Faster Payments Scheme can only accept 18 characters for\r\nthe ReferenceInformation field - which is where this ISO field will\r\nbe mapped.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Information supplied to enable the matching of an entry with the items\r\nthat the transfer is intended to settle, such as commercial invoices in\r\nan accounts' receivable system."
-      },
-      "OBWriteDomesticConsentResponse5DataReadRefundAccountEnum": {
-        "enum": [
-          "No",
-          "Yes"
-        ],
-        "type": "string",
-        "description": "Defines values for\r\nOBWriteDomesticConsentResponse5DataReadRefundAccountEnum."
-      },
-      "OBWriteDomesticConsentResponse5DataSCASupportData": {
-        "type": "object",
-        "properties": {
-          "RequestedSCAExemptionType": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsentResponse5DataSCASupportDataRequestedSCAExemptionTypeEnum"
-          },
-          "AppliedAuthenticationApproach": {
-            "$ref": "#/components/schemas/OBWriteDomesticConsentResponse5DataSCASupportDataAppliedAuthenticationApproachEnum"
-          },
-          "ReferencePaymentOrderId": {
-            "type": "string",
-            "description": "Gets or sets specifies a character string with a maximum length of\r\n140 characters.\r\nUsage: If the payment is recurring then the transaction identifier\r\nof the previous payment occurrence so that the ASPSP can verify\r\nthat the PISP, amount and the payee are the same as the previous\r\noccurrence.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Supporting Data provided by TPP, when requesting SCA Exemption."
-      },
-      "OBWriteDomesticConsentResponse5DataSCASupportDataAppliedAuthenticationApproachEnum": {
-        "enum": [
-          "CA",
-          "SCA"
-        ],
-        "type": "string",
-        "description": "Defines values for\r\nOBWriteDomesticConsentResponse5DataSCASupportDataAppliedAuthenticationApproachEnum."
-      },
-      "OBWriteDomesticConsentResponse5DataSCASupportDataRequestedSCAExemptionTypeEnum": {
-        "enum": [
-          "BillPayment",
-          "ContactlessTravel",
-          "EcommerceGoods",
-          "EcommerceServices",
-          "Kiosk",
-          "Parking",
-          "PartyToParty"
-        ],
-        "type": "string",
-        "description": "Defines values for\r\nOBWriteDomesticConsentResponse5DataSCASupportDataRequestedSCAExemptionTypeEnum."
-      },
-      "OBWriteDomesticConsentResponse5DataStatusEnum": {
-        "enum": [
-          "Authorised",
-          "AwaitingAuthorisation",
-          "Consumed",
-          "Rejected"
-        ],
-        "type": "string",
-        "description": "Defines values for OBWriteDomesticConsentResponse5DataStatusEnum."
-      },
-      "OBWriteDomesticResponse5": {
-        "type": "object",
-        "properties": {
-          "Data": {
-            "$ref": "#/components/schemas/OBWriteDomesticResponse5Data"
-          },
-          "Links": {
-            "$ref": "#/components/schemas/Links"
-          },
-          "Meta": {
-            "$ref": "#/components/schemas/Meta"
-          }
-        },
-        "additionalProperties": false
-      },
-      "OBWriteDomesticResponse5Data": {
-        "type": "object",
-        "properties": {
-          "DomesticPaymentId": {
-            "type": "string",
-            "description": "Gets or sets OB: Unique identification as assigned by the ASPSP to\r\nuniquely identify the domestic payment resource.",
-            "nullable": true
-          },
-          "ConsentId": {
-            "type": "string",
-            "description": "Gets or sets OB: Unique identification as assigned by the ASPSP to\r\nuniquely identify the consent resource.",
-            "nullable": true
-          },
-          "CreationDateTime": {
-            "type": "string",
-            "description": "Gets or sets date and time at which the message was created.All\r\ndates in the JSON payloads are represented in ISO 8601 date-time\r\nformat.\r\nAll date-time fields in responses must include the timezone. An\r\nexample is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time"
-          },
-          "Status": {
-            "$ref": "#/components/schemas/OBWriteDomesticResponse5DataStatusEnum"
-          },
-          "StatusUpdateDateTime": {
-            "type": "string",
-            "description": "Gets or sets date and time at which the resource status was\r\nupdated.All dates in the JSON payloads are represented in ISO 8601\r\ndate-time format.\r\nAll date-time fields in responses must include the timezone. An\r\nexample is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time"
-          },
-          "ExpectedExecutionDateTime": {
-            "type": "string",
-            "description": "Gets or sets expected execution date and time for the payment\r\nresource.All dates in the JSON payloads are represented in ISO 8601\r\ndate-time format.\r\nAll date-time fields in responses must include the timezone. An\r\nexample is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time",
-            "nullable": true
-          },
-          "ExpectedSettlementDateTime": {
-            "type": "string",
-            "description": "Gets or sets expected settlement date and time for the payment\r\nresource.All dates in the JSON payloads are represented in ISO 8601\r\ndate-time format.\r\nAll date-time fields in responses must include the timezone. An\r\nexample is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time",
-            "nullable": true
-          },
-          "Refund": {
-            "$ref": "#/components/schemas/OBWriteDomesticResponse5DataRefund"
-          },
-          "Charges": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OBWriteDomesticResponse5DataChargesItem"
-            },
-            "description": "",
-            "nullable": true
-          },
-          "Initiation": {
-            "$ref": "#/components/schemas/OBWriteDomesticResponse5DataInitiation"
-          },
-          "MultiAuthorisation": {
-            "$ref": "#/components/schemas/OBWriteDomesticResponse5DataMultiAuthorisation"
-          },
-          "Debtor": {
-            "$ref": "#/components/schemas/OBDebtorIdentification1"
-          }
-        },
-        "additionalProperties": false
-      },
-      "OBWriteDomesticResponse5DataChargesItem": {
-        "type": "object",
-        "properties": {
-          "ChargeBearer": {
-            "$ref": "#/components/schemas/OBChargeBearerType1CodeEnum"
-          },
-          "Type": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Amount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Set of elements used to provide details of a charge for the payment\r\ninitiation."
-      },
-      "OBWriteDomesticResponse5DataInitiation": {
-        "type": "object",
-        "properties": {
-          "InstructionIdentification": {
-            "type": "string",
-            "description": "Gets or sets unique identification as assigned by an instructing\r\nparty for an instructed party to unambiguously identify the\r\ninstruction.\r\nUsage: the  instruction identification is a point to point\r\nreference that can be used between the instructing party and the\r\ninstructed party to refer to the individual instruction. It can be\r\nincluded in several messages related to the instruction.",
-            "nullable": true
-          },
-          "EndToEndIdentification": {
-            "type": "string",
-            "description": "Gets or sets unique identification assigned by the initiating party\r\nto unambiguously identify the transaction. This identification is\r\npassed on, unchanged, throughout the entire end-to-end chain.\r\nUsage: The end-to-end identification can be used for reconciliation\r\nor to link tasks relating to the transaction. It can be included in\r\nseveral messages related to the transaction.\r\nOB: The Faster Payments Scheme can only access 31 characters for\r\nthe EndToEndIdentification field.",
-            "nullable": true
-          },
-          "LocalInstrument": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "InstructedAmount": {
-            "$ref": "#/components/schemas/OBWriteDomesticResponse5DataInitiationInstructedAmount"
-          },
-          "DebtorAccount": {
-            "$ref": "#/components/schemas/OBWriteDomesticResponse5DataInitiationDebtorAccount"
-          },
-          "CreditorAccount": {
-            "$ref": "#/components/schemas/OBWriteDomesticResponse5DataInitiationCreditorAccount"
-          },
-          "CreditorPostalAddress": {
-            "$ref": "#/components/schemas/OBPostalAddress6"
-          },
-          "RemittanceInformation": {
-            "$ref": "#/components/schemas/OBWriteDomesticResponse5DataInitiationRemittanceInformation"
-          },
-          "SupplementaryData": {
-            "type": "object",
-            "additionalProperties": { },
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "The Initiation payload is sent by the initiating party to the ASPSP. It\r\nis used to request movement of funds from the debtor account to a\r\ncreditor for a single domestic payment."
-      },
-      "OBWriteDomesticResponse5DataInitiationCreditorAccount": {
-        "type": "object",
-        "properties": {
-          "SchemeName": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Identification": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Name": {
-            "type": "string",
-            "description": "Gets or sets the account name is the name or names of the account\r\nowner(s) represented at an account level.\r\nNote, the account name is not the product name or the nickname of\r\nthe account.\r\nOB: ASPSPs may carry out name validation for Confirmation of Payee,\r\nbut it is not mandatory.",
-            "nullable": true
-          },
-          "SecondaryIdentification": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Unambiguous identification of the account of the creditor to which a\r\ncredit entry will be posted as a result of the payment transaction."
-      },
-      "OBWriteDomesticResponse5DataInitiationDebtorAccount": {
-        "type": "object",
-        "properties": {
-          "SchemeName": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Identification": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Name": {
-            "type": "string",
-            "description": "Gets or sets the account name is the name or names of the account\r\nowner(s) represented at an account level, as displayed by the\r\nASPSP's online channels.\r\nNote, the account name is not the product name or the nickname of\r\nthe account.",
-            "nullable": true
-          },
-          "SecondaryIdentification": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Unambiguous identification of the account of the debtor to which a\r\ndebit entry will be made as a result of the transaction."
-      },
-      "OBWriteDomesticResponse5DataInitiationInstructedAmount": {
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          },
-          "Currency": {
-            "type": "string",
-            "description": "",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Amount of money to be moved between the debtor and creditor, before\r\ndeduction of charges, expressed in the currency as ordered by the\r\ninitiating party.\r\nUsage: This amount has to be transported unchanged through the\r\ntransaction chain."
-      },
-      "OBWriteDomesticResponse5DataInitiationRemittanceInformation": {
-        "type": "object",
-        "properties": {
-          "Unstructured": {
-            "type": "string",
-            "description": "Gets or sets information supplied to enable the\r\nmatching/reconciliation of an entry with the items that the payment\r\nis intended to settle, such as commercial invoices in an accounts'\r\nreceivable system, in an unstructured form.",
-            "nullable": true
-          },
-          "Reference": {
-            "type": "string",
-            "description": "Gets or sets unique reference, as assigned by the creditor, to\r\nunambiguously refer to the payment transaction.\r\nUsage: If available, the initiating party should provide this\r\nreference in the structured remittance information, to enable\r\nreconciliation by the creditor upon receipt of the amount of money.\r\nIf the business context requires the use of a creditor reference or\r\na payment remit identification, and only one identifier can be\r\npassed through the end-to-end chain, the creditor's reference or\r\npayment remittance identification should be quoted in the\r\nend-to-end transaction identification.\r\nOB: The Faster Payments Scheme can only accept 18 characters for\r\nthe ReferenceInformation field - which is where this ISO field will\r\nbe mapped.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Information supplied to enable the matching of an entry with the items\r\nthat the transfer is intended to settle, such as commercial invoices in\r\nan accounts' receivable system."
-      },
-      "OBWriteDomesticResponse5DataMultiAuthorisation": {
         "type": "object",
         "properties": {
           "Status": {
-            "$ref": "#/components/schemas/OBWriteDomesticResponse5DataMultiAuthorisationStatusEnum"
+            "$ref": "#/components/schemas/MultiAuthorisationStatus"
           },
           "NumberRequired": {
             "type": "integer",
-            "description": "Gets or sets number of authorisations required for payment order\r\n(total required at the start of the multi authorisation journey).",
+            "description": "Number of authorisations required for payment order (total required at the start of the multi authorisation journey).",
             "format": "int32",
             "nullable": true
           },
           "NumberReceived": {
             "type": "integer",
-            "description": "Gets or sets number of authorisations received.",
+            "description": "Number of authorisations received.",
             "format": "int32",
             "nullable": true
           },
           "LastUpdateDateTime": {
             "type": "string",
-            "description": "Gets or sets last date and time at the authorisation flow was\r\nupdated.All dates in the JSON payloads are represented in ISO 8601\r\ndate-time format.\r\nAll date-time fields in responses must include the timezone. An\r\nexample is below:\r\n2017-04-05T10:43:07+00:00",
+            "description": "Last date and time at the authorisation flow was updated.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "ExpirationDateTime": {
             "type": "string",
-            "description": "Gets or sets date and time at which the requested authorisation\r\nflow must be completed.All dates in the JSON payloads are\r\nrepresented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An\r\nexample is below:\r\n2017-04-05T10:43:07+00:00",
+            "description": "Date and time at which the requested authorisation flow must be completed.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           }
         },
-        "additionalProperties": false,
-        "description": "The multiple authorisation flow response from the ASPSP."
+        "additionalProperties": false
       },
-      "OBWriteDomesticResponse5DataMultiAuthorisationStatusEnum": {
+      "MultiAuthorisationStatus": {
         "enum": [
-          "Authorised",
-          "AwaitingFurtherAuthorisation",
-          "Rejected"
+          0,
+          1,
+          2
         ],
-        "type": "string",
-        "description": "Defines values for\r\nOBWriteDomesticResponse5DataMultiAuthorisationStatusEnum."
+        "type": "integer",
+        "format": "int32"
       },
-      "OBWriteDomesticResponse5DataRefund": {
+      "OBActiveOrHistoricCurrencyAndAmount": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
         "type": "object",
         "properties": {
-          "Account": {
-            "$ref": "#/components/schemas/OBWriteDomesticResponse5DataRefundAccount"
+          "Amount": {
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
+          },
+          "Currency": {
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
           }
         },
         "additionalProperties": false,
-        "description": "Unambiguous identification of the refund account to which a refund will\r\nbe made as a result of the transaction."
+        "description": "Amount of money associated with the charge type."
       },
-      "OBWriteDomesticResponse5DataRefundAccount": {
+      "OBAddressTypeCode": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "type": "integer",
+        "description": "Identifies the nature of the postal address.",
+        "format": "int32"
+      },
+      "OBCashAccountDebtor4": {
         "type": "object",
         "properties": {
           "SchemeName": {
             "type": "string",
-            "description": "",
+            "description": "^ Name of the identification scheme, in a coded form as published in an external list. | Namespaced Enumeration OBExternalAccountIdentification4Code",
             "nullable": true
           },
           "Identification": {
             "type": "string",
-            "description": "",
+            "description": "^ Identification assigned by an institution to identify an account. This identification is known by the account owner. | Max256Text",
             "nullable": true
           },
           "Name": {
             "type": "string",
-            "description": "Gets or sets name of the account, as assigned by the account\r\nservicing institution.\r\nUsage: The account name is the name or names of the account\r\nowner(s) represented at an account level. The account name is not\r\nthe product name or the nickname of the account.\r\nOB: ASPSPs may carry out name validation for Confirmation of Payee,\r\nbut it is not mandatory.",
+            "description": "^ Name of the account, as assigned by the account servicing institution.  Usage The account name is the name or names of the account owner(s) represented at an account level. The account name is not the product name or the nickname of the account.",
             "nullable": true
           },
           "SecondaryIdentification": {
             "type": "string",
-            "description": "",
+            "description": "^ This is secondary identification of the account, as assigned by the account servicing institution.  This can be used by building societies to additionally identify accounts with a roll number (in addition to a sort code and account number combination) | Max34Text",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { },
+        "description": "^ Only incuded in the response if `Data. ReadRefundAccount` is set to `Yes` in the consent."
+      },
+      "OBChargeBearerType1Code": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "description": "Specifies which party/parties will bear the charges associated with the processing of the payment transaction.",
+        "format": "int32"
+      },
+      "OBExternalExtendedAccountType1Code": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "type": "integer",
+        "description": "Specifies the extended type of account.",
+        "format": "int32"
+      },
+      "OBPostalAddress6": {
+        "type": "object",
+        "properties": {
+          "AddressType": {
+            "$ref": "#/components/schemas/OBAddressTypeCode"
+          },
+          "Department": {
+            "maxLength": 70,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "SubDepartment": {
+            "maxLength": 70,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "StreetName": {
+            "maxLength": 70,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "BuildingNumber": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "PostCode": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "TownName": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "CountrySubDivision": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "Country": {
+            "pattern": "^[A-Z]{2,2}$",
+            "type": "string",
+            "nullable": true
+          },
+          "AddressLine": {
+            "maxItems": 7,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
             "nullable": true
           }
         },
         "additionalProperties": false,
-        "description": "Provides the details to identify an account."
+        "description": "Information that locates and identifies a specific address, as defined by postal services."
       },
-      "OBWriteDomesticResponse5DataStatusEnum": {
+      "OBRisk1": {
+        "type": "object",
+        "properties": {
+          "PaymentContextCode": {
+            "$ref": "#/components/schemas/OBRisk1PaymentContextCode"
+          },
+          "MerchantCategoryCode": {
+            "maxLength": 4,
+            "minLength": 3,
+            "type": "string",
+            "description": "Category code conform to ISO 18245, related to the type of services or goods the merchant provides for the transaction.",
+            "nullable": true
+          },
+          "MerchantCustomerIdentification": {
+            "maxLength": 70,
+            "minLength": 1,
+            "type": "string",
+            "description": "The unique customer identifier of the PSU with the merchant.",
+            "nullable": true
+          },
+          "ContractPresentIndicator": {
+            "type": "boolean",
+            "description": "Indicates if Payee has a contractual relationship with the PISP.",
+            "nullable": true
+          },
+          "BeneficiaryPrepopulatedIndicator": {
+            "type": "boolean",
+            "description": "Indicates if PISP has immutably prepopulated payment details in for the PSU.",
+            "nullable": true
+          },
+          "PaymentPurposeCode": {
+            "maxLength": 4,
+            "minLength": 3,
+            "type": "string",
+            "description": "Category code, related to the type of services or goods that corresponds to the underlying purpose of the payment that conforms to Recommended UK Purpose Code in ISO 20022 Payment Messaging List",
+            "nullable": true
+          },
+          "BeneficiaryAccountType": {
+            "$ref": "#/components/schemas/OBExternalExtendedAccountType1Code"
+          },
+          "DeliveryAddress": {
+            "$ref": "#/components/schemas/DeliveryAddress"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The Risk section is sent by the initiating party to the ASPSP.\r\n<br />It is used to specify additional details for risk scoring for Payments."
+      },
+      "OBRisk1PaymentContextCode": {
         "enum": [
-          "AcceptedCreditSettlementCompleted",
-          "AcceptedSettlementCompleted",
-          "AcceptedSettlementInProcess",
-          "AcceptedWithoutPosting",
-          "Pending",
-          "Rejected"
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
         ],
-        "type": "string",
-        "description": "Defines values for OBWriteDomesticResponse5DataStatusEnum."
+        "type": "integer",
+        "format": "int32"
+      },
+      "OBSCASupportData1": {
+        "type": "object",
+        "properties": {
+          "RequestedSCAExemptionType": {
+            "$ref": "#/components/schemas/OBSCASupportData1RequestedSCAExemptionType"
+          },
+          "AppliedAuthenticationApproach": {
+            "$ref": "#/components/schemas/OBSCASupportData1AppliedAuthenticationApproach"
+          },
+          "ReferencePaymentOrderId": {
+            "maxLength": 40,
+            "minLength": 1,
+            "type": "string",
+            "description": "If the payment is recurring, then this field is populated with the transaction identifier of the previous payment occurrence so that the ASPSP can verify that the PISP, amount and the payee are the same as the previous occurrence. The value here refers to the payment id e.g. DomesticPaymentId",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { },
+        "description": "Supporting Data provided by TPP, when requesting SCA Exemption."
+      },
+      "OBSCASupportData1AppliedAuthenticationApproach": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "OBSCASupportData1RequestedSCAExemptionType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "OBSupplementaryData1": {
+        "type": "object",
+        "additionalProperties": { },
+        "description": "Additional information that can not be captured in the structured fields and/or any other specific block."
+      },
+      "OBWriteDomestic2": {
+        "required": [
+          "Data",
+          "Risk"
+        ],
+        "type": "object",
+        "properties": {
+          "Data": {
+            "$ref": "#/components/schemas/Data"
+          },
+          "Risk": {
+            "$ref": "#/components/schemas/OBRisk1"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBWriteDomesticConsent4": {
+        "required": [
+          "Data",
+          "Risk"
+        ],
+        "type": "object",
+        "properties": {
+          "Data": {
+            "$ref": "#/components/schemas/Data2"
+          },
+          "Risk": {
+            "$ref": "#/components/schemas/OBRisk1"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBWriteDomesticConsentResponse5": {
+        "required": [
+          "Data",
+          "Risk"
+        ],
+        "type": "object",
+        "properties": {
+          "Data": {
+            "$ref": "#/components/schemas/Data3"
+          },
+          "Risk": {
+            "$ref": "#/components/schemas/OBRisk1"
+          },
+          "Links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "Meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBWriteDomesticResponse5": {
+        "required": [
+          "Data"
+        ],
+        "type": "object",
+        "properties": {
+          "Data": {
+            "$ref": "#/components/schemas/Data4"
+          },
+          "Links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "Meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBWriteFundsConfirmationResponse1": {
+        "required": [
+          "Data"
+        ],
+        "type": "object",
+        "properties": {
+          "Data": {
+            "$ref": "#/components/schemas/Data17"
+          },
+          "Links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "Meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBWritePaymentDetailsResponse1": {
+        "required": [
+          "Data"
+        ],
+        "type": "object",
+        "properties": {
+          "Data": {
+            "$ref": "#/components/schemas/Data30"
+          },
+          "Links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "Meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaymentStatus": {
+        "required": [
+          "PaymentTransactionId",
+          "Status",
+          "StatusUpdateDateTime"
+        ],
+        "type": "object",
+        "properties": {
+          "PaymentTransactionId": {
+            "maxLength": 210,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identifier for the transaction within an servicing institution. This identifier is both unique and immutable."
+          },
+          "Status": {
+            "$ref": "#/components/schemas/PaymentStatusStatus"
+          },
+          "StatusUpdateDateTime": {
+            "type": "string",
+            "description": "Date and time at which the status was assigned to the transfer.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "format": "date-time"
+          },
+          "StatusDetail": {
+            "$ref": "#/components/schemas/StatusDetail"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Payment status details."
+      },
+      "PaymentStatusStatus": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Refund": {
+        "required": [
+          "Account"
+        ],
+        "type": "object",
+        "properties": {
+          "Account": {
+            "$ref": "#/components/schemas/Account"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RemittanceInformation": {
+        "type": "object",
+        "properties": {
+          "Unstructured": {
+            "maxLength": 140,
+            "minLength": 1,
+            "type": "string",
+            "description": "Information supplied to enable the matching/reconciliation of an entry with the items that the payment is intended to settle, such as commercial invoices in an accounts' receivable system, in an unstructured form.",
+            "nullable": true
+          },
+          "Reference": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.\r\n<br />Usage: If available, the initiating party should provide this reference in the structured remittance information, to enable reconciliation by the creditor upon receipt of the amount of money.\r\n<br />If the business context requires the use of a creditor reference or a payment remit identification, and only one identifier can be passed through the end-to-end chain, the creditor's reference or payment remittance identification should be quoted in the end-to-end transaction identification.\r\n<br />OB: The Faster Payments Scheme can only accept 18 characters for the ReferenceInformation field - which is where this ISO field will be mapped.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RemittanceInformation2": {
+        "type": "object",
+        "properties": {
+          "Unstructured": {
+            "maxLength": 140,
+            "minLength": 1,
+            "type": "string",
+            "description": "Information supplied to enable the matching/reconciliation of an entry with the items that the payment is intended to settle, such as commercial invoices in an accounts' receivable system, in an unstructured form.",
+            "nullable": true
+          },
+          "Reference": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.\r\n<br />Usage: If available, the initiating party should provide this reference in the structured remittance information, to enable reconciliation by the creditor upon receipt of the amount of money.\r\n<br />If the business context requires the use of a creditor reference or a payment remit identification, and only one identifier can be passed through the end-to-end chain, the creditor's reference or payment remittance identification should be quoted in the end-to-end transaction identification.\r\n<br />OB: The Faster Payments Scheme can only accept 18 characters for the ReferenceInformation field - which is where this ISO field will be mapped.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RemittanceInformation3": {
+        "type": "object",
+        "properties": {
+          "Unstructured": {
+            "maxLength": 140,
+            "minLength": 1,
+            "type": "string",
+            "description": "Information supplied to enable the matching/reconciliation of an entry with the items that the payment is intended to settle, such as commercial invoices in an accounts' receivable system, in an unstructured form.",
+            "nullable": true
+          },
+          "Reference": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.\r\n<br />Usage: If available, the initiating party should provide this reference in the structured remittance information, to enable reconciliation by the creditor upon receipt of the amount of money.\r\n<br />If the business context requires the use of a creditor reference or a payment remit identification, and only one identifier can be passed through the end-to-end chain, the creditor's reference or payment remittance identification should be quoted in the end-to-end transaction identification.\r\n<br />OB: The Faster Payments Scheme can only accept 18 characters for the ReferenceInformation field - which is where this ISO field will be mapped.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RemittanceInformation4": {
+        "type": "object",
+        "properties": {
+          "Unstructured": {
+            "maxLength": 140,
+            "minLength": 1,
+            "type": "string",
+            "description": "Information supplied to enable the matching/reconciliation of an entry with the items that the payment is intended to settle, such as commercial invoices in an accounts' receivable system, in an unstructured form.",
+            "nullable": true
+          },
+          "Reference": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.\r\n<br />Usage: If available, the initiating party should provide this reference in the structured remittance information, to enable reconciliation by the creditor upon receipt of the amount of money.\r\n<br />If the business context requires the use of a creditor reference or a payment remit identification, and only one identifier can be passed through the end-to-end chain, the creditor's reference or payment remittance identification should be quoted in the end-to-end transaction identification.\r\n<br />OB: The Faster Payments Scheme can only accept 18 characters for the ReferenceInformation field - which is where this ISO field will be mapped.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StatusDetail": {
+        "required": [
+          "Status"
+        ],
+        "type": "object",
+        "properties": {
+          "LocalInstrument": {
+            "type": "string",
+            "nullable": true
+          },
+          "Status": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string",
+            "description": "Status of a transfer, as assigned by the transaction administrator."
+          },
+          "StatusReason": {
+            "$ref": "#/components/schemas/StatusDetailStatusReason"
+          },
+          "StatusReasonDescription": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "Reason provided for the status of a transfer.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StatusDetailStatusReason": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "type": "integer",
+        "format": "int32"
       }
     }
   }
