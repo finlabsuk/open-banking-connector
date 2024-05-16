@@ -2,15 +2,19 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 
@@ -55,7 +59,7 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
             GetFinancialId(bank),
             GetAccountAndTransactionApi(bank),
             GetPaymentInitiationApi(bank),
-            null,
+            GetVariableRecurringPaymentsApi(bank),
             bank is not MonzoBank.Sandbox,
             instrumentationClient)
         {
@@ -72,7 +76,24 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
                 AccountAccessConsentAuthCodeGrantPost = authCodeGrantPostCustomBehaviour,
                 DomesticPaymentConsentAuthCodeGrantPost = authCodeGrantPostCustomBehaviour,
                 DomesticVrpConsentAuthCodeGrantPost = authCodeGrantPostCustomBehaviour,
-                AccountAccessConsentRefreshTokenGrantPost = refreshTokenGrantPostCustomBehaviour
+                AccountAccessConsentRefreshTokenGrantPost = refreshTokenGrantPostCustomBehaviour,
+                DomesticPaymentConsentRefreshTokenGrantPost = refreshTokenGrantPostCustomBehaviour,
+                DomesticVrpConsentRefreshTokenGrantPost = refreshTokenGrantPostCustomBehaviour,
+                DomesticPaymentPost =
+                    new ReadWritePostCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true },
+                DomesticPaymentGet =
+                    new DomesticPaymentGetCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true },
+                DomesticVrpPost = new DomesticVrpPostCustomBehaviour
+                {
+                    RefundResponseJsonConverter =
+                        DomesticVrpRefundConverterOptions.ContainsNestedAccountProperty
+                },
+                DomesticVrpGet =
+                    new DomesticVrpGetCustomBehaviour
+                    {
+                        RefundResponseJsonConverter =
+                            DomesticVrpRefundConverterOptions.ContainsNestedAccountProperty
+                    }
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
@@ -144,15 +165,20 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
             _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
         };
 
-    private PaymentInitiationApi? GetPaymentInitiationApi(MonzoBank bank) =>
-        bank switch
+    private PaymentInitiationApi GetPaymentInitiationApi(MonzoBank bank) =>
+        new() { BaseUrl = GetPaymentsBaseUrl(bank) };
+
+    private static string GetPaymentsBaseUrl(MonzoBank bank)
+    {
+        return bank switch
         {
-            MonzoBank.Sandbox => new PaymentInitiationApi
-            {
-                BaseUrl =
-                    "https://openbanking.s101.nonprod-ffs.io/open-banking/v3.1/pisp" // from https://docs.monzo.com/#payment-initiation-services-api
-            },
-            MonzoBank.Monzo => null,
+            MonzoBank.Sandbox =>
+                "https://openbanking.s101.nonprod-ffs.io/open-banking/v3.1/pisp", // from https://docs.monzo.com/#payment-initiation-services-api
+            MonzoBank.Monzo => "https://openbanking.monzo.com/open-banking/v3.1/pisp", // from https://docs.monzo.com/#payment-initiation-services-api
             _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
         };
+    }
+
+    private VariableRecurringPaymentsApi GetVariableRecurringPaymentsApi(MonzoBank bank) =>
+        new() { BaseUrl = GetPaymentsBaseUrl(bank) };
 }
