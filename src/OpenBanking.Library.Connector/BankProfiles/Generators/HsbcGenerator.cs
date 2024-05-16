@@ -12,6 +12,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 
@@ -25,52 +27,39 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
         HsbcBank bank,
         IInstrumentationClient instrumentationClient)
     {
-        (string issuerUrl, string accountAndTransactionApiBaseUrl) = bank switch
+        string issuerUrl = bank switch
         {
-            HsbcBank.FirstDirect => (
+            HsbcBank.FirstDirect =>
                 // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/915047304/Implementation+Guide+first+direct
                 "https://api.ob.firstdirect.com",
-                "https://api.ob.firstdirect.com/obie/open-banking/v3.1/aisp"),
-            HsbcBank.Sandbox => (
+            HsbcBank.Sandbox =>
                 GetIssuerUrl(bank),
-                GetAccountAndTransactionApiBaseUrl(bank)),
-            HsbcBank.UkBusiness => (
+            HsbcBank.UkBusiness =>
                 // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/1059489023/Implementation+Guide+HSBC+Business
                 "https://api.ob.business.hsbc.co.uk",
-                "https://api.ob.business.hsbc.co.uk/obie/open-banking/v3.1/aisp"),
-            HsbcBank.UkKinetic => (
+            HsbcBank.UkKinetic =>
                 // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/1387201093/Implementation+Guide+HSBC+-+Kinetic
                 "https://api.ob.hsbckinetic.co.uk",
-                "https://api.ob.hsbckinetic.co.uk/obie/open-banking/v3.1/aisp"),
-            HsbcBank.UkPersonal => (
+            HsbcBank.UkPersonal =>
                 // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/108266712/Implementation+Guide+HSBC+Personal
                 "https://api.ob.hsbc.co.uk",
-                "https://api.ob.hsbc.co.uk/obie/open-banking/v3.1/aisp"),
-            HsbcBank.HsbcNetUk => (
+            HsbcBank.HsbcNetUk =>
                 // from: https://develop.hsbc.com/sites/default/files/open_banking/HSBC%20Open%20Banking%20TPP%20Implementation%20Guide%20(v3.1).pdf
                 "https://api.ob.hsbcnet.com",
-                "https://api.ob.hsbcnet.com/obie/open-banking/v3.1/aisp"),
             _ => throw new ArgumentOutOfRangeException()
-        };
-        var sandboxGrantPostCustomBehaviour = new AuthCodeGrantPostCustomBehaviour
-        {
-            IdTokenProcessingCustomBehaviour = new IdTokenProcessingCustomBehaviour { DoNotValidateIdToken = true }
         };
         return new BankProfile(
             _bankGroup.GetBankProfile(bank),
             issuerUrl,
             GetFinancialId(bank),
-            new AccountAndTransactionApi { BaseUrl = accountAndTransactionApiBaseUrl },
-            null,
-            null,
+            GetAccountAndTransactionApi(bank),
+            GetPaymentInitiationApi(bank),
+            GetVariableRecurringPaymentsApi(bank),
             bank is not HsbcBank.Sandbox,
             instrumentationClient)
         {
             CustomBehaviour = new CustomBehaviourClass
             {
-                OpenIdConfigurationGet = bank is HsbcBank.Sandbox
-                    ? new OpenIdConfigurationGetCustomBehaviour { Url = GetExtra1(bank) }
-                    : null,
                 BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                 {
                     TransportCertificateSubjectDnOrgIdEncoding = SubjectDnOrgIdEncoding.DottedDecimalAttributeType,
@@ -80,21 +69,12 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                     UseApplicationJoseNotApplicationJwtContentTypeHeader = true
                 },
                 BankRegistrationPut = new BankRegistrationPutCustomBehaviour { CustomTokenScope = "accounts" },
-                JwksGet = bank is HsbcBank.Sandbox
-                    ? new JwksGetCustomBehaviour { ResponseHasNoRootProperty = true }
-                    : null,
-                AccountAccessConsentAuthGet = bank is HsbcBank.Sandbox
-                    ? new ConsentAuthGetCustomBehaviour
-                    {
-                        IdTokenProcessingCustomBehaviour =
-                            new IdTokenProcessingCustomBehaviour { DoNotValidateIdToken = true }
-                    }
-                    : null,
-                AccountAccessConsentAuthCodeGrantPost = bank is HsbcBank.Sandbox
-                    ? sandboxGrantPostCustomBehaviour
-                    : null,
                 AccountAccessConsentRefreshTokenGrantPost =
-                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true }
+                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
+                DomesticPaymentConsentAuthCodeGrantPost =
+                    new AuthCodeGrantPostCustomBehaviour { ExpectedResponseRefreshTokenMayBeAbsent = true },
+                DomesticVrpConsentAuthCodeGrantPost =
+                    new AuthCodeGrantPostCustomBehaviour { ExpectedResponseRefreshTokenMayBeAbsent = true }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings { UseRegistrationGetEndpoint = true },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
@@ -116,10 +96,6 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                         externalApiRequest.Data.Permissions.Remove(element);
                     }
 
-                    if (bank is HsbcBank.Sandbox)
-                    {
-                        externalApiRequest.Data.ExpirationDateTime = DateTimeOffset.UtcNow.AddDays(89);
-                    }
 
                     return externalApiRequest;
                 }
@@ -137,6 +113,63 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                 HsbcBank.HsbcNetUk => 9,
                 _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
             }
+        };
+    }
+
+    private AccountAndTransactionApi GetAccountAndTransactionApi(HsbcBank bank) => new()
+    {
+        BaseUrl = bank switch
+        {
+            HsbcBank.FirstDirect =>
+                // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/915047304/Implementation+Guide+first+direct
+                "https://api.ob.firstdirect.com/obie/open-banking/v3.1/aisp",
+            HsbcBank.Sandbox =>
+                GetAccountAndTransactionApiBaseUrl(bank),
+            HsbcBank.UkBusiness =>
+                // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/1059489023/Implementation+Guide+HSBC+Business
+                "https://api.ob.business.hsbc.co.uk/obie/open-banking/v3.1/aisp",
+            HsbcBank.UkKinetic =>
+                // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/1387201093/Implementation+Guide+HSBC+-+Kinetic
+                "https://api.ob.hsbckinetic.co.uk/obie/open-banking/v3.1/aisp",
+            HsbcBank.UkPersonal =>
+                // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/108266712/Implementation+Guide+HSBC+Personal
+                "https://api.ob.hsbc.co.uk/obie/open-banking/v3.1/aisp",
+            HsbcBank.HsbcNetUk =>
+                // from: https://develop.hsbc.com/sites/default/files/open_banking/HSBC%20Open%20Banking%20TPP%20Implementation%20Guide%20(v3.1).pdf
+                "https://api.ob.hsbcnet.com/obie/open-banking/v3.1/aisp",
+            _ => throw new ArgumentOutOfRangeException()
+        }
+    };
+
+    private PaymentInitiationApi GetPaymentInitiationApi(HsbcBank bank) => new() { BaseUrl = GetPaymentsBaseUrl(bank) };
+
+    private VariableRecurringPaymentsApi GetVariableRecurringPaymentsApi(HsbcBank bank) => new()
+    {
+        BaseUrl = GetPaymentsBaseUrl(bank)
+    };
+
+    private string GetPaymentsBaseUrl(HsbcBank bank)
+    {
+        return bank switch
+        {
+            HsbcBank.FirstDirect =>
+                // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/915047304/Implementation+Guide+first+direct
+                "https://api.ob.firstdirect.com/obie/open-banking/v3.1/pisp",
+            HsbcBank.Sandbox =>
+                GetPaymentInitiationApiBaseUrl(bank),
+            HsbcBank.UkBusiness =>
+                // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/1059489023/Implementation+Guide+HSBC+Business
+                "https://api.ob.business.hsbc.co.uk/obie/open-banking/v3.1/pisp",
+            HsbcBank.UkKinetic =>
+                // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/1387201093/Implementation+Guide+HSBC+-+Kinetic
+                "https://api.ob.hsbckinetic.co.uk/obie/open-banking/v3.1/pisp",
+            HsbcBank.UkPersonal =>
+                // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/108266712/Implementation+Guide+HSBC+Personal
+                "https://api.ob.hsbc.co.uk/obie/open-banking/v3.1/pisp",
+            HsbcBank.HsbcNetUk =>
+                // from: https://develop.hsbc.com/sites/default/files/open_banking/HSBC%20Open%20Banking%20TPP%20Implementation%20Guide%20(v3.1).pdf
+                "https://api.ob.hsbcnet.com/obie/open-banking/v3.1/pisp",
+            _ => throw new ArgumentOutOfRangeException()
         };
     }
 }
