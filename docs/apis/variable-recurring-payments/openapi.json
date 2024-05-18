@@ -586,11 +586,10 @@
       },
       "Data2ReadRefundAccount": {
         "enum": [
-          0,
-          1
+          "Yes",
+          "No"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Data3": {
         "required": [
@@ -709,15 +708,14 @@
       },
       "Data4Status": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5
+          "AcceptedCreditSettlementCompleted",
+          "AcceptedWithoutPosting",
+          "AcceptedSettlementCompleted",
+          "AcceptedSettlementInProcess",
+          "Pending",
+          "Rejected"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Data5": {
         "type": "object",
@@ -801,20 +799,18 @@
       },
       "DataReadRefundAccount": {
         "enum": [
-          0,
-          1
+          "Yes",
+          "No"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "DataStatus": {
         "enum": [
-          0,
-          1,
-          2
+          "Authorised",
+          "AwaitingAuthorisation",
+          "Rejected"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "DebtorAccount": {
         "required": [
@@ -1341,18 +1337,17 @@
       },
       "OBAddressTypeCode": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7
+          "Business",
+          "Correspondence",
+          "DeliveryTo",
+          "MailTo",
+          "POBox",
+          "Postal",
+          "Residential",
+          "Statement"
         ],
-        "type": "integer",
-        "description": "Identifies the nature of the postal address.",
-        "format": "int32"
+        "type": "string",
+        "description": "Identifies the nature of the postal address."
       },
       "OBCashAccountCreditor3": {
         "required": [
@@ -1423,14 +1418,13 @@
       },
       "OBChargeBearerType1Code": {
         "enum": [
-          0,
-          1,
-          2,
-          3
+          "BorneByCreditor",
+          "BorneByDebtor",
+          "FollowingServiceLevel",
+          "Shared"
         ],
-        "type": "integer",
-        "description": "Specifies which party/parties will bear the charges associated with the processing of the payment transaction.",
-        "format": "int32"
+        "type": "string",
+        "description": "Specifies which party/parties will bear the charges associated with the processing of the payment transaction."
       },
       "OBDomesticVRPConsentRequest": {
         "required": [
@@ -1647,34 +1641,32 @@
       },
       "OBExternalExtendedAccountType1Code": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14
+          "Business",
+          "BusinessSavingsAccount",
+          "Charity",
+          "Collection",
+          "Corporate",
+          "Ewallet",
+          "Government",
+          "Investment",
+          "ISA",
+          "JointPersonal",
+          "Pension",
+          "Personal",
+          "PersonalSavingsAccount",
+          "Premier",
+          "Wealth"
         ],
-        "type": "integer",
-        "description": "Specifies the extended type of account.",
-        "format": "int32"
+        "type": "string",
+        "description": "Specifies the extended type of account."
       },
       "OBExternalPaymentChargeType1Code": {
         "enum": [
-          0,
-          1,
-          2
+          "UK.OBIE.CHAPSOut",
+          "UK.OBIE.BalanceTransferOut",
+          "UK.OBIE.MoneyTransferOut"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "OBPAFundsAvailableResult1": {
         "required": [
@@ -1697,11 +1689,10 @@
       },
       "OBPAFundsAvailableResult1FundsAvailable": {
         "enum": [
-          0,
-          1
+          "Available",
+          "NotAvailable"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "OBPostalAddress6": {
         "type": "object",
@@ -1817,21 +1808,20 @@
       },
       "OBRisk1PaymentContextCode": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11
+          "BillingGoodsAndServicesInAdvance",
+          "BillingGoodsAndServicesInArrears",
+          "PispPayee",
+          "EcommerceMerchantInitiatedPayment",
+          "FaceToFacePointOfSale",
+          "TransferToSelf",
+          "TransferToThirdParty",
+          "BillPayment",
+          "EcommerceGoods",
+          "EcommerceServices",
+          "Other",
+          "PartyToParty"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "OBVRPFundsConfirmationRequest": {
         "required": [
@@ -1861,11 +1851,10 @@
       },
       "OBVRPInteractionTypes": {
         "enum": [
-          0,
-          1
+          "InSession",
+          "OffSession"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "OBVRPRemittanceInformation": {
         "type": "object",
@@ -1918,29 +1907,28 @@
       },
       "PaymentStatusStatus": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15,
-          16,
-          17,
-          18,
-          19
+          "Accepted",
+          "AcceptedCancellationRequest",
+          "AcceptedCreditSettlementCompleted",
+          "AcceptedCustomerProfile",
+          "AcceptedFundsChecked",
+          "AcceptedSettlementCompleted",
+          "AcceptedSettlementInProcess",
+          "AcceptedTechnicalValidation",
+          "AcceptedWithChange",
+          "AcceptedWithoutPosting",
+          "Cancelled",
+          "NoCancellationProcess",
+          "PartiallyAcceptedCancellationRequest",
+          "PartiallyAcceptedTechnicalCorrect",
+          "PaymentCancelled",
+          "Pending",
+          "PendingCancellationRequest",
+          "Received",
+          "Rejected",
+          "RejectedCancellationRequest"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "PeriodicLimits": {
         "required": [
@@ -1972,23 +1960,21 @@
       },
       "PeriodicLimitsPeriodAlignment": {
         "enum": [
-          0,
-          1
+          "Consent",
+          "Calendar"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "PeriodicLimitsPeriodType": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5
+          "Day",
+          "Week",
+          "Fortnight",
+          "Month",
+          "Half-year",
+          "Year"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "RemittanceInformation": {
         "type": "object",
@@ -2041,16 +2027,15 @@
       },
       "StatusDetailStatusReason": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
+          "Cancelled",
+          "PendingFailingSettlement",
+          "PendingSettlement",
+          "Proprietary",
+          "ProprietaryRejection",
+          "Suspended",
+          "Unmatched"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       }
     }
   }

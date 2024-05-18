@@ -496,19 +496,17 @@
       },
       "Authorisation2AuthorisationType": {
         "enum": [
-          0,
-          1
+          "Any",
+          "Single"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "AuthorisationType": {
         "enum": [
-          0,
-          1
+          "Any",
+          "Single"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Charges": {
         "required": [
@@ -728,11 +726,10 @@
       },
       "Data2ReadRefundAccount": {
         "enum": [
-          0,
-          1
+          "No",
+          "Yes"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Data3": {
         "required": [
@@ -821,21 +818,19 @@
       },
       "Data3ReadRefundAccount": {
         "enum": [
-          0,
-          1
+          "No",
+          "Yes"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Data3Status": {
         "enum": [
-          0,
-          1,
-          2,
-          3
+          "Authorised",
+          "AwaitingAuthorisation",
+          "Consumed",
+          "Rejected"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Data4": {
         "required": [
@@ -909,15 +904,14 @@
       },
       "Data4Status": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5
+          "AcceptedCreditSettlementCompleted",
+          "AcceptedSettlementCompleted",
+          "AcceptedSettlementInProcess",
+          "AcceptedWithoutPosting",
+          "Pending",
+          "Rejected"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "DebtorAccount": {
         "required": [
@@ -1828,12 +1822,11 @@
       },
       "MultiAuthorisationStatus": {
         "enum": [
-          0,
-          1,
-          2
+          "Authorised",
+          "AwaitingFurtherAuthorisation",
+          "Rejected"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "OBActiveOrHistoricCurrencyAndAmount": {
         "required": [
@@ -1856,18 +1849,17 @@
       },
       "OBAddressTypeCode": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7
+          "Business",
+          "Correspondence",
+          "DeliveryTo",
+          "MailTo",
+          "POBox",
+          "Postal",
+          "Residential",
+          "Statement"
         ],
-        "type": "integer",
-        "description": "Identifies the nature of the postal address.",
-        "format": "int32"
+        "type": "string",
+        "description": "Identifies the nature of the postal address."
       },
       "OBCashAccountDebtor4": {
         "type": "object",
@@ -1898,36 +1890,34 @@
       },
       "OBChargeBearerType1Code": {
         "enum": [
-          0,
-          1,
-          2,
-          3
+          "BorneByCreditor",
+          "BorneByDebtor",
+          "FollowingServiceLevel",
+          "Shared"
         ],
-        "type": "integer",
-        "description": "Specifies which party/parties will bear the charges associated with the processing of the payment transaction.",
-        "format": "int32"
+        "type": "string",
+        "description": "Specifies which party/parties will bear the charges associated with the processing of the payment transaction."
       },
       "OBExternalExtendedAccountType1Code": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14
+          "Business",
+          "BusinessSavingsAccount",
+          "Charity",
+          "Collection",
+          "Corporate",
+          "Ewallet",
+          "Government",
+          "Investment",
+          "ISA",
+          "JointPersonal",
+          "Pension",
+          "Personal",
+          "PersonalSavingsAccount",
+          "Premier",
+          "Wealth"
         ],
-        "type": "integer",
-        "description": "Specifies the extended type of account.",
-        "format": "int32"
+        "type": "string",
+        "description": "Specifies the extended type of account."
       },
       "OBPostalAddress6": {
         "type": "object",
@@ -2043,21 +2033,20 @@
       },
       "OBRisk1PaymentContextCode": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11
+          "BillingGoodsAndServicesInAdvance",
+          "BillingGoodsAndServicesInArrears",
+          "PispPayee",
+          "EcommerceMerchantInitiatedPayment",
+          "FaceToFacePointOfSale",
+          "TransferToSelf",
+          "TransferToThirdParty",
+          "BillPayment",
+          "EcommerceGoods",
+          "EcommerceServices",
+          "Other",
+          "PartyToParty"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "OBSCASupportData1": {
         "type": "object",
@@ -2081,24 +2070,22 @@
       },
       "OBSCASupportData1AppliedAuthenticationApproach": {
         "enum": [
-          0,
-          1
+          "CA",
+          "SCA"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "OBSCASupportData1RequestedSCAExemptionType": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
+          "BillPayment",
+          "ContactlessTravel",
+          "EcommerceGoods",
+          "EcommerceServices",
+          "Kiosk",
+          "Parking",
+          "PartyToParty"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "OBSupplementaryData1": {
         "type": "object",
@@ -2244,29 +2231,28 @@
       },
       "PaymentStatusStatus": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15,
-          16,
-          17,
-          18,
-          19
+          "Accepted",
+          "AcceptedCancellationRequest",
+          "AcceptedCreditSettlementCompleted",
+          "AcceptedCustomerProfile",
+          "AcceptedFundsChecked",
+          "AcceptedSettlementCompleted",
+          "AcceptedSettlementInProcess",
+          "AcceptedTechnicalValidation",
+          "AcceptedWithChange",
+          "AcceptedWithoutPosting",
+          "Cancelled",
+          "NoCancellationProcess",
+          "PartiallyAcceptedCancellationRequest",
+          "PartiallyAcceptedTechnicalCorrect",
+          "PaymentCancelled",
+          "Pending",
+          "PendingCancellationRequest",
+          "Received",
+          "Rejected",
+          "RejectedCancellationRequest"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Refund": {
         "required": [
@@ -2391,16 +2377,15 @@
       },
       "StatusDetailStatusReason": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
+          "Cancelled",
+          "PendingFailingSettlement",
+          "PendingSettlement",
+          "Proprietary",
+          "ProprietaryRejection",
+          "Suspended",
+          "Unmatched"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       }
     }
   }

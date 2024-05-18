@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "10.1.0"
+    "version": "11.0.0"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -66,7 +66,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -182,7 +182,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -246,7 +246,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -304,7 +304,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -371,7 +371,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -428,7 +428,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -494,7 +494,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -551,7 +551,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -617,7 +617,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -674,7 +674,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -732,7 +732,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -799,7 +799,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -866,7 +866,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -923,7 +923,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -989,7 +989,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1063,7 +1063,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1146,7 +1146,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1238,7 +1238,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1339,25 +1339,33 @@
         "additionalProperties": false
       },
       "AccountAccessConsentAuthContextCreateResponse": {
+        "required": [
+          "AccountAccessConsentId",
+          "AppSessionId",
+          "AuthUrl",
+          "Created",
+          "Id",
+          "State"
+        ],
         "type": "object",
         "properties": {
           "AuthUrl": {
+            "minLength": 1,
             "type": "string",
-            "description": "Time-sensitive URL to enable end-user authentication via website or mobile app",
-            "nullable": true
+            "description": "Time-sensitive URL to enable end-user authentication via website or mobile app"
           },
           "AppSessionId": {
+            "minLength": 1,
             "type": "string",
-            "description": "App session ID that can be checked when processing post-auth redirect",
-            "nullable": true
+            "description": "App session ID that can be checked when processing post-auth redirect"
           },
           "AccountAccessConsentId": {
             "type": "string",
             "format": "uuid"
           },
           "State": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "Id": {
             "type": "string",
@@ -1392,6 +1400,12 @@
         "description": "Response to create requests."
       },
       "AccountAccessConsentAuthContextReadResponse": {
+        "required": [
+          "AccountAccessConsentId",
+          "Created",
+          "Id",
+          "State"
+        ],
         "type": "object",
         "properties": {
           "AccountAccessConsentId": {
@@ -1399,8 +1413,8 @@
             "format": "uuid"
           },
           "State": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "Id": {
             "type": "string",
@@ -1435,6 +1449,15 @@
         "description": "Response to Read requests."
       },
       "AccountAccessConsentCreateResponse": {
+        "required": [
+          "AuthContextModified",
+          "BankRegistrationId",
+          "Created",
+          "ExternalApiId",
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo",
+          "Id"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
@@ -1462,9 +1485,9 @@
             "format": "uuid"
           },
           "ExternalApiId": {
+            "minLength": 1,
             "type": "string",
-            "description": "External (bank) API ID. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks.",
-            "nullable": true
+            "description": "External (bank) API ID. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks."
           },
           "Id": {
             "type": "string",
@@ -1680,11 +1703,10 @@
       },
       "Amount3SubType": {
         "enum": [
-          0,
-          1
+          "BaseCurrency",
+          "LocalCurrency"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Amount5": {
         "type": "object",
@@ -1823,14 +1845,13 @@
       },
       "CreditLineType": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4
+          "Available",
+          "Credit",
+          "Emergency",
+          "Pre-Agreed",
+          "Temporary"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Data": {
         "type": "object",
@@ -1971,13 +1992,12 @@
       },
       "Data5Status": {
         "enum": [
-          0,
-          1,
-          2,
-          3
+          "Authorised",
+          "AwaitingAuthorisation",
+          "Rejected",
+          "Revoked"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Data6": {
         "type": "object",
@@ -2100,11 +2120,14 @@
         "additionalProperties": false
       },
       "ExternalApiResponseInfo": {
+        "required": [
+          "XFapiInteractionId"
+        ],
         "type": "object",
         "properties": {
           "XFapiInteractionId": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -2184,11 +2207,10 @@
       },
       "LocalAmount2SubType": {
         "enum": [
-          0,
-          1
+          "BaseCurrency",
+          "LocalCurrency"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Meta": {
         "type": "object",
@@ -2368,15 +2390,14 @@
       },
       "OBAccountStatus1Code": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4
+          "Deleted",
+          "Disabled",
+          "Enabled",
+          "Pending",
+          "ProForma"
         ],
-        "type": "integer",
-        "description": "Specifies the status of account resource in code form.",
-        "format": "int32"
+        "type": "string",
+        "description": "Specifies the status of account resource in code form."
       },
       "OBActiveOrHistoricCurrencyAndAmount_0": {
         "required": [
@@ -2513,38 +2534,36 @@
       },
       "OBAddressTypeCode": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7
+          "Business",
+          "Correspondence",
+          "DeliveryTo",
+          "MailTo",
+          "POBox",
+          "Postal",
+          "Residential",
+          "Statement"
         ],
-        "type": "integer",
-        "description": "Identifies the nature of the postal address.",
-        "format": "int32"
+        "type": "string",
+        "description": "Identifies the nature of the postal address."
       },
       "OBBalanceType1Code": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12
+          "ClosingAvailable",
+          "ClosingBooked",
+          "ClosingCleared",
+          "Expected",
+          "ForwardAvailable",
+          "Information",
+          "InterimAvailable",
+          "InterimBooked",
+          "InterimCleared",
+          "OpeningAvailable",
+          "OpeningBooked",
+          "OpeningCleared",
+          "PreviouslyClosedBooked"
         ],
-        "type": "integer",
-        "description": "Balance type, in a coded form.",
-        "format": "int32"
+        "type": "string",
+        "description": "Balance type, in a coded form."
       },
       "OBBankTransactionCodeStructure1": {
         "required": [
@@ -2747,21 +2766,19 @@
       },
       "OBCreditDebitCode_1": {
         "enum": [
-          0,
-          1
+          "Credit",
+          "Debit"
         ],
-        "type": "integer",
-        "description": "Indicates whether the transaction is a credit or a debit entry.",
-        "format": "int32"
+        "type": "string",
+        "description": "Indicates whether the transaction is a credit or a debit entry."
       },
       "OBCreditDebitCode_2": {
         "enum": [
-          0,
-          1
+          "Credit",
+          "Debit"
         ],
-        "type": "integer",
-        "description": "Indicates whether the balance is a credit or a debit balance. \r\n<br />Usage: A zero balance is considered to be a credit balance.",
-        "format": "int32"
+        "type": "string",
+        "description": "Indicates whether the balance is a credit or a debit balance. \r\n<br />Usage: A zero balance is considered to be a credit balance."
       },
       "OBCurrencyExchange5": {
         "required": [
@@ -2814,65 +2831,59 @@
       },
       "OBEntryStatus1Code": {
         "enum": [
-          0,
-          1,
-          2
+          "Booked",
+          "Pending",
+          "Rejected"
         ],
-        "type": "integer",
-        "description": "Status of a transaction entry on the books of the account servicer.",
-        "format": "int32"
+        "type": "string",
+        "description": "Status of a transaction entry on the books of the account servicer."
       },
       "OBExternalAccountSubType1Code": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7
+          "ChargeCard",
+          "CreditCard",
+          "CurrentAccount",
+          "EMoney",
+          "Loan",
+          "Mortgage",
+          "PrePaidCard",
+          "Savings"
         ],
-        "type": "integer",
-        "description": "Specifies the sub type of account (product family group).",
-        "format": "int32"
+        "type": "string",
+        "description": "Specifies the sub type of account (product family group)."
       },
       "OBExternalAccountType1Code": {
         "enum": [
-          0,
-          1
+          "Business",
+          "Personal"
         ],
-        "type": "integer",
-        "description": "Specifies the type of account (personal or business).",
-        "format": "int32"
+        "type": "string",
+        "description": "Specifies the type of account (personal or business)."
       },
       "OBExternalDirectDebitStatus1Code": {
         "enum": [
-          0,
-          1
+          "Active",
+          "Inactive"
         ],
-        "type": "integer",
-        "description": "Specifies the status of the direct debit in code form.",
-        "format": "int32"
+        "type": "string",
+        "description": "Specifies the status of the direct debit in code form."
       },
       "OBExternalPartyType1Code": {
         "enum": [
-          0,
-          1,
-          2
+          "Delegate",
+          "Joint",
+          "Sole"
         ],
-        "type": "integer",
-        "description": "Party type, in a coded form.",
-        "format": "int32"
+        "type": "string",
+        "description": "Party type, in a coded form."
       },
       "OBExternalStandingOrderStatus1Code": {
         "enum": [
-          0,
-          1
+          "Active",
+          "Inactive"
         ],
-        "type": "integer",
-        "description": "Specifies the status of the standing order in code form.",
-        "format": "int32"
+        "type": "string",
+        "description": "Specifies the status of the standing order in code form."
       },
       "OBMerchantDetails1": {
         "type": "object",
@@ -3453,24 +3464,22 @@
       },
       "OBTransactionCardInstrument1AuthorisationType": {
         "enum": [
-          0,
-          1,
-          2,
-          3
+          "ConsumerDevice",
+          "Contactless",
+          "None",
+          "PIN"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "OBTransactionCardInstrument1CardSchemeName": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4
+          "AmericanExpress",
+          "Diners",
+          "Discover",
+          "MasterCard",
+          "VISA"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "OBTransactionCashBalance": {
         "required": [
@@ -3495,12 +3504,11 @@
       },
       "OBTransactionMutability1Code": {
         "enum": [
-          0,
-          1
+          "Mutable",
+          "Immutable"
         ],
-        "type": "integer",
-        "description": "Specifies the Mutability of the Transaction record.",
-        "format": "int32"
+        "type": "string",
+        "description": "Specifies the Mutability of the Transaction record."
       },
       "Parties2Response": {
         "type": "object",
@@ -3548,59 +3556,57 @@
       },
       "Permissions": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15,
-          16,
-          17,
-          18,
-          19,
-          20
+          "ReadAccountsBasic",
+          "ReadAccountsDetail",
+          "ReadBalances",
+          "ReadBeneficiariesBasic",
+          "ReadBeneficiariesDetail",
+          "ReadDirectDebits",
+          "ReadOffers",
+          "ReadPAN",
+          "ReadParty",
+          "ReadPartyPSU",
+          "ReadProducts",
+          "ReadScheduledPaymentsBasic",
+          "ReadScheduledPaymentsDetail",
+          "ReadStandingOrdersBasic",
+          "ReadStandingOrdersDetail",
+          "ReadStatementsBasic",
+          "ReadStatementsDetail",
+          "ReadTransactionsBasic",
+          "ReadTransactionsCredits",
+          "ReadTransactionsDebits",
+          "ReadTransactionsDetail"
         ],
-        "type": "integer",
-        "description": "Specifies the Open Banking account access data types. This is a list of the data clusters being consented by the PSU, and requested for authorisation with the ASPSP.",
-        "format": "int32"
+        "type": "string",
+        "description": "Specifies the Open Banking account access data types. This is a list of the data clusters being consented by the PSU, and requested for authorisation with the ASPSP."
       },
       "Permissions2": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15,
-          16,
-          17,
-          18,
-          19,
-          20
+          "ReadAccountsBasic",
+          "ReadAccountsDetail",
+          "ReadBalances",
+          "ReadBeneficiariesBasic",
+          "ReadBeneficiariesDetail",
+          "ReadDirectDebits",
+          "ReadOffers",
+          "ReadPAN",
+          "ReadParty",
+          "ReadPartyPSU",
+          "ReadProducts",
+          "ReadScheduledPaymentsBasic",
+          "ReadScheduledPaymentsDetail",
+          "ReadStandingOrdersBasic",
+          "ReadStandingOrdersDetail",
+          "ReadStatementsBasic",
+          "ReadStatementsDetail",
+          "ReadTransactionsBasic",
+          "ReadTransactionsCredits",
+          "ReadTransactionsDebits",
+          "ReadTransactionsDetail"
         ],
-        "type": "integer",
-        "description": "Specifies the Open Banking account access data types. This is a list of the data clusters being consented by the PSU, and requested for authorisation with the ASPSP.",
-        "format": "int32"
+        "type": "string",
+        "description": "Specifies the Open Banking account access data types. This is a list of the data clusters being consented by the PSU, and requested for authorisation with the ASPSP."
       },
       "ProprietaryBankTransactionCodeStructure1": {
         "required": [
