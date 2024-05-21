@@ -8,13 +8,17 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 
@@ -35,8 +39,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
             _bankGroup.GetBankProfile(bank),
             bank switch
             {
-                LloydsBank.Sandbox =>
-                    "https://as.aspsp.sandbox.lloydsbanking.com/oauth2", // from API discovery endpoint
+                LloydsBank.Sandbox => GetIssuerUrl(LloydsBank.Sandbox),
                 LloydsBank.LloydsPersonal =>
                     "https://authorise-api.lloydsbank.co.uk/prod01/channel/mtls/lyds/personal", // from https://developer.lloydsbanking.com/sites/developer.lloydsbanking.com/files/support/technical_implementation_guide.pdf
                 LloydsBank.LloydsBusiness =>
@@ -69,14 +72,8 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                 _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
             },
             bank is not LloydsBank.Sandbox ? GetAccountAndTransactionApi(bank) : null,
-            bank is LloydsBank.Sandbox
-                ? new PaymentInitiationApi
-                {
-                    BaseUrl =
-                        "https://matls.rs.aspsp.sandbox.lloydsbanking.com/open-banking/v3.1.10/pisp" // from API discovery endpoint
-                }
-                : null,
-            null,
+            GetPaymentInitiationApi(bank),
+            GetVariableRecurringPaymentsApi(bank),
             bank is not LloydsBank.Sandbox,
             instrumentationClient)
         {
@@ -87,6 +84,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                 BankRegistrationPost = bank is LloydsBank.Sandbox
                     ? new BankRegistrationPostCustomBehaviour
                     {
+                        TransportCertificateSubjectDnOrgIdEncoding = SubjectDnOrgIdEncoding.DottedDecimalAttributeType,
                         GrantTypesClaim =
                             new List<OBRegistrationProperties1grantTypesItemEnum>
                             {
@@ -137,13 +135,38 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                 DomesticPaymentConsentAuthCodeGrantPost =
                     new AuthCodeGrantPostCustomBehaviour { ExpectedResponseRefreshTokenMayBeAbsent = true },
                 AccountAccessConsentRefreshTokenGrantPost =
-                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true }
+                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
+                DomesticPaymentConsentGet =
+                    new DomesticPaymentConsentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticPaymentConsentPost =
+                    new DomesticPaymentConsentPostCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticPaymentGet =
+                    new DomesticPaymentGetCustomBehaviour
+                    {
+                        PreferMisspeltContractPresentIndicator = true,
+                        AddOpenIdScope = true
+                    },
+                DomesticPaymentGetPaymentDetails = new DomesticPaymentGetCustomBehaviour { AddOpenIdScope = true },
+                DomesticPaymentPost =
+                    new DomesticPaymentPostCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticVrpGet =
+                    new DomesticVrpGetCustomBehaviour
+                    {
+                        ResponseLinksReplace = ("domestic-vrps", "domestic-vrp-payments")
+                    },
+                DomesticVrpPost =
+                    new DomesticVrpPostCustomBehaviour
+                    {
+                        ResponseLinksReplace = ("domestic-vrps", "domestic-vrp-payments")
+                    }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {
                 UseRegistrationDeleteEndpoint = true,
                 UseRegistrationGetEndpoint = true,
-                UseRegistrationAccessToken = bank is LloydsBank.Sandbox
+                UseRegistrationAccessToken = bank is LloydsBank.Sandbox,
+                IdTokenSubClaimType =
+                    bank is LloydsBank.Sandbox ? IdTokenSubClaimType.EndUserId : IdTokenSubClaimType.ConsentId
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
@@ -177,6 +200,27 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
             }
         };
     }
+
+    private PaymentInitiationApi GetPaymentInitiationApi(LloydsBank bank) =>
+        new() { BaseUrl = GetPaymentsBaseUrl(bank) };
+
+    private VariableRecurringPaymentsApi GetVariableRecurringPaymentsApi(LloydsBank bank) =>
+        new() { BaseUrl = GetPaymentsBaseUrl(bank) };
+
+    private string GetPaymentsBaseUrl(LloydsBank bank) => bank switch
+    {
+        LloydsBank.Sandbox => GetPaymentInitiationApiBaseUrl(LloydsBank.Sandbox),
+        LloydsBank.LloydsPersonal or LloydsBank.LloydsBusiness or LloydsBank.LloydsCommerical =>
+            "https://secure-api.lloydsbank.com/prod01/lbg/lyds/open-banking/v3.1/pisp", // from https://developer.lloydsbanking.com/node/4055#post-domestic-payment-consents-3.1.10
+        LloydsBank.HalifaxPersonal =>
+            "https://secure-api.halifax.co.uk/prod01/lbg/lyds/open-banking/v3.1/pisp", // from https://developer.lloydsbanking.com/node/4055#post-domestic-payment-consents-3.1.10
+        LloydsBank.BankOfScotlandPersonal or LloydsBank.BankOfScotlandBusiness
+            or LloydsBank.BankOfScotlandCommerical =>
+            "https://secure-api.bankofscotland.co.uk/prod01/lbg/lyds/open-banking/v3.1/pisp", // from https://developer.lloydsbanking.com/node/4055#post-domestic-payment-consents-3.1.10
+        LloydsBank.MbnaPersonal =>
+            "https://secure-api.mbna.co.uk/prod01/lbg/lyds/open-banking/v3.1/pisp", // from https://developer.lloydsbanking.com/node/4055#post-domestic-payment-consents-3.1.10
+        _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+    };
 
     private AccountAndTransactionApi GetAccountAndTransactionApi(LloydsBank bank)
     {

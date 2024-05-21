@@ -24,30 +24,23 @@ public class LloydsUiMethods : IBankUiMethods
     {
         if (_lloydsBank is LloydsBank.Sandbox)
         {
-            // Cookie popup
-            await page.Locator("text=Allow cookies").ClickAsync();
-
             // User name
-            await page.Locator("[placeholder=\"User Name\"]").ClickAsync();
-            await page.Locator("[placeholder=\"User Name\"]").FillAsync(bankUser.UserNameOrNumber);
+            await page.GetByTestId("fr-field-callback_1").GetByTestId("input-").FillAsync(bankUser.UserNameOrNumber);
 
             // Password
-            await page.Locator("[placeholder=\"Password\"]").ClickAsync();
-            await page.Locator("[placeholder=\"Password\"]").FillAsync(bankUser.Password);
+            await page.GetByTestId("fr-field-callback_2").GetByTestId("input-").FillAsync(bankUser.Password);
 
             // Next
-            await page.Locator("button:has-text(\"NEXT\")").ClickAsync();
+            await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Next" }).ClickAsync();
 
             // Select account
-            await page.Locator(
-                    "label:has-text(\"518791******4295 Interim available : £638.20Interim booked : £11.80\")")
-                .ClickAsync();
+            await page.Locator("#mat-radio-2 label").ClickAsync();
 
             // Proceed
-            await page.Locator("button:has-text(\"Proceed\")").ClickAsync();
+            await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Proceed" }).ClickAsync();
 
             // Confirm
-            await page.Locator("button:has-text(\"Yes\")").ClickAsync();
+            await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Yes" }).ClickAsync();
         }
     }
 }
