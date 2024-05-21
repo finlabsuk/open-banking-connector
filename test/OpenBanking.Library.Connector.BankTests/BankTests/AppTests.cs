@@ -21,6 +21,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
@@ -62,14 +63,21 @@ public abstract class AppTests
     }
 
     private readonly AppContextFixture _appContextFixture;
+    private readonly ManagementApiClient _managementApiClient;
     private readonly ITestOutputHelper _outputHelper;
     protected readonly IServiceProvider _serviceProvider;
+    private readonly WebAppClient _webAppClient;
 
-    protected AppTests(ITestOutputHelper outputHelper, AppContextFixture appContextFixture)
+    protected AppTests(
+        ITestOutputHelper outputHelper,
+        AppContextFixture appContextFixture,
+        WebApplicationFactory<Program> webApplicationFactory)
     {
         _outputHelper = outputHelper ?? throw new ArgumentNullException(nameof(outputHelper));
         _serviceProvider = appContextFixture.Host.Services;
         _appContextFixture = appContextFixture;
+        _webAppClient = new WebAppClient(webApplicationFactory);
+        _managementApiClient = new ManagementApiClient(_webAppClient);
     }
 
     public static TheoryData<BankTestData1, BankTestData2>
@@ -189,7 +197,6 @@ public abstract class AppTests
         var testNameUnique = $"{testName}_{Guid.NewGuid()}";
 
         // Set test options
-        var bankRegistrationOptions = BankRegistrationOptions.TestRegistration;
         var accountAccessConsentOptions = AccountAccessConsentOptions.TestConsent;
 
         // Get bank test settings
@@ -277,8 +284,7 @@ public abstract class AppTests
         // Create software statement
         (Guid obWacCertificateId, Guid obSealCertificateId, Guid softwareStatementId) = await CreateSoftwareStatement(
             processedSoftwareStatementProfile,
-            modifiedBy,
-            serviceScopeGenerator);
+            modifiedBy);
 
         // CREATE and READ bank configuration objects
         // Create bankRegistration or use existing
@@ -291,228 +297,137 @@ public abstract class AppTests
             testNameUnique,
             modifiedBy);
 
-        // Handle "only delete" case
-        if (bankRegistrationOptions is BankRegistrationOptions.OnlyDeleteRegistration)
-        {
-            // Create BankRegistration using existing external API registration
-            bankRegistrationRequest.ExternalApiId =
-                testData2.BankRegistrationExternalApiId ??
-                throw new InvalidOperationException("No external API BankRegistration ID provided.");
-            bankRegistrationRequest.ExternalApiSecret = testData2.BankRegistrationExternalApiSecret;
-            bankRegistrationRequest.RegistrationAccessToken = testData2.BankRegistrationRegistrationAccessToken;
-            (Guid bankRegistrationId, _) =
-                await CreateBankRegistration(serviceScopeGenerator, bankRegistrationRequest);
-
-            // Delete BankRegistration (includes forced external API delete which may fail)
-            await DeleteBankRegistration(serviceScopeGenerator, bankRegistrationId, modifiedBy, true);
-        }
-
-        // Handle "only create" case
-        else if (bankRegistrationOptions is BankRegistrationOptions.OnlyCreateRegistration)
+        if (bankProfile.BankConfigurationApiSettings.TestTemporaryBankRegistration)
         {
             // Create fresh BankRegistration
-            _ = await CreateBankRegistration(serviceScopeGenerator, bankRegistrationRequest);
+            (Guid bankRegistrationIdTmp, _) =
+                await CreateBankRegistration(bankRegistrationRequest);
+
+            // Delete BankRegistration (includes external API delete as appropriate)
+            await DeleteBankRegistration(serviceScopeGenerator, bankRegistrationIdTmp, modifiedBy, null);
         }
 
-        // Handle "normal" case
-        else
+        // Create BankRegistration using existing external API registration
+        bankRegistrationRequest.ExternalApiId =
+            testData2.BankRegistrationExternalApiId ??
+            throw new InvalidOperationException("No external API BankRegistration ID provided.");
+        bankRegistrationRequest.ExternalApiSecret = testData2.BankRegistrationExternalApiSecret;
+        bankRegistrationRequest.RegistrationAccessToken = testData2.BankRegistrationRegistrationAccessToken;
+        (Guid bankRegistrationId, OAuth2ResponseMode? defaultResponseModeOverride) =
+            await CreateBankRegistration(bankRegistrationRequest);
+        OAuth2ResponseMode defaultResponseMode = defaultResponseModeOverride ?? bankProfile.DefaultResponseMode;
+
+        // Read BankRegistration
+        BankRegistrationResponse bankRegistrationReadResponse =
+            await _managementApiClient.BankRegistrationRead(bankRegistrationId);
+
+        // Run account access consent subtests
+        string redirectUri = processedSoftwareStatementProfile.GetRedirectUri(
+            defaultResponseMode,
+            bankRegistrationReadResponse.DefaultFragmentRedirectUri,
+            bankRegistrationReadResponse.DefaultQueryRedirectUri);
+        string authUrlLeftPart =
+            new Uri(redirectUri)
+                .GetLeftPart(UriPartial.Authority);
+        if (registrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction))
         {
-            if (bankProfile.BankConfigurationApiSettings.TestTemporaryBankRegistration)
+            foreach (AccountAccessConsentSubtestEnum subTest in
+                     AccountAccessConsentSubtest.AccountAccessConsentSubtestsSupported(bankProfile))
             {
-                // Create fresh BankRegistration
-                (Guid bankRegistrationIdTmp, _) =
-                    await CreateBankRegistration(serviceScopeGenerator, bankRegistrationRequest);
-
-                // Delete BankRegistration (includes external API delete as appropriate)
-                await DeleteBankRegistration(serviceScopeGenerator, bankRegistrationIdTmp, modifiedBy, null);
+                await AccountAccessConsentSubtest.RunTest(
+                    subTest,
+                    bankProfile,
+                    testData2,
+                    bankRegistrationId,
+                    defaultResponseMode,
+                    serviceScopeGenerator,
+                    testNameUnique,
+                    modifiedBy,
+                    testDataProcessorFluentRequestLogging
+                        .AppendToPath("aisp")
+                        .AppendToPath($"{subTest.ToString()}"),
+                    consentAuth,
+                    authUrlLeftPart,
+                    bankUser,
+                    memoryCache,
+                    accountAccessConsentOptions);
             }
-
-            // Create BankRegistration using existing external API registration
-            bankRegistrationRequest.ExternalApiId =
-                testData2.BankRegistrationExternalApiId ??
-                throw new InvalidOperationException("No external API BankRegistration ID provided.");
-            bankRegistrationRequest.ExternalApiSecret = testData2.BankRegistrationExternalApiSecret;
-            bankRegistrationRequest.RegistrationAccessToken = testData2.BankRegistrationRegistrationAccessToken;
-            (Guid bankRegistrationId, OAuth2ResponseMode? defaultResponseModeOverride) =
-                await CreateBankRegistration(serviceScopeGenerator, bankRegistrationRequest);
-            OAuth2ResponseMode defaultResponseMode = defaultResponseModeOverride ?? bankProfile.DefaultResponseMode;
-
-            // Read BankRegistration
-            BankRegistrationResponse bankRegistrationReadResponse = await ReadBankRegistrationAsync(
-                serviceScopeGenerator,
-                bankRegistrationId,
-                modifiedBy);
-
-            // Run account access consent subtests
-            string redirectUri = processedSoftwareStatementProfile.GetRedirectUri(
-                defaultResponseMode,
-                bankRegistrationReadResponse.DefaultFragmentRedirectUri,
-                bankRegistrationReadResponse.DefaultQueryRedirectUri);
-            string authUrlLeftPart =
-                new Uri(redirectUri)
-                    .GetLeftPart(UriPartial.Authority);
-            if (registrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction))
-            {
-                foreach (AccountAccessConsentSubtestEnum subTest in
-                         AccountAccessConsentSubtest.AccountAccessConsentSubtestsSupported(bankProfile))
-                {
-                    await AccountAccessConsentSubtest.RunTest(
-                        subTest,
-                        bankProfile,
-                        testData2,
-                        bankRegistrationId,
-                        defaultResponseMode,
-                        serviceScopeGenerator,
-                        testNameUnique,
-                        modifiedBy,
-                        testDataProcessorFluentRequestLogging
-                            .AppendToPath("aisp")
-                            .AppendToPath($"{subTest.ToString()}"),
-                        consentAuth,
-                        authUrlLeftPart,
-                        bankUser,
-                        memoryCache,
-                        accountAccessConsentOptions);
-                }
-            }
-
-            // Run domestic payment consent subtests
-            if (registrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
-            {
-                foreach (DomesticPaymentSubtestEnum subTest in
-                         DomesticPaymentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
-                {
-                    await DomesticPaymentSubtest.RunTest(
-                        subTest,
-                        bankProfile,
-                        bankRegistrationId,
-                        defaultResponseMode,
-                        serviceScopeGenerator,
-                        testNameUnique,
-                        modifiedBy,
-                        testDataProcessorFluentRequestLogging
-                            .AppendToPath("pisp")
-                            .AppendToPath($"{subTest.ToString()}"),
-                        consentAuth,
-                        bankUser);
-                }
-
-                // Run domestic VRP consent subtests
-                foreach (DomesticVrpSubtestEnum subTest in
-                         DomesticVrpSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
-                {
-                    await DomesticVrpSubtest.RunTest(
-                        subTest,
-                        bankProfile,
-                        bankRegistrationId,
-                        defaultResponseMode,
-                        serviceScopeGenerator,
-                        testNameUnique,
-                        modifiedBy,
-                        testDataProcessorFluentRequestLogging
-                            .AppendToPath("vrp")
-                            .AppendToPath($"{subTest.ToString()}"),
-                        consentAuth,
-                        bankUser);
-                }
-            }
-
-
-            // Delete BankRegistration (excludes external API delete)
-            await DeleteBankRegistration(serviceScopeGenerator, bankRegistrationId, modifiedBy, false);
-
-            await DeleteSoftwareStatement(
-                serviceScopeGenerator,
-                obWacCertificateId,
-                obSealCertificateId,
-                softwareStatementId,
-                modifiedBy);
         }
+
+        // Run domestic payment consent subtests
+        if (registrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
+        {
+            foreach (DomesticPaymentSubtestEnum subTest in
+                     DomesticPaymentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
+            {
+                await DomesticPaymentSubtest.RunTest(
+                    subTest,
+                    bankProfile,
+                    bankRegistrationId,
+                    defaultResponseMode,
+                    serviceScopeGenerator,
+                    testNameUnique,
+                    modifiedBy,
+                    testDataProcessorFluentRequestLogging
+                        .AppendToPath("pisp")
+                        .AppendToPath($"{subTest.ToString()}"),
+                    consentAuth,
+                    bankUser);
+            }
+
+            // Run domestic VRP consent subtests
+            foreach (DomesticVrpSubtestEnum subTest in
+                     DomesticVrpSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
+            {
+                await DomesticVrpSubtest.RunTest(
+                    subTest,
+                    bankProfile,
+                    bankRegistrationId,
+                    defaultResponseMode,
+                    serviceScopeGenerator,
+                    testNameUnique,
+                    modifiedBy,
+                    testDataProcessorFluentRequestLogging
+                        .AppendToPath("vrp")
+                        .AppendToPath($"{subTest.ToString()}"),
+                    consentAuth,
+                    bankUser);
+            }
+        }
+
+        // Delete BankRegistration (excludes external API delete)
+        await DeleteBankRegistration(serviceScopeGenerator, bankRegistrationId, modifiedBy, false);
+
+        await DeleteSoftwareStatement(
+            obWacCertificateId,
+            obSealCertificateId,
+            softwareStatementId);
     }
 
-    private static async Task<BankRegistrationResponse> ReadBankRegistrationAsync(
-        Func<IServiceScopeContainer> serviceScopeGenerator,
-        Guid bankRegistrationId,
-        string modifiedBy)
-    {
-        // Get request builder
-        using IServiceScopeContainer serviceScopeContainer = serviceScopeGenerator();
-        IRequestBuilder requestBuilder = serviceScopeContainer.RequestBuilder;
 
-        BankRegistrationResponse bankRegistrationReadResponse = await requestBuilder
-            .Management
-            .BankRegistrations
-            .ReadAsync(
-                bankRegistrationId,
-                modifiedBy);
-
-        // Checks
-        bankRegistrationReadResponse.Should().NotBeNull();
-        bankRegistrationReadResponse.Warnings.Should().BeNull();
-        return bankRegistrationReadResponse;
-    }
-
-    private static async Task DeleteSoftwareStatement(
-        Func<IServiceScopeContainer> serviceScopeGenerator,
+    private async Task DeleteSoftwareStatement(
         Guid obWacCertificateId,
         Guid obSealCertificateId,
-        Guid softwareStatementId,
-        string modifiedBy)
+        Guid softwareStatementId)
     {
-        // Get request builder
-        using IServiceScopeContainer serviceScopeContainer = serviceScopeGenerator();
-        IRequestBuilder requestBuilder = serviceScopeContainer.RequestBuilder;
+        _ = await _managementApiClient.ObWacCertificateDelete(obWacCertificateId);
 
-        BaseResponse obWacCertificateDeleteResponse = await requestBuilder
-            .Management
-            .ObWacCertificates
-            .DeleteLocalAsync(
-                obWacCertificateId,
-                modifiedBy);
+        _ = await _managementApiClient.ObSealCertificateDelete(obSealCertificateId);
 
-        // Checks
-        obWacCertificateDeleteResponse.Should().NotBeNull();
-        obWacCertificateDeleteResponse.Warnings.Should().BeNull();
-
-        BaseResponse obSealCertificateDeleteResponse = await requestBuilder
-            .Management
-            .ObSealCertificates
-            .DeleteLocalAsync(
-                obSealCertificateId,
-                modifiedBy);
-
-        // Checks
-        obSealCertificateDeleteResponse.Should().NotBeNull();
-        obSealCertificateDeleteResponse.Warnings.Should().BeNull();
-
-        BaseResponse softwareStatementDeleteResponse = await requestBuilder
-            .Management
-            .SoftwareStatements
-            .DeleteLocalAsync(
-                softwareStatementId,
-                modifiedBy);
-
-        // Checks
-        softwareStatementDeleteResponse.Should().NotBeNull();
-        softwareStatementDeleteResponse.Warnings.Should().BeNull();
+        _ = await _managementApiClient.SoftwareStatementDelete(softwareStatementId);
     }
 
-    private static async Task<(Guid obWacCertificateId, Guid obSealCertificateId, Guid softwareStatementId)>
+    private async Task<(Guid obWacCertificateId, Guid obSealCertificateId, Guid softwareStatementId)>
         CreateSoftwareStatement(
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
-            string modifiedBy,
-            Func<IServiceScopeContainer> serviceScopeGenerator)
+            string createdBy)
     {
-        // Get request builder
-        using IServiceScopeContainer serviceScopeContainer = serviceScopeGenerator();
-        IRequestBuilder requestBuilder = serviceScopeContainer.RequestBuilder;
-
         // Create OBWAC certificate
         string obWacReference = processedSoftwareStatementProfile.TransportCertificateId;
         var obWacRequest = new ObWacCertificateRequest
         {
             Reference = obWacReference,
-            CreatedBy = modifiedBy,
+            CreatedBy = createdBy,
             AssociatedKey = new SecretDescription
             {
                 Name =
@@ -520,28 +435,19 @@ public abstract class AppTests
             },
             Certificate = processedSoftwareStatementProfile.TransportCertificate
         };
-        ObWacCertificateResponse obWacCertificateResponse = await requestBuilder
-            .Management
-            .ObWacCertificates
-            .CreateLocalAsync(obWacRequest);
-        obWacCertificateResponse.Should().NotBeNull();
-        obWacCertificateResponse.Warnings.Should().BeNull();
+        ObWacCertificateResponse obWacCertificateResponse =
+            await _managementApiClient.ObWacCertificateCreate(obWacRequest);
         Guid obWacCertificateId = obWacCertificateResponse.Id;
 
         // Read OBWAC certificate
-        ObWacCertificateResponse obWacCertificateReadResponse = await requestBuilder
-            .Management
-            .ObWacCertificates
-            .ReadLocalAsync(obWacCertificateId, modifiedBy);
-        obWacCertificateReadResponse.Should().NotBeNull();
-        obWacCertificateReadResponse.Warnings.Should().BeNull();
+        _ = await _managementApiClient.ObWacCertificateRead(obWacCertificateId);
 
         // Create OBSeal certificate
         string obSealReference = processedSoftwareStatementProfile.SigningCertificateId;
         var obSealRequest = new ObSealCertificateRequest
         {
             Reference = obSealReference,
-            CreatedBy = modifiedBy,
+            CreatedBy = createdBy,
             AssociatedKeyId = processedSoftwareStatementProfile.OBSealKey.KeyId,
             AssociatedKey = new SecretDescription
             {
@@ -550,28 +456,19 @@ public abstract class AppTests
             },
             Certificate = processedSoftwareStatementProfile.SigningCertificate
         };
-        ObSealCertificateResponse obSealCertificateResponse = await requestBuilder
-            .Management
-            .ObSealCertificates
-            .CreateLocalAsync(obSealRequest);
-        obSealCertificateResponse.Should().NotBeNull();
-        obSealCertificateResponse.Warnings.Should().BeNull();
+        ObSealCertificateResponse obSealCertificateResponse =
+            await _managementApiClient.ObSealCertificateCreate(obSealRequest);
         Guid obSealCertificateId = obSealCertificateResponse.Id;
 
         // Read OBSeal certificate
-        ObSealCertificateResponse obSealCertificateReadResponse = await requestBuilder
-            .Management
-            .ObSealCertificates
-            .ReadLocalAsync(obSealCertificateId, modifiedBy);
-        obSealCertificateReadResponse.Should().NotBeNull();
-        obSealCertificateReadResponse.Warnings.Should().BeNull();
+        _ = await _managementApiClient.ObSealCertificateRead(obSealCertificateId);
 
         // Create software statement
         string sReference = processedSoftwareStatementProfile.Id;
         var softwareStatementRequest = new SoftwareStatement
         {
             Reference = sReference,
-            CreatedBy = modifiedBy,
+            CreatedBy = createdBy,
             OrganisationId = processedSoftwareStatementProfile.OrganisationId,
             SoftwareId = processedSoftwareStatementProfile.SoftwareId,
             SandboxEnvironment = processedSoftwareStatementProfile.SandboxEnvironment,
@@ -580,42 +477,23 @@ public abstract class AppTests
             DefaultQueryRedirectUrl = processedSoftwareStatementProfile.DefaultQueryRedirectUrl,
             DefaultFragmentRedirectUrl = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl
         };
-        SoftwareStatementResponse softwareStatementResponse = await requestBuilder
-            .Management
-            .SoftwareStatements
-            .CreateLocalAsync(softwareStatementRequest);
-        softwareStatementResponse.Should().NotBeNull();
-        softwareStatementResponse.Warnings.Should().BeNull();
+        SoftwareStatementResponse softwareStatementResponse =
+            await _managementApiClient.SoftwareStatementCreate(softwareStatementRequest);
         Guid softwareStatementId = softwareStatementResponse.Id;
 
         // Read software statement
-        SoftwareStatementResponse softwareStatementReadResponse = await requestBuilder
-            .Management
-            .SoftwareStatements
-            .ReadLocalAsync(softwareStatementId, modifiedBy);
-        softwareStatementReadResponse.Should().NotBeNull();
-        softwareStatementReadResponse.Warnings.Should().BeNull();
+        _ = await _managementApiClient.SoftwareStatementRead(softwareStatementId);
 
         return (obWacCertificateId, obSealCertificateId, softwareStatementId);
     }
 
-    private static async Task<(Guid bankRegistrationId, OAuth2ResponseMode? defaultResponseModeOverride)>
-        CreateBankRegistration(
-            Func<IServiceScopeContainer> serviceScopeGenerator,
-            BankRegistration bankRegistrationRequest)
+    private async Task<(Guid bankRegistrationId, OAuth2ResponseMode? defaultResponseModeOverride)>
+        CreateBankRegistration(BankRegistration bankRegistrationRequest)
     {
-        // Get request builder
-        using IServiceScopeContainer serviceScopeContainer = serviceScopeGenerator();
-        IRequestBuilder requestBuilder = serviceScopeContainer.RequestBuilder;
-
-        BankRegistrationResponse registrationResp = await requestBuilder
-            .Management
-            .BankRegistrations
-            .CreateAsync(bankRegistrationRequest);
+        BankRegistrationResponse registrationResp =
+            await _managementApiClient.BankRegistrationCreate(bankRegistrationRequest);
 
         // Checks and assignments
-        registrationResp.Should().NotBeNull();
-        registrationResp.Warnings.Should().BeNull();
         if (bankRegistrationRequest.ExternalApiId is not null)
         {
             registrationResp.ExternalApiResponse.Should().BeNull();
@@ -627,6 +505,7 @@ public abstract class AppTests
 
         Guid bankRegistrationId = registrationResp.Id;
         OAuth2ResponseMode? defaultResponseModeOverride = registrationResp.DefaultResponseModeOverride;
+
         return (bankRegistrationId, defaultResponseModeOverride);
     }
 

@@ -2,6 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using Newtonsoft.Json;
+
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 public interface IEntityBaseQuery
@@ -20,6 +22,7 @@ public class EntityBaseResponse : BaseResponse, IEntityBaseQuery
     /// <summary>
     ///     Unique Open Banking Connector ID (used in local database).
     /// </summary>
+    [JsonProperty(Required = Required.Always)]
     public required Guid Id { get; init; }
 
     /// <summary>

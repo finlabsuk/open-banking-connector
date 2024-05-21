@@ -10,7 +10,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Extensions;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using AccountAndTransactionModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
@@ -173,3 +172,5 @@ app.MapControllers();
 
 // Run 
 app.Run();
+
+public partial class Program { }

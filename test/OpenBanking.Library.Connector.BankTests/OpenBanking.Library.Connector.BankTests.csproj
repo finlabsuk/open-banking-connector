@@ -18,6 +18,7 @@
         <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.4.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.6"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.6"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0"/>
         <PackageReference Include="Microsoft.Playwright" Version="1.44.0"/>
         <PackageReference Include="NSubstitute" Version="5.1.0"/>
@@ -41,6 +42,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\OpenBanking.Library.Connector.Web\OpenBanking.Library.Connector.Web.csproj"/>
+        <ProjectReference Include="..\..\src\OpenBanking.WebApp.Connector\OpenBanking.WebApp.Connector.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
