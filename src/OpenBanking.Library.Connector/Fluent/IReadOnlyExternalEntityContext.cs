@@ -15,16 +15,11 @@ public interface IReadOnlyExternalEntityContext<TPublicResponse> :
     IReadAccountAccessConsentExternalEntityContext<TPublicResponse>
     where TPublicResponse : class { }
 
-internal interface IReadOnlyExternalEntityContextInternal<TPublicResponse> :
-    IReadOnlyExternalEntityContext<TPublicResponse>,
-    IReadAccountAccessConsentExternalEntityContextInternal<TPublicResponse>
-    where TPublicResponse : class { }
-
-internal class ReadOnlyExternalEntityContextInternal<TPublicResponse> :
-    IReadOnlyExternalEntityContextInternal<TPublicResponse>
+internal class ReadOnlyExternalEntityContext<TPublicResponse> :
+    IReadOnlyExternalEntityContext<TPublicResponse>
     where TPublicResponse : class
 {
-    public ReadOnlyExternalEntityContextInternal(
+    public ReadOnlyExternalEntityContext(
         IAccountAccessConsentExternalRead<TPublicResponse, AccountAccessConsentExternalReadParams> readObject)
     {
         ReadObject = readObject;

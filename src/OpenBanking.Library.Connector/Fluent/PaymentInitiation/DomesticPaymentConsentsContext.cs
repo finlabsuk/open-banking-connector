@@ -35,14 +35,8 @@ public interface IDomesticPaymentConsentsContext :
         AuthContexts { get; }
 }
 
-internal interface IDomesticPaymentConsentsContextInternal :
-    IDomesticPaymentConsentsContext,
-    IConsentContextInternal<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse,
-        DomesticPaymentConsentCreateResponse>,
-    IDeleteLocalContextInternal { }
-
 internal class DomesticPaymentConsentsConsentContext :
-    IDomesticPaymentConsentsContextInternal
+    IDomesticPaymentConsentsContext
 {
     private readonly DomesticPaymentConsentOperations _domesticPaymentConsentOperations;
     private readonly ISharedContext _sharedContext;
@@ -89,7 +83,7 @@ internal class DomesticPaymentConsentsConsentContext :
         IDomesticPaymentConsentAuthContextPublicQuery,
         DomesticPaymentConsentAuthContextCreateResponse,
         DomesticPaymentConsentAuthContextReadResponse> AuthContexts =>
-        new LocalEntityContextInternal<DomesticPaymentConsentAuthContextPersisted,
+        new LocalEntityContext<DomesticPaymentConsentAuthContextPersisted,
             DomesticPaymentConsentAuthContextRequest,
             IDomesticPaymentConsentAuthContextPublicQuery,
             DomesticPaymentConsentAuthContextCreateResponse,

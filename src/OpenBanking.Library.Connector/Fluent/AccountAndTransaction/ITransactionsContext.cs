@@ -15,16 +15,11 @@ public interface ITransactionsContext<TPublicResponse> :
     IReadTransactionsContext<TPublicResponse>
     where TPublicResponse : class { }
 
-internal interface ITransactionsContextInternal<TPublicResponse> :
-    ITransactionsContext<TPublicResponse>,
-    IReadTransactionsContextInternal<TPublicResponse>
-    where TPublicResponse : class { }
-
-internal class TransactionsContextInternal<TPublicResponse> :
-    ITransactionsContextInternal<TPublicResponse>
+internal class TransactionsContext<TPublicResponse> :
+    ITransactionsContext<TPublicResponse>
     where TPublicResponse : class
 {
-    public TransactionsContextInternal(
+    public TransactionsContext(
         ISharedContext context,
         IAccountAccessConsentExternalRead<TPublicResponse, TransactionsReadParams> readObject)
     {

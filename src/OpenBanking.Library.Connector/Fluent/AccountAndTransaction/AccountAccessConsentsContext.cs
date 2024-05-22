@@ -38,14 +38,8 @@ public interface IAccountAccessConsentsContext :
         AuthContexts { get; }
 }
 
-internal interface IAccountAccessConsentsContextInternal :
-    IAccountAccessConsentsContext,
-    IConsentContextInternal<AccountAccessConsentRequest, AccountAccessConsentCreateResponse,
-        AccountAccessConsentCreateResponse>,
-    IDeleteConsentContextInternal { }
-
 internal class AccountAccessConsentsConsentContext :
-    IAccountAccessConsentsContextInternal
+    IAccountAccessConsentsContext
 {
     private readonly ISharedContext _sharedContext;
 
@@ -89,7 +83,7 @@ internal class AccountAccessConsentsConsentContext :
         IAccountAccessConsentAuthContextPublicQuery,
         AccountAccessConsentAuthContextCreateResponse,
         AccountAccessConsentAuthContextReadResponse> AuthContexts =>
-        new LocalEntityContextInternal<AccountAccessConsentAuthContextPersisted,
+        new LocalEntityContext<AccountAccessConsentAuthContextPersisted,
             AccountAccessConsentAuthContextRequest,
             IAccountAccessConsentAuthContextPublicQuery,
             AccountAccessConsentAuthContextCreateResponse,

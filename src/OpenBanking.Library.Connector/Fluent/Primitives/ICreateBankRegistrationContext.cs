@@ -15,27 +15,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 /// <typeparam name="TPublicRequest"></typeparam>
 /// <typeparam name="TPublicResponse"></typeparam>
 public interface ICreateBankRegistrationContext<in TPublicRequest, TPublicResponse>
+    where TPublicRequest : class, ISupportsValidation
     where TPublicResponse : class
 {
+    private protected IObjectCreate<TPublicRequest, TPublicResponse, BankRegistrationCreateParams> CreateObject { get; }
+
     /// <summary>
     ///     CREATE object (includes POSTing object to bank API).
     ///     Object will be created at bank and also in local database if it is a Bank Registration or Consent.
     /// </summary>
     /// <param name="publicRequest">Request object</param>
     /// <returns></returns>
-    Task<TPublicResponse> CreateAsync(TPublicRequest publicRequest);
-}
-
-internal interface
-    ICreateBankRegistrationContextInternal<in TPublicRequest, TPublicResponse> :
-        ICreateBankRegistrationContext<TPublicRequest, TPublicResponse>
-    where TPublicRequest : class, ISupportsValidation
-    where TPublicResponse : class
-{
-    IObjectCreate<TPublicRequest, TPublicResponse, BankRegistrationCreateParams> CreateObject { get; }
-
-    async Task<TPublicResponse> ICreateBankRegistrationContext<TPublicRequest, TPublicResponse>.CreateAsync(
-        TPublicRequest publicRequest)
+    async Task<TPublicResponse> CreateAsync(TPublicRequest publicRequest)
     {
         publicRequest.ArgNotNull(nameof(publicRequest));
 

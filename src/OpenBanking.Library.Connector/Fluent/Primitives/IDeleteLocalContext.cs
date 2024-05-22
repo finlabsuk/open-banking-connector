@@ -12,6 +12,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 /// </summary>
 public interface IDeleteLocalContext
 {
+    private protected IObjectDelete<LocalDeleteParams> DeleteLocalObject { get; }
+
     /// <summary>
     ///     DELETE local object by ID (does not include DELETE-ing object from bank API).
     ///     Object will be deleted from local database only.
@@ -20,18 +22,9 @@ public interface IDeleteLocalContext
     /// <param name="id"></param>
     /// <param name="modifiedBy">Optional user name or comment for DB update when performing soft delete.</param>
     /// <returns></returns>
-    Task<BaseResponse> DeleteLocalAsync(
+    async Task<BaseResponse> DeleteLocalAsync(
         Guid id,
-        string? modifiedBy = null);
-}
-
-internal interface IDeleteLocalContextInternal : IDeleteLocalContext
-{
-    IObjectDelete<LocalDeleteParams> DeleteLocalObject { get; }
-
-    async Task<BaseResponse> IDeleteLocalContext.DeleteLocalAsync(
-        Guid id,
-        string? modifiedBy)
+        string? modifiedBy = null)
     {
         var localDeleteParams = new LocalDeleteParams(id, modifiedBy);
         IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages =

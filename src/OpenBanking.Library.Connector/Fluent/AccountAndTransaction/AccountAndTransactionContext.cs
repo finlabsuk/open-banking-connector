@@ -73,7 +73,7 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
         new AccountAccessConsentsConsentContext(_sharedContext);
 
     public IReadOnlyExternalEntityContext<AccountsResponse> Accounts =>
-        new ReadOnlyExternalEntityContextInternal<AccountsResponse>(
+        new ReadOnlyExternalEntityContext<AccountsResponse>(
             new AccountGet(
                 _sharedContext.Instrumentation,
                 _sharedContext.ApiVariantMapper,
@@ -95,7 +95,7 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                 _sharedContext.ObSealCertificateMethods));
 
     public IReadOnlyExternalEntityContext<BalancesResponse> Balances =>
-        new ReadOnlyExternalEntityContextInternal<BalancesResponse>(
+        new ReadOnlyExternalEntityContext<BalancesResponse>(
             new BalanceGet(
                 _sharedContext.Instrumentation,
                 _sharedContext.ApiVariantMapper,
@@ -117,7 +117,7 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                 _sharedContext.ObSealCertificateMethods));
 
     public IReadOnlyExternalEntityContext<PartiesResponse> Parties =>
-        new ReadOnlyExternalEntityContextInternal<PartiesResponse>(
+        new ReadOnlyExternalEntityContext<PartiesResponse>(
             new PartyGet(
                 _sharedContext.Instrumentation,
                 _sharedContext.ApiVariantMapper,
@@ -139,7 +139,7 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                 _sharedContext.ObSealCertificateMethods));
 
     public IReadOnlyExternalEntityContext<Parties2Response> Parties2 =>
-        new ReadOnlyExternalEntityContextInternal<Parties2Response>(
+        new ReadOnlyExternalEntityContext<Parties2Response>(
             new Party2Get(
                 _sharedContext.Instrumentation,
                 _sharedContext.ApiVariantMapper,
@@ -161,7 +161,7 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                 _sharedContext.ObSealCertificateMethods));
 
     public ITransactionsContext<TransactionsResponse> Transactions =>
-        new TransactionsContextInternal<TransactionsResponse>(
+        new TransactionsContext<TransactionsResponse>(
             _sharedContext,
             new TransactionGet(
                 _sharedContext.Instrumentation,
@@ -184,7 +184,7 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                 _sharedContext.ObSealCertificateMethods));
 
     public IReadOnlyExternalEntityContext<DirectDebitsResponse> DirectDebits =>
-        new ReadOnlyExternalEntityContextInternal<DirectDebitsResponse>(
+        new ReadOnlyExternalEntityContext<DirectDebitsResponse>(
             new DirectDebitGet(
                 _sharedContext.Instrumentation,
                 _sharedContext.ApiVariantMapper,
@@ -206,7 +206,7 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                 _sharedContext.ObSealCertificateMethods));
 
     public IReadOnlyExternalEntityContext<StandingOrdersResponse> StandingOrders =>
-        new ReadOnlyExternalEntityContextInternal<StandingOrdersResponse>(
+        new ReadOnlyExternalEntityContext<StandingOrdersResponse>(
             new StandingOrderGet(
                 _sharedContext.Instrumentation,
                 _sharedContext.ApiVariantMapper,
@@ -228,7 +228,7 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                 _sharedContext.ObSealCertificateMethods));
 
     public IReadOnlyExternalEntityContext<MonzoPotsResponse> MonzoPots =>
-        new ReadOnlyExternalEntityContextInternal<MonzoPotsResponse>(
+        new ReadOnlyExternalEntityContext<MonzoPotsResponse>(
             new MonzoPotGet(
                 _sharedContext.Instrumentation,
                 _sharedContext.ApiVariantMapper,

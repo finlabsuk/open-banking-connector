@@ -6,26 +6,12 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 
-/// <summary>
-///     Fluent interface methods for ReadLocal.
-/// </summary>
-/// <typeparam name="TPublicResponse"></typeparam>
-/// <typeparam name="TPublicRequest"></typeparam>
 public interface IUpdateContext<in TPublicRequest, TPublicResponse>
     where TPublicResponse : class
 {
-    Task<TPublicResponse> UpdateAsync(
-        TPublicRequest request,
-        LocalReadParams readParams);
-}
+    private protected IObjectUpdate2<TPublicRequest, TPublicResponse> UpdateObject { get; }
 
-internal interface
-    IUpdateContextInternal<in TPublicRequest, TPublicResponse> : IUpdateContext<TPublicRequest, TPublicResponse>
-    where TPublicResponse : class
-{
-    IObjectUpdate2<TPublicRequest, TPublicResponse> UpdateObject { get; }
-
-    async Task<TPublicResponse> IUpdateContext<TPublicRequest, TPublicResponse>.UpdateAsync(
+    async Task<TPublicResponse> UpdateAsync(
         TPublicRequest request,
         LocalReadParams readParams)
     {

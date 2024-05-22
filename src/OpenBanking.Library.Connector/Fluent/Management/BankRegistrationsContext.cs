@@ -17,16 +17,10 @@ public interface IBankRegistrationsContext :
     IReadBankRegistrationContext<BankRegistrationResponse>,
     IDeleteBankRegistrationContext { }
 
-internal interface IBankRegistrationsContextInternal :
-    IBankRegistrationsContext,
-    ICreateBankRegistrationContextInternal<BankRegistration, BankRegistrationResponse>,
-    IReadBankRegistrationContextInternal<BankRegistrationResponse>,
-    IDeleteBankRegistrationContextInternal { }
-
-internal class BankRegistrationsContextInternal :
-    IBankRegistrationsContextInternal
+internal class BankRegistrationsContext :
+    IBankRegistrationsContext
 {
-    public BankRegistrationsContextInternal(ISharedContext sharedContext)
+    public BankRegistrationsContext(ISharedContext sharedContext)
     {
         var bankRegistrationOperations = new BankRegistrationOperations(
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),

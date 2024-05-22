@@ -15,17 +15,12 @@ public interface ISoftwareStatementsContext :
         SoftwareStatementResponse, SoftwareStatementResponse>,
     IUpdateContext<SoftwareStatementUpdate, SoftwareStatementResponse> { }
 
-internal interface ISoftwareStatementsContextInternal : ISoftwareStatementsContext,
-    ILocalEntityContextInternal<SoftwareStatement, ISoftwareStatementPublicQuery,
-        SoftwareStatementResponse, SoftwareStatementResponse>,
-    IUpdateContextInternal<SoftwareStatementUpdate, SoftwareStatementResponse> { }
-
-internal class SoftwareStatementsContextInternal : LocalEntityContextInternal<SoftwareStatementEntity, SoftwareStatement
+internal class SoftwareStatementsContext : LocalEntityContext<SoftwareStatementEntity, SoftwareStatement
         , ISoftwareStatementPublicQuery,
         SoftwareStatementResponse, SoftwareStatementResponse>,
-    ISoftwareStatementsContextInternal
+    ISoftwareStatementsContext
 {
-    public SoftwareStatementsContextInternal(
+    public SoftwareStatementsContext(
         ISharedContext sharedContext,
         IObjectCreate<SoftwareStatement, SoftwareStatementResponse, LocalCreateParams> postObject,
         IObjectUpdate2<SoftwareStatementUpdate, SoftwareStatementResponse> updateObject) : base(

@@ -13,6 +13,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 /// </summary>
 public interface IDeleteConsentContext
 {
+    private protected IObjectDelete<ConsentDeleteParams> DeleteObject { get; }
+
     /// <summary>
     ///     DELETE object by ID (includes DELETE-ing object at bank API).
     ///     Object will be deleted at bank and also from local database if it is a Bank Registration or Consent.
@@ -23,22 +25,11 @@ public interface IDeleteConsentContext
     /// <param name="extraHeaders"></param>
     /// <param name="includeExternalApiOperation"></param>
     /// <returns></returns>
-    Task<BaseResponse> DeleteAsync(
-        Guid id,
-        string? modifiedBy = null,
-        IEnumerable<HttpHeader>? extraHeaders = null,
-        bool includeExternalApiOperation = true);
-}
-
-internal interface IDeleteConsentContextInternal : IDeleteConsentContext
-{
-    IObjectDelete<ConsentDeleteParams> DeleteObject { get; }
-
-    async Task<BaseResponse> IDeleteConsentContext.DeleteAsync(
+    async Task<BaseResponse> DeleteAsync(
         Guid id,
         string? modifiedBy,
         IEnumerable<HttpHeader>? extraHeaders,
-        bool includeExternalApiOperation)
+        bool includeExternalApiOperation = true)
     {
         var consentDeleteParams = new ConsentDeleteParams(id, modifiedBy, extraHeaders, includeExternalApiOperation);
         IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages =

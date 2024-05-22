@@ -38,14 +38,8 @@ public interface IDomesticVrpConsentsContext :
         AuthContexts { get; }
 }
 
-internal interface IDomesticVrpConsentsContextInternal :
-    IDomesticVrpConsentsContext,
-    IConsentContextInternal<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse,
-        DomesticVrpConsentCreateResponse>,
-    IDeleteConsentContextInternal { }
-
 internal class DomesticVrpConsentsContext :
-    IDomesticVrpConsentsContextInternal
+    IDomesticVrpConsentsContext
 {
     private readonly DomesticVrpConsentOperations _domesticVrpConsentOperations;
     private readonly ISharedContext _sharedContext;
@@ -103,7 +97,7 @@ internal class DomesticVrpConsentsContext :
         IDomesticVrpConsentAuthContextPublicQuery,
         DomesticVrpConsentAuthContextCreateResponse,
         DomesticVrpConsentAuthContextReadResponse> AuthContexts =>
-        new LocalEntityContextInternal<DomesticVrpConsentAuthContextPersisted,
+        new LocalEntityContext<DomesticVrpConsentAuthContextPersisted,
             DomesticVrpConsentAuthContextRequest,
             IDomesticVrpConsentAuthContextPublicQuery,
             DomesticVrpConsentAuthContextCreateResponse,

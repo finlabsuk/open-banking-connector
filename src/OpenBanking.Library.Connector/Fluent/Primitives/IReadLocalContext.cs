@@ -15,30 +15,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 public interface IReadLocalContext<TPublicQuery, TPublicResponse>
     where TPublicResponse : class
 {
+    private protected IObjectReadWithSearch<TPublicQuery, TPublicResponse, LocalReadParams> ReadLocalObject { get; }
+
     /// <summary>
     ///     READ local object(s) by query (does not include GETing object(s) from bank API).
     ///     Object(s) will be read from local database only.
     /// </summary>
     /// <param name="predicate"></param>
     /// <returns></returns>
-    Task<IQueryable<TPublicResponse>> ReadLocalAsync(Expression<Func<TPublicQuery, bool>> predicate);
-
-    Task<TPublicResponse> ReadLocalAsync(
-        Guid id,
-        string? modifiedBy = null,
-        string? apiResponseWriteFile = null,
-        string? apiResponseOverrideFile = null);
-}
-
-internal interface
-    IReadLocalContextInternal<TPublicQuery, TPublicResponse> : IReadLocalContext<TPublicQuery, TPublicResponse>
-    where TPublicResponse : class
-{
-    IObjectReadWithSearch<TPublicQuery, TPublicResponse, LocalReadParams> ReadLocalObject { get; }
-
-
-    async Task<IQueryable<TPublicResponse>> IReadLocalContext<TPublicQuery, TPublicResponse>.
-        ReadLocalAsync(Expression<Func<TPublicQuery, bool>> predicate)
+    async Task<IQueryable<TPublicResponse>> ReadLocalAsync(Expression<Func<TPublicQuery, bool>> predicate)
     {
         (IQueryable<TPublicResponse> response,
                 IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
@@ -46,11 +31,11 @@ internal interface
         return response;
     }
 
-    async Task<TPublicResponse> IReadLocalContext<TPublicQuery, TPublicResponse>.ReadLocalAsync(
+    async Task<TPublicResponse> ReadLocalAsync(
         Guid id,
-        string? modifiedBy,
-        string? apiResponseWriteFile,
-        string? apiResponseOverrideFile)
+        string? modifiedBy = null,
+        string? apiResponseWriteFile = null,
+        string? apiResponseOverrideFile = null)
     {
         var readParams = new LocalReadParams
         {

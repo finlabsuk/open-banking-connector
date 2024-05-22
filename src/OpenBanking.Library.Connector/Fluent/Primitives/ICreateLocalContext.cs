@@ -13,29 +13,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 ///     Fluent interface methods for CreateLocal.
 /// </summary>
 /// <typeparam name="TPublicRequest"></typeparam>
-/// <typeparam name="TPublicPostResponse"></typeparam>
-public interface ICreateLocalContext<in TPublicRequest, TPublicPostResponse>
-    where TPublicPostResponse : class
+/// <typeparam name="TPublicResponse"></typeparam>
+public interface ICreateLocalContext<in TPublicRequest, TPublicResponse>
+    where TPublicRequest : class, ISupportsValidation
+    where TPublicResponse : class
 {
+    private protected IObjectCreate<TPublicRequest, TPublicResponse, LocalCreateParams> CreateLocalObject { get; }
+
     /// <summary>
     ///     CREATE local object (does not include POSTing object to bank API).
     ///     Object will be created in local database only.
     /// </summary>
     /// <param name="publicRequest">Request object</param>
     /// <returns></returns>
-    Task<TPublicPostResponse> CreateLocalAsync(TPublicRequest publicRequest);
-}
-
-internal interface
-    ICreateLocalContextInternal<in TPublicRequest, TPublicResponse> :
-        ICreateLocalContext<TPublicRequest, TPublicResponse>
-    where TPublicRequest : class, ISupportsValidation
-    where TPublicResponse : class
-{
-    IObjectCreate<TPublicRequest, TPublicResponse, LocalCreateParams> CreateLocalObject { get; }
-
-    async Task<TPublicResponse> ICreateLocalContext<TPublicRequest, TPublicResponse>.
-        CreateLocalAsync(TPublicRequest publicRequest)
+    async Task<TPublicResponse> CreateLocalAsync(TPublicRequest publicRequest)
     {
         publicRequest.ArgNotNull(nameof(publicRequest));
 

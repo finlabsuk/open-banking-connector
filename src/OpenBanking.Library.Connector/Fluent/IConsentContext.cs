@@ -17,12 +17,5 @@ public interface IConsentContext<in TPublicRequest, TPublicCreateResponse, TPubl
     ICreateConsentContext<TPublicRequest, TPublicCreateResponse>,
     IReadConsentContext<TPublicReadResponse>
     where TPublicReadResponse : class
-    where TPublicCreateResponse : class { }
-
-internal interface IConsentContextInternal<in TPublicRequest, TPublicCreateResponse, TPublicReadResponse> :
-    IConsentContext<TPublicRequest, TPublicCreateResponse, TPublicReadResponse>,
-    ICreateConsentContextInternal<TPublicRequest, TPublicCreateResponse>,
-    IReadConsentContextInternal<TPublicReadResponse>
-    where TPublicRequest : class, ISupportsValidation
-    where TPublicReadResponse : class
-    where TPublicCreateResponse : class { }
+    where TPublicCreateResponse : class
+    where TPublicRequest : class, ISupportsValidation { }

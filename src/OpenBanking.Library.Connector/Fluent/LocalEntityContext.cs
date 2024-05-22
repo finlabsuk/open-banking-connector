@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -12,17 +11,17 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
 internal class
-    LocalEntityContextInternal<TEntity, TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
+    LocalEntityContext<TEntity, TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
         TPublicReadLocalResponse> :
-    ILocalEntityContextInternal<TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
-        TPublicReadLocalResponse>, IDeleteLocalContextInternal
+    ILocalEntityContext<TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
+        TPublicReadLocalResponse>
     where TEntity : class, IEntity,
     ISupportsFluentLocalEntityGet<TPublicReadLocalResponse>
     where TPublicCreateLocalResponse : class
     where TPublicReadLocalResponse : class
     where TPublicRequest : EntityBase, ISupportsValidation
 {
-    public LocalEntityContextInternal(
+    public LocalEntityContext(
         ISharedContext sharedContext,
         IObjectCreate<TPublicRequest, TPublicCreateLocalResponse, LocalCreateParams> postObject)
     {

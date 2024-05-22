@@ -16,8 +16,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 /// <typeparam name="TPublicRequest"></typeparam>
 /// <typeparam name="TPublicResponse"></typeparam>
 public interface ICreateConsentContext<in TPublicRequest, TPublicResponse>
+    where TPublicRequest : class, ISupportsValidation
     where TPublicResponse : class
 {
+    private protected IObjectCreate<TPublicRequest, TPublicResponse, ConsentCreateParams> CreateObject { get; }
+
     /// <summary>
     ///     CREATE object (includes POSTing object to bank API).
     ///     Object will be created at bank and also in local database if it is a Bank Registration or Consent.
@@ -26,24 +29,10 @@ public interface ICreateConsentContext<in TPublicRequest, TPublicResponse>
     /// <param name="publicRequestUrlWithoutQuery"></param>
     /// <param name="extraHeaders"></param>
     /// <returns></returns>
-    Task<TPublicResponse> CreateAsync(
+    async Task<TPublicResponse> CreateAsync(
         TPublicRequest publicRequest,
         string? publicRequestUrlWithoutQuery = null,
-        IEnumerable<HttpHeader>? extraHeaders = null);
-}
-
-internal interface
-    ICreateConsentContextInternal<in TPublicRequest, TPublicResponse> :
-    ICreateConsentContext<TPublicRequest, TPublicResponse>
-    where TPublicRequest : class, ISupportsValidation
-    where TPublicResponse : class
-{
-    IObjectCreate<TPublicRequest, TPublicResponse, ConsentCreateParams> CreateObject { get; }
-
-    async Task<TPublicResponse> ICreateConsentContext<TPublicRequest, TPublicResponse>.CreateAsync(
-        TPublicRequest publicRequest,
-        string? publicRequestUrlWithoutQuery,
-        IEnumerable<HttpHeader>? extraHeaders)
+        IEnumerable<HttpHeader>? extraHeaders = null)
     {
         publicRequest.ArgNotNull(nameof(publicRequest));
 

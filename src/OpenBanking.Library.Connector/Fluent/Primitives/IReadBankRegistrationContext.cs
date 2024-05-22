@@ -13,6 +13,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 public interface IReadBankRegistrationContext<TPublicResponse>
     where TPublicResponse : class
 {
+    private protected IObjectRead<TPublicResponse, BankRegistrationReadParams> ReadObject { get; }
+
     /// <summary>
     ///     READ object by ID (includes GETing object from bank API).
     ///     Object will be read from bank and also from local database if it is a Bank Registration or Consent.
@@ -21,22 +23,10 @@ public interface IReadBankRegistrationContext<TPublicResponse>
     /// <param name="modifiedBy"></param>
     /// <param name="includeExternalApiOperation"></param>
     /// <returns></returns>
-    Task<TPublicResponse> ReadAsync(
+    async Task<TPublicResponse> ReadAsync(
         Guid id,
         string? modifiedBy = null,
-        bool? includeExternalApiOperation = null);
-}
-
-internal interface
-    IReadBankRegistrationContextInternal<TPublicResponse> : IReadBankRegistrationContext<TPublicResponse>
-    where TPublicResponse : class
-{
-    IObjectRead<TPublicResponse, BankRegistrationReadParams> ReadObject { get; }
-
-    async Task<TPublicResponse> IReadBankRegistrationContext<TPublicResponse>.ReadAsync(
-        Guid id,
-        string? modifiedBy,
-        bool? includeExternalApiOperation)
+        bool? includeExternalApiOperation = null)
     {
         var readParams = new BankRegistrationReadParams
         {

@@ -14,6 +14,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 public interface IReadConsentContext<TPublicResponse>
     where TPublicResponse : class
 {
+    private protected IObjectRead<TPublicResponse, ConsentReadParams> ReadObject { get; }
+
     /// <summary>
     ///     READ object by ID (includes GETing object from bank API).
     ///     Object will be read from bank and also from local database if it is a Bank Registration or Consent.
@@ -24,26 +26,12 @@ public interface IReadConsentContext<TPublicResponse>
     /// <param name="includeExternalApiOperation"></param>
     /// <param name="publicRequestUrlWithoutQuery"></param>
     /// <returns></returns>
-    Task<TPublicResponse> ReadAsync(
+    async Task<TPublicResponse> ReadAsync(
         Guid id,
         string? modifiedBy = null,
         IEnumerable<HttpHeader>? extraHeaders = null,
         bool includeExternalApiOperation = true,
-        string? publicRequestUrlWithoutQuery = null);
-}
-
-internal interface
-    IReadConsentContextInternal<TPublicResponse> : IReadConsentContext<TPublicResponse>
-    where TPublicResponse : class
-{
-    IObjectRead<TPublicResponse, ConsentReadParams> ReadObject { get; }
-
-    async Task<TPublicResponse> IReadConsentContext<TPublicResponse>.ReadAsync(
-        Guid id,
-        string? modifiedBy,
-        IEnumerable<HttpHeader>? extraHeaders,
-        bool includeExternalApiOperation,
-        string? publicRequestUrlWithoutQuery)
+        string? publicRequestUrlWithoutQuery = null)
     {
         var readParams = new ConsentReadParams
         {

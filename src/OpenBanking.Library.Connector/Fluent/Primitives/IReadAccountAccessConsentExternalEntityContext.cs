@@ -14,6 +14,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 public interface IReadAccountAccessConsentExternalEntityContext<TPublicResponse>
     where TPublicResponse : class
 {
+    private protected IAccountAccessConsentExternalRead<TPublicResponse, AccountAccessConsentExternalReadParams>
+        ReadObject { get; }
+
     /// <summary>
     ///     READ objects using consent ID (includes GETing objects from bank API).
     ///     Objects will be read from bank database only.
@@ -25,29 +28,13 @@ public interface IReadAccountAccessConsentExternalEntityContext<TPublicResponse>
     /// <param name="queryString"></param>
     /// <param name="requestUrlWithoutQuery"></param>
     /// <returns></returns>
-    Task<TPublicResponse> ReadAsync(
+    async Task<TPublicResponse> ReadAsync(
         Guid consentId,
         string? externalApiAccountId = null,
         string? modifiedBy = null,
         IEnumerable<HttpHeader>? extraHeaders = null,
         string? queryString = null,
-        string? requestUrlWithoutQuery = null);
-}
-
-internal interface
-    IReadAccountAccessConsentExternalEntityContextInternal<TPublicResponse> :
-    IReadAccountAccessConsentExternalEntityContext<TPublicResponse>
-    where TPublicResponse : class
-{
-    IAccountAccessConsentExternalRead<TPublicResponse, AccountAccessConsentExternalReadParams> ReadObject { get; }
-
-    async Task<TPublicResponse> IReadAccountAccessConsentExternalEntityContext<TPublicResponse>.ReadAsync(
-        Guid consentId,
-        string? externalApiAccountId,
-        string? modifiedBy,
-        IEnumerable<HttpHeader>? extraHeaders,
-        string? queryString,
-        string? requestUrlWithoutQuery)
+        string? requestUrlWithoutQuery = null)
     {
         var externalEntityReadParams = new AccountAccessConsentExternalReadParams
         {

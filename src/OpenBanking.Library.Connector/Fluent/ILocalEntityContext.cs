@@ -20,13 +20,5 @@ public interface ILocalEntityContext<in TPublicRequest, TPublicQuery, TPublicCre
     IReadLocalContext<TPublicQuery, TPublicReadLocalResponse>,
     IDeleteLocalContext
     where TPublicCreateLocalResponse : class
-    where TPublicReadLocalResponse : class { }
-
-internal interface ILocalEntityContextInternal<in TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
-    TPublicReadLocalResponse> :
-    ILocalEntityContext<TPublicRequest, TPublicQuery, TPublicCreateLocalResponse, TPublicReadLocalResponse>,
-    ICreateLocalContextInternal<TPublicRequest, TPublicCreateLocalResponse>,
-    IReadLocalContextInternal<TPublicQuery, TPublicReadLocalResponse>
-    where TPublicCreateLocalResponse : class
     where TPublicReadLocalResponse : class
     where TPublicRequest : class, ISupportsValidation { }

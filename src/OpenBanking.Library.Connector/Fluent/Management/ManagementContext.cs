@@ -43,11 +43,11 @@ internal class ManagementContext : IManagementContext
     }
 
     public IBankRegistrationsContext
-        BankRegistrations => new BankRegistrationsContextInternal(_sharedContext);
+        BankRegistrations => new BankRegistrationsContext(_sharedContext);
 
     public ILocalEntityContext<ObWacCertificate, IObWacCertificatePublicQuery, ObWacCertificateResponse,
         ObWacCertificateResponse> ObWacCertificates =>
-        new LocalEntityContextInternal<ObWacCertificateEntity, ObWacCertificate, IObWacCertificatePublicQuery,
+        new LocalEntityContext<ObWacCertificateEntity, ObWacCertificate, IObWacCertificatePublicQuery,
             ObWacCertificateResponse, ObWacCertificateResponse>(
             _sharedContext,
             new ObWacCertificatePost(
@@ -62,7 +62,7 @@ internal class ManagementContext : IManagementContext
 
     public ILocalEntityContext<ObSealCertificate, IObSealCertificatePublicQuery, ObSealCertificateResponse,
         ObSealCertificateResponse> ObSealCertificates =>
-        new LocalEntityContextInternal<ObSealCertificateEntity, ObSealCertificate, IObSealCertificatePublicQuery,
+        new LocalEntityContext<ObSealCertificateEntity, ObSealCertificate, IObSealCertificatePublicQuery,
             ObSealCertificateResponse, ObSealCertificateResponse>(
             _sharedContext,
             new ObSealCertificatePost(
@@ -82,7 +82,7 @@ internal class ManagementContext : IManagementContext
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
                 _sharedContext.Instrumentation);
-            return new SoftwareStatementsContextInternal(
+            return new SoftwareStatementsContext(
                 _sharedContext,
                 softwareStatementOperations,
                 softwareStatementOperations);

@@ -12,6 +12,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 /// </summary>
 public interface IDeleteBankRegistrationContext
 {
+    private protected IObjectDelete<BankRegistrationDeleteParams> DeleteObject { get; }
+
     /// <summary>
     ///     DELETE object by ID (includes DELETE-ing object at bank API).
     ///     Object will be deleted at bank and also from local database if it is a Bank Registration or Consent.
@@ -24,20 +26,10 @@ public interface IDeleteBankRegistrationContext
     ///     BankProfile is used to set value.
     /// </param>
     /// <returns></returns>
-    Task<BaseResponse> DeleteAsync(
+    async Task<BaseResponse> DeleteAsync(
         Guid id,
         string? modifiedBy = null,
-        bool? includeExternalApiOperation = null);
-}
-
-internal interface IDeleteBankRegistrationContextInternal : IDeleteBankRegistrationContext
-{
-    IObjectDelete<BankRegistrationDeleteParams> DeleteObject { get; }
-
-    async Task<BaseResponse> IDeleteBankRegistrationContext.DeleteAsync(
-        Guid id,
-        string? modifiedBy,
-        bool? includeExternalApiOperation)
+        bool? includeExternalApiOperation = null)
     {
         var bankRegistrationDeleteParams = new BankRegistrationDeleteParams(
             id,
