@@ -5,6 +5,8 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
@@ -13,6 +15,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 
@@ -50,8 +53,8 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             },
             GetFinancialId(bank),
             GetAccountAndTransactionApi(bank),
-            null,
-            null,
+            GetPaymentInitiationApi(bank),
+            GetVariableRecurringPaymentsApi(bank),
             bank is not BarclaysBank.Sandbox,
             instrumentationClient)
         {
@@ -150,9 +153,44 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                     : null,
                 AccountAccessConsentRefreshTokenGrantPost =
                     new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
-                BankRegistrationPost = new BankRegistrationPostCustomBehaviour
+                BankRegistrationPost =
+                    new BankRegistrationPostCustomBehaviour
+                    {
+                        TransportCertificateSubjectDnOrgIdEncoding =
+                            SubjectDnOrgIdEncoding.DottedDecimalAttributeType
+                    },
+                DomesticVrpConsentRefreshTokenGrantPost =
+                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
+                DomesticPaymentConsentGet =
+                    new DomesticPaymentConsentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticPaymentConsentPost =
+                    new DomesticPaymentConsentPostCustomBehaviour
+                    {
+                        ResponseLinksOmitId = true,
+                        PreferMisspeltContractPresentIndicator = true
+                    },
+                DomesticPaymentGet =
+                    new DomesticPaymentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticPaymentPost =
+                    new DomesticPaymentPostCustomBehaviour
+                    {
+                        ResponseLinksOmitId = true,
+                        PreferMisspeltContractPresentIndicator = true
+                    },
+                DomesticVrpConsentGet =
+                    new DomesticVrpConsentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticVrpConsentPost =
+                    new DomesticVrpConsentPostCustomBehaviour
+                    {
+                        ResponseLinksOmitId = true,
+                        PreferMisspeltContractPresentIndicator = true
+                    },
+                DomesticVrpGet = new DomesticVrpGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticVrpPost = new DomesticVrpPostCustomBehaviour
                 {
-                    TransportCertificateSubjectDnOrgIdEncoding = SubjectDnOrgIdEncoding.DottedDecimalAttributeType
+                    ResponseLinksOmitId = true,
+                    PreferMisspeltContractPresentIndicator = true,
+                    OmitVrpType = true
                 }
             },
             AspspBrandId = bank is BarclaysBank.Sandbox
@@ -170,10 +208,13 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
         };
 
     private PaymentInitiationApi GetPaymentInitiationApi(BarclaysBank bank) =>
-        new()
-        {
-            BaseUrl = bank is BarclaysBank.Sandbox
-                ? "https://sandbox.api.barclays:443/open-banking/v3.1/sandbox/pisp" // from https://developer.barclays.com/apis/payment-initiation/1f6ad5c5-e397-41c0-8d3b-c35446491402.bdn/documentation#interface-details
-                : "https://telesto.api.barclays:443/open-banking/v3.1/pisp" // from https://developer.barclays.com/apis/payment-initiation/1f6ad5c5-e397-41c0-8d3b-c35446491402.bdn/documentation#interface-details
-        };
+        new() { BaseUrl = GetPaymentsBaseUrl(bank) };
+
+    private VariableRecurringPaymentsApi GetVariableRecurringPaymentsApi(BarclaysBank bank) =>
+        new() { BaseUrl = GetPaymentsBaseUrl(bank) };
+
+    private static string GetPaymentsBaseUrl(BarclaysBank bank) =>
+        bank is BarclaysBank.Sandbox
+            ? "https://sandbox.api.barclays:443/open-banking/v3.1/sandbox/pisp" // from https://developer.barclays.com/apis/payment-initiation/1f6ad5c5-e397-41c0-8d3b-c35446491402.bdn/documentation#interface-details
+            : "https://telesto.api.barclays:443/open-banking/v3.1/pisp"; // from https://developer.barclays.com/apis/payment-initiation/1f6ad5c5-e397-41c0-8d3b-c35446491402.bdn/documentation#interface-details
 }
