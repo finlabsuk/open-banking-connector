@@ -5,7 +5,10 @@
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
@@ -87,12 +90,8 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 _ => throw new ArgumentOutOfRangeException()
             },
             GetAccountAndTransactionApi(bank),
-            bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
-                ? GetPaymentInitiationApi(bank)
-                : null,
-            bank is NatWestBank.NatWestSandbox
-                ? GetVariableRecurringPaymentsApi(bank)
-                : null,
+            GetPaymentInitiationApi(bank),
+            GetVariableRecurringPaymentsApi(bank),
             bank is not (NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox),
             instrumentationClient)
         {
@@ -139,68 +138,97 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     return externalApiRequest;
                 }
             },
-            CustomBehaviour = bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
-                ? new CustomBehaviourClass
+            CustomBehaviour = new CustomBehaviourClass
+            {
+                BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                 {
-                    BankRegistrationPost = new BankRegistrationPostCustomBehaviour
+                    TransportCertificateSubjectDnOrgIdEncoding = bank switch
                     {
-                        TransportCertificateSubjectDnOrgIdEncoding = SubjectDnOrgIdEncoding.DottedDecimalAttributeType,
-                        ScopeClaimResponseJsonConverter =
-                            DelimitedStringConverterOptions.JsonIsStringArrayNotString
-                    }
-                }
-                : new CustomBehaviourClass
-                {
-                    BankRegistrationPost = new BankRegistrationPostCustomBehaviour
-                    {
-                        TransportCertificateSubjectDnOrgIdEncoding = bank switch
-                        {
-                            NatWestBank.Mettle or NatWestBank.Coutts => SubjectDnOrgIdEncoding.StringAttributeType,
-                            _ => SubjectDnOrgIdEncoding.DottedDecimalAttributeType
-                        }
+                        NatWestBank.Mettle or NatWestBank.Coutts => SubjectDnOrgIdEncoding.StringAttributeType,
+                        _ => SubjectDnOrgIdEncoding.DottedDecimalAttributeType
                     },
-                    AccountAccessConsentAuthGet = new ConsentAuthGetCustomBehaviour
+                    ScopeClaimResponseJsonConverter =
+                        bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
+                            ? DelimitedStringConverterOptions.JsonIsStringArrayNotString
+                            : null
+                },
+                AccountAccessConsentAuthGet = new ConsentAuthGetCustomBehaviour
+                {
+                    AudClaim = GetAudClaim(bank),
+                    IdTokenProcessingCustomBehaviour =
+                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
+                },
+                AccountAccessConsentAuthCodeGrantPost =
+                    new AuthCodeGrantPostCustomBehaviour
                     {
-                        AudClaim = bank switch
-                        {
-                            NatWestBank.NatWest
-                                or NatWestBank.NatWestBankline
-                                or NatWestBank.NatWestClearSpend => "https://secure1.natwest.com",
-                            NatWestBank.RoyalBankOfScotland
-                                or NatWestBank.RoyalBankOfScotlandBankline
-                                or NatWestBank.RoyalBankOfScotlandClearSpend
-                                or NatWestBank.TheOne
-                                or NatWestBank.NatWestOne
-                                or NatWestBank.VirginOne => "https://secure1.rbs.co.uk",
-                            NatWestBank.UlsterBankNi
-                                or NatWestBank.UlsterBankNiBankline
-                                or NatWestBank.UlsterBankNiClearSpend =>
-                                "https://secure1.ulsterbank.co.uk",
-                            NatWestBank.Mettle => null, // use default
-                            NatWestBank.Coutts => null, // use default
-                            _ => throw new ArgumentOutOfRangeException(
-                                nameof(bank),
-                                bank,
-                                null)
-                        },
                         IdTokenProcessingCustomBehaviour =
                             new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
                     },
-                    AccountAccessConsentAuthCodeGrantPost =
-                        new AuthCodeGrantPostCustomBehaviour
-                        {
-                            IdTokenProcessingCustomBehaviour =
-                                new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
-                        },
-                    AccountAccessConsentRefreshTokenGrantPost =
-                        new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
-                    AccountAccessConsentPost = bank is NatWestBank.Coutts
-                        ? new ReadWritePostCustomBehaviour { ResponseLinksAddSlash = true }
-                        : null,
-                    AccountAccessConsentGet = bank is NatWestBank.Coutts
-                        ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
-                        : null
+                AccountAccessConsentRefreshTokenGrantPost =
+                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
+                AccountAccessConsentPost = bank is NatWestBank.Coutts
+                    ? new ReadWritePostCustomBehaviour { ResponseLinksAddSlash = true }
+                    : null,
+                AccountAccessConsentGet = bank is NatWestBank.Coutts
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
+                    : null,
+                AccountGet = bank is NatWestBank.Coutts
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
+                    : null,
+                BalanceGet = bank is NatWestBank.Coutts
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
+                    : null,
+                DirectDebitGet = bank is NatWestBank.Coutts
+                    ? new DirectDebitGetCustomBehaviour { ResponseLinksAddSlash = true }
+                    : null,
+                MonzoPotGet = bank is NatWestBank.Coutts
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
+                    : null,
+                Party2Get = bank is NatWestBank.Coutts
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
+                    : null,
+                PartyGet = bank is NatWestBank.Coutts
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
+                    : null,
+                StandingOrderGet = bank is NatWestBank.Coutts
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
+                    : null,
+                TransactionGet = bank is NatWestBank.Coutts
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
+                    : null,
+                DomesticPaymentConsentAuthGet = new ConsentAuthGetCustomBehaviour
+                {
+                    AudClaim = GetAudClaim(bank),
+                    IdTokenProcessingCustomBehaviour =
+                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
                 },
+                DomesticPaymentConsentRefreshTokenGrantPost =
+                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
+                DomesticVrpConsentAuthGet = new ConsentAuthGetCustomBehaviour
+                {
+                    AudClaim = GetAudClaim(bank),
+                    IdTokenProcessingCustomBehaviour =
+                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
+                },
+                DomesticVrpConsentRefreshTokenGrantPost =
+                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
+                DomesticPaymentConsentGet =
+                    new DomesticPaymentConsentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticPaymentConsentPost =
+                    new DomesticPaymentConsentPostCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticPaymentGet =
+                    new DomesticPaymentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticPaymentPost =
+                    new DomesticPaymentPostCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticVrpConsentGet =
+                    new DomesticVrpConsentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticVrpConsentPost =
+                    new DomesticVrpConsentPostCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticVrpGet = new DomesticVrpGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticVrpPost = new DomesticVrpPostCustomBehaviour { PreferMisspeltContractPresentIndicator = true }
+            },
+            VariableRecurringPaymentsApiSettings =
+                new VariableRecurringPaymentsApiSettings { UseDomesticVrpGetPaymentDetailsEndpoint = true },
             AspspBrandId = bank switch
             {
                 NatWestBank.NatWestSandbox => 100001, // sandbox
@@ -225,8 +253,61 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
         };
     }
 
+    private string? GetAudClaim(NatWestBank bank) => bank switch
+    {
+        NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox => null,
+        NatWestBank.NatWest
+            or NatWestBank.NatWestBankline
+            or NatWestBank.NatWestClearSpend => "https://secure1.natwest.com",
+        NatWestBank.RoyalBankOfScotland
+            or NatWestBank.RoyalBankOfScotlandBankline
+            or NatWestBank.RoyalBankOfScotlandClearSpend
+            or NatWestBank.TheOne
+            or NatWestBank.NatWestOne
+            or NatWestBank.VirginOne => "https://secure1.rbs.co.uk",
+        NatWestBank.UlsterBankNi
+            or NatWestBank.UlsterBankNiBankline
+            or NatWestBank.UlsterBankNiClearSpend =>
+            "https://secure1.ulsterbank.co.uk",
+        NatWestBank.Mettle => null, // use default
+        NatWestBank.Coutts => null, // use default
+        _ => throw new ArgumentOutOfRangeException(
+            nameof(bank),
+            bank,
+            null)
+    };
+
     private VariableRecurringPaymentsApi GetVariableRecurringPaymentsApi(NatWestBank bank) =>
-        new() { BaseUrl = GetPaymentInitiationApiBaseUrl(bank) };
+        new() { BaseUrl = GetPaymentsBaseUrl(bank) };
+
+    private string GetPaymentsBaseUrl(NatWestBank bank)
+    {
+        return bank switch
+        {
+            NatWestBank.NatWestSandbox => GetPaymentInitiationApiBaseUrl(bank),
+            NatWestBank.RoyalBankOfScotlandSandbox => GetPaymentInitiationApiBaseUrl(bank),
+            NatWestBank.NatWest
+                or NatWestBank.NatWestBankline
+                or NatWestBank.NatWestClearSpend =>
+                "https://api.natwest.com/open-banking/v3.1/pisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/nwb/3.1.11
+            NatWestBank.RoyalBankOfScotland
+                or NatWestBank.RoyalBankOfScotlandBankline
+                or NatWestBank.RoyalBankOfScotlandClearSpend
+                or NatWestBank.TheOne
+                or NatWestBank.NatWestOne
+                or NatWestBank.VirginOne =>
+                "https://api.rbs.co.uk/open-banking/v3.1/pisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/rbs/3.1.11
+            NatWestBank.UlsterBankNi
+                or NatWestBank.UlsterBankNiBankline
+                or NatWestBank.UlsterBankNiClearSpend =>
+                "https://api.ulsterbank.co.uk/open-banking/v3.1/pisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/ubn/3.1.11
+            NatWestBank.Mettle =>
+                "https://api.openbanking.prd-mettle.co.uk/apis/open-banking/v3.1/pisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/mettle/3.1.10
+            NatWestBank.Coutts =>
+                "https://api.coutts.com/open-banking/v3.1/pisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/coutts/3.1.8#api-specification
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
 
     private AccountAndTransactionApi GetAccountAndTransactionApi(NatWestBank bank)
     {
@@ -262,5 +343,5 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
     }
 
     private PaymentInitiationApi GetPaymentInitiationApi(NatWestBank bank) =>
-        new() { BaseUrl = GetPaymentInitiationApiBaseUrl(bank) };
+        new() { BaseUrl = GetPaymentsBaseUrl(bank) };
 }
