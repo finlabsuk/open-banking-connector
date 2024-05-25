@@ -3,11 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FluentAssertions;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 
@@ -17,23 +15,25 @@ public class WebAppClient
 {
     private readonly HttpClient _client;
 
-    public WebAppClient(WebApplicationFactory<Program> factory)
+    public WebAppClient(BankTestingFixture bankTestingFixture)
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            // factory = factory.WithWebHostBuilder(
-            //     builder => builder.UseSolutionRelativeContentRoot(
-            //         "src/OpenBanking.WebApp.Connector"));
-            factory = factory.WithWebHostBuilder(builder => builder.UseContentRoot(""));
-        }
-        _client = factory.CreateClient(
+        _client = bankTestingFixture.CreateClient(
             new WebApplicationFactoryClientOptions { BaseAddress = new Uri("http://localhost:5000") });
     }
 
-    public async Task<TResponse> GetAsync<TResponse>(string uriPath)
+    public async Task<TResponse> GetAsync<TResponse>(
+        string uriPath,
+        IEnumerable<KeyValuePair<string, IEnumerable<string>>> extraHeaders)
     {
+        // Assemble request
+        using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uriPath);
+        foreach ((string key, IEnumerable<string> value) in extraHeaders)
+        {
+            httpRequestMessage.Headers.Add(key, value);
+        }
+
         // Send request
-        using HttpResponseMessage httpResponse = await _client.GetAsync(uriPath);
+        using HttpResponseMessage httpResponse = await _client.SendAsync(httpRequestMessage);
 
         // Check status code
         httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -72,10 +72,19 @@ public class WebAppClient
         return response;
     }
 
-    public async Task<TResponse> DeleteAsync<TResponse>(string uriPath)
+    public async Task<TResponse> DeleteAsync<TResponse>(
+        string uriPath,
+        IEnumerable<KeyValuePair<string, IEnumerable<string>>> extraHeaders)
     {
+        // Assemble request
+        using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, uriPath);
+        foreach ((string key, IEnumerable<string> value) in extraHeaders)
+        {
+            httpRequestMessage.Headers.Add(key, value);
+        }
+
         // Send request
-        using HttpResponseMessage httpResponse = await _client.DeleteAsync(uriPath);
+        using HttpResponseMessage httpResponse = await _client.SendAsync(httpRequestMessage);
 
         // Check status code
         httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);

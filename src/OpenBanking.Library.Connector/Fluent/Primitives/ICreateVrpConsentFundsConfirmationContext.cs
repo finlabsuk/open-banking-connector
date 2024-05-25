@@ -17,10 +17,7 @@ public interface ICreateVrpConsentFundsConfirmationContext<in TPublicRequest, TP
     /// <summary>
     ///     CREATE funds confirmation for consent (includes POSTing object to bank API).
     /// </summary>
-    /// <param name="request"></param>
     /// <param name="createParams"></param>
     /// <returns></returns>
-    Task<TPublicResponse> CreateFundsConfirmationAsync(
-        TPublicRequest request,
-        VrpConsentFundsConfirmationCreateParams createParams);
+    Task<TPublicResponse> CreateFundsConfirmationAsync(VrpConsentFundsConfirmationCreateParams createParams);
 }

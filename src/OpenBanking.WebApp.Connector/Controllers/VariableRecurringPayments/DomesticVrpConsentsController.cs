@@ -154,12 +154,12 @@ public class DomesticVrpConsentsController : ControllerBase
             .VariableRecurringPayments
             .DomesticVrpConsents
             .CreateFundsConfirmationAsync(
-                request,
                 new VrpConsentFundsConfirmationCreateParams
                 {
                     PublicRequestUrlWithoutQuery = requestUrlWithoutQuery,
                     ExtraHeaders = extraHeaders,
-                    Id = domesticVrpConsentId
+                    ConsentId = domesticVrpConsentId,
+                    Request = request
                 });
 
         return Ok(fluentResponse);

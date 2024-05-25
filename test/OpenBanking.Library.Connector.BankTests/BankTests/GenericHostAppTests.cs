@@ -4,22 +4,21 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
 [Collection("App context collection")]
-public class GenericHostAppTests : AppTests, IClassFixture<WebApplicationFactory<Program>>
+public class GenericHostAppTests : AppTests, IClassFixture<BankTestingFixture>
 {
     public GenericHostAppTests(
         ITestOutputHelper outputHelper,
         AppContextFixture appContextFixture,
-        WebApplicationFactory<Program> webApplicationFactory) : base(
+        BankTestingFixture bankTestingFixture) : base(
         outputHelper,
         appContextFixture,
-        webApplicationFactory) { }
+        bankTestingFixture) { }
 
     [Theory]
     [MemberData(

@@ -118,7 +118,6 @@ internal class DomesticVrpConsentsContext :
     public IObjectDelete<ConsentDeleteParams> DeleteObject { get; }
 
     public Task<DomesticVrpConsentFundsConfirmationResponse> CreateFundsConfirmationAsync(
-        DomesticVrpConsentFundsConfirmationRequest request,
         VrpConsentFundsConfirmationCreateParams createParams) =>
-        _domesticVrpConsentOperations.CreateFundsConfirmationAsync(request, createParams);
+        _domesticVrpConsentOperations.CreateFundsConfirmationAsync(createParams);
 }

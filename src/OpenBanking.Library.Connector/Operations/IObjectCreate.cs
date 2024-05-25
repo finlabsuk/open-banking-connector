@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
@@ -20,7 +21,9 @@ public class ConsentCreateParams : LocalCreateParams
 
 public class VrpConsentFundsConfirmationCreateParams : ConsentCreateParams
 {
-    public required Guid Id { get; init; }
+    public required Guid ConsentId { get; init; }
+
+    public required DomesticVrpConsentFundsConfirmationRequest Request { get; init; }
 }
 
 internal interface IObjectCreate<in TPublicRequest, TPublicResponse, in TCreateParams>

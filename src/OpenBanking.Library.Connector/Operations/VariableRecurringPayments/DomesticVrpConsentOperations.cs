@@ -99,7 +99,6 @@ internal class
 
     public async
         Task<DomesticVrpConsentFundsConfirmationResponse> CreateFundsConfirmationAsync(
-            DomesticVrpConsentFundsConfirmationRequest request,
             VrpConsentFundsConfirmationCreateParams createParams)
     {
         // Create non-error list
@@ -107,7 +106,7 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Validate request data and convert to messages
-        ValidationResult validationResult = await request.ValidateAsync();
+        ValidationResult validationResult = await createParams.Request.ValidateAsync();
         if (validationResult.Errors.Any(failure => failure.Severity == Severity.Error))
         {
             throw new ValidationException(validationResult.Errors);
@@ -117,15 +116,15 @@ internal class
         (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
                 SoftwareStatementEntity softwareStatement) =
-            await _domesticVrpConsentCommon.GetDomesticVrpConsent(createParams.Id, true);
+            await _domesticVrpConsentCommon.GetDomesticVrpConsent(createParams.ConsentId, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
 
         // Validate consent ID
-        if (string.IsNullOrEmpty(request.ExternalApiRequest.Data.ConsentId))
+        if (string.IsNullOrEmpty(createParams.Request.ExternalApiRequest.Data.ConsentId))
         {
-            request.ExternalApiRequest.Data.ConsentId = externalApiConsentId;
+            createParams.Request.ExternalApiRequest.Data.ConsentId = externalApiConsentId;
         }
-        else if (request.ExternalApiRequest.Data.ConsentId != externalApiConsentId)
+        else if (createParams.Request.ExternalApiRequest.Data.ConsentId != externalApiConsentId)
         {
             throw new ArgumentException(
                 $"ExternalApiRequest contains consent ID that differs from {externalApiConsentId} " +
@@ -177,7 +176,7 @@ internal class
                 idTokenSubClaimType,
                 domesticVrpConsentRefreshTokenGrantPostCustomBehaviour,
                 jwksGetCustomBehaviour,
-                request.ModifiedBy);
+                createParams.Request.ModifiedBy);
 
         // Read object from external API
         JsonSerializerSettings? requestJsonSerializerSettings = null;
@@ -208,7 +207,7 @@ internal class
             await apiRequests.PostAsync(
                 externalApiUrl,
                 createParams.ExtraHeaders,
-                request.ExternalApiRequest,
+                createParams.Request.ExternalApiRequest,
                 tppReportingRequestInfo,
                 requestJsonSerializerSettings,
                 responseJsonSerializerSettings,

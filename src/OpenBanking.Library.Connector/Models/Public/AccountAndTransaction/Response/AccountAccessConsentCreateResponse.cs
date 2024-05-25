@@ -7,7 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 
 /// <summary>
-///     Response to AccountAccessConsent Create requests.
+///     Response to AccountAccessConsent Create and Read requests.
 /// </summary>
 public class AccountAccessConsentCreateResponse : ConsentBaseResponse
 {

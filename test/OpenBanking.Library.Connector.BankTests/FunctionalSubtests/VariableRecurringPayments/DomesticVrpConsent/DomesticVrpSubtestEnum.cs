@@ -5,7 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.VariableRecurringPayments;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.
-    DomesticVrp;
+    DomesticVrpConsent;
 
 /// <summary>
 ///     Domestic VRP functional subtest

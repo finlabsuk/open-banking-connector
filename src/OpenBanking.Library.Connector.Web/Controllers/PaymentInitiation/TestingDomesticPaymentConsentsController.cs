@@ -3,22 +3,22 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers.AccountAndTransaction;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers.PaymentInitiation;
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "test")]
-[Tags("Account Access Consent Auth Contexts")]
-[Route("aisp/account-access-consents")]
-public class TestingAccountAccessConsentsController : ControllerBase
+[Tags("Domestic Payment Consent Auth Contexts")]
+[Route("pisp/domestic-payment-consents")]
+public class TestingDomesticPaymentConsentsController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
 
-    public TestingAccountAccessConsentsController(IRequestBuilder requestBuilder)
+    public TestingDomesticPaymentConsentsController(IRequestBuilder requestBuilder)
     {
         _requestBuilder = requestBuilder;
     }
@@ -26,33 +26,33 @@ public class TestingAccountAccessConsentsController : ControllerBase
     public static string BrowserCookieKey => "__Host-Session-Id";
 
     /// <summary>
-    ///     Create account access consent auth context and redirect to auth URL
+    ///     Create domestic payment consent auth context and redirect to auth URL
     /// </summary>
-    /// <param name="accountAccessConsentId">ID of account access consent</param>
+    /// <param name="domesticPaymentConsentId">ID of domestic payment consent</param>
     /// <param name="modifiedBy"></param>
     /// <param name="reference"></param>
     /// <returns></returns>
-    [HttpGet("{accountAccessConsentId:guid}/auth")]
+    [HttpGet("{domesticPaymentConsentId:guid}/auth")]
     [ActionName(nameof(GetAsync))]
     [ProducesResponseType(StatusCodes.Status302Found)]
     public async Task<ActionResult> GetAsync(
-        Guid accountAccessConsentId,
+        Guid domesticPaymentConsentId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
         [FromHeader(Name = "reference")]
         string? reference)
     {
         // Create auth context
-        var authContextRequest = new AccountAccessConsentAuthContext
+        var authContextRequest = new DomesticPaymentConsentAuthContext
         {
-            AccountAccessConsentId = accountAccessConsentId,
+            DomesticPaymentConsentId = domesticPaymentConsentId,
             Reference = reference,
             CreatedBy = modifiedBy
         };
-        AccountAccessConsentAuthContextCreateResponse authContextResponse =
+        DomesticPaymentConsentAuthContextCreateResponse authContextResponse =
             await _requestBuilder
-                .AccountAndTransaction
-                .AccountAccessConsents
+                .PaymentInitiation
+                .DomesticPaymentConsents
                 .AuthContexts
                 .CreateLocalAsync(authContextRequest);
 

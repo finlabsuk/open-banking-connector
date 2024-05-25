@@ -5,18 +5,23 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FluentAssertions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
 public class ManagementApiClient(WebAppClient client)
 {
-    public async Task<BankRegistrationResponse> BankRegistrationRead(Guid id)
+    public async Task<BankRegistrationResponse> BankRegistrationRead(BankRegistrationReadParams readParams)
     {
         // Read object
-        var uriPath = $"/manage/bank-registrations/{id}";
+        var uriPath = $"/manage/bank-registrations/{readParams.Id}";
         var response =
-            await client.GetAsync<BankRegistrationResponse>(uriPath);
+            await client.GetAsync<BankRegistrationResponse>(
+                uriPath,
+                readParams.ExcludeExternalApiOperation
+                    ? [new KeyValuePair<string, IEnumerable<string>>("x-obc-exclude-external-api-operation", ["true"])]
+                    : []);
 
         // Checks
         response.Warnings.Should().BeNull();
@@ -37,12 +42,16 @@ public class ManagementApiClient(WebAppClient client)
         return response;
     }
 
-    public async Task<BaseResponse> BankRegistrationDelete(Guid id)
+    public async Task<BaseResponse> BankRegistrationDelete(BankRegistrationDeleteParams deleteParams)
     {
         // Delete object
-        var uriPath = $"/manage/bank-registrations/{id}";
+        var uriPath = $"/manage/bank-registrations/{deleteParams.Id}";
         var response =
-            await client.DeleteAsync<BaseResponse>(uriPath);
+            await client.DeleteAsync<BaseResponse>(
+                uriPath,
+                deleteParams.ExcludeExternalApiOperation
+                    ? [new KeyValuePair<string, IEnumerable<string>>("x-obc-exclude-external-api-operation", ["true"])]
+                    : []);
 
         // Checks
         response.Warnings.Should().BeNull();
@@ -68,7 +77,7 @@ public class ManagementApiClient(WebAppClient client)
         // Read object
         var uriPath = $"/manage/obwac-certificates/{id}";
         var response =
-            await client.GetAsync<ObWacCertificateResponse>(uriPath);
+            await client.GetAsync<ObWacCertificateResponse>(uriPath, []);
 
         // Checks
         response.Warnings.Should().BeNull();
@@ -81,7 +90,7 @@ public class ManagementApiClient(WebAppClient client)
         // Delete object
         var uriPath = $"/manage/obwac-certificates/{id}";
         var response =
-            await client.DeleteAsync<BaseResponse>(uriPath);
+            await client.DeleteAsync<BaseResponse>(uriPath, []);
 
         // Checks
         response.Warnings.Should().BeNull();
@@ -94,7 +103,7 @@ public class ManagementApiClient(WebAppClient client)
         // Delete object
         var uriPath = $"/manage/obseal-certificates/{id}";
         var response =
-            await client.DeleteAsync<BaseResponse>(uriPath);
+            await client.DeleteAsync<BaseResponse>(uriPath, []);
 
         // Checks
         response.Warnings.Should().BeNull();
@@ -107,7 +116,7 @@ public class ManagementApiClient(WebAppClient client)
         // Delete object
         var uriPath = $"/manage/software-statements/{id}";
         var response =
-            await client.DeleteAsync<BaseResponse>(uriPath);
+            await client.DeleteAsync<BaseResponse>(uriPath, []);
 
         // Checks
         response.Warnings.Should().BeNull();
@@ -134,7 +143,7 @@ public class ManagementApiClient(WebAppClient client)
         // Read object
         var uriPath = $"/manage/obseal-certificates/{id}";
         var response =
-            await client.GetAsync<ObSealCertificateResponse>(uriPath);
+            await client.GetAsync<ObSealCertificateResponse>(uriPath, []);
 
         // Checks
         response.Warnings.Should().BeNull();
@@ -160,7 +169,7 @@ public class ManagementApiClient(WebAppClient client)
         // Read object
         var uriPath = $"/manage/software-statements/{id}";
         var response =
-            await client.GetAsync<SoftwareStatementResponse>(uriPath);
+            await client.GetAsync<SoftwareStatementResponse>(uriPath, []);
 
         // Checks
         response.Warnings.Should().BeNull();

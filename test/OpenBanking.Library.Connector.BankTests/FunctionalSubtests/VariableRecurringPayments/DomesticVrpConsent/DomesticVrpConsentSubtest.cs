@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -17,16 +18,16 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurring
 using FluentAssertions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.
-    DomesticVrp;
+    DomesticVrpConsent;
 
-public static class DomesticVrpSubtest
+public class DomesticVrpConsentSubtest(VariableRecurringPaymentsApiClient variableRecurringPaymentsApiClient)
 {
     public static ISet<DomesticVrpSubtestEnum> DomesticVrpFunctionalSubtestsSupported(BankProfile bankProfile) =>
         bankProfile.VariableRecurringPaymentsApi is null
             ? new HashSet<DomesticVrpSubtestEnum>() // empty set
             : DomesticVrpSubtestHelper.AllDomesticVrpSubtests;
 
-    public static async Task RunTest(
+    public async Task RunTest(
         DomesticVrpSubtestEnum subtestEnum,
         BankProfile bankProfile,
         Guid bankRegistrationId,
@@ -211,12 +212,12 @@ public static class DomesticVrpSubtest
             DomesticVrpConsentFundsConfirmationResponse domesticPaymentConsentResp4 =
                 await requestBuilderNew.VariableRecurringPayments.DomesticVrpConsents
                     .CreateFundsConfirmationAsync(
-                        domesticVrpConsentFundsConfirmationRequest,
                         new VrpConsentFundsConfirmationCreateParams
                         {
                             PublicRequestUrlWithoutQuery = null,
                             ExtraHeaders = null,
-                            Id = domesticVrpConsentId
+                            ConsentId = domesticVrpConsentId,
+                            Request = domesticVrpConsentFundsConfirmationRequest
                         });
 
             // Checks
