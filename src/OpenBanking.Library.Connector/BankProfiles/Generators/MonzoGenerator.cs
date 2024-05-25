@@ -6,7 +6,6 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -79,10 +78,6 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
                 AccountAccessConsentRefreshTokenGrantPost = refreshTokenGrantPostCustomBehaviour,
                 DomesticPaymentConsentRefreshTokenGrantPost = refreshTokenGrantPostCustomBehaviour,
                 DomesticVrpConsentRefreshTokenGrantPost = refreshTokenGrantPostCustomBehaviour,
-                DomesticPaymentPost =
-                    new DomesticPaymentPostCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true },
-                DomesticPaymentGet =
-                    new DomesticPaymentGetCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true },
                 DomesticVrpPost = new DomesticVrpPostCustomBehaviour
                 {
                     RefundResponseJsonConverter =
@@ -174,7 +169,8 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
         {
             MonzoBank.Sandbox =>
                 "https://openbanking.s101.nonprod-ffs.io/open-banking/v3.1/pisp", // from https://docs.monzo.com/#payment-initiation-services-api
-            MonzoBank.Monzo => "https://openbanking.monzo.com/open-banking/v3.1/pisp", // from https://docs.monzo.com/#payment-initiation-services-api
+            MonzoBank.Monzo =>
+                "https://openbanking.monzo.com/open-banking/v3.1/pisp", // from https://docs.monzo.com/#payment-initiation-services-api
             _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
         };
     }
