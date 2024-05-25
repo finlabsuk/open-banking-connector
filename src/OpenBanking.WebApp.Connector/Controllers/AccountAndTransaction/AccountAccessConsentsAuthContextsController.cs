@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTransaction;
@@ -61,7 +62,12 @@ public class AccountAccessConsentsAuthContextsController : ControllerBase
             .AccountAndTransaction
             .AccountAccessConsents
             .AuthContexts
-            .ReadLocalAsync(accountAccessConsentAuthContextId);
+            .ReadLocalAsync(
+                new LocalReadParams
+                {
+                    Id = accountAccessConsentAuthContextId,
+                    ModifiedBy = null
+                });
 
         return Ok(fluentResponse);
     }

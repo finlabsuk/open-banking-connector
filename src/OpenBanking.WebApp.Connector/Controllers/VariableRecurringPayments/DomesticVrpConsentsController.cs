@@ -72,6 +72,7 @@ public class DomesticVrpConsentsController : ControllerBase
     ///     Read domestic VRP consent
     /// </summary>
     /// <param name="domesticVrpConsentId">ID of DomesticVrpConsent</param>
+    /// <param name="excludeExternalApiOperation"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpGet("{domesticVrpConsentId:guid}")]
@@ -79,6 +80,8 @@ public class DomesticVrpConsentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<DomesticVrpConsentCreateResponse>> GetAsync(
         Guid domesticVrpConsentId,
+        [FromHeader(Name = "x-obc-exclude-external-api-operation")]
+        bool? excludeExternalApiOperation,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
@@ -102,11 +105,14 @@ public class DomesticVrpConsentsController : ControllerBase
             .VariableRecurringPayments
             .DomesticVrpConsents
             .ReadAsync(
-                domesticVrpConsentId,
-                null,
-                extraHeaders,
-                true,
-                requestUrlWithoutQuery);
+                new ConsentReadParams
+                {
+                    Id = domesticVrpConsentId,
+                    ModifiedBy = null,
+                    ExtraHeaders = extraHeaders,
+                    PublicRequestUrlWithoutQuery = requestUrlWithoutQuery,
+                    ExcludeExternalApiOperation = excludeExternalApiOperation ?? false
+                });
 
         return Ok(fluentResponse);
     }
@@ -163,12 +169,15 @@ public class DomesticVrpConsentsController : ControllerBase
     ///     Delete domestic VRP consent
     /// </summary>
     /// <param name="domesticVrpConsentId">ID of DomesticVrpConsent</param>
+    /// <param name="excludeExternalApiOperation"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpDelete("{domesticVrpConsentId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<BaseResponse>> DeleteAsync(
         Guid domesticVrpConsentId,
+        [FromHeader(Name = "x-obc-exclude-external-api-operation")]
+        bool? excludeExternalApiOperation,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
@@ -187,7 +196,14 @@ public class DomesticVrpConsentsController : ControllerBase
         BaseResponse fluentResponse = await _requestBuilder
             .VariableRecurringPayments
             .DomesticVrpConsents
-            .DeleteAsync(domesticVrpConsentId, null, extraHeaders);
+            .DeleteAsync(
+                new ConsentDeleteParams
+                {
+                    ExtraHeaders = extraHeaders,
+                    ExcludeExternalApiOperation = excludeExternalApiOperation ?? false,
+                    Id = domesticVrpConsentId,
+                    ModifiedBy = null
+                });
 
         return Ok(fluentResponse);
     }

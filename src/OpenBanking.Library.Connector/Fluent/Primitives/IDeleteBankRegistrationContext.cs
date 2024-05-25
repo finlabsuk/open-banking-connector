@@ -19,24 +19,12 @@ public interface IDeleteBankRegistrationContext
     ///     Object will be deleted at bank and also from local database if it is a Bank Registration or Consent.
     ///     Note: deletions from local database are implemented via soft delete (i.e. a flag is set).
     /// </summary>
-    /// <param name="id"> </param>
-    /// <param name="modifiedBy">Optional user name or comment for local DB update when performing soft delete.</param>
-    /// <param name="includeExternalApiOperation">
-    ///     Include deletion of corresponding object at external API endpoint. When null,
-    ///     BankProfile is used to set value.
-    /// </param>
+    /// <param name="deleteParams"></param>
     /// <returns></returns>
-    async Task<BaseResponse> DeleteAsync(
-        Guid id,
-        string? modifiedBy = null,
-        bool? includeExternalApiOperation = null)
+    async Task<BaseResponse> DeleteAsync(BankRegistrationDeleteParams deleteParams)
     {
-        var bankRegistrationDeleteParams = new BankRegistrationDeleteParams(
-            id,
-            modifiedBy,
-            includeExternalApiOperation);
         IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages =
-            await DeleteObject.DeleteAsync(bankRegistrationDeleteParams);
+            await DeleteObject.DeleteAsync(deleteParams);
 
         return new BaseResponse();
     }

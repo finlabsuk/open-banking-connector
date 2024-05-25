@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.Management;
@@ -50,24 +51,24 @@ public class ObSealCertificatesController : ControllerBase
     ///     Read OBSeal signing certificate
     /// </summary>
     /// <param name="obSealCertificateId"></param>
-    /// <param name="modifiedBy"></param>
     /// <returns></returns>
     [HttpGet("{obSealCertificateId:guid}")]
     [ActionName(nameof(GetAsync))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<
         ObSealCertificateResponse>> GetAsync(
-        Guid obSealCertificateId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy)
+        Guid obSealCertificateId)
     {
         // Operation
         ObSealCertificateResponse fluentResponse = await _requestBuilder
             .Management
             .ObSealCertificates
             .ReadLocalAsync(
-                obSealCertificateId,
-                modifiedBy);
+                new LocalReadParams
+                {
+                    Id = obSealCertificateId,
+                    ModifiedBy = null
+                });
 
         return Ok(fluentResponse);
     }
@@ -76,22 +77,22 @@ public class ObSealCertificatesController : ControllerBase
     ///     Delete OBSeal signing certificate
     /// </summary>
     /// <param name="obSealCertificateId"></param>
-    /// <param name="modifiedBy"></param>
     /// <returns></returns>
     [HttpDelete("{obSealCertificateId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<BaseResponse>> DeleteAsync(
-        Guid obSealCertificateId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy)
+        Guid obSealCertificateId)
     {
         // Operation
         BaseResponse fluentResponse = await _requestBuilder
             .Management
             .ObSealCertificates
             .DeleteLocalAsync(
-                obSealCertificateId,
-                modifiedBy);
+                new LocalDeleteParams
+                {
+                    Id = obSealCertificateId,
+                    ModifiedBy = null
+                });
 
         return Ok(fluentResponse);
     }

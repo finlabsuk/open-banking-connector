@@ -14,9 +14,9 @@ public class LocalReadParams
     public required string? ModifiedBy { get; init; }
 }
 
-internal class BankRegistrationReadParams : LocalReadParams
+public class BankRegistrationReadParams : LocalReadParams
 {
-    public required bool? IncludeExternalApiOperation { get; init; }
+    public required bool ExcludeExternalApiOperation { get; init; }
 }
 
 public class ConsentBaseReadParams : LocalReadParams
@@ -25,9 +25,9 @@ public class ConsentBaseReadParams : LocalReadParams
     public required string? PublicRequestUrlWithoutQuery { get; init; }
 }
 
-internal class ConsentReadParams : ConsentBaseReadParams
+public class ConsentReadParams : ConsentBaseReadParams
 {
-    public required bool IncludeExternalApiOperation { get; init; }
+    public required bool ExcludeExternalApiOperation { get; init; }
 }
 
 internal interface IObjectRead<TPublicResponse, in TReadParams>

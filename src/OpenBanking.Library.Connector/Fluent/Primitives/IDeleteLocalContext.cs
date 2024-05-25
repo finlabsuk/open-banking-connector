@@ -19,16 +19,12 @@ public interface IDeleteLocalContext
     ///     Object will be deleted from local database only.
     ///     Note: deletions from local database are implemented via soft delete (i.e. a flag is set).
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="modifiedBy">Optional user name or comment for DB update when performing soft delete.</param>
+    /// <param name="deleteParams"></param>
     /// <returns></returns>
-    async Task<BaseResponse> DeleteLocalAsync(
-        Guid id,
-        string? modifiedBy = null)
+    async Task<BaseResponse> DeleteLocalAsync(LocalDeleteParams deleteParams)
     {
-        var localDeleteParams = new LocalDeleteParams(id, modifiedBy);
         IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages =
-            await DeleteLocalObject.DeleteAsync(localDeleteParams);
+            await DeleteLocalObject.DeleteAsync(deleteParams);
         return new BaseResponse();
     }
 }

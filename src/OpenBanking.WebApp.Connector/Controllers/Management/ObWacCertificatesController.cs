@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.Management;
@@ -50,24 +51,24 @@ public class ObWacCertificatesController : ControllerBase
     ///     Read OBWAC transport certificate
     /// </summary>
     /// <param name="obWacCertificateId"></param>
-    /// <param name="modifiedBy"></param>
     /// <returns></returns>
     [HttpGet("{obWacCertificateId:guid}")]
     [ActionName(nameof(GetAsync))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<
         ObWacCertificateResponse>> GetAsync(
-        Guid obWacCertificateId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy)
+        Guid obWacCertificateId)
     {
         // Operation
         ObWacCertificateResponse fluentResponse = await _requestBuilder
             .Management
             .ObWacCertificates
             .ReadLocalAsync(
-                obWacCertificateId,
-                modifiedBy);
+                new LocalReadParams
+                {
+                    Id = obWacCertificateId,
+                    ModifiedBy = null
+                });
 
         return Ok(fluentResponse);
     }
@@ -76,22 +77,22 @@ public class ObWacCertificatesController : ControllerBase
     ///     Delete OBWAC transport certificate
     /// </summary>
     /// <param name="obWacCertificateId"></param>
-    /// <param name="modifiedBy"></param>
     /// <returns></returns>
     [HttpDelete("{obWacCertificateId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<BaseResponse>> DeleteAsync(
-        Guid obWacCertificateId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy)
+        Guid obWacCertificateId)
     {
         // Operation
         BaseResponse fluentResponse = await _requestBuilder
             .Management
             .ObWacCertificates
             .DeleteLocalAsync(
-                obWacCertificateId,
-                modifiedBy);
+                new LocalDeleteParams
+                {
+                    Id = obWacCertificateId,
+                    ModifiedBy = null
+                });
 
         return Ok(fluentResponse);
     }

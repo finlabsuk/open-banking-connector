@@ -68,7 +68,7 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
                 .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
             throw new KeyNotFoundException($"No record found for Account Access Consent with ID {deleteParams.Id}.");
 
-        if (deleteParams.IncludeExternalApiOperation)
+        if (!deleteParams.ExcludeExternalApiOperation)
         {
             BankRegistrationEntity bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankApiId = persistedObject.ExternalApiId;

@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTransaction;
@@ -29,7 +30,6 @@ public class PartiesController : ControllerBase
     /// </summary>
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
-    /// <param name="modifiedBy"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
@@ -41,8 +41,6 @@ public class PartiesController : ControllerBase
         string? externalApiAccountId,
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
         Guid accountAccessConsentId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
@@ -73,12 +71,15 @@ public class PartiesController : ControllerBase
             .AccountAndTransaction
             .Parties
             .ReadAsync(
-                accountAccessConsentId,
-                externalApiAccountId,
-                modifiedBy,
-                extraHeaders,
-                queryString,
-                requestUrlWithoutQuery);
+                new AccountAccessConsentExternalReadParams
+                {
+                    ExternalApiAccountId = externalApiAccountId,
+                    QueryString = queryString,
+                    ConsentId = accountAccessConsentId,
+                    ModifiedBy = null,
+                    ExtraHeaders = extraHeaders,
+                    PublicRequestUrlWithoutQuery = requestUrlWithoutQuery
+                });
 
         return Ok(fluentResponse);
     }
@@ -88,7 +89,6 @@ public class PartiesController : ControllerBase
     /// </summary>
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
-    /// <param name="modifiedBy"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
@@ -99,8 +99,6 @@ public class PartiesController : ControllerBase
         string? externalApiAccountId,
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
         Guid accountAccessConsentId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
@@ -127,12 +125,15 @@ public class PartiesController : ControllerBase
             .AccountAndTransaction
             .Parties2
             .ReadAsync(
-                accountAccessConsentId,
-                externalApiAccountId,
-                modifiedBy,
-                extraHeaders,
-                queryString,
-                requestUrlWithoutQuery);
+                new AccountAccessConsentExternalReadParams
+                {
+                    ExternalApiAccountId = externalApiAccountId,
+                    QueryString = queryString,
+                    ConsentId = accountAccessConsentId,
+                    ModifiedBy = null,
+                    ExtraHeaders = extraHeaders,
+                    PublicRequestUrlWithoutQuery = requestUrlWithoutQuery
+                });
 
         return Ok(fluentResponse);
     }

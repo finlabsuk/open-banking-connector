@@ -72,6 +72,7 @@ public class DomesticPaymentConsentsController : ControllerBase
     ///     Read domestic payment consent
     /// </summary>
     /// <param name="domesticPaymentConsentId">ID of DomesticPaymentConsent</param>
+    /// <param name="excludeExternalApiOperation"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpGet("{domesticPaymentConsentId:guid}")]
@@ -80,6 +81,8 @@ public class DomesticPaymentConsentsController : ControllerBase
     public async Task<ActionResult<
         DomesticPaymentConsentCreateResponse>> GetAsync(
         Guid domesticPaymentConsentId,
+        [FromHeader(Name = "x-obc-exclude-external-api-operation")]
+        bool? excludeExternalApiOperation,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
@@ -103,11 +106,14 @@ public class DomesticPaymentConsentsController : ControllerBase
             .PaymentInitiation
             .DomesticPaymentConsents
             .ReadAsync(
-                domesticPaymentConsentId,
-                null,
-                extraHeaders,
-                true,
-                requestUrlWithoutQuery);
+                new ConsentReadParams
+                {
+                    Id = domesticPaymentConsentId,
+                    ModifiedBy = null,
+                    ExtraHeaders = extraHeaders,
+                    PublicRequestUrlWithoutQuery = requestUrlWithoutQuery,
+                    ExcludeExternalApiOperation = excludeExternalApiOperation ?? false
+                });
 
         return Ok(fluentResponse);
     }

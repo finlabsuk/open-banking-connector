@@ -31,17 +31,8 @@ public interface IReadLocalContext<TPublicQuery, TPublicResponse>
         return response;
     }
 
-    async Task<TPublicResponse> ReadLocalAsync(
-        Guid id,
-        string? modifiedBy = null,
-        string? apiResponseWriteFile = null,
-        string? apiResponseOverrideFile = null)
+    async Task<TPublicResponse> ReadLocalAsync(LocalReadParams readParams)
     {
-        var readParams = new LocalReadParams
-        {
-            Id = id,
-            ModifiedBy = modifiedBy
-        };
         (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
             await ReadLocalObject.ReadAsync(readParams);
 

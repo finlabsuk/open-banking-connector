@@ -102,8 +102,15 @@ public static class DomesticVrpSubtest
 
         // GET domestic VRP consent
         DomesticVrpConsentCreateResponse domesticVrpConsentResp2 =
-            await requestBuilder.VariableRecurringPayments.DomesticVrpConsents
-                .ReadAsync(domesticVrpConsentId);
+            await requestBuilder.VariableRecurringPayments.DomesticVrpConsents.ReadAsync(
+                new ConsentReadParams
+                {
+                    Id = domesticVrpConsentId,
+                    ModifiedBy = null,
+                    ExtraHeaders = null,
+                    PublicRequestUrlWithoutQuery = null,
+                    ExcludeExternalApiOperation = false
+                });
 
         // Checks
         domesticVrpConsentResp2.Should().NotBeNull();
@@ -134,7 +141,12 @@ public static class DomesticVrpSubtest
         DomesticVrpConsentAuthContextReadResponse authContextResponse2 =
             await requestBuilder.VariableRecurringPayments.DomesticVrpConsents
                 .AuthContexts
-                .ReadLocalAsync(authContextId);
+                .ReadLocalAsync(
+                    new LocalReadParams
+                    {
+                        Id = authContextId,
+                        ModifiedBy = null
+                    });
         // Checks
         authContextResponse2.Should().NotBeNull();
         authContextResponse2.Warnings.Should().BeNull();
@@ -149,10 +161,14 @@ public static class DomesticVrpSubtest
                         .VariableRecurringPayments
                         .DomesticVrpConsents
                         .ReadAsync(
-                            domesticVrpConsentId,
-                            modifiedBy,
-                            null,
-                            false);
+                            new ConsentReadParams
+                            {
+                                Id = domesticVrpConsentId,
+                                ModifiedBy = null,
+                                ExtraHeaders = null,
+                                PublicRequestUrlWithoutQuery = null,
+                                ExcludeExternalApiOperation = true
+                            });
                 return consentResponse.Created < consentResponse.AuthContextModified;
             }
 
@@ -286,10 +302,17 @@ public static class DomesticVrpSubtest
             }
 
             // DELETE domestic payment consent
-            var includeExternalApiOperation = true;
+            var excludeExternalApiOperation = false;
             BaseResponse domesticVrpConsentResp3 = await requestBuilderNew.VariableRecurringPayments
                 .DomesticVrpConsents
-                .DeleteAsync(domesticVrpConsentId, modifiedBy, null, includeExternalApiOperation);
+                .DeleteAsync(
+                    new ConsentDeleteParams
+                    {
+                        Id = domesticVrpConsentId,
+                        ModifiedBy = null,
+                        ExtraHeaders = null,
+                        ExcludeExternalApiOperation = excludeExternalApiOperation
+                    });
 
             // Checks
             domesticVrpConsentResp3.Should().NotBeNull();

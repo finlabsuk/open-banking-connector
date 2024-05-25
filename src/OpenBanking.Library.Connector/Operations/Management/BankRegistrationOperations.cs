@@ -397,10 +397,10 @@ internal class
             bankProfile.DynamicClientRegistrationApiVersion;
 
         ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse;
-        bool includeExternalApiOperation =
-            readParams.IncludeExternalApiOperation ??
-            bankProfile.BankConfigurationApiSettings.UseRegistrationGetEndpoint;
-        if (includeExternalApiOperation)
+        bool excludeExternalApiOperation =
+            readParams.ExcludeExternalApiOperation ||
+            !bankProfile.BankConfigurationApiSettings.UseRegistrationGetEndpoint;
+        if (!excludeExternalApiOperation)
         {
             string registrationEndpoint =
                 entity.RegistrationEndpoint ??

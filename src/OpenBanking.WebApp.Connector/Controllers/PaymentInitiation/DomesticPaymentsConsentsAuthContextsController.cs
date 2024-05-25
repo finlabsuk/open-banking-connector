@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.PaymentInitiation;
@@ -63,7 +64,12 @@ public class DomesticPaymentsConsentsAuthContextsController : ControllerBase
             .PaymentInitiation
             .DomesticPaymentConsents
             .AuthContexts
-            .ReadLocalAsync(domesticPaymentConsentAuthContextId);
+            .ReadLocalAsync(
+                new LocalReadParams
+                {
+                    Id = domesticPaymentConsentAuthContextId,
+                    ModifiedBy = null
+                });
 
         return Ok(fluentResponse);
     }

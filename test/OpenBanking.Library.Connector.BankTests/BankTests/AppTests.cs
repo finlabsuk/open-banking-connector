@@ -19,6 +19,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Req
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -304,7 +305,7 @@ public abstract class AppTests
                 await CreateBankRegistration(bankRegistrationRequest);
 
             // Delete BankRegistration (includes external API delete as appropriate)
-            await DeleteBankRegistration(serviceScopeGenerator, bankRegistrationIdTmp, modifiedBy, null);
+            await DeleteBankRegistration(serviceScopeGenerator, bankRegistrationIdTmp, modifiedBy, false);
         }
 
         // Create BankRegistration using existing external API registration
@@ -396,7 +397,7 @@ public abstract class AppTests
         }
 
         // Delete BankRegistration (excludes external API delete)
-        await DeleteBankRegistration(serviceScopeGenerator, bankRegistrationId, modifiedBy, false);
+        await DeleteBankRegistration(serviceScopeGenerator, bankRegistrationId, modifiedBy, true);
 
         await DeleteSoftwareStatement(
             obWacCertificateId,
@@ -513,7 +514,7 @@ public abstract class AppTests
         Func<IServiceScopeContainer> serviceScopeGenerator,
         Guid bankRegistrationId,
         string modifiedBy,
-        bool? includeExternalApiOperation)
+        bool excludeExternalApiOperation)
     {
         // Get request builder
         using IServiceScopeContainer serviceScopeContainer = serviceScopeGenerator();
@@ -523,9 +524,12 @@ public abstract class AppTests
             .Management
             .BankRegistrations
             .DeleteAsync(
-                bankRegistrationId,
-                modifiedBy,
-                includeExternalApiOperation);
+                new BankRegistrationDeleteParams
+                {
+                    ExcludeExternalApiOperation = excludeExternalApiOperation,
+                    Id = bankRegistrationId,
+                    ModifiedBy = null
+                });
 
         // Checks
         bankRegistrationDeleteResponse.Should().NotBeNull();

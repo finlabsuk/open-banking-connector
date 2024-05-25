@@ -70,10 +70,10 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
-        bool includeExternalApiOperationValue =
-            deleteParams.IncludeExternalApiOperation ??
-            bankProfile.BankConfigurationApiSettings.UseRegistrationDeleteEndpoint;
-        if (includeExternalApiOperationValue)
+        bool excludeExternalApiOperation =
+            deleteParams.ExcludeExternalApiOperation ||
+            !bankProfile.BankConfigurationApiSettings.UseRegistrationDeleteEndpoint;
+        if (!excludeExternalApiOperation)
         {
             string registrationEndpoint =
                 entity.RegistrationEndpoint ??

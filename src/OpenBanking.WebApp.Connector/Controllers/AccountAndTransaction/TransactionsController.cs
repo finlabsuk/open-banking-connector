@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTransaction;
@@ -30,7 +31,6 @@ public class TransactionsController : ControllerBase
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <param name="externalApiStatementId">External (bank) API ID of Statement</param>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
-    /// <param name="modifiedBy"></param>
     /// <param name="fromBookingDateTime">
     ///     Start date and time for filtering of the Transaction records on the
     ///     Transaction/BookingDateTime field
@@ -52,8 +52,6 @@ public class TransactionsController : ControllerBase
         string? externalApiStatementId,
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
         Guid accountAccessConsentId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy,
         [FromQuery]
         string? fromBookingDateTime,
         [FromQuery]
@@ -88,13 +86,16 @@ public class TransactionsController : ControllerBase
             .AccountAndTransaction
             .Transactions
             .ReadAsync(
-                accountAccessConsentId,
-                externalApiAccountId,
-                externalApiStatementId,
-                modifiedBy,
-                extraHeaders,
-                queryString,
-                requestUrlWithoutQuery);
+                new TransactionsReadParams
+                {
+                    ExternalApiStatementId = externalApiStatementId,
+                    ConsentId = accountAccessConsentId,
+                    ModifiedBy = null,
+                    ExtraHeaders = extraHeaders,
+                    PublicRequestUrlWithoutQuery = requestUrlWithoutQuery,
+                    ExternalApiAccountId = externalApiAccountId,
+                    QueryString = queryString
+                });
 
         return Ok(fluentResponse);
     }

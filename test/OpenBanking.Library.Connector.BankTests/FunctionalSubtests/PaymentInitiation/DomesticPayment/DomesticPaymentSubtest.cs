@@ -101,8 +101,15 @@ public static class DomesticPaymentSubtest
 
         // GET domestic payment consent
         DomesticPaymentConsentCreateResponse domesticPaymentConsentResp2 =
-            await requestBuilder.PaymentInitiation.DomesticPaymentConsents
-                .ReadAsync(domesticPaymentConsentId);
+            await requestBuilder.PaymentInitiation.DomesticPaymentConsents.ReadAsync(
+                new ConsentReadParams
+                {
+                    Id = domesticPaymentConsentId,
+                    ModifiedBy = null,
+                    ExtraHeaders = null,
+                    PublicRequestUrlWithoutQuery = null,
+                    ExcludeExternalApiOperation = false
+                });
 
         // Checks
         domesticPaymentConsentResp2.Should().NotBeNull();
@@ -133,7 +140,12 @@ public static class DomesticPaymentSubtest
         DomesticPaymentConsentAuthContextReadResponse authContextResponse2 =
             await requestBuilder.PaymentInitiation.DomesticPaymentConsents
                 .AuthContexts
-                .ReadLocalAsync(authContextId);
+                .ReadLocalAsync(
+                    new LocalReadParams
+                    {
+                        Id = authContextId,
+                        ModifiedBy = null
+                    });
         // Checks
         authContextResponse2.Should().NotBeNull();
         authContextResponse2.Warnings.Should().BeNull();
@@ -148,10 +160,14 @@ public static class DomesticPaymentSubtest
                         .PaymentInitiation
                         .DomesticPaymentConsents
                         .ReadAsync(
-                            domesticPaymentConsentId,
-                            modifiedBy,
-                            null,
-                            false);
+                            new ConsentReadParams
+                            {
+                                Id = domesticPaymentConsentId,
+                                ModifiedBy = null,
+                                ExtraHeaders = null,
+                                PublicRequestUrlWithoutQuery = null,
+                                ExcludeExternalApiOperation = true
+                            });
                 return consentResponse.Created < consentResponse.AuthContextModified;
             }
 
@@ -273,7 +289,12 @@ public static class DomesticPaymentSubtest
         BaseResponse domesticPaymentConsentResp3 = await requestBuilder
             .PaymentInitiation
             .DomesticPaymentConsents
-            .DeleteLocalAsync(domesticPaymentConsentId, modifiedBy);
+            .DeleteLocalAsync(
+                new LocalDeleteParams
+                {
+                    Id = domesticPaymentConsentId,
+                    ModifiedBy = null
+                });
 
         // Checks
         domesticPaymentConsentResp3.Should().NotBeNull();

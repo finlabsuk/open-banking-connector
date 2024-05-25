@@ -7,45 +7,22 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
-internal class LocalDeleteParams
+public class LocalDeleteParams
 {
-    public LocalDeleteParams(Guid id, string? modifiedBy)
-    {
-        Id = id;
-        ModifiedBy = modifiedBy;
-    }
-
-    public Guid Id { get; }
-    public string? ModifiedBy { get; }
+    public required Guid Id { get; init; }
+    public required string? ModifiedBy { get; init; }
 }
 
-internal class BankRegistrationDeleteParams : LocalDeleteParams
+public class BankRegistrationDeleteParams : LocalDeleteParams
 {
-    public BankRegistrationDeleteParams(
-        Guid id,
-        string? modifiedBy,
-        bool? includeExternalApiOperation) : base(id, modifiedBy)
-    {
-        IncludeExternalApiOperation = includeExternalApiOperation;
-    }
-
-    public bool? IncludeExternalApiOperation { get; }
+    public required bool ExcludeExternalApiOperation { get; init; }
 }
 
-internal class ConsentDeleteParams : LocalDeleteParams
+public class ConsentDeleteParams : LocalDeleteParams
 {
-    public ConsentDeleteParams(
-        Guid id,
-        string? modifiedBy,
-        IEnumerable<HttpHeader>? extraHeaders,
-        bool includeExternalApiOperation) : base(id, modifiedBy)
-    {
-        ExtraHeaders = extraHeaders;
-        IncludeExternalApiOperation = includeExternalApiOperation;
-    }
+    public required IEnumerable<HttpHeader>? ExtraHeaders { get; init; }
 
-    public IEnumerable<HttpHeader>? ExtraHeaders { get; }
-    public bool IncludeExternalApiOperation { get; }
+    public required bool ExcludeExternalApiOperation { get; init; }
 }
 
 internal interface IObjectDelete<in TDeleteParams>

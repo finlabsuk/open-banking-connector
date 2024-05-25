@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.VariableRecurringPayments;
@@ -63,7 +64,12 @@ public class DomesticVrpsConsentsAuthContextsController : ControllerBase
             .VariableRecurringPayments
             .DomesticVrpConsents
             .AuthContexts
-            .ReadLocalAsync(domesticVrpConsentAuthContextId);
+            .ReadLocalAsync(
+                new LocalReadParams
+                {
+                    Id = domesticVrpConsentAuthContextId,
+                    ModifiedBy = null
+                });
 
         return Ok(fluentResponse);
     }

@@ -51,24 +51,24 @@ public class SoftwareStatementsController : ControllerBase
     ///     Read software statement
     /// </summary>
     /// <param name="softwareStatementId"></param>
-    /// <param name="modifiedBy"></param>
     /// <returns></returns>
     [HttpGet("{softwareStatementId:guid}")]
     [ActionName(nameof(GetAsync))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<
         SoftwareStatementResponse>> GetAsync(
-        Guid softwareStatementId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy)
+        Guid softwareStatementId)
     {
         // Operation
         SoftwareStatementResponse fluentResponse = await _requestBuilder
             .Management
             .SoftwareStatements
             .ReadLocalAsync(
-                softwareStatementId,
-                modifiedBy);
+                new LocalReadParams
+                {
+                    Id = softwareStatementId,
+                    ModifiedBy = null
+                });
 
         return Ok(fluentResponse);
     }
@@ -78,7 +78,6 @@ public class SoftwareStatementsController : ControllerBase
     /// </summary>
     /// <param name="request"></param>
     /// <param name="softwareStatementId"></param>
-    /// <param name="modifiedBy"></param>
     /// <returns></returns>
     [HttpPut("{softwareStatementId:guid}")]
     [Consumes("application/json")]
@@ -87,9 +86,7 @@ public class SoftwareStatementsController : ControllerBase
         SoftwareStatementResponse>> PutAsync(
         [FromBody]
         SoftwareStatementUpdate request,
-        Guid softwareStatementId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy)
+        Guid softwareStatementId)
     {
         // Operation
         SoftwareStatementResponse fluentResponse = await _requestBuilder
@@ -100,7 +97,7 @@ public class SoftwareStatementsController : ControllerBase
                 new LocalReadParams
                 {
                     Id = softwareStatementId,
-                    ModifiedBy = modifiedBy
+                    ModifiedBy = null
                 });
 
         return Ok(fluentResponse);
@@ -110,22 +107,22 @@ public class SoftwareStatementsController : ControllerBase
     ///     Delete software statement
     /// </summary>
     /// <param name="softwareStatementId"></param>
-    /// <param name="modifiedBy"></param>
     /// <returns></returns>
     [HttpDelete("{softwareStatementId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<BaseResponse>> DeleteAsync(
-        Guid softwareStatementId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy)
+        Guid softwareStatementId)
     {
         // Operation
         BaseResponse fluentResponse = await _requestBuilder
             .Management
             .SoftwareStatements
             .DeleteLocalAsync(
-                softwareStatementId,
-                modifiedBy);
+                new LocalDeleteParams
+                {
+                    Id = softwareStatementId,
+                    ModifiedBy = null
+                });
 
         return Ok(fluentResponse);
     }

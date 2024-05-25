@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTransaction;
@@ -27,7 +28,6 @@ public class MonzoPotsController : ControllerBase
     ///     Read Monzo pots
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
-    /// <param name="modifiedBy"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
@@ -37,8 +37,6 @@ public class MonzoPotsController : ControllerBase
     public async Task<ActionResult<MonzoPotsResponse>> GetAsync(
         [FromHeader(Name = "x-obc-account-access-consent-id")]
         Guid accountAccessConsentId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
@@ -69,12 +67,15 @@ public class MonzoPotsController : ControllerBase
             .AccountAndTransaction
             .MonzoPots
             .ReadAsync(
-                accountAccessConsentId,
-                null,
-                modifiedBy,
-                extraHeaders,
-                queryString,
-                requestUrlWithoutQuery);
+                new AccountAccessConsentExternalReadParams
+                {
+                    ExternalApiAccountId = null,
+                    QueryString = queryString,
+                    ConsentId = accountAccessConsentId,
+                    ModifiedBy = null,
+                    ExtraHeaders = extraHeaders,
+                    PublicRequestUrlWithoutQuery = requestUrlWithoutQuery
+                });
 
         return Ok(fluentResponse);
     }

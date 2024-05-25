@@ -444,11 +444,11 @@ internal class
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id, false);
         string externalApiConsentId = persistedConsent.ExternalApiId;
 
-        bool includeExternalApiOperation =
-            readParams.IncludeExternalApiOperation;
+        bool excludeExternalApiOperation =
+            readParams.ExcludeExternalApiOperation;
         VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? externalApiResponse;
         ExternalApiResponseInfo? externalApiResponseInfo;
-        if (includeExternalApiOperation)
+        if (!excludeExternalApiOperation)
         {
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);

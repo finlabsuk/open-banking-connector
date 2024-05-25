@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTransaction;
@@ -72,8 +73,7 @@ public class AccountAccessConsentsController : ControllerBase
     ///     Read account access consent
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent</param>
-    /// <param name="modifiedBy"></param>
-    /// <param name="includeExternalApiOperation"></param>
+    /// <param name="excludeExternalApiOperation"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpGet("{accountAccessConsentId:guid}")]
@@ -82,10 +82,8 @@ public class AccountAccessConsentsController : ControllerBase
     public async Task<ActionResult<
         AccountAccessConsentCreateResponse>> GetAsync(
         Guid accountAccessConsentId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy,
-        [FromHeader(Name = "x-obc-include-external-api-operation")]
-        bool? includeExternalApiOperation,
+        [FromHeader(Name = "x-obc-exclude-external-api-operation")]
+        bool? excludeExternalApiOperation,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
@@ -109,11 +107,14 @@ public class AccountAccessConsentsController : ControllerBase
             .AccountAndTransaction
             .AccountAccessConsents
             .ReadAsync(
-                accountAccessConsentId,
-                modifiedBy,
-                extraHeaders,
-                includeExternalApiOperation ?? true,
-                requestUrlWithoutQuery);
+                new ConsentReadParams
+                {
+                    Id = accountAccessConsentId,
+                    ModifiedBy = null,
+                    ExtraHeaders = extraHeaders,
+                    PublicRequestUrlWithoutQuery = requestUrlWithoutQuery,
+                    ExcludeExternalApiOperation = excludeExternalApiOperation ?? false
+                });
 
         return Ok(fluentResponse);
     }
@@ -122,8 +123,7 @@ public class AccountAccessConsentsController : ControllerBase
     ///     Delete account access consent
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent</param>
-    /// <param name="modifiedBy"></param>
-    /// <param name="includeExternalApiOperation"></param>
+    /// <param name="excludeExternalApiOperation"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpDelete("{accountAccessConsentId:guid}")]
@@ -131,10 +131,8 @@ public class AccountAccessConsentsController : ControllerBase
     public async Task<ActionResult<
         BaseResponse>> DeleteAsync(
         Guid accountAccessConsentId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy,
-        [FromHeader(Name = "x-obc-include-external-api-operation")]
-        bool? includeExternalApiOperation,
+        [FromHeader(Name = "x-obc-exclude-external-api-operation")]
+        bool? excludeExternalApiOperation,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
@@ -153,7 +151,14 @@ public class AccountAccessConsentsController : ControllerBase
         BaseResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
-            .DeleteAsync(accountAccessConsentId, modifiedBy, extraHeaders, includeExternalApiOperation ?? true);
+            .DeleteAsync(
+                new ConsentDeleteParams
+                {
+                    ExtraHeaders = extraHeaders,
+                    ExcludeExternalApiOperation = excludeExternalApiOperation ?? false,
+                    Id = accountAccessConsentId,
+                    ModifiedBy = null
+                });
 
         return Ok(fluentResponse);
     }

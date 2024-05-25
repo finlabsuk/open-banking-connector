@@ -24,7 +24,7 @@ public abstract class ConsentExternalReadParams
     public required string? PublicRequestUrlWithoutQuery { get; init; }
 }
 
-internal class AccountAccessConsentExternalReadParams : ConsentExternalReadParams
+public class AccountAccessConsentExternalReadParams : ConsentExternalReadParams
 {
     /// <summary>
     ///     Account ID associated with external object(s)
@@ -38,7 +38,7 @@ internal class AccountAccessConsentExternalReadParams : ConsentExternalReadParam
     public required string? QueryString { get; init; }
 }
 
-internal class TransactionsReadParams : AccountAccessConsentExternalReadParams
+public class TransactionsReadParams : AccountAccessConsentExternalReadParams
 {
     public required string? ExternalApiStatementId { get; init; }
 }

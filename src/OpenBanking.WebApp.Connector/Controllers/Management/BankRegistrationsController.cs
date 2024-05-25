@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.Management;
@@ -50,7 +51,7 @@ public class BankRegistrationsController : ControllerBase
     ///     Read bank registration
     /// </summary>
     /// <param name="bankRegistrationId"></param>
-    /// <param name="modifiedBy"></param>
+    /// <param name="excludeExternalApiOperation"></param>
     /// <returns></returns>
     [HttpGet("{bankRegistrationId:guid}")]
     [ActionName(nameof(GetAsync))]
@@ -58,16 +59,20 @@ public class BankRegistrationsController : ControllerBase
     public async Task<ActionResult<
         BankRegistrationResponse>> GetAsync(
         Guid bankRegistrationId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy)
+        [FromHeader(Name = "x-obc-exclude-external-api-operation")]
+        bool? excludeExternalApiOperation)
     {
         // Operation
         BankRegistrationResponse fluentResponse = await _requestBuilder
             .Management
             .BankRegistrations
             .ReadAsync(
-                bankRegistrationId,
-                modifiedBy);
+                new BankRegistrationReadParams
+                {
+                    Id = bankRegistrationId,
+                    ModifiedBy = null,
+                    ExcludeExternalApiOperation = excludeExternalApiOperation ?? false
+                });
 
         return Ok(fluentResponse);
     }
@@ -76,22 +81,26 @@ public class BankRegistrationsController : ControllerBase
     ///     Delete bank registration
     /// </summary>
     /// <param name="bankRegistrationId"></param>
-    /// <param name="modifiedBy"></param>
+    /// <param name="excludeExternalApiOperation"></param>
     /// <returns></returns>
     [HttpDelete("{bankRegistrationId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<BaseResponse>> DeleteAsync(
         Guid bankRegistrationId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy)
+        [FromHeader(Name = "x-obc-exclude-external-api-operation")]
+        bool? excludeExternalApiOperation)
     {
         // Operation
         BaseResponse fluentResponse = await _requestBuilder
             .Management
             .BankRegistrations
             .DeleteAsync(
-                bankRegistrationId,
-                modifiedBy);
+                new BankRegistrationDeleteParams
+                {
+                    ExcludeExternalApiOperation = excludeExternalApiOperation ?? false,
+                    Id = bankRegistrationId,
+                    ModifiedBy = null
+                });
 
         return Ok(fluentResponse);
     }

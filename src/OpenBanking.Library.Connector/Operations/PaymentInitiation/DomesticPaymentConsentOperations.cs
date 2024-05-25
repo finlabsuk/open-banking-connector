@@ -315,11 +315,11 @@ internal class
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id, false);
         string externalApiConsentId = persistedConsent.ExternalApiId;
 
-        bool includeExternalApiOperation =
-            readParams.IncludeExternalApiOperation;
+        bool excludeExternalApiOperation =
+            readParams.ExcludeExternalApiOperation;
         PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? externalApiResponse;
         ExternalApiResponseInfo? externalApiResponseInfo;
-        if (includeExternalApiOperation)
+        if (!excludeExternalApiOperation)
         {
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
