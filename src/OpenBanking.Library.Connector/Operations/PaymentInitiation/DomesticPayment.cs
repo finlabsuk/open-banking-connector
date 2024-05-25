@@ -103,6 +103,12 @@ internal class DomesticPayment :
         ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
             bankProfile.CustomBehaviour?.ClientCredentialsGrantPost;
 
+        // Determine whether bank endpoint should be used
+        if (!bankProfile.PaymentInitiationApiSettings.UseDomesticPaymentGetPaymentDetailsEndpoint)
+        {
+            throw new InvalidOperationException("Bank profile does not specify support for this endpoint.");
+        }
+
         // Get IApiClient
         IApiClient apiClient = bankRegistration.UseSimulatedBank
             ? bankProfile.ReplayApiClient

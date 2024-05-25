@@ -427,6 +427,12 @@ internal class DomesticVrp :
         ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
             bankProfile.CustomBehaviour?.ClientCredentialsGrantPost;
 
+        // Determine whether bank endpoint should be used
+        if (!bankProfile.VariableRecurringPaymentsApiSettings.UseDomesticVrpGetPaymentDetailsEndpoint)
+        {
+            throw new InvalidOperationException("Bank profile does not specify support for this endpoint.");
+        }
+
         // Get IApiClient
         IApiClient apiClient = bankRegistration.UseSimulatedBank
             ? bankProfile.ReplayApiClient

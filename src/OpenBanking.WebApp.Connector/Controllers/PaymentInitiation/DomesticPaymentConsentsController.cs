@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Microsoft.AspNetCore.Mvc;
 
@@ -158,6 +159,30 @@ public class DomesticPaymentConsentsController : ControllerBase
                     ModifiedBy = null,
                     ExtraHeaders = extraHeaders,
                     PublicRequestUrlWithoutQuery = requestUrlWithoutQuery
+                });
+
+        return Ok(fluentResponse);
+    }
+
+    /// <summary>
+    ///     Delete domestic payment consent
+    /// </summary>
+    /// <param name="domesticPaymentConsentId">ID of DomesticPaymentConsent</param>
+    /// <returns></returns>
+    [HttpDelete("{domesticPaymentConsentId:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<BaseResponse>> DeleteAsync(
+        Guid domesticPaymentConsentId)
+    {
+        // Operation
+        BaseResponse fluentResponse = await _requestBuilder
+            .PaymentInitiation
+            .DomesticPaymentConsents
+            .DeleteLocalAsync(
+                new LocalDeleteParams
+                {
+                    Id = domesticPaymentConsentId,
+                    ModifiedBy = null
                 });
 
         return Ok(fluentResponse);
