@@ -69,14 +69,13 @@ public static class CreateAuthUrl
         OAuth2RequestObjectClaims oAuth2RequestObjectClaims =
             OAuth2RequestObjectClaimsFactory.CreateOAuth2RequestObjectClaims(
                 clientExternalApiId,
-                customBehaviourConsentAuthGet,
                 redirectUrl,
-                new[] { "openid", scopeString },
-                externalApiConsentId,
+                ["openid", scopeString],
                 consentAuthGetAudClaim,
                 supportsSca,
                 state,
-                nonce);
+                nonce,
+                customBehaviourConsentAuthGet?.ConsentIdClaimPrefix + externalApiConsentId);
         var jsonSerializerSettings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
         string payloadJson = JsonConvert.SerializeObject(
             oAuth2RequestObjectClaims,

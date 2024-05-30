@@ -18,100 +18,50 @@ public enum Acr
     Sca
 }
 
+public class StringClaim
+{
+    [JsonProperty("essential")]
+    public required bool Essential { get; init; }
+
+    [JsonProperty("value")]
+    public string? Value { get; init; }
+
+    [JsonProperty("values")]
+    public string[]? Values { get; init; }
+}
+
+public class AcrClaim
+{
+    [JsonProperty("essential")]
+    public required bool Essential { get; init; }
+
+    [JsonProperty("value")]
+    public Acr? Value { get; init; }
+
+    [JsonProperty("values")]
+    public IList<Acr>? Values { get; init; }
+}
+
+public class UserInfoClaims
+{
+    [JsonProperty("openbanking_intent_id")]
+    public required StringClaim OpenbankingIntentId { get; init; }
+}
+
+public class IdTokenClaims
+{
+    [JsonProperty("openbanking_intent_id")]
+    public required StringClaim ConsentIdClaim { get; init; }
+
+    [JsonProperty("acr")]
+    public required AcrClaim AcrClaim { get; init; }
+}
+
 public class OAuth2RequestObjectInnerClaims
 {
-    public OAuth2RequestObjectInnerClaims(
-        string externalApiConsentId,
-        string? consentIdClaimPrefix,
-        bool supportsSca)
-    {
-        string consentIdClaimValue = consentIdClaimPrefix + externalApiConsentId;
-        UserInfo = new UserInfoClaims(consentIdClaimValue);
-        IdToken = new IdTokenClaims(consentIdClaimValue, supportsSca);
-    }
-
     [JsonProperty("userinfo")]
-    public UserInfoClaims UserInfo { get; set; }
+    public required UserInfoClaims UserInfo { get; init; }
 
     [JsonProperty("id_token")]
-    public IdTokenClaims IdToken { get; set; }
-
-    public class StringClaim
-    {
-        public StringClaim(bool essential, string? value, string[]? values)
-        {
-            Essential = essential;
-            Value = value;
-            Values = values;
-        }
-
-        [JsonProperty("essential")]
-        public bool Essential { get; set; }
-
-        [JsonProperty("value")]
-        public string? Value { get; set; }
-
-        [JsonProperty("values")]
-        public string[]? Values { get; set; }
-    }
-
-    public class AcrClaim
-    {
-        [JsonProperty("essential")]
-        public bool Essential { get; set; }
-
-        [JsonProperty("value")]
-        public Acr? Value { get; set; }
-
-        [JsonProperty("values")]
-        public IList<Acr>? Values { get; set; }
-    }
-
-    public class UserInfoClaims
-    {
-        public UserInfoClaims(string consentIdClaimValue)
-        {
-            OpenbankingIntentId = new StringClaim(
-                true,
-                consentIdClaimValue,
-                null);
-        }
-
-        [JsonProperty("openbanking_intent_id")]
-        public StringClaim OpenbankingIntentId { get; set; }
-    }
-
-    public class IdTokenClaims
-    {
-        public IdTokenClaims(string consentIdClaimValue, bool supportsSca)
-        {
-            ConsentIdClaim = new StringClaim(
-                true,
-                consentIdClaimValue,
-                null);
-            AcrClaim = supportsSca
-                ? new AcrClaim
-                {
-                    Essential = true,
-                    Value = null,
-                    Values = new List<Acr>
-                    {
-                        Acr.Ca,
-                        Acr.Sca
-                    }
-                }
-                : new AcrClaim
-                {
-                    Essential = true,
-                    Value = Acr.Ca,
-                    Values = null
-                };
-        }
-
-        [JsonProperty("openbanking_intent_id")]
-        public StringClaim ConsentIdClaim { get; set; }
-
-        [JsonProperty("acr")]
-        public AcrClaim AcrClaim { get; set; }
-    }
+    public required IdTokenClaims IdToken { get; init; }
 }
