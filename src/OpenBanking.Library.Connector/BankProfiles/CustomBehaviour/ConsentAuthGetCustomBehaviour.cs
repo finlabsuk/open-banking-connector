@@ -18,5 +18,7 @@ public class ConsentAuthGetCustomBehaviour
 
     public bool? AddRedundantOAuth2NonceRequestParameter { get; set; }
 
+    public bool? UsePkce { get; set; }
+
     public IdTokenProcessingCustomBehaviour? IdTokenProcessingCustomBehaviour { get; set; }
 }

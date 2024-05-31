@@ -8,7 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
@@ -26,32 +25,31 @@ public static class CreateAuthUrl
         return Base64UrlEncoder.Encode(buffer, 0, numBytes);
     }
 
-    private static (string sessionId, string nonce) GenerateSessionIdAndNonce()
+    private static (string codeVerifier, string codeChallenge) GeneratePkceValues()
     {
         const int lengthInBytes = 32;
 
-        // Generate session ID
-        var sessionIdBytes = new byte[lengthInBytes];
-        RandomNumberGenerator.Fill(sessionIdBytes);
-        string sessionId = Base64UrlEncoder.Encode(sessionIdBytes, 0, lengthInBytes);
+        // Generate code verifier
+        var codeVerifierBytes = new byte[lengthInBytes];
+        RandomNumberGenerator.Fill(codeVerifierBytes);
+        string codeVerifier = Base64UrlEncoder.Encode(codeVerifierBytes, 0, lengthInBytes);
 
-        // Generate nonce
+        // Generate code challenge
         using var sha256 = SHA256.Create();
-        byte[] nonceBytes = sha256.ComputeHash(sessionIdBytes);
-        if (nonceBytes.Length != lengthInBytes)
+        byte[] codeChallengeBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(codeVerifier));
+        if (codeChallengeBytes.Length != lengthInBytes)
         {
             throw new InvalidOperationException();
         }
 
-        string nonce = Base64UrlEncoder.Encode(nonceBytes, 0, lengthInBytes);
+        string codeChallenge = Base64UrlEncoder.Encode(codeChallengeBytes, 0, lengthInBytes);
 
-        return (sessionId, nonce);
+        return (codeVerifier, codeChallenge);
     }
 
-    internal static (string authUrl, string state, string nonce, string appSessionId) Create(
+    internal static (string authUrl, string state, string nonce, string? codeVerifier, string appSessionId) Create(
         string externalApiConsentId,
         OBSealKey obSealKey,
-        BankRegistrationEntity bankRegistration,
         string clientExternalApiId,
         ConsentAuthGetCustomBehaviour? customBehaviourConsentAuthGet,
         string authorisationEndpoint,
@@ -81,7 +79,7 @@ public static class CreateAuthUrl
             oAuth2RequestObjectClaims,
             jsonSerializerSettings);
         string requestObjectJwt = JwtFactory.CreateJwt(
-            JwtFactory.DefaultJwtHeadersExcludingTyp(obSealKey.KeyId),
+            JwtFactory.JwtHeaders(obSealKey.KeyId, null),
             payloadJson,
             obSealKey.Key,
             null);
@@ -119,12 +117,23 @@ public static class CreateAuthUrl
         {
             keyValuePairs.Add("nonce", oAuth2RequestObjectClaims.Nonce); // required by some banks but not by spec
         }
+
+        string? codeVerifier = null;
+        bool usePkce = customBehaviourConsentAuthGet?.UsePkce ?? false;
+        if (usePkce)
+        {
+            (codeVerifier, string codeChallenge) = GeneratePkceValues();
+            keyValuePairs.Add("code_challenge_method", "S256");
+            keyValuePairs.Add("code_challenge", codeChallenge);
+        }
+
         string queryString = keyValuePairs.ToUrlEncoded();
         string authUrl = authorisationEndpoint + "?" + queryString;
         StringBuilder authUrlTraceSb = new StringBuilder()
             .AppendLine("#### Auth URL (Consent)")
             .Append(authUrl);
         instrumentationClient.Trace(authUrlTraceSb.ToString());
-        return (authUrl, state, nonce, appSessionId);
+
+        return (authUrl, state, nonce, codeVerifier, appSessionId);
     }
 }

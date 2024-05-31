@@ -50,6 +50,7 @@ internal interface IGrantPost
         bool expectRefreshToken,
         BankProfileEnum? bankProfileForTppReportingMetrics,
         IdTokenSubClaimType idTokenSubClaimType,
+        string? codeVerifier,
         JsonSerializerSettings? jsonSerializerSettings,
         AuthCodeGrantPostCustomBehaviour? authCodeGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,

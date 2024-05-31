@@ -77,15 +77,16 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
         DateTimeOffset accessTokenModified,
         string? accessTokenModifiedBy,
         string? accessTokenRefreshToken,
-        Guid bankRegistrationId,
-        string externalApiId,
         string? authContextState,
         string? authContextNonce,
+        string? authContextCodeVerifier,
         DateTimeOffset authContextModified,
         string? authContextModifiedBy,
         string? externalApiUserId,
         DateTimeOffset externalApiUserIdModified,
-        string? externalApiUserIdModifiedBy) : base(
+        string? externalApiUserIdModifiedBy,
+        Guid bankRegistrationId,
+        string externalApiId) : base(
         id,
         reference,
         isDeleted,
@@ -99,15 +100,16 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
         _accessTokenModified = accessTokenModified;
         _accessTokenModifiedBy = accessTokenModifiedBy;
         _accessTokenRefreshToken = accessTokenRefreshToken;
-        BankRegistrationId = bankRegistrationId;
-        ExternalApiId = externalApiId;
         AuthContextState = authContextState;
         AuthContextNonce = authContextNonce;
+        AuthContextCodeVerifier = authContextCodeVerifier;
         AuthContextModified = authContextModified;
         AuthContextModifiedBy = authContextModifiedBy;
         ExternalApiUserId = externalApiUserId;
         ExternalApiUserIdModified = externalApiUserIdModified;
         ExternalApiUserIdModifiedBy = externalApiUserIdModifiedBy;
+        BankRegistrationId = bankRegistrationId;
+        ExternalApiId = externalApiId ?? throw new ArgumentNullException(nameof(externalApiId));
     }
 
     [ForeignKey(nameof(BankRegistrationId))]
@@ -122,6 +124,8 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
     ///     OpenID Connect "nonce". This is mutable as re-auth will generate a new value.
     /// </summary>
     public string? AuthContextNonce { get; private set; }
+
+    public string? AuthContextCodeVerifier { get; private set; }
 
     public DateTimeOffset AuthContextModified { get; private set; }
 
@@ -170,10 +174,16 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
         _accessTokenModifiedBy = modifiedBy;
     }
 
-    public void UpdateAuthContext(string state, string nonce, DateTimeOffset modified, string? modifiedBy)
+    public void UpdateAuthContext(
+        string state,
+        string nonce,
+        string? codeVerifier,
+        DateTimeOffset modified,
+        string? modifiedBy)
     {
         AuthContextState = state;
         AuthContextNonce = nonce;
+        AuthContextCodeVerifier = codeVerifier;
         AuthContextModified = modified;
         AuthContextModifiedBy = modifiedBy;
     }

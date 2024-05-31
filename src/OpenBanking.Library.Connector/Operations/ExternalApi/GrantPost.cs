@@ -225,6 +225,7 @@ internal class GrantPost : IGrantPost
         bool expectRefreshToken,
         BankProfileEnum? bankProfileForTppReportingMetrics,
         IdTokenSubClaimType idTokenSubClaimType,
+        string? codeVerifier,
         JsonSerializerSettings? jsonSerializerSettings,
         AuthCodeGrantPostCustomBehaviour? authCodeGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
@@ -236,6 +237,11 @@ internal class GrantPost : IGrantPost
             { "redirect_uri", redirectUrl },
             { "code", authCode }
         };
+
+        if (codeVerifier is not null)
+        {
+            keyValuePairs["code_verifier"] = codeVerifier;
+        }
 
         if (tokenEndpointAuthMethod is
             TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt)

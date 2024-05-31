@@ -89,10 +89,9 @@ internal class
             customBehaviour?.DomesticVrpConsentAuthGet?.AudClaim ??
             issuerUrl;
 
-        (string authUrl, string state, string nonce, string sessionId) = CreateAuthUrl.Create(
+        (string authUrl, string state, string nonce, string? codeVerifier, string sessionId) = CreateAuthUrl.Create(
             domesticVrpConsent.ExternalApiId,
             obSealKey,
-            bankRegistration,
             bankRegistration.ExternalApiId,
             customBehaviour?.DomesticVrpConsentAuthGet,
             authorizationEndpoint,
@@ -114,6 +113,7 @@ internal class
             request.CreatedBy,
             state,
             nonce,
+            codeVerifier,
             sessionId,
             request.DomesticVrpConsentId);
 

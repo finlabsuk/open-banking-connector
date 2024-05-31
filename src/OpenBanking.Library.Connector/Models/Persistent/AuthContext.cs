@@ -12,6 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 /// </summary>
 [Index(nameof(State), IsUnique = true)]
 [Index(nameof(Nonce), IsUnique = true)]
+[Index(nameof(CodeVerifier), IsUnique = true)]
 [Index(nameof(AppSessionId), IsUnique = true)]
 internal class AuthContext : BaseEntity
 {
@@ -25,6 +26,7 @@ internal class AuthContext : BaseEntity
         string? createdBy,
         string state,
         string nonce,
+        string? codeVerifier,
         string appSessionId) : base(
         id,
         reference,
@@ -34,9 +36,10 @@ internal class AuthContext : BaseEntity
         created,
         createdBy)
     {
-        State = state;
-        Nonce = nonce;
-        AppSessionId = appSessionId;
+        State = state ?? throw new ArgumentNullException(nameof(state));
+        Nonce = nonce ?? throw new ArgumentNullException(nameof(nonce));
+        CodeVerifier = codeVerifier;
+        AppSessionId = appSessionId ?? throw new ArgumentNullException(nameof(appSessionId));
     }
 
     /// <summary>
@@ -48,6 +51,11 @@ internal class AuthContext : BaseEntity
     ///     OpenID Connect "nonce".
     /// </summary>
     public string Nonce { get; }
+
+    /// <summary>
+    ///     Code verifier for PKCE.
+    /// </summary>
+    public string? CodeVerifier { get; }
 
     /// <summary>
     ///     App session ID.

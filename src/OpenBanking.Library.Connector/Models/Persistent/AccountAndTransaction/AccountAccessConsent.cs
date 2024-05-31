@@ -26,15 +26,16 @@ internal class AccountAccessConsent :
         DateTimeOffset accessTokenModified,
         string? accessTokenModifiedBy,
         string? accessTokenRefreshToken,
-        Guid bankRegistrationId,
-        string externalApiId,
         string? authContextState,
         string? authContextNonce,
+        string? authContextCodeVerifier,
         DateTimeOffset authContextModified,
         string? authContextModifiedBy,
         string? externalApiUserId,
         DateTimeOffset externalApiUserIdModified,
-        string? externalApiUserIdModifiedBy) : base(
+        string? externalApiUserIdModifiedBy,
+        Guid bankRegistrationId,
+        string externalApiId) : base(
         id,
         reference,
         isDeleted,
@@ -47,15 +48,16 @@ internal class AccountAccessConsent :
         accessTokenModified,
         accessTokenModifiedBy,
         accessTokenRefreshToken,
-        bankRegistrationId,
-        externalApiId,
         authContextState,
         authContextNonce,
+        authContextCodeVerifier,
         authContextModified,
         authContextModifiedBy,
         externalApiUserId,
         externalApiUserIdModified,
-        externalApiUserIdModifiedBy) { }
+        externalApiUserIdModifiedBy,
+        bankRegistrationId,
+        externalApiId) { }
 
     /// <summary>
     ///     Associated access tokens

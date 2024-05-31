@@ -25,6 +25,7 @@ internal partial class AccountAccessConsentAuthContext :
         string? createdBy,
         string state,
         string nonce,
+        string? codeVerifier,
         string appSessionId,
         Guid accountAccessConsentId) : base(
         id,
@@ -36,6 +37,7 @@ internal partial class AccountAccessConsentAuthContext :
         createdBy,
         state,
         nonce,
+        codeVerifier,
         appSessionId)
     {
         AccountAccessConsentId = accountAccessConsentId;

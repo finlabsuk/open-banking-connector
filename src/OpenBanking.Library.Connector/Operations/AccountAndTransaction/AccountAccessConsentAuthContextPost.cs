@@ -88,10 +88,9 @@ internal class
             customBehaviour?.AccountAccessConsentAuthGet?.AudClaim ??
             issuerUrl;
 
-        (string authUrl, string state, string nonce, string sessionId) = CreateAuthUrl.Create(
+        (string authUrl, string state, string nonce, string? codeVerifier, string sessionId) = CreateAuthUrl.Create(
             accountAccessConsent.ExternalApiId,
             obSealKey,
-            bankRegistration,
             bankRegistration.ExternalApiId,
             customBehaviour?.AccountAccessConsentAuthGet,
             authorizationEndpoint,
@@ -113,6 +112,7 @@ internal class
             request.CreatedBy,
             state,
             nonce,
+            codeVerifier,
             sessionId,
             request.AccountAccessConsentId);
 

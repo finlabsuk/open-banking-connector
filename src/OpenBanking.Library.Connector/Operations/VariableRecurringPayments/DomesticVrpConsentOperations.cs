@@ -383,15 +383,16 @@ internal class
             utcNow,
             request.CreatedBy,
             null,
-            request.BankRegistrationId,
-            externalApiId,
+            null,
             null,
             null,
             utcNow,
             request.CreatedBy,
             request.ExternalApiUserId,
             utcNow,
-            request.CreatedBy);
+            request.CreatedBy,
+            request.BankRegistrationId,
+            externalApiId);
 
         AuthContextRequest? authContext = request.ExternalApiObject?.AuthContext;
         if (authContext is not null)
@@ -399,6 +400,7 @@ internal class
             persistedConsent.UpdateAuthContext(
                 authContext.State,
                 authContext.Nonce,
+                authContext.CodeVerifier,
                 utcNow,
                 authContext.ModifiedBy);
         }

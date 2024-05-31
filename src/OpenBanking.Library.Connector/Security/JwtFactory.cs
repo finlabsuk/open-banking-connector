@@ -44,4 +44,18 @@ public static class JwtFactory
             { "typ", "JWT" },
             { "kid", signingId.ArgNotNull(nameof(signingId)) }
         };
+
+    public static Dictionary<string, object> JwtHeaders(string? signingId, string? type)
+    {
+        var jwtHeaders = new Dictionary<string, object>();
+        if (signingId is not null)
+        {
+            jwtHeaders.Add("kid", signingId);
+        }
+        if (type is not null)
+        {
+            jwtHeaders.Add("typ", type);
+        }
+        return jwtHeaders;
+    }
 }

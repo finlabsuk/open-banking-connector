@@ -88,10 +88,9 @@ internal class
             customBehaviour?.DomesticPaymentConsentAuthGet?.AudClaim ??
             issuerUrl;
 
-        (string authUrl, string state, string nonce, string sessionId) = CreateAuthUrl.Create(
+        (string authUrl, string state, string nonce, string? codeVerifier, string sessionId) = CreateAuthUrl.Create(
             domesticPaymentConsent.ExternalApiId,
             obSealKey,
-            bankRegistration,
             bankRegistration.ExternalApiId,
             customBehaviour?.DomesticPaymentConsentAuthGet,
             authorizationEndpoint,
@@ -114,6 +113,7 @@ internal class
             request.CreatedBy,
             state,
             nonce,
+            codeVerifier,
             sessionId,
             request.DomesticPaymentConsentId);
 

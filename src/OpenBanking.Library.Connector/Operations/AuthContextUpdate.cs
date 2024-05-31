@@ -318,6 +318,7 @@ internal class AuthContextUpdate :
                     expectRefreshToken,
                     bankProfile.BankProfileEnum,
                     idTokenSubClaimType,
+                    authContext.CodeVerifier,
                     jsonSerializerSettings,
                     consentAuthCodeGrantPostCustomBehaviour,
                     customBehaviour?.JwksGet,
@@ -327,6 +328,7 @@ internal class AuthContextUpdate :
             consent.UpdateAuthContext(
                 authContext.State,
                 nonce,
+                authContext.CodeVerifier,
                 modified,
                 modifiedBy);
 

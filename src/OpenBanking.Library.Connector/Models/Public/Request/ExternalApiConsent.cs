@@ -9,14 +9,16 @@ public class AuthContextRequest
     /// <summary>
     ///     OAuth2 "state".
     /// </summary>
-    public string State { get; set; } = null!;
+    public required string State { get; init; }
 
     /// <summary>
     ///     OpenID Connect "nonce".
     /// </summary>
-    public string Nonce { get; set; } = null!;
+    public required string Nonce { get; init; }
 
-    public string? ModifiedBy { get; set; }
+    public string? CodeVerifier { get; init; }
+
+    public string? ModifiedBy { get; init; }
 }
 
 public class ExternalApiConsent

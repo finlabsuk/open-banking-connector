@@ -26,6 +26,7 @@ internal partial class DomesticVrpConsentAuthContext :
         string? createdBy,
         string state,
         string nonce,
+        string? codeVerifier,
         string appSessionId,
         Guid domesticVrpConsentId) : base(
         id,
@@ -37,6 +38,7 @@ internal partial class DomesticVrpConsentAuthContext :
         createdBy,
         state,
         nonce,
+        codeVerifier,
         appSessionId)
     {
         DomesticVrpConsentId = domesticVrpConsentId;
