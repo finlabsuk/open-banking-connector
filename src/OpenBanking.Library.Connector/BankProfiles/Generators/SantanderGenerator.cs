@@ -5,11 +5,14 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 
@@ -27,8 +30,8 @@ public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistration
             "https://openbanking.santander.co.uk/sanuk/external/open-banking/openid-connect-provider/v1/", // from https://developer.santander.co.uk/sanuk/external/faq-page#t4n553
             GetFinancialId(bank),
             GetAccountAndTransactionApi(bank),
-            null,
-            null,
+            GetPaymentInitiationApi(bank),
+            GetVariableRecurringPaymentsApi(bank),
             true,
             instrumentationClient)
         {
@@ -45,7 +48,8 @@ public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistration
                         "https://openbanking.santander.co.uk/sanuk/external/open-banking/openid-connect-provider/v1/.well-known/openid-configuration" // from https://developer.santander.co.uk/sanuk/external/faq-page#t4n553
                 },
                 AccountAccessConsentPost =
-                    new ReadWritePostCustomBehaviour { ResponseLinksOmitId = true }
+                    new ReadWritePostCustomBehaviour { ResponseLinksOmitId = true },
+                DomesticVrpPost = new DomesticVrpPostCustomBehaviour { OmitPsuInteractionType = true }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {
@@ -61,4 +65,21 @@ public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistration
             BaseUrl =
                 "https://openbanking-ma.santander.co.uk/sanuk/external/open-banking/v3.1/aisp" // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110133822/Implementation+Guide+Santander
         };
+
+    private PaymentInitiationApi? GetPaymentInitiationApi(SantanderBank bank) =>
+        new()
+        {
+            BaseUrl =
+                GetPaymentsBaseUrl()
+        };
+
+    private VariableRecurringPaymentsApi? GetVariableRecurringPaymentsApi(SantanderBank bank) =>
+        new()
+        {
+            BaseUrl =
+                GetPaymentsBaseUrl()
+        };
+
+    private static string GetPaymentsBaseUrl() =>
+        "https://openbanking-ma.santander.co.uk/sanuk/external/open-banking/v3.1/pisp"; // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110133822/Implementation+Guide+Santander
 }

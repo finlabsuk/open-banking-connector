@@ -198,6 +198,16 @@ internal class DomesticVrp :
                 $"ExternalApiRequest contains consent ID that differs from {externalApiConsentId} " +
                 "inferred from specified DomesticVrpConsent.");
         }
+        bool omitVrpType = domesticVrpPostCustomBehaviour?.OmitVrpType ?? false;
+        if (omitVrpType)
+        {
+            request.ExternalApiRequest.Data.VRPType = null;
+        }
+        bool omitPsuInteractionType = domesticVrpPostCustomBehaviour?.OmitPsuInteractionType ?? false;
+        if (omitPsuInteractionType)
+        {
+            request.ExternalApiRequest.Data.PSUInteractionType = null;
+        }
         bool preferMisspeltContractPresentIndicator =
             domesticVrpPostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
         request.ExternalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);

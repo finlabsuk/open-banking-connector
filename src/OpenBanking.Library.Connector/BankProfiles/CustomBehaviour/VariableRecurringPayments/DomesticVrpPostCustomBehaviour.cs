@@ -11,4 +11,8 @@ public class DomesticVrpPostCustomBehaviour : ReadWritePostCustomBehaviour
     public DomesticVrpRefundConverterOptions? RefundResponseJsonConverter { get; set; }
 
     public bool? PreferMisspeltContractPresentIndicator { get; set; }
+
+    public bool? OmitPsuInteractionType { get; set; }
+
+    public bool? OmitVrpType { get; set; }
 }
