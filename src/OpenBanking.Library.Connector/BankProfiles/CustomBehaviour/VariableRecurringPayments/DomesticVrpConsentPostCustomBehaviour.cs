@@ -2,11 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
 
-public class DomesticPaymentGetCustomBehaviour : ReadWriteGetCustomBehaviour
+public class DomesticVrpConsentPostCustomBehaviour : ReadWritePostCustomBehaviour
 {
-    public bool? AddOpenIdScope { get; set; }
-
     public bool? PreferMisspeltContractPresentIndicator { get; set; }
 }

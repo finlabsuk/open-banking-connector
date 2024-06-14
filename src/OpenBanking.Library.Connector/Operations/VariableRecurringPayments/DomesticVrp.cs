@@ -198,6 +198,9 @@ internal class DomesticVrp :
                 $"ExternalApiRequest contains consent ID that differs from {externalApiConsentId} " +
                 "inferred from specified DomesticVrpConsent.");
         }
+        bool preferMisspeltContractPresentIndicator =
+            domesticVrpPostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
+        request.ExternalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
         var tppReportingRequestInfo = new TppReportingRequestInfo
         {
             EndpointDescription =
@@ -220,6 +223,7 @@ internal class DomesticVrp :
         nonErrorMessages.AddRange(newNonErrorMessages);
         var externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
         string externalApiId = externalApiResponse.Data.DomesticVRPId;
+        externalApiResponse.Risk.AdjustAfterReceiveFromBank();
 
         // Transform links
         string? transformedLinkUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery is { } x
@@ -361,6 +365,7 @@ internal class DomesticVrp :
                 _mapper);
         nonErrorMessages.AddRange(newNonErrorMessages);
         var externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
+        externalApiResponse.Risk.AdjustAfterReceiveFromBank();
 
         // Transform links 
         string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;

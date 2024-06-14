@@ -80,7 +80,7 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
                 DomesticPaymentConsentRefreshTokenGrantPost = refreshTokenGrantPostCustomBehaviour,
                 DomesticVrpConsentRefreshTokenGrantPost = refreshTokenGrantPostCustomBehaviour,
                 DomesticPaymentPost =
-                    new ReadWritePostCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true },
+                    new DomesticPaymentPostCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true },
                 DomesticPaymentGet =
                     new DomesticPaymentGetCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true },
                 DomesticVrpPost = new DomesticVrpPostCustomBehaviour

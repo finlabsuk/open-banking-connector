@@ -64,24 +64,24 @@ public class CustomBehaviourClass
     public ReadWriteGetCustomBehaviour? TransactionGet { get; set; }
 
     // Payment Initiation API endpoints
-    public ReadWritePostCustomBehaviour? DomesticPaymentConsentPost { get; set; }
+    public DomesticPaymentConsentPostCustomBehaviour? DomesticPaymentConsentPost { get; set; }
 
-    public ReadWriteGetCustomBehaviour? DomesticPaymentConsentGet { get; set; }
+    public DomesticPaymentConsentGetCustomBehaviour? DomesticPaymentConsentGet { get; set; }
 
-    public ReadWriteGetCustomBehaviour? DomesticPaymentConsentGetFundsConfirmation { get; set; }
+    public DomesticPaymentConsentGetCustomBehaviour? DomesticPaymentConsentGetFundsConfirmation { get; set; }
 
-    public ReadWritePostCustomBehaviour? DomesticPaymentPost { get; set; }
+    public DomesticPaymentPostCustomBehaviour? DomesticPaymentPost { get; set; }
 
     public DomesticPaymentGetCustomBehaviour? DomesticPaymentGet { get; set; }
 
     public DomesticPaymentGetCustomBehaviour? DomesticPaymentGetPaymentDetails { get; set; }
 
     // Variable Recurring Payments API endpoints
-    public ReadWritePostCustomBehaviour? DomesticVrpConsentPost { get; set; }
+    public DomesticVrpConsentPostCustomBehaviour? DomesticVrpConsentPost { get; set; }
 
-    public ReadWritePostCustomBehaviour? DomesticVrpConsentPostFundsConfirmation { get; set; }
+    public DomesticVrpConsentPostCustomBehaviour? DomesticVrpConsentPostFundsConfirmation { get; set; }
 
-    public ReadWriteGetCustomBehaviour? DomesticVrpConsentGet { get; set; }
+    public DomesticVrpConsentGetCustomBehaviour? DomesticVrpConsentGet { get; set; }
 
     public DomesticVrpPostCustomBehaviour? DomesticVrpPost { get; set; }
 

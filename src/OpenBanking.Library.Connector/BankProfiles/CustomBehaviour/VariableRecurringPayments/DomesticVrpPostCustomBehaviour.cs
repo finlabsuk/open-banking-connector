@@ -9,4 +9,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehav
 public class DomesticVrpPostCustomBehaviour : ReadWritePostCustomBehaviour
 {
     public DomesticVrpRefundConverterOptions? RefundResponseJsonConverter { get; set; }
+
+    public bool? PreferMisspeltContractPresentIndicator { get; set; }
 }

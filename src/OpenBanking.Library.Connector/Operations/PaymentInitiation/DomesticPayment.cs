@@ -254,7 +254,8 @@ internal class DomesticPayment :
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
         ConsentAuthGetCustomBehaviour? domesticPaymentConsentAuthGetCustomBehaviour = bankProfile.CustomBehaviour
             ?.DomesticPaymentConsentAuthGet;
-        ReadWritePostCustomBehaviour? readWritePostCustomBehaviour = bankProfile.CustomBehaviour?.DomesticPaymentPost;
+        DomesticPaymentPostCustomBehaviour? readWritePostCustomBehaviour =
+            bankProfile.CustomBehaviour?.DomesticPaymentPost;
         RefreshTokenGrantPostCustomBehaviour? domesticPaymentConsentRefreshTokenGrantPostCustomBehaviour =
             bankProfile.CustomBehaviour?.DomesticPaymentConsentRefreshTokenGrantPost;
         JwksGetCustomBehaviour? jwksGetCustomBehaviour = bankProfile.CustomBehaviour?.JwksGet;
@@ -312,6 +313,9 @@ internal class DomesticPayment :
                 $"ExternalApiRequest contains consent ID that differs from {externalApiConsentId} " +
                 "inferred from specified DomesticPaymentConsent.");
         }
+        bool preferMisspeltContractPresentIndicator =
+            readWritePostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
+        request.ExternalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
         var tppReportingRequestInfo = new TppReportingRequestInfo
         {
             EndpointDescription =

@@ -11,4 +11,6 @@ public class DomesticVrpGetCustomBehaviour : ReadWriteGetCustomBehaviour
     public bool? AddOpenIdScope { get; set; }
 
     public DomesticVrpRefundConverterOptions? RefundResponseJsonConverter { get; set; }
+
+    public bool? PreferMisspeltContractPresentIndicator { get; set; }
 }

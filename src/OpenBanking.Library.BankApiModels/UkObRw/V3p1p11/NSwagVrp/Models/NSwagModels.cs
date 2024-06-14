@@ -890,9 +890,44 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// <summary>
         /// Indicates if Payee has a contractual relationship with the PISP.
         /// </summary>
+        [Newtonsoft.Json.JsonProperty("ContractPresentIndicator", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? ContractPresentIndicator { get; set; } = default!;
+
+        /// <summary>
+        /// Indicates if Payee has a contractual relationship with the PISP.
+        /// </summary>
         [Newtonsoft.Json.JsonProperty("ContractPresentInidicator", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool? ContractPresentInidicator { get; set; } = default!;
+        
+        public void AdjustBeforeSendToBank(bool preferMisspelt)
+        {
+            if (ContractPresentInidicator is not null)
+            {
+                throw new Exception("ContractPresentInidicator should be null.");
+            }
+            if (preferMisspelt)
+            {
+                ContractPresentInidicator = ContractPresentIndicator;
+                ContractPresentIndicator = null;
+            }
+            
+        }
 
+        public void AdjustAfterReceiveFromBank()
+        {
+            if (ContractPresentIndicator is not null &&
+                ContractPresentInidicator is not null)
+            {
+                throw new Exception("Both ContractPresentIndicator and ContractPresentInidicator received.");
+            }
+
+            if (ContractPresentInidicator is not null)
+            {
+                ContractPresentIndicator = ContractPresentInidicator;
+                ContractPresentInidicator = null;
+            }
+        }
+        
         /// <summary>
         /// Indicates if PISP has immutably prepopulated payment details in for the PSU.
         /// </summary>
@@ -1153,9 +1188,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public OBVRPInteractionTypes? PSUInteractionType { get; set; } = default!;
 
-        [Newtonsoft.Json.JsonProperty("VRPType", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string VRPType { get; set; } = default!;
+        [Newtonsoft.Json.JsonProperty("VRPType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string? VRPType { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Initiation", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]

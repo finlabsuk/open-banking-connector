@@ -4,9 +4,7 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
 
-public class DomesticPaymentGetCustomBehaviour : ReadWriteGetCustomBehaviour
+public class DomesticPaymentConsentGetCustomBehaviour : ReadWriteGetCustomBehaviour
 {
-    public bool? AddOpenIdScope { get; set; }
-
     public bool? PreferMisspeltContractPresentIndicator { get; set; }
 }

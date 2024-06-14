@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -129,7 +130,7 @@ internal class
             string bankFinancialId = bankProfile.FinancialId;
             ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
                 bankProfile.CustomBehaviour?.ClientCredentialsGrantPost;
-            ReadWritePostCustomBehaviour? readWritePostCustomBehaviour =
+            DomesticPaymentConsentPostCustomBehaviour? readWritePostCustomBehaviour =
                 bankProfile.CustomBehaviour?.DomesticPaymentConsentPost;
 
             // Get IApiClient
@@ -170,6 +171,9 @@ internal class
             PaymentInitiationModelsPublic.OBWriteDomesticConsent4 externalApiRequest = request.ExternalApiRequest ??
                 throw new InvalidOperationException(
                     "ExternalApiRequest specified as null so not possible to create external API request.");
+            bool preferMisspeltContractPresentIndicator =
+                readWritePostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
+            request.ExternalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
             var tppReportingRequestInfo = new TppReportingRequestInfo
             {
                 EndpointDescription =
@@ -192,6 +196,7 @@ internal class
             nonErrorMessages.AddRange(newNonErrorMessages);
             externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
             externalApiId = externalApiResponse.Data.ConsentId;
+            externalApiResponse.Risk.AdjustAfterReceiveFromBank();
 
             // Transform links
             if (externalApiResponse.Links is not null)
@@ -330,6 +335,8 @@ internal class
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
             string bankFinancialId = bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+            DomesticPaymentConsentGetCustomBehaviour? readWriteGetCustomBehaviour =
+                customBehaviour?.DomesticPaymentConsentGet;
 
             // Get IApiClient
             IApiClient apiClient =
@@ -384,12 +391,11 @@ internal class
                     _mapper);
             nonErrorMessages.AddRange(newNonErrorMessages);
             externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
+            externalApiResponse.Risk.AdjustAfterReceiveFromBank();
 
             // Transform links 
             if (externalApiResponse.Links is not null)
             {
-                ReadWriteGetCustomBehaviour? readWriteGetCustomBehaviour =
-                    customBehaviour?.DomesticPaymentConsentGet;
                 string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
                 Uri expectedLinkUrlWithoutQuery = externalApiUrl;
                 var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
@@ -472,7 +478,7 @@ internal class
         string bankFinancialId = bankProfile.FinancialId;
         string issuerUrl = bankProfile.IssuerUrl;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
-        ReadWriteGetCustomBehaviour? readWriteGetCustomBehaviour =
+        DomesticPaymentConsentGetCustomBehaviour? readWriteGetCustomBehaviour =
             bankProfile.CustomBehaviour?.DomesticPaymentConsentGetFundsConfirmation;
         RefreshTokenGrantPostCustomBehaviour? domesticPaymentConsentRefreshTokenGrantPostCustomBehaviour =
             bankProfile.CustomBehaviour?.DomesticPaymentConsentRefreshTokenGrantPost;

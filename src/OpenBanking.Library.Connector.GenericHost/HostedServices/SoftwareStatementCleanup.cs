@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Security.Cryptography;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
@@ -55,7 +56,7 @@ public class SoftwareStatementCleanup
                     "on this ObWacCertificate will not be able to be used.";
                 instrumentationClient.Warning(fullMessage);
             }
-            catch (System.Security.Cryptography.CryptographicException ex)
+            catch (CryptographicException ex)
             {
                 string fullMessage =
                     $"ObWacCertificate record with ID {obWac.Id} " +

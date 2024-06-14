@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -146,6 +147,8 @@ internal class
         JwksGetCustomBehaviour? jwksGetCustomBehaviour = bankProfile.CustomBehaviour?.JwksGet;
         ConsentAuthGetCustomBehaviour? domesticVrpConsentAuthGetCustomBehaviour = bankProfile.CustomBehaviour
             ?.DomesticVrpConsentAuthGet;
+        DomesticVrpConsentPostCustomBehaviour? domesticVrpConsentPostFundsConfirmationCustomBehaviour =
+            bankProfile.CustomBehaviour?.DomesticVrpConsentPostFundsConfirmation;
 
         // Get IApiClient
         IApiClient apiClient = bankRegistration.UseSimulatedBank
@@ -260,7 +263,7 @@ internal class
             string bankFinancialId = bankProfile.FinancialId;
             ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
                 bankProfile.CustomBehaviour?.ClientCredentialsGrantPost;
-            ReadWritePostCustomBehaviour? readWritePostCustomBehaviour =
+            DomesticVrpConsentPostCustomBehaviour? domesticVrpConsentPostCustomBehaviour =
                 bankProfile.CustomBehaviour?.DomesticVrpConsentPost;
 
             // Get IApiClient
@@ -303,6 +306,9 @@ internal class
                 request.ExternalApiRequest ??
                 throw new InvalidOperationException(
                     "ExternalApiRequest specified as null so not possible to create external API request.");
+            bool preferMisspeltContractPresentIndicator =
+                domesticVrpConsentPostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
+            request.ExternalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
             var tppReportingRequestInfo = new TppReportingRequestInfo
             {
                 EndpointDescription =
@@ -325,19 +331,20 @@ internal class
             nonErrorMessages.AddRange(newNonErrorMessages);
             externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
             externalApiId = externalApiResponse.Data.ConsentId;
+            externalApiResponse.Risk.AdjustAfterReceiveFromBank();
 
             // Transform links
             string? transformedLinkUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery is { } x
                 ? $"{x}/{entityId}"
                 : null;
             Uri expectedLinkUrlWithoutQuery = LinksUrlOperations.GetExpectedLinkUrlWithoutQuery(
-                readWritePostCustomBehaviour,
+                domesticVrpConsentPostCustomBehaviour,
                 externalApiUrl,
                 externalApiId);
             var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
                 expectedLinkUrlWithoutQuery,
                 transformedLinkUrlWithoutQuery,
-                readWritePostCustomBehaviour,
+                domesticVrpConsentPostCustomBehaviour,
                 false);
             externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
             if (externalApiResponse.Links.First is not null)
@@ -514,9 +521,10 @@ internal class
                     _mapper);
             nonErrorMessages.AddRange(newNonErrorMessages);
             externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
+            externalApiResponse.Risk.AdjustAfterReceiveFromBank();
 
             // Transform links 
-            ReadWriteGetCustomBehaviour? readWriteGetCustomBehaviour =
+            DomesticVrpConsentGetCustomBehaviour? readWriteGetCustomBehaviour =
                 customBehaviour?.DomesticVrpConsentGet;
             string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
             Uri expectedLinkUrlWithoutQuery = externalApiUrl;
