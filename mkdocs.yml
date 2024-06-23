@@ -39,8 +39,12 @@ nav:
     - Set up configuration and secrets: get-started\set-up-configuration-and-secrets\README.md
     - Run Docker image: get-started\run-docker-image\README.md
     - Create bank registration: get-started\create-bank-registration\README.md
-    - Create and authorise account access consent: get-started\create-and-authorise-account-access-consent\README.md
-    - Get account data: get-started\get-account-data\README.md
+    - Account information:
+      - Create and authorise an account access consent: get-started\account-information\create-and-authorise-account-access-consent\README.md
+      - Get account data: get-started\account-information\get-account-data\README.md
+    - Sweeping VRPs:
+      - Create and authorise a domestic VRP consent for sweeping: get-started\sweeping-vrps\create-and-authorise-domestic-vrp-consent\README.md
+      - Check funds and make payment: get-started\sweeping-vrps\confirm-funds-and-make-payment\README.md
   - Bank Integrations: bank-integrations.md
   - Configuration:
     - configuration/README.md
