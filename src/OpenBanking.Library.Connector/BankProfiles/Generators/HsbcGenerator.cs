@@ -6,6 +6,8 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
@@ -73,8 +75,22 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                     new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
                 DomesticPaymentConsentAuthCodeGrantPost =
                     new AuthCodeGrantPostCustomBehaviour { ExpectedResponseRefreshTokenMayBeAbsent = true },
+                DomesticPaymentConsentGet =
+                    new DomesticPaymentConsentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticPaymentConsentPost =
+                    new DomesticPaymentConsentPostCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticPaymentGet =
+                    new DomesticPaymentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticPaymentPost =
+                    new DomesticPaymentPostCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
                 DomesticVrpConsentAuthCodeGrantPost =
-                    new AuthCodeGrantPostCustomBehaviour { ExpectedResponseRefreshTokenMayBeAbsent = true }
+                    new AuthCodeGrantPostCustomBehaviour { ExpectedResponseRefreshTokenMayBeAbsent = true },
+                DomesticVrpConsentGet =
+                    new DomesticVrpConsentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticVrpConsentPost =
+                    new DomesticVrpConsentPostCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticVrpGet = new DomesticVrpGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticVrpPost = new DomesticVrpPostCustomBehaviour { PreferMisspeltContractPresentIndicator = true }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings { UseRegistrationGetEndpoint = true },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
