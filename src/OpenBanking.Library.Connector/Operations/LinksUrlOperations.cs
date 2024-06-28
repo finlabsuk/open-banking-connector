@@ -92,6 +92,12 @@ internal class LinksUrlOperations
         {
             expectedLinkUrl = new Uri(expectedLinkUrl + "/");
         }
+        (string oldValue, string newValue)? responseLinksReplace = readWriteGetCustomBehaviour?.ResponseLinksReplace;
+        if (responseLinksReplace is not null)
+        {
+            (string oldValue, string newValue) = responseLinksReplace.Value;
+            expectedLinkUrl = new Uri($"{expectedLinkUrl}".Replace(oldValue, newValue));
+        }
         bool responseLinksMayHaveIncorrectUrlBeforeQuery =
             readWriteGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false;
         var linksUrlOperations = new LinksUrlOperations(

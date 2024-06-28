@@ -9,4 +9,9 @@ public class ReadWriteGetCustomBehaviour
     public bool? ResponseLinksAddSlash { get; set; }
 
     public bool? ResponseLinksMayHaveIncorrectUrlBeforeQuery { get; set; }
+
+    /// <summary>
+    ///     Use when response links provided by bank substitute newValue for oldValue.
+    /// </summary>
+    public (string oldValue, string newValue)? ResponseLinksReplace { get; set; }
 }
