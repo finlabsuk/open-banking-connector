@@ -135,6 +135,15 @@ public abstract class AppTests
                     .AuthData
                     .TryGetValue(bankProfileEnum, out AuthData? authData);
 
+                testGroup
+                    .TestDomesticPaymentConsent
+                    .TryGetValue(bankProfileEnum, out bool testDomesticPaymentConsent);
+
+                testGroup
+                    .TestDomesticVrpConsent
+                    .TryGetValue(bankProfileEnum, out bool testDomesticVrpConsent);
+
+
                 bool? authDisable = authData?.DisableAuth;
                 string? authUiInputUserName = authData?.UiInput?.UserName; // can only be null when UiInput null
                 string? authUiInputPassword = authData?.UiInput?.Password; // can only be null when UiInput null
@@ -161,7 +170,9 @@ public abstract class AppTests
                             RegistrationScope = testGroup.RegistrationScope,
                             AuthDisable = authDisable,
                             AuthUiInputUserName = authUiInputUserName,
-                            AuthUiInputPassword = authUiInputPassword
+                            AuthUiInputPassword = authUiInputPassword,
+                            TestDomesticPaymentConsent = testDomesticPaymentConsent,
+                            TestDomesticVrpConsent = testDomesticVrpConsent
                         });
                 }
             }
@@ -341,46 +352,52 @@ public abstract class AppTests
             }
         }
 
-        // Run domestic payment consent subtests
         if (registrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
         {
-            foreach (DomesticPaymentSubtestEnum subTest in
-                     DomesticPaymentConsentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
+            // Run domestic payment consent subtests
+            if (testData2.TestDomesticPaymentConsent)
             {
-                await _domesticPaymentConsentSubtest.RunTest(
-                    subTest,
-                    bankProfile,
-                    bankRegistrationId,
-                    defaultResponseMode,
-                    serviceScopeGenerator,
-                    testNameUnique,
-                    modifiedBy,
-                    testDataProcessorFluentRequestLogging
-                        .AppendToPath("pisp")
-                        .AppendToPath($"{subTest.ToString()}"),
-                    consentAuth,
-                    authUrlLeftPart,
-                    bankUser,
-                    memoryCache);
+                foreach (DomesticPaymentSubtestEnum subTest in
+                         DomesticPaymentConsentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
+                {
+                    await _domesticPaymentConsentSubtest.RunTest(
+                        subTest,
+                        bankProfile,
+                        bankRegistrationId,
+                        defaultResponseMode,
+                        serviceScopeGenerator,
+                        testNameUnique,
+                        modifiedBy,
+                        testDataProcessorFluentRequestLogging
+                            .AppendToPath("pisp")
+                            .AppendToPath($"{subTest.ToString()}"),
+                        consentAuth,
+                        authUrlLeftPart,
+                        bankUser,
+                        memoryCache);
+                }
             }
 
             // Run domestic VRP consent subtests
-            foreach (DomesticVrpSubtestEnum subTest in
-                     DomesticVrpConsentSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
+            if (testData2.TestDomesticVrpConsent)
             {
-                await _domesticVrpConsentSubtest.RunTest(
-                    subTest,
-                    bankProfile,
-                    bankRegistrationId,
-                    defaultResponseMode,
-                    serviceScopeGenerator,
-                    testNameUnique,
-                    modifiedBy,
-                    testDataProcessorFluentRequestLogging
-                        .AppendToPath("vrp")
-                        .AppendToPath($"{subTest.ToString()}"),
-                    consentAuth,
-                    bankUser);
+                foreach (DomesticVrpSubtestEnum subTest in
+                         DomesticVrpConsentSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
+                {
+                    await _domesticVrpConsentSubtest.RunTest(
+                        subTest,
+                        bankProfile,
+                        bankRegistrationId,
+                        defaultResponseMode,
+                        serviceScopeGenerator,
+                        testNameUnique,
+                        modifiedBy,
+                        testDataProcessorFluentRequestLogging
+                            .AppendToPath("vrp")
+                            .AppendToPath($"{subTest.ToString()}"),
+                        consentAuth,
+                        bankUser);
+                }
             }
         }
 

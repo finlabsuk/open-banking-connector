@@ -197,6 +197,14 @@ public class TestGroup
     public Dictionary<BankProfileEnum, string>
         AccountAccessConsentAuthContextNonces { get; set; } =
         new();
+
+    public Dictionary<BankProfileEnum, bool>
+        TestDomesticPaymentConsent { get; set; } =
+        new();
+
+    public Dictionary<BankProfileEnum, bool>
+        TestDomesticVrpConsent { get; set; } =
+        new();
 }
 
 /// <summary>

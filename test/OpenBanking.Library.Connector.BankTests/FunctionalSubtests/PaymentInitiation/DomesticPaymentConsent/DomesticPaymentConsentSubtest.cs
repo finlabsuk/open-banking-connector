@@ -25,9 +25,7 @@ public class DomesticPaymentConsentSubtest(PaymentInitiationApiClient paymentIni
 {
     public static ISet<DomesticPaymentSubtestEnum> DomesticPaymentFunctionalSubtestsSupported(
         BankProfile bankProfile) =>
-        bankProfile.PaymentInitiationApi is null
-            ? new HashSet<DomesticPaymentSubtestEnum>()
-            : DomesticPaymentSubtestHelper.AllDomesticPaymentSubtests;
+        DomesticPaymentSubtestHelper.AllDomesticPaymentSubtests;
 
     public async Task RunTest(
         DomesticPaymentSubtestEnum subtestEnum,

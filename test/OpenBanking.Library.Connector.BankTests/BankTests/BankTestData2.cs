@@ -34,6 +34,10 @@ public class BankTestData2 : IXunitSerializable
 
     public bool? AuthDisable { get; set; }
 
+    public bool TestDomesticPaymentConsent { get; set; }
+
+    public bool TestDomesticVrpConsent { get; set; }
+
     public void Deserialize(IXunitSerializationInfo info)
     {
         BankProfileEnum = info.GetValue<BankProfileEnum>(nameof(BankProfileEnum));
@@ -47,6 +51,8 @@ public class BankTestData2 : IXunitSerializable
         AuthUiInputUserName = info.GetValue<string?>(nameof(AuthUiInputUserName));
         AuthUiInputPassword = info.GetValue<string?>(nameof(AuthUiInputPassword));
         AuthDisable = info.GetValue<bool?>(nameof(AuthDisable));
+        TestDomesticPaymentConsent = info.GetValue<bool>(nameof(TestDomesticPaymentConsent));
+        TestDomesticVrpConsent = info.GetValue<bool>(nameof(TestDomesticVrpConsent));
     }
 
     public void Serialize(IXunitSerializationInfo info)
@@ -61,6 +67,8 @@ public class BankTestData2 : IXunitSerializable
         info.AddValue(nameof(AuthUiInputUserName), AuthUiInputUserName);
         info.AddValue(nameof(AuthUiInputPassword), AuthUiInputPassword);
         info.AddValue(nameof(AuthDisable), AuthDisable);
+        info.AddValue(nameof(TestDomesticPaymentConsent), TestDomesticPaymentConsent);
+        info.AddValue(nameof(TestDomesticVrpConsent), TestDomesticVrpConsent);
     }
 
     public override string ToString()
@@ -85,10 +93,13 @@ public class BankTestData2 : IXunitSerializable
                 }
             }
 
-            bool supportsPisp = RegistrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation);
-            if (supportsPisp)
+            if (TestDomesticPaymentConsent)
             {
                 elements.Add("PISP");
+            }
+            if (TestDomesticVrpConsent)
+            {
+                elements.Add("VRP");
             }
 
             extraBankProfileInfo = "(" + string.Join(", ", elements) + ")";

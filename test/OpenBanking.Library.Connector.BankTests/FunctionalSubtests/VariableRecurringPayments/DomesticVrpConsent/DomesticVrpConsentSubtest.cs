@@ -23,9 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 public class DomesticVrpConsentSubtest(VariableRecurringPaymentsApiClient variableRecurringPaymentsApiClient)
 {
     public static ISet<DomesticVrpSubtestEnum> DomesticVrpFunctionalSubtestsSupported(BankProfile bankProfile) =>
-        bankProfile.VariableRecurringPaymentsApi is null
-            ? new HashSet<DomesticVrpSubtestEnum>() // empty set
-            : DomesticVrpSubtestHelper.AllDomesticVrpSubtests;
+        DomesticVrpSubtestHelper.AllDomesticVrpSubtests;
 
     public async Task RunTest(
         DomesticVrpSubtestEnum subtestEnum,
