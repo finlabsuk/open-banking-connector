@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "11.0.0"
+    "version": "12.0.0"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -156,15 +156,7 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "x-obc-include-external-api-operation",
+            "name": "x-obc-exclude-external-api-operation",
             "in": "header",
             "description": "",
             "schema": {
@@ -220,15 +212,7 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "x-obc-include-external-api-operation",
+            "name": "x-obc-exclude-external-api-operation",
             "in": "header",
             "description": "",
             "schema": {
@@ -283,14 +267,6 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
-          },
-          {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
             }
           },
           {
@@ -353,14 +329,6 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
@@ -407,14 +375,6 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
-          },
-          {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
             }
           },
           {
@@ -476,14 +436,6 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
@@ -530,14 +482,6 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
-          },
-          {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
             }
           },
           {
@@ -599,14 +543,6 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
@@ -653,14 +589,6 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
-          },
-          {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
             }
           },
           {
@@ -711,14 +639,6 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
-          },
-          {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
             }
           },
           {
@@ -781,14 +701,6 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
@@ -848,14 +760,6 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
@@ -902,14 +806,6 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
-          },
-          {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
             }
           },
           {
@@ -971,14 +867,6 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
@@ -1026,14 +914,6 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
-          },
-          {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
             }
           },
           {
@@ -1109,14 +989,6 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
-          },
-          {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
             }
           },
           {
@@ -1201,14 +1073,6 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
-          },
-          {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
             }
           },
           {
@@ -1350,22 +1214,22 @@
         "type": "object",
         "properties": {
           "AuthUrl": {
-            "minLength": 1,
             "type": "string",
-            "description": "Time-sensitive URL to enable end-user authentication via website or mobile app"
+            "description": "Time-sensitive URL to enable end-user authentication via website or mobile app",
+            "nullable": true
           },
           "AppSessionId": {
-            "minLength": 1,
             "type": "string",
-            "description": "App session ID that can be checked when processing post-auth redirect"
+            "description": "App session ID that can be checked when processing post-auth redirect",
+            "nullable": true
           },
           "AccountAccessConsentId": {
             "type": "string",
             "format": "uuid"
           },
           "State": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "Id": {
             "type": "string",
@@ -1413,8 +1277,8 @@
             "format": "uuid"
           },
           "State": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "Id": {
             "type": "string",
@@ -1485,9 +1349,9 @@
             "format": "uuid"
           },
           "ExternalApiId": {
-            "minLength": 1,
             "type": "string",
-            "description": "External (bank) API ID. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks."
+            "description": "External (bank) API ID. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks.",
+            "nullable": true
           },
           "Id": {
             "type": "string",
@@ -1519,7 +1383,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response to AccountAccessConsent Create requests."
+        "description": "Response to AccountAccessConsent Create and Read requests."
       },
       "AccountAccessConsentRequest": {
         "required": [
@@ -1725,6 +1589,10 @@
         "additionalProperties": { }
       },
       "AuthContextRequest": {
+        "required": [
+          "Nonce",
+          "State"
+        ],
         "type": "object",
         "properties": {
           "State": {
@@ -1735,6 +1603,10 @@
           "Nonce": {
             "type": "string",
             "description": "OpenID Connect \"nonce\".",
+            "nullable": true
+          },
+          "CodeVerifier": {
+            "type": "string",
             "nullable": true
           },
           "ModifiedBy": {
@@ -1767,7 +1639,7 @@
           },
           "DateTime": {
             "type": "string",
-            "description": "Indicates the date (and time) of the balance.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Indicates the date (and time) of the balance.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time"
           },
           "Amount": {
@@ -1831,7 +1703,7 @@
         "properties": {
           "Included": {
             "type": "boolean",
-            "description": "Indicates whether or not the credit line is included in the balance of the account.\r\n<br />Usage: If not present, credit line is not included in the balance amount of the account."
+            "description": "Indicates whether or not the credit line is included in the balance of the account.\r\n\r\nUsage: If not present, credit line is not included in the balance amount of the account."
           },
           "Type": {
             "$ref": "#/components/schemas/CreditLineType"
@@ -1913,19 +1785,19 @@
           },
           "ExpirationDateTime": {
             "type": "string",
-            "description": "Specified date and time the permissions will expire.\r\n<br />If this is not populated, the permissions will be open ended.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Specified date and time the permissions will expire.\r\n\r\nIf this is not populated, the permissions will be open ended.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "TransactionFromDateTime": {
             "type": "string",
-            "description": "Specified start date and time for the transaction query period.\r\n<br />If this is not populated, the start date will be open ended, and data will be returned from the earliest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Specified start date and time for the transaction query period.\r\n\r\nIf this is not populated, the start date will be open ended, and data will be returned from the earliest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "TransactionToDateTime": {
             "type": "string",
-            "description": "Specified end date and time for the transaction query period.\r\n<br />If this is not populated, the end date will be open ended, and data will be returned to the latest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Specified end date and time for the transaction query period.\r\n\r\nIf this is not populated, the end date will be open ended, and data will be returned to the latest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
@@ -1971,19 +1843,19 @@
           },
           "ExpirationDateTime": {
             "type": "string",
-            "description": "Specified date and time the permissions will expire.\r\n<br />If this is not populated, the permissions will be open ended.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Specified date and time the permissions will expire.\r\n\r\nIf this is not populated, the permissions will be open ended.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "TransactionFromDateTime": {
             "type": "string",
-            "description": "Specified start date and time for the transaction query period.\r\n<br />If this is not populated, the start date will be open ended, and data will be returned from the earliest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Specified start date and time for the transaction query period.\r\n\r\nIf this is not populated, the start date will be open ended, and data will be returned from the earliest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "TransactionToDateTime": {
             "type": "string",
-            "description": "Specified end date and time for the transaction query period.\r\n<br />If this is not populated, the end date will be open ended, and data will be returned to the latest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Specified end date and time for the transaction query period.\r\n\r\nIf this is not populated, the end date will be open ended, and data will be returned to the latest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           }
@@ -2126,8 +1998,8 @@
         "type": "object",
         "properties": {
           "XFapiInteractionId": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2386,7 +2258,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Unambiguous identification of the account to which credit and debit entries are made. The following fields are optional only for accounts that are switched:\r\n<br /><br />  * Data.Currency  \r\n<br />  * Data.AccountType  \r\n<br />  * Data.AccountSubType\r\n<br /><br />For all other accounts, the fields must be populated by the ASPSP."
+        "description": "Unambiguous identification of the account to which credit and debit entries are made. The following fields are optional only for accounts that are switched:\r\n\r\n\r\n  * Data.Currency  \r\n\r\n  * Data.AccountType  \r\n\r\n  * Data.AccountSubType\r\n\r\n\r\nFor all other accounts, the fields must be populated by the ASPSP."
       },
       "OBAccountStatus1Code": {
         "enum": [
@@ -2620,7 +2492,7 @@
           }
         },
         "additionalProperties": { },
-        "description": "Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account.\r\n<br />This is the servicer of the beneficiary account."
+        "description": "Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account.\r\n\r\nThis is the servicer of the beneficiary account."
       },
       "OBBranchAndFinancialInstitutionIdentification6_1": {
         "type": "object",
@@ -2778,7 +2650,7 @@
           "Debit"
         ],
         "type": "string",
-        "description": "Indicates whether the balance is a credit or a debit balance. \r\n<br />Usage: A zero balance is considered to be a credit balance."
+        "description": "Indicates whether the balance is a credit or a debit balance. \r\n\r\nUsage: A zero balance is considered to be a credit balance."
       },
       "OBCurrencyExchange5": {
         "required": [
@@ -2806,7 +2678,7 @@
           },
           "ExchangeRate": {
             "type": "number",
-            "description": "Factor used to convert an amount from one currency into another. This reflects the price at which one currency was bought with another currency.\r\n<br />Usage: ExchangeRate expresses the ratio between UnitCurrency and QuotedCurrency (ExchangeRate = UnitCurrency/QuotedCurrency).",
+            "description": "Factor used to convert an amount from one currency into another. This reflects the price at which one currency was bought with another currency.\r\n\r\nUsage: ExchangeRate expresses the ratio between UnitCurrency and QuotedCurrency (ExchangeRate = UnitCurrency/QuotedCurrency).",
             "format": "double"
           },
           "ContractIdentification": {
@@ -2818,7 +2690,7 @@
           },
           "QuotationDate": {
             "type": "string",
-            "description": "Date and time at which an exchange rate is quoted.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Date and time at which an exchange rate is quoted.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },

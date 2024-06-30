@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "11.0.0"
+    "version": "12.0.0"
   },
   "paths": {
     "/manage/bank-registrations": {
@@ -64,11 +64,11 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
+            "name": "x-obc-exclude-external-api-operation",
             "in": "header",
             "description": "",
             "schema": {
-              "type": "string"
+              "type": "boolean"
             }
           }
         ],
@@ -112,11 +112,11 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
+            "name": "x-obc-exclude-external-api-operation",
             "in": "header",
             "description": "",
             "schema": {
-              "type": "string"
+              "type": "boolean"
             }
           }
         ],
@@ -200,14 +200,6 @@
               "type": "string",
               "format": "uuid"
             }
-          },
-          {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -247,14 +239,6 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
-          },
-          {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -338,14 +322,6 @@
               "type": "string",
               "format": "uuid"
             }
-          },
-          {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -385,14 +361,6 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
-          },
-          {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -476,14 +444,6 @@
               "type": "string",
               "format": "uuid"
             }
-          },
-          {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -523,14 +483,6 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
-          },
-          {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -581,14 +533,6 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
-          },
-          {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -781,47 +725,48 @@
             "$ref": "#/components/schemas/BankProfileEnum"
           },
           "JwksUri": {
-            "minLength": 1,
             "type": "string",
-            "description": "JWK Set URI (normally supplied from OpenID Configuration)"
+            "description": "JWK Set URI (normally supplied from OpenID Configuration)",
+            "nullable": true
           },
           "RegistrationEndpoint": {
-            "minLength": 1,
             "type": "string",
-            "description": "Registration endpoint (normally supplied from OpenID Configuration)"
+            "description": "Registration endpoint (normally supplied from OpenID Configuration)",
+            "nullable": true
           },
           "TokenEndpoint": {
-            "minLength": 1,
             "type": "string",
-            "description": "Token endpoint (normally supplied from OpenID Configuration)"
+            "description": "Token endpoint (normally supplied from OpenID Configuration)",
+            "nullable": true
           },
           "AuthorizationEndpoint": {
-            "minLength": 1,
             "type": "string",
-            "description": "Authorization endpoint (normally supplied from OpenID Configuration)"
+            "description": "Authorization endpoint (normally supplied from OpenID Configuration)",
+            "nullable": true
           },
           "RegistrationScope": {
             "$ref": "#/components/schemas/RegistrationScopeEnum"
           },
           "DefaultFragmentRedirectUri": {
-            "minLength": 1,
             "type": "string",
-            "description": "Default fragment redirect URI to use for this registration. This URI must\r\nbe included in the redirect URIs used for this registration (these are specified by RedirectUris and if that is\r\nnull default to those specified in the software statement in software statement profile\r\nSoftwareStatementProfileId).\r\nIf null, the default fragment redirect URI specified in the software statement profile\r\nwill be used."
+            "description": "Default fragment redirect URI to use for this registration. This URI must\r\nbe included in the redirect URIs used for this registration (these are specified by RedirectUris and if that is\r\nnull default to those specified in the software statement in software statement profile\r\nSoftwareStatementProfileId).\r\nIf null, the default fragment redirect URI specified in the software statement profile\r\nwill be used.",
+            "nullable": true
           },
           "DefaultQueryRedirectUri": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "RedirectUris": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Redirect URIs to use for this registration. Must be a subset of those specified in\r\nthe software statement in software statement profile SoftwareStatementProfileId.\r\nIf null, redirect URIs specified in the software statement will be used."
+            "description": "Redirect URIs to use for this registration. Must be a subset of those specified in\r\nthe software statement in software statement profile SoftwareStatementProfileId.\r\nIf null, redirect URIs specified in the software statement will be used.",
+            "nullable": true
           },
           "ExternalApiId": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "UseSimulatedBank": {
             "type": "boolean",
@@ -1088,7 +1033,6 @@
         "type": "object",
         "properties": {
           "AssociatedKeyId": {
-            "minLength": 1,
             "type": "string",
             "description": "Key ID of associated key (from UK Open Banking Directory) as string."
           },
@@ -1096,7 +1040,6 @@
             "$ref": "#/components/schemas/SecretDescription"
           },
           "Certificate": {
-            "minLength": 1,
             "type": "string",
             "description": "OB Seal (signing) certificate (X.509) as \"stringified\" PEM file with escaped newline characters (\"\\n\") and\r\n\"CERTIFICATE\"\r\nlabel.\r\nExample: \"-----BEGIN CERTIFICATE-----\\nABC\\n-----END CERTIFICATE-----\\n\""
           },
@@ -1124,17 +1067,17 @@
         "type": "object",
         "properties": {
           "AssociatedKeyId": {
-            "minLength": 1,
             "type": "string",
-            "description": "Key ID of associated key (from UK Open Banking Directory) as string."
+            "description": "Key ID of associated key (from UK Open Banking Directory) as string.",
+            "nullable": true
           },
           "AssociatedKey": {
             "$ref": "#/components/schemas/SecretDescription"
           },
           "Certificate": {
-            "minLength": 1,
             "type": "string",
-            "description": "OB Seal (signing) certificate (X.509) as \"stringified\" PEM file with escaped newline characters (\"\\n\") and\r\n\"CERTIFICATE\"\r\nlabel.\r\nExample: \"-----BEGIN CERTIFICATE-----\\nABC\\n-----END CERTIFICATE-----\\n\""
+            "description": "OB Seal (signing) certificate (X.509) as \"stringified\" PEM file with escaped newline characters (\"\\n\") and\r\n\"CERTIFICATE\"\r\nlabel.\r\nExample: \"-----BEGIN CERTIFICATE-----\\nABC\\n-----END CERTIFICATE-----\\n\"",
+            "nullable": true
           },
           "Id": {
             "type": "string",
@@ -1179,7 +1122,6 @@
             "$ref": "#/components/schemas/SecretDescription"
           },
           "Certificate": {
-            "minLength": 1,
             "type": "string",
             "description": "OB WAC (transport) certificate (X.509) as \"stringified\" PEM file with escaped newline characters (\"\\n\") and\r\n\"CERTIFICATE\"\r\nlabel.\r\nExample: \"-----BEGIN CERTIFICATE-----\\nABC\\n-----END CERTIFICATE-----\\n\""
           },
@@ -1209,9 +1151,9 @@
             "$ref": "#/components/schemas/SecretDescription"
           },
           "Certificate": {
-            "minLength": 1,
             "type": "string",
-            "description": "OB WAC (transport) certificate (X.509) as \"stringified\" PEM file with escaped newline characters (\"\\n\") and\r\n\"CERTIFICATE\"\r\nlabel.\r\nExample: \"-----BEGIN CERTIFICATE-----\\nABC\\n-----END CERTIFICATE-----\\n\""
+            "description": "OB WAC (transport) certificate (X.509) as \"stringified\" PEM file with escaped newline characters (\"\\n\") and\r\n\"CERTIFICATE\"\r\nlabel.\r\nExample: \"-----BEGIN CERTIFICATE-----\\nABC\\n-----END CERTIFICATE-----\\n\"",
+            "nullable": true
           },
           "Id": {
             "type": "string",
@@ -1266,7 +1208,6 @@
             "$ref": "#/components/schemas/SecretSource"
           },
           "Name": {
-            "minLength": 1,
             "type": "string",
             "description": "Name of secret value."
           }
@@ -1292,12 +1233,10 @@
         "type": "object",
         "properties": {
           "OrganisationId": {
-            "minLength": 1,
             "type": "string",
             "description": "Organisation ID from UK Open Banking directory as string."
           },
           "SoftwareId": {
-            "minLength": 1,
             "type": "string",
             "description": "Software statement ID from UK Open Banking directory as string."
           },
@@ -1316,12 +1255,10 @@
             "format": "uuid"
           },
           "DefaultQueryRedirectUrl": {
-            "minLength": 1,
             "type": "string",
             "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = query."
           },
           "DefaultFragmentRedirectUrl": {
-            "minLength": 1,
             "type": "string",
             "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = fragment."
           },
@@ -1353,14 +1290,14 @@
         "type": "object",
         "properties": {
           "OrganisationId": {
-            "minLength": 1,
             "type": "string",
-            "description": "Organisation ID from UK Open Banking directory as string."
+            "description": "Organisation ID from UK Open Banking directory as string.",
+            "nullable": true
           },
           "SoftwareId": {
-            "minLength": 1,
             "type": "string",
-            "description": "Software statement ID from UK Open Banking directory as string."
+            "description": "Software statement ID from UK Open Banking directory as string.",
+            "nullable": true
           },
           "SandboxEnvironment": {
             "type": "boolean",
@@ -1377,14 +1314,14 @@
             "format": "uuid"
           },
           "DefaultQueryRedirectUrl": {
-            "minLength": 1,
             "type": "string",
-            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = query."
+            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = query.",
+            "nullable": true
           },
           "DefaultFragmentRedirectUrl": {
-            "minLength": 1,
             "type": "string",
-            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = fragment."
+            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.",
+            "nullable": true
           },
           "Id": {
             "type": "string",

@@ -3,7 +3,7 @@
   "info": {
     "title": "Payment Initiation API",
     "description": "Payment Initiation API for Open Banking Connector Web App",
-    "version": "11.0.0"
+    "version": "12.0.0"
   },
   "paths": {
     "/pisp/domestic-payment-consent-auth-contexts": {
@@ -156,6 +156,14 @@
             }
           },
           {
+            "name": "x-obc-exclude-external-api-operation",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
@@ -181,6 +189,46 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DomesticPaymentConsentCreateResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Domestic Payment Consents"
+        ],
+        "summary": "Delete domestic payment consent",
+        "parameters": [
+          {
+            "name": "domesticPaymentConsentId",
+            "in": "path",
+            "description": "ID of DomesticPaymentConsent",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               }
             }
@@ -427,7 +475,7 @@
             "maxLength": 350,
             "minLength": 1,
             "type": "string",
-            "description": "Name of the account, as assigned by the account servicing institution.\r\n<br />Usage: The account name is the name or names of the account owner(s) represented at an account level. The account name is not the product name or the nickname of the account.\r\n<br />OB: ASPSPs may carry out name validation for Confirmation of Payee, but it is not mandatory."
+            "description": "Name of the account, as assigned by the account servicing institution.\r\n\r\nUsage: The account name is the name or names of the account owner(s) represented at an account level. The account name is not the product name or the nickname of the account.\r\n\r\nOB: ASPSPs may carry out name validation for Confirmation of Payee, but it is not mandatory."
           },
           "SecondaryIdentification": {
             "maxLength": 34,
@@ -439,6 +487,10 @@
         "additionalProperties": false
       },
       "AuthContextRequest": {
+        "required": [
+          "Nonce",
+          "State"
+        ],
         "type": "object",
         "properties": {
           "State": {
@@ -449,6 +501,10 @@
           "Nonce": {
             "type": "string",
             "description": "OpenID Connect \"nonce\".",
+            "nullable": true
+          },
+          "CodeVerifier": {
+            "type": "string",
             "nullable": true
           },
           "ModifiedBy": {
@@ -469,7 +525,7 @@
           },
           "CompletionDateTime": {
             "type": "string",
-            "description": "Date and time at which the requested authorisation flow must be completed.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Date and time at which the requested authorisation flow must be completed.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           }
@@ -487,7 +543,7 @@
           },
           "CompletionDateTime": {
             "type": "string",
-            "description": "Date and time at which the requested authorisation flow must be completed.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Date and time at which the requested authorisation flow must be completed.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           }
@@ -507,6 +563,20 @@
           "Single"
         ],
         "type": "string"
+      },
+      "BaseResponse": {
+        "type": "object",
+        "properties": {
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "Charges": {
         "required": [
@@ -570,7 +640,7 @@
             "maxLength": 350,
             "minLength": 1,
             "type": "string",
-            "description": "The account name is the name or names of the account owner(s) represented at an account level.\r\n<br />Note, the account name is not the product name or the nickname of the account.\r\n<br />OB: ASPSPs may carry out name validation for Confirmation of Payee, but it is not mandatory."
+            "description": "The account name is the name or names of the account owner(s) represented at an account level.\r\n\r\nNote, the account name is not the product name or the nickname of the account.\r\n\r\nOB: ASPSPs may carry out name validation for Confirmation of Payee, but it is not mandatory."
           },
           "SecondaryIdentification": {
             "maxLength": 34,
@@ -601,7 +671,7 @@
             "maxLength": 350,
             "minLength": 1,
             "type": "string",
-            "description": "The account name is the name or names of the account owner(s) represented at an account level.\r\n<br />Note, the account name is not the product name or the nickname of the account.\r\n<br />OB: ASPSPs may carry out name validation for Confirmation of Payee, but it is not mandatory."
+            "description": "The account name is the name or names of the account owner(s) represented at an account level.\r\n\r\nNote, the account name is not the product name or the nickname of the account.\r\n\r\nOB: ASPSPs may carry out name validation for Confirmation of Payee, but it is not mandatory."
           },
           "SecondaryIdentification": {
             "maxLength": 34,
@@ -632,7 +702,7 @@
             "maxLength": 350,
             "minLength": 1,
             "type": "string",
-            "description": "The account name is the name or names of the account owner(s) represented at an account level.\r\n<br />Note, the account name is not the product name or the nickname of the account.\r\n<br />OB: ASPSPs may carry out name validation for Confirmation of Payee, but it is not mandatory."
+            "description": "The account name is the name or names of the account owner(s) represented at an account level.\r\n\r\nNote, the account name is not the product name or the nickname of the account.\r\n\r\nOB: ASPSPs may carry out name validation for Confirmation of Payee, but it is not mandatory."
           },
           "SecondaryIdentification": {
             "maxLength": 34,
@@ -663,7 +733,7 @@
             "maxLength": 350,
             "minLength": 1,
             "type": "string",
-            "description": "The account name is the name or names of the account owner(s) represented at an account level.\r\n<br />Note, the account name is not the product name or the nickname of the account.\r\n<br />OB: ASPSPs may carry out name validation for Confirmation of Payee, but it is not mandatory."
+            "description": "The account name is the name or names of the account owner(s) represented at an account level.\r\n\r\nNote, the account name is not the product name or the nickname of the account.\r\n\r\nOB: ASPSPs may carry out name validation for Confirmation of Payee, but it is not mandatory."
           },
           "SecondaryIdentification": {
             "maxLength": 34,
@@ -749,7 +819,7 @@
           },
           "CreationDateTime": {
             "type": "string",
-            "description": "Date and time at which the resource was created.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Date and time at which the resource was created.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time"
           },
           "Status": {
@@ -757,7 +827,7 @@
           },
           "StatusUpdateDateTime": {
             "type": "string",
-            "description": "Date and time at which the resource status was updated.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Date and time at which the resource status was updated.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time"
           },
           "ReadRefundAccount": {
@@ -765,19 +835,19 @@
           },
           "CutOffDateTime": {
             "type": "string",
-            "description": "Specified cut-off date and time for the payment consent.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Specified cut-off date and time for the payment consent.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "ExpectedExecutionDateTime": {
             "type": "string",
-            "description": "Expected execution date and time for the payment resource.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Expected execution date and time for the payment resource.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "ExpectedSettlementDateTime": {
             "type": "string",
-            "description": "Expected settlement date and time for the payment resource.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Expected settlement date and time for the payment resource.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
@@ -857,7 +927,7 @@
           },
           "CreationDateTime": {
             "type": "string",
-            "description": "Date and time at which the message was created.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Date and time at which the message was created.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time"
           },
           "Status": {
@@ -865,18 +935,18 @@
           },
           "StatusUpdateDateTime": {
             "type": "string",
-            "description": "Date and time at which the resource status was updated.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Date and time at which the resource status was updated.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time"
           },
           "ExpectedExecutionDateTime": {
             "type": "string",
-            "description": "Expected execution date and time for the payment resource.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Expected execution date and time for the payment resource.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "ExpectedSettlementDateTime": {
             "type": "string",
-            "description": "Expected settlement date and time for the payment resource.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Expected settlement date and time for the payment resource.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
@@ -932,7 +1002,7 @@
             "maxLength": 350,
             "minLength": 1,
             "type": "string",
-            "description": "The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels.\r\n<br />Note, the account name is not the product name or the nickname of the account.",
+            "description": "The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels.\r\n\r\nNote, the account name is not the product name or the nickname of the account.",
             "nullable": true
           },
           "SecondaryIdentification": {
@@ -963,7 +1033,7 @@
             "maxLength": 350,
             "minLength": 1,
             "type": "string",
-            "description": "The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels.\r\n<br />Note, the account name is not the product name or the nickname of the account.",
+            "description": "The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels.\r\n\r\nNote, the account name is not the product name or the nickname of the account.",
             "nullable": true
           },
           "SecondaryIdentification": {
@@ -994,7 +1064,7 @@
             "maxLength": 350,
             "minLength": 1,
             "type": "string",
-            "description": "The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels.\r\n<br />Note, the account name is not the product name or the nickname of the account.",
+            "description": "The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels.\r\n\r\nNote, the account name is not the product name or the nickname of the account.",
             "nullable": true
           },
           "SecondaryIdentification": {
@@ -1025,7 +1095,7 @@
             "maxLength": 350,
             "minLength": 1,
             "type": "string",
-            "description": "The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels.\r\n<br />Note, the account name is not the product name or the nickname of the account.",
+            "description": "The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels.\r\n\r\nNote, the account name is not the product name or the nickname of the account.",
             "nullable": true
           },
           "SecondaryIdentification": {
@@ -1123,18 +1193,18 @@
         "type": "object",
         "properties": {
           "AuthUrl": {
-            "minLength": 1,
             "type": "string",
-            "description": "Time-sensitive URL to enable end-user authentication via website or mobile app"
+            "description": "Time-sensitive URL to enable end-user authentication via website or mobile app",
+            "nullable": true
           },
           "AppSessionId": {
-            "minLength": 1,
             "type": "string",
-            "description": "App session ID that can be checked when processing post-auth redirect"
+            "description": "App session ID that can be checked when processing post-auth redirect",
+            "nullable": true
           },
           "State": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "DomesticPaymentConsentId": {
             "type": "string",
@@ -1182,8 +1252,8 @@
         "type": "object",
         "properties": {
           "State": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "DomesticPaymentConsentId": {
             "type": "string",
@@ -1258,9 +1328,9 @@
             "format": "uuid"
           },
           "ExternalApiId": {
-            "minLength": 1,
             "type": "string",
-            "description": "External (bank) API ID. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks."
+            "description": "External (bank) API ID. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks.",
+            "nullable": true
           },
           "Id": {
             "type": "string",
@@ -1447,8 +1517,8 @@
         "type": "object",
         "properties": {
           "XFapiInteractionId": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1462,7 +1532,7 @@
         "properties": {
           "FundsAvailableDateTime": {
             "type": "string",
-            "description": "Date and time at which the funds availability check was generated.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Date and time at which the funds availability check was generated.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time"
           },
           "FundsAvailable": {
@@ -1485,13 +1555,13 @@
             "maxLength": 35,
             "minLength": 1,
             "type": "string",
-            "description": "Unique identification as assigned by an instructing party for an instructed party to unambiguously identify the instruction.\r\n<br />Usage: the  instruction identification is a point to point reference that can be used between the instructing party and the instructed party to refer to the individual instruction. It can be included in several messages related to the instruction."
+            "description": "Unique identification as assigned by an instructing party for an instructed party to unambiguously identify the instruction.\r\n\r\nUsage: the  instruction identification is a point to point reference that can be used between the instructing party and the instructed party to refer to the individual instruction. It can be included in several messages related to the instruction."
           },
           "EndToEndIdentification": {
             "maxLength": 35,
             "minLength": 1,
             "type": "string",
-            "description": "Unique identification assigned by the initiating party to unambiguously identify the transaction. This identification is passed on, unchanged, throughout the entire end-to-end chain.\r\n<br />Usage: The end-to-end identification can be used for reconciliation or to link tasks relating to the transaction. It can be included in several messages related to the transaction.\r\n<br />OB: The Faster Payments Scheme can only access 31 characters for the EndToEndIdentification field."
+            "description": "Unique identification assigned by the initiating party to unambiguously identify the transaction. This identification is passed on, unchanged, throughout the entire end-to-end chain.\r\n\r\nUsage: The end-to-end identification can be used for reconciliation or to link tasks relating to the transaction. It can be included in several messages related to the transaction.\r\n\r\nOB: The Faster Payments Scheme can only access 31 characters for the EndToEndIdentification field."
           },
           "LocalInstrument": {
             "type": "string",
@@ -1531,13 +1601,13 @@
             "maxLength": 35,
             "minLength": 1,
             "type": "string",
-            "description": "Unique identification as assigned by an instructing party for an instructed party to unambiguously identify the instruction.\r\n<br />Usage: the  instruction identification is a point to point reference that can be used between the instructing party and the instructed party to refer to the individual instruction. It can be included in several messages related to the instruction."
+            "description": "Unique identification as assigned by an instructing party for an instructed party to unambiguously identify the instruction.\r\n\r\nUsage: the  instruction identification is a point to point reference that can be used between the instructing party and the instructed party to refer to the individual instruction. It can be included in several messages related to the instruction."
           },
           "EndToEndIdentification": {
             "maxLength": 35,
             "minLength": 1,
             "type": "string",
-            "description": "Unique identification assigned by the initiating party to unambiguously identify the transaction. This identification is passed on, unchanged, throughout the entire end-to-end chain.\r\n<br />Usage: The end-to-end identification can be used for reconciliation or to link tasks relating to the transaction. It can be included in several messages related to the transaction.\r\n<br />OB: The Faster Payments Scheme can only access 31 characters for the EndToEndIdentification field."
+            "description": "Unique identification assigned by the initiating party to unambiguously identify the transaction. This identification is passed on, unchanged, throughout the entire end-to-end chain.\r\n\r\nUsage: The end-to-end identification can be used for reconciliation or to link tasks relating to the transaction. It can be included in several messages related to the transaction.\r\n\r\nOB: The Faster Payments Scheme can only access 31 characters for the EndToEndIdentification field."
           },
           "LocalInstrument": {
             "type": "string",
@@ -1577,13 +1647,13 @@
             "maxLength": 35,
             "minLength": 1,
             "type": "string",
-            "description": "Unique identification as assigned by an instructing party for an instructed party to unambiguously identify the instruction.\r\n<br />Usage: the  instruction identification is a point to point reference that can be used between the instructing party and the instructed party to refer to the individual instruction. It can be included in several messages related to the instruction."
+            "description": "Unique identification as assigned by an instructing party for an instructed party to unambiguously identify the instruction.\r\n\r\nUsage: the  instruction identification is a point to point reference that can be used between the instructing party and the instructed party to refer to the individual instruction. It can be included in several messages related to the instruction."
           },
           "EndToEndIdentification": {
             "maxLength": 35,
             "minLength": 1,
             "type": "string",
-            "description": "Unique identification assigned by the initiating party to unambiguously identify the transaction. This identification is passed on, unchanged, throughout the entire end-to-end chain.\r\n<br />Usage: The end-to-end identification can be used for reconciliation or to link tasks relating to the transaction. It can be included in several messages related to the transaction.\r\n<br />OB: The Faster Payments Scheme can only access 31 characters for the EndToEndIdentification field."
+            "description": "Unique identification assigned by the initiating party to unambiguously identify the transaction. This identification is passed on, unchanged, throughout the entire end-to-end chain.\r\n\r\nUsage: The end-to-end identification can be used for reconciliation or to link tasks relating to the transaction. It can be included in several messages related to the transaction.\r\n\r\nOB: The Faster Payments Scheme can only access 31 characters for the EndToEndIdentification field."
           },
           "LocalInstrument": {
             "type": "string",
@@ -1623,13 +1693,13 @@
             "maxLength": 35,
             "minLength": 1,
             "type": "string",
-            "description": "Unique identification as assigned by an instructing party for an instructed party to unambiguously identify the instruction.\r\n<br />Usage: the  instruction identification is a point to point reference that can be used between the instructing party and the instructed party to refer to the individual instruction. It can be included in several messages related to the instruction."
+            "description": "Unique identification as assigned by an instructing party for an instructed party to unambiguously identify the instruction.\r\n\r\nUsage: the  instruction identification is a point to point reference that can be used between the instructing party and the instructed party to refer to the individual instruction. It can be included in several messages related to the instruction."
           },
           "EndToEndIdentification": {
             "maxLength": 35,
             "minLength": 1,
             "type": "string",
-            "description": "Unique identification assigned by the initiating party to unambiguously identify the transaction. This identification is passed on, unchanged, throughout the entire end-to-end chain.\r\n<br />Usage: The end-to-end identification can be used for reconciliation or to link tasks relating to the transaction. It can be included in several messages related to the transaction.\r\n<br />OB: The Faster Payments Scheme can only access 31 characters for the EndToEndIdentification field."
+            "description": "Unique identification assigned by the initiating party to unambiguously identify the transaction. This identification is passed on, unchanged, throughout the entire end-to-end chain.\r\n\r\nUsage: The end-to-end identification can be used for reconciliation or to link tasks relating to the transaction. It can be included in several messages related to the transaction.\r\n\r\nOB: The Faster Payments Scheme can only access 31 characters for the EndToEndIdentification field."
           },
           "LocalInstrument": {
             "type": "string",
@@ -1807,13 +1877,13 @@
           },
           "LastUpdateDateTime": {
             "type": "string",
-            "description": "Last date and time at the authorisation flow was updated.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Last date and time at the authorisation flow was updated.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "ExpirationDateTime": {
             "type": "string",
-            "description": "Date and time at which the requested authorisation flow must be completed.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Date and time at which the requested authorisation flow must be completed.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           }
@@ -2009,6 +2079,11 @@
             "description": "Indicates if Payee has a contractual relationship with the PISP.",
             "nullable": true
           },
+          "ContractPresentInidicator": {
+            "type": "boolean",
+            "description": "Indicates if Payee has a contractual relationship with the PISP.",
+            "nullable": true
+          },
           "BeneficiaryPrepopulatedIndicator": {
             "type": "boolean",
             "description": "Indicates if PISP has immutably prepopulated payment details in for the PSU.",
@@ -2029,7 +2104,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "The Risk section is sent by the initiating party to the ASPSP.\r\n<br />It is used to specify additional details for risk scoring for Payments."
+        "description": "The Risk section is sent by the initiating party to the ASPSP.\r\n\r\nIt is used to specify additional details for risk scoring for Payments."
       },
       "OBRisk1PaymentContextCode": {
         "enum": [
@@ -2219,7 +2294,7 @@
           },
           "StatusUpdateDateTime": {
             "type": "string",
-            "description": "Date and time at which the status was assigned to the transfer.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n<br />All date-time fields in responses must include the timezone. An example is below:\r\n<br />2017-04-05T10:43:07+00:00",
+            "description": "Date and time at which the status was assigned to the transfer.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time"
           },
           "StatusDetail": {
@@ -2280,7 +2355,7 @@
             "maxLength": 35,
             "minLength": 1,
             "type": "string",
-            "description": "Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.\r\n<br />Usage: If available, the initiating party should provide this reference in the structured remittance information, to enable reconciliation by the creditor upon receipt of the amount of money.\r\n<br />If the business context requires the use of a creditor reference or a payment remit identification, and only one identifier can be passed through the end-to-end chain, the creditor's reference or payment remittance identification should be quoted in the end-to-end transaction identification.\r\n<br />OB: The Faster Payments Scheme can only accept 18 characters for the ReferenceInformation field - which is where this ISO field will be mapped.",
+            "description": "Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.\r\n\r\nUsage: If available, the initiating party should provide this reference in the structured remittance information, to enable reconciliation by the creditor upon receipt of the amount of money.\r\n\r\nIf the business context requires the use of a creditor reference or a payment remit identification, and only one identifier can be passed through the end-to-end chain, the creditor's reference or payment remittance identification should be quoted in the end-to-end transaction identification.\r\n\r\nOB: The Faster Payments Scheme can only accept 18 characters for the ReferenceInformation field - which is where this ISO field will be mapped.",
             "nullable": true
           }
         },
@@ -2300,7 +2375,7 @@
             "maxLength": 35,
             "minLength": 1,
             "type": "string",
-            "description": "Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.\r\n<br />Usage: If available, the initiating party should provide this reference in the structured remittance information, to enable reconciliation by the creditor upon receipt of the amount of money.\r\n<br />If the business context requires the use of a creditor reference or a payment remit identification, and only one identifier can be passed through the end-to-end chain, the creditor's reference or payment remittance identification should be quoted in the end-to-end transaction identification.\r\n<br />OB: The Faster Payments Scheme can only accept 18 characters for the ReferenceInformation field - which is where this ISO field will be mapped.",
+            "description": "Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.\r\n\r\nUsage: If available, the initiating party should provide this reference in the structured remittance information, to enable reconciliation by the creditor upon receipt of the amount of money.\r\n\r\nIf the business context requires the use of a creditor reference or a payment remit identification, and only one identifier can be passed through the end-to-end chain, the creditor's reference or payment remittance identification should be quoted in the end-to-end transaction identification.\r\n\r\nOB: The Faster Payments Scheme can only accept 18 characters for the ReferenceInformation field - which is where this ISO field will be mapped.",
             "nullable": true
           }
         },
@@ -2320,7 +2395,7 @@
             "maxLength": 35,
             "minLength": 1,
             "type": "string",
-            "description": "Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.\r\n<br />Usage: If available, the initiating party should provide this reference in the structured remittance information, to enable reconciliation by the creditor upon receipt of the amount of money.\r\n<br />If the business context requires the use of a creditor reference or a payment remit identification, and only one identifier can be passed through the end-to-end chain, the creditor's reference or payment remittance identification should be quoted in the end-to-end transaction identification.\r\n<br />OB: The Faster Payments Scheme can only accept 18 characters for the ReferenceInformation field - which is where this ISO field will be mapped.",
+            "description": "Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.\r\n\r\nUsage: If available, the initiating party should provide this reference in the structured remittance information, to enable reconciliation by the creditor upon receipt of the amount of money.\r\n\r\nIf the business context requires the use of a creditor reference or a payment remit identification, and only one identifier can be passed through the end-to-end chain, the creditor's reference or payment remittance identification should be quoted in the end-to-end transaction identification.\r\n\r\nOB: The Faster Payments Scheme can only accept 18 characters for the ReferenceInformation field - which is where this ISO field will be mapped.",
             "nullable": true
           }
         },
@@ -2340,7 +2415,7 @@
             "maxLength": 35,
             "minLength": 1,
             "type": "string",
-            "description": "Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.\r\n<br />Usage: If available, the initiating party should provide this reference in the structured remittance information, to enable reconciliation by the creditor upon receipt of the amount of money.\r\n<br />If the business context requires the use of a creditor reference or a payment remit identification, and only one identifier can be passed through the end-to-end chain, the creditor's reference or payment remittance identification should be quoted in the end-to-end transaction identification.\r\n<br />OB: The Faster Payments Scheme can only accept 18 characters for the ReferenceInformation field - which is where this ISO field will be mapped.",
+            "description": "Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.\r\n\r\nUsage: If available, the initiating party should provide this reference in the structured remittance information, to enable reconciliation by the creditor upon receipt of the amount of money.\r\n\r\nIf the business context requires the use of a creditor reference or a payment remit identification, and only one identifier can be passed through the end-to-end chain, the creditor's reference or payment remittance identification should be quoted in the end-to-end transaction identification.\r\n\r\nOB: The Faster Payments Scheme can only accept 18 characters for the ReferenceInformation field - which is where this ISO field will be mapped.",
             "nullable": true
           }
         },
