@@ -20,9 +20,12 @@ public class OpenIdConfigurationGetCustomBehaviour
     /// </summary>
     public string? Url { get; set; }
 
-    public bool? EndpointUnavailable { get; set; }
-
     public IList<OAuth2ResponseMode>? ResponseModesSupportedResponse { get; set; }
 
     public IList<TokenEndpointAuthMethodOpenIdConfiguration>? TokenEndpointAuthMethodsSupportedResponse { get; set; }
+
+    /// <summary>
+    ///     Manual OpenID Configuration for use when well-known endpoint not available
+    /// </summary>
+    public OpenIdConfiguration? OpenIdConfiguration { get; set; }
 }

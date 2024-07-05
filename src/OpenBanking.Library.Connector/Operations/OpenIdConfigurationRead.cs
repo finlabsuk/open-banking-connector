@@ -39,9 +39,10 @@ public class OpenIdConfigurationRead : IOpenIdConfigurationRead
             BankProfileEnum bankProfile,
             OpenIdConfigurationGetCustomBehaviour? openIdConfigurationGetCustomBehaviour)
     {
-        if (openIdConfigurationGetCustomBehaviour?.EndpointUnavailable is true)
+        if (openIdConfigurationGetCustomBehaviour?.OpenIdConfiguration is not null)
         {
-            return (null, new List<IFluentResponseInfoOrWarningMessage>());
+            return (openIdConfigurationGetCustomBehaviour.OpenIdConfiguration,
+                new List<IFluentResponseInfoOrWarningMessage>());
         }
 
         var openIdConfigurationUrl = new Uri(
