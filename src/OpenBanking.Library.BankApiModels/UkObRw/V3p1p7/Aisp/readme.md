@@ -4,7 +4,8 @@ This file contains configuration for generating bank API models using AutoRest.
 
 > see https://aka.ms/autorest
 
-Please install AutoRest v3 and run `autorest --reset` then `autorest --latest` in this directory to generate model files.
+Please install AutoRest v3 and run `autorest --reset` then `autorest --latest` in this directory to generate model
+files.
 
 ``` yaml
 input-file:

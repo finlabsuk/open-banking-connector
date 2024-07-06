@@ -1,8 +1,10 @@
 # Migrations
 
-These allow tracking of changes in the database schema. Currently these are created and supported for DB provider `PostgreSql` only.
+These allow tracking of changes in the database schema. Currently these are created and supported for DB provider
+`PostgreSql` only.
 
-See the [EF Core docs](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli) for more infomration on EF Core migrations.
+See the [EF Core docs](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli) for
+more infomration on EF Core migrations.
 
 To create or update migrations from the repo, please first ensure .NET EF tools are installed as follows:
 
@@ -27,7 +29,8 @@ dotnet ef migrations add MigrationName --startup-project ..\OpenBanking.WebApp.C
 
 ## Apply the latest migration
 
-Generally, you can use Open Banking Connector to automatically apply the latest migration using the [OpenBankingConnector:Database:EnsureDatabaseMigrated](../../../docs/configuration/database-settings.md) setting.
+Generally, you can use Open Banking Connector to automatically apply the latest migration using
+the [OpenBankingConnector:Database:EnsureDatabaseMigrated](../../../docs/configuration/database-settings.md) setting.
 
 You can also apply a migration manually (or create the database) from the repo as follows:
 
