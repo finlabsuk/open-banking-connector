@@ -2699,10 +2699,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// <summary>
         /// Name of the card scheme.
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("CardSchemeName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [Newtonsoft.Json.JsonProperty("CardSchemeName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBTransactionCardInstrument1CardSchemeName CardSchemeName { get; set; } = default!;
+        public OBTransactionCardInstrument1CardSchemeName? CardSchemeName { get; set; } = default!;
 
         /// <summary>
         /// The card authorisation type.
