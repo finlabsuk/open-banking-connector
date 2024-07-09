@@ -49,7 +49,8 @@ public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistration
                 },
                 AccountAccessConsentPost =
                     new ReadWritePostCustomBehaviour { ResponseLinksOmitId = true },
-                DomesticVrpPost = new DomesticVrpPostCustomBehaviour { OmitPsuInteractionType = true }
+                DomesticVrpPost = new DomesticVrpPostCustomBehaviour { OmitPsuInteractionType = true },
+                DomesticVrpConsentPost = new DomesticVrpConsentPostCustomBehaviour { OmitPsuInteractionTypes = true }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {

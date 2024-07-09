@@ -7,4 +7,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehav
 public class DomesticVrpConsentPostCustomBehaviour : ReadWritePostCustomBehaviour
 {
     public bool? PreferMisspeltContractPresentIndicator { get; set; }
+
+    public bool? OmitPsuInteractionTypes { get; set; }
 }

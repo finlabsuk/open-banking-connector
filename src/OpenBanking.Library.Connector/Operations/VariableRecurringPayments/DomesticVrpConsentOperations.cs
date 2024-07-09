@@ -306,6 +306,11 @@ internal class
                 request.ExternalApiRequest ??
                 throw new InvalidOperationException(
                     "ExternalApiRequest specified as null so not possible to create external API request.");
+            bool omitPsuInteractionTypes = domesticVrpConsentPostCustomBehaviour?.OmitPsuInteractionTypes ?? false;
+            if (omitPsuInteractionTypes)
+            {
+                request.ExternalApiRequest.Data.ControlParameters.PSUInteractionTypes = null;
+            }
             bool preferMisspeltContractPresentIndicator =
                 domesticVrpConsentPostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
             request.ExternalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
