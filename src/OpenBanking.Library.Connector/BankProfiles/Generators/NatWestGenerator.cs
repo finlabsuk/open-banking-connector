@@ -15,6 +15,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 
@@ -103,7 +104,9 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     _ => TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt
                 },
                 TestTemporaryBankRegistration =
-                    bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
+                    bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox,
+                IdTokenSubClaimType =
+                    bank is NatWestBank.Coutts ? IdTokenSubClaimType.EndUserId : IdTokenSubClaimType.ConsentId
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
