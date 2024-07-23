@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
@@ -171,6 +172,30 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     ? new ReadWritePostCustomBehaviour { ResponseLinksMayAddSlash = true }
                     : null,
                 AccountAccessConsentGet = bank is NatWestBank.Coutts
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    : null,
+                AccountGet = bank is NatWestBank.Coutts
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    : null,
+                BalanceGet = bank is NatWestBank.Coutts
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    : null,
+                DirectDebitGet = bank is NatWestBank.Coutts
+                    ? new DirectDebitGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    : null,
+                MonzoPotGet = bank is NatWestBank.Coutts
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    : null,
+                Party2Get = bank is NatWestBank.Coutts
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    : null,
+                PartyGet = bank is NatWestBank.Coutts
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    : null,
+                StandingOrderGet = bank is NatWestBank.Coutts
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    : null,
+                TransactionGet = bank is NatWestBank.Coutts
                     ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
                     : null,
                 DomesticPaymentConsentAuthGet = new ConsentAuthGetCustomBehaviour

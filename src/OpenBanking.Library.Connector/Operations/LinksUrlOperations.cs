@@ -67,7 +67,7 @@ internal class LinksUrlOperations
             if (!matchFound)
             {
                 throw new InvalidOperationException(
-                    $"Base component of link URL is {linkUrl} but was expected to be one of {_expectedLinkUrlsWithoutQuery}.");
+                    $"Base component of link URL is {linkUrl} but was expected to be one of [{string.Join(", ", _expectedLinkUrlsWithoutQuery)}].");
             }
         }
 
