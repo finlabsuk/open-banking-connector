@@ -190,14 +190,13 @@ internal class
                 string? transformedLinkUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery is { } x
                     ? $"{x}/{entityId}"
                     : null;
-                Uri expectedLinkUrlWithoutQuery = LinksUrlOperations.GetExpectedLinkUrlWithoutQuery(
-                    readWritePostCustomBehaviour,
-                    externalApiUrl,
-                    externalApiId);
                 var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
-                    expectedLinkUrlWithoutQuery,
+                    LinksUrlOperations.PostMethodExpectedLinkUrls(
+                        externalApiUrl,
+                        externalApiId,
+                        readWritePostCustomBehaviour),
                     transformedLinkUrlWithoutQuery,
-                    readWritePostCustomBehaviour,
+                    readWritePostCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                     false);
                 externalApiResponse.Links.Self =
                     linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
@@ -384,9 +383,11 @@ internal class
                 string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
                 Uri expectedLinkUrlWithoutQuery = externalApiUrl;
                 var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
-                    expectedLinkUrlWithoutQuery,
+                    LinksUrlOperations.GetMethodExpectedLinkUrls(
+                        expectedLinkUrlWithoutQuery,
+                        readWriteGetCustomBehaviour),
                     transformedLinkUrlWithoutQuery,
-                    readWriteGetCustomBehaviour,
+                    readWriteGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                     false);
                 externalApiResponse.Links.Self =
                     linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);

@@ -168,10 +168,10 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 AccountAccessConsentRefreshTokenGrantPost =
                     new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
                 AccountAccessConsentPost = bank is NatWestBank.Coutts
-                    ? new ReadWritePostCustomBehaviour { ResponseLinksAddSlash = true }
+                    ? new ReadWritePostCustomBehaviour { ResponseLinksMayAddSlash = true }
                     : null,
                 AccountAccessConsentGet = bank is NatWestBank.Coutts
-                    ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
                     : null,
                 DomesticPaymentConsentAuthGet = new ConsentAuthGetCustomBehaviour
                 {

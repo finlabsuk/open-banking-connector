@@ -61,7 +61,7 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                         new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
                 },
                 AccountAccessConsentPost =
-                    new ReadWritePostCustomBehaviour { ResponseLinksOmitId = true },
+                    new ReadWritePostCustomBehaviour { ResponseLinksMayOmitId = true },
                 DomesticPaymentConsentAuthCodeGrantPost =
                     new AuthCodeGrantPostCustomBehaviour { ExpectedResponseRefreshTokenMayBeAbsent = true },
                 DomesticPaymentConsentGet =
@@ -69,7 +69,7 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                 DomesticPaymentConsentPost =
                     new DomesticPaymentConsentPostCustomBehaviour
                     {
-                        ResponseLinksOmitId = true,
+                        ResponseLinksMayOmitId = true,
                         PreferMisspeltContractPresentIndicator = true
                     },
                 DomesticPaymentConsentRefreshTokenGrantPost = new RefreshTokenGrantPostCustomBehaviour
@@ -82,7 +82,7 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                 DomesticPaymentPost =
                     new DomesticPaymentPostCustomBehaviour
                     {
-                        ResponseLinksOmitId = true,
+                        ResponseLinksMayOmitId = true,
                         PreferMisspeltContractPresentIndicator = true
                     },
                 DomesticVrpConsentGet =
@@ -90,7 +90,7 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                 DomesticVrpConsentPost =
                     new DomesticVrpConsentPostCustomBehaviour
                     {
-                        ResponseLinksOmitId = true,
+                        ResponseLinksMayOmitId = true,
                         PreferMisspeltContractPresentIndicator = true
                     },
                 DomesticVrpConsentRefreshTokenGrantPost = new RefreshTokenGrantPostCustomBehaviour
@@ -105,7 +105,7 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                 },
                 DomesticVrpPost = new DomesticVrpPostCustomBehaviour
                 {
-                    ResponseLinksOmitId = true,
+                    ResponseLinksMayOmitId = true,
                     PreferMisspeltContractPresentIndicator = true
                 }
             },

@@ -48,7 +48,7 @@ public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistration
                         "https://openbanking.santander.co.uk/sanuk/external/open-banking/openid-connect-provider/v1/.well-known/openid-configuration" // from https://developer.santander.co.uk/sanuk/external/faq-page#t4n553
                 },
                 AccountAccessConsentPost =
-                    new ReadWritePostCustomBehaviour { ResponseLinksOmitId = true },
+                    new ReadWritePostCustomBehaviour { ResponseLinksMayOmitId = true },
                 DomesticVrpPost = new DomesticVrpPostCustomBehaviour { OmitPsuInteractionType = true },
                 DomesticVrpConsentPost = new DomesticVrpConsentPostCustomBehaviour { OmitPsuInteractionTypes = true }
             },

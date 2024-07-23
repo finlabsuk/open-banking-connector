@@ -239,14 +239,13 @@ internal class DomesticVrp :
         string? transformedLinkUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery is { } x
             ? $"{x}/{externalApiId}"
             : null;
-        Uri expectedLinkUrlWithoutQuery = LinksUrlOperations.GetExpectedLinkUrlWithoutQuery(
-            domesticVrpPostCustomBehaviour,
-            externalApiUrl,
-            externalApiId);
         var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
-            expectedLinkUrlWithoutQuery,
+            LinksUrlOperations.PostMethodExpectedLinkUrls(
+                externalApiUrl,
+                externalApiId,
+                domesticVrpPostCustomBehaviour),
             transformedLinkUrlWithoutQuery,
-            domesticVrpPostCustomBehaviour,
+            domesticVrpPostCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
             false);
         externalApiResponse.Links.Self =
             linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
@@ -381,9 +380,9 @@ internal class DomesticVrp :
         string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
         Uri expectedLinkUrlWithoutQuery = externalApiUrl;
         var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
-            expectedLinkUrlWithoutQuery,
+            LinksUrlOperations.GetMethodExpectedLinkUrls(expectedLinkUrlWithoutQuery, domesticVrpGetCustomBehaviour),
             transformedLinkUrlWithoutQuery,
-            domesticVrpGetCustomBehaviour,
+            domesticVrpGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
             false);
         externalApiResponse.Links.Self =
             linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);

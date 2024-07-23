@@ -124,7 +124,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                     : new ConsentAuthGetCustomBehaviour { AddRedundantOAuth2NonceRequestParameter = true },
                 AccountAccessConsentPost = bank is LloydsBank.Sandbox
                     ? null
-                    : new ReadWritePostCustomBehaviour { ResponseLinksOmitId = true },
+                    : new ReadWritePostCustomBehaviour { ResponseLinksMayOmitId = true },
                 DirectDebitGet = bank is LloydsBank.Sandbox
                     ? null
                     : new DirectDebitGetCustomBehaviour
@@ -152,12 +152,12 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                 DomesticVrpGet =
                     new DomesticVrpGetCustomBehaviour
                     {
-                        ResponseLinksReplace = ("domestic-vrps", "domestic-vrp-payments")
+                        ResponseLinksAllowReplace = ("domestic-vrps", "domestic-vrp-payments")
                     },
                 DomesticVrpPost =
                     new DomesticVrpPostCustomBehaviour
                     {
-                        ResponseLinksReplace = ("domestic-vrps", "domestic-vrp-payments")
+                        ResponseLinksAllowReplace = ("domestic-vrps", "domestic-vrp-payments")
                     }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings

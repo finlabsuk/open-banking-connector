@@ -160,9 +160,9 @@ internal class StandingOrderGet : IAccountAccessConsentExternalRead<StandingOrde
             string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
             var expectedLinkUrlWithoutQuery = new Uri(urlStringWihoutQuery);
             var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
-                expectedLinkUrlWithoutQuery,
+                LinksUrlOperations.GetMethodExpectedLinkUrls(expectedLinkUrlWithoutQuery, readWriteGetCustomBehaviour),
                 transformedLinkUrlWithoutQuery,
-                readWriteGetCustomBehaviour,
+                readWriteGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                 true);
             externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
             if (externalApiResponse.Links.First is not null)

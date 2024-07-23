@@ -16,9 +16,9 @@ internal class LinksUrlOperations
     private readonly bool _allowLinkUrlQueryParameters;
 
     /// <summary>
-    ///     Expected link URL without query before transformation
+    ///     Expected link URLs without query before transformation
     /// </summary>
-    private readonly Uri _expectedLinkUrlWithoutQuery;
+    private readonly IList<Uri> _expectedLinkUrlsWithoutQuery;
 
     /// <summary>
     ///     Ignore expected link URL without query (limits validation)
@@ -31,12 +31,12 @@ internal class LinksUrlOperations
     private readonly string _publicUrlWithoutQuery;
 
     private LinksUrlOperations(
-        Uri expectedLinkUrlWithoutQuery,
+        IList<Uri> expectedLinkUrlsWithoutQuery,
         bool ignoreExpectedUrlWithoutQuery,
         string? publicUrlWithoutQuery,
         bool allowLinkUrlQueryParameters)
     {
-        _expectedLinkUrlWithoutQuery = expectedLinkUrlWithoutQuery;
+        _expectedLinkUrlsWithoutQuery = expectedLinkUrlsWithoutQuery;
         _publicUrlWithoutQuery = publicUrlWithoutQuery ?? "https://localhost/placeholder";
         _allowLinkUrlQueryParameters = allowLinkUrlQueryParameters;
         _ignoreExpectedUrlWithoutQuery = ignoreExpectedUrlWithoutQuery;
@@ -44,20 +44,30 @@ internal class LinksUrlOperations
 
     public Uri ValidateAndTransformUrl(Uri linkUrl)
     {
+        // Validate URL against expected URLs
         if (!_ignoreExpectedUrlWithoutQuery)
         {
-            int urlsMatch = Uri.Compare(
-                linkUrl,
-                _expectedLinkUrlWithoutQuery,
-                UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path,
-                UriFormat.Unescaped,
-                StringComparison.InvariantCulture);
+            var matchFound = false;
+            foreach (Uri expectedUrl in _expectedLinkUrlsWithoutQuery)
+            {
+                int urlsMatch = Uri.Compare(
+                    linkUrl,
+                    expectedUrl,
+                    UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path,
+                    UriFormat.Unescaped,
+                    StringComparison.InvariantCulture);
+                if (urlsMatch == 0)
+                {
+                    matchFound = true;
+                    break;
+                }
+            }
 
             // Check URLs without fragment and query parameters match
-            if (urlsMatch != 0)
+            if (!matchFound)
             {
                 throw new InvalidOperationException(
-                    $"Base component of link URL is {linkUrl} but was expected to be {_expectedLinkUrlWithoutQuery}.");
+                    $"Base component of link URL is {linkUrl} but was expected to be one of {_expectedLinkUrlsWithoutQuery}.");
             }
         }
 
@@ -82,49 +92,53 @@ internal class LinksUrlOperations
     }
 
     public static LinksUrlOperations CreateLinksUrlOperations(
-        Uri expectedLinkUrl,
+        IList<Uri> expectedLinkUrls,
         string? transformedLinkUrlWithoutQuery,
-        ReadWriteGetCustomBehaviour? readWriteGetCustomBehaviour,
+        bool responseLinksMayHaveIncorrectUrlBeforeQuery,
         bool allowQueryParameters)
     {
-        bool responseLinksAddSlash = readWriteGetCustomBehaviour?.ResponseLinksAddSlash ?? false;
-        if (responseLinksAddSlash)
-        {
-            expectedLinkUrl = new Uri(expectedLinkUrl + "/");
-        }
-        (string oldValue, string newValue)? responseLinksReplace = readWriteGetCustomBehaviour?.ResponseLinksReplace;
-        if (responseLinksReplace is not null)
-        {
-            (string oldValue, string newValue) = responseLinksReplace.Value;
-            expectedLinkUrl = new Uri($"{expectedLinkUrl}".Replace(oldValue, newValue));
-        }
-        bool responseLinksMayHaveIncorrectUrlBeforeQuery =
-            readWriteGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false;
         var linksUrlOperations = new LinksUrlOperations(
-            expectedLinkUrl,
+            expectedLinkUrls,
             responseLinksMayHaveIncorrectUrlBeforeQuery,
             transformedLinkUrlWithoutQuery,
             allowQueryParameters);
         return linksUrlOperations;
     }
 
-    /// <summary>
-    ///     For POST requests to external API, expected link URL without query formed by adding ID of newly-created object to
-    ///     request URL
-    /// </summary>
-    /// <param name="readWritePostCustomBehaviour"></param>
-    /// <param name="externalApiUrl"></param>
-    /// <param name="externalApiId"></param>
-    /// <returns></returns>
-    public static Uri GetExpectedLinkUrlWithoutQuery(
-        ReadWritePostCustomBehaviour? readWritePostCustomBehaviour,
-        Uri externalApiUrl,
-        string externalApiId)
+    public static IList<Uri> GetMethodExpectedLinkUrls(
+        Uri expectedLinkUrl,
+        ReadWriteGetCustomBehaviour? readWriteGetCustomBehaviour)
     {
-        bool responseLinksOmitId = readWritePostCustomBehaviour?.ResponseLinksOmitId ?? false;
-        Uri expectedLinkUrlWithoutQuery = responseLinksOmitId
-            ? externalApiUrl
-            : new Uri(externalApiUrl + $"/{externalApiId}");
-        return expectedLinkUrlWithoutQuery;
+        List<Uri> expectedLinkUrls = [expectedLinkUrl];
+        bool responseLinksMayAddSlash = readWriteGetCustomBehaviour?.ResponseLinksMayAddSlash ?? false;
+        if (responseLinksMayAddSlash)
+        {
+            expectedLinkUrls.Add(new Uri(expectedLinkUrl + "/"));
+        }
+        (string oldValue, string newValue)? responseLinksAllowReplace =
+            readWriteGetCustomBehaviour?.ResponseLinksAllowReplace;
+        if (responseLinksAllowReplace is not null)
+        {
+            (string oldValue, string newValue) = responseLinksAllowReplace.Value;
+            expectedLinkUrls.Add(new Uri($"{expectedLinkUrl}".Replace(oldValue, newValue)));
+        }
+        return expectedLinkUrls;
+    }
+
+    public static IList<Uri> PostMethodExpectedLinkUrls(
+        Uri externalApiUrl,
+        string externalApiId,
+        ReadWritePostCustomBehaviour? readWritePostCustomBehaviour)
+    {
+        var expectedLinkUrl = new Uri(externalApiUrl + $"/{externalApiId}");
+        IList<Uri> expectedLinkUrls = GetMethodExpectedLinkUrls(
+            expectedLinkUrl,
+            readWritePostCustomBehaviour);
+        bool responseLinksMayOmitId = readWritePostCustomBehaviour?.ResponseLinksMayOmitId ?? false;
+        if (responseLinksMayOmitId)
+        {
+            expectedLinkUrls.Add(externalApiUrl);
+        }
+        return expectedLinkUrls;
     }
 }

@@ -342,14 +342,13 @@ internal class
             string? transformedLinkUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery is { } x
                 ? $"{x}/{entityId}"
                 : null;
-            Uri expectedLinkUrlWithoutQuery = LinksUrlOperations.GetExpectedLinkUrlWithoutQuery(
-                domesticVrpConsentPostCustomBehaviour,
-                externalApiUrl,
-                externalApiId);
             var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
-                expectedLinkUrlWithoutQuery,
+                LinksUrlOperations.PostMethodExpectedLinkUrls(
+                    externalApiUrl,
+                    externalApiId,
+                    domesticVrpConsentPostCustomBehaviour),
                 transformedLinkUrlWithoutQuery,
-                domesticVrpConsentPostCustomBehaviour,
+                domesticVrpConsentPostCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                 false);
             externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
             if (externalApiResponse.Links.First is not null)
@@ -534,9 +533,9 @@ internal class
             string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
             Uri expectedLinkUrlWithoutQuery = externalApiUrl;
             var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
-                expectedLinkUrlWithoutQuery,
+                LinksUrlOperations.GetMethodExpectedLinkUrls(expectedLinkUrlWithoutQuery, readWriteGetCustomBehaviour),
                 transformedLinkUrlWithoutQuery,
-                readWriteGetCustomBehaviour,
+                readWriteGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                 false);
             externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
             if (externalApiResponse.Links.First is not null)

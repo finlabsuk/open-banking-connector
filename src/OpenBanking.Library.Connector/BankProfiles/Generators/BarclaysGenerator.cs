@@ -136,7 +136,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             CustomBehaviour = new CustomBehaviourClass
             {
                 AccountAccessConsentPost =
-                    new ReadWritePostCustomBehaviour { ResponseLinksOmitId = true },
+                    new ReadWritePostCustomBehaviour { ResponseLinksMayOmitId = true },
                 AccountAccessConsentAuthGet = bank is BarclaysBank.Sandbox
                     ? new ConsentAuthGetCustomBehaviour
                     {
@@ -166,7 +166,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                 DomesticPaymentConsentPost =
                     new DomesticPaymentConsentPostCustomBehaviour
                     {
-                        ResponseLinksOmitId = true,
+                        ResponseLinksMayOmitId = true,
                         PreferMisspeltContractPresentIndicator = true
                     },
                 DomesticPaymentGet =
@@ -174,7 +174,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                 DomesticPaymentPost =
                     new DomesticPaymentPostCustomBehaviour
                     {
-                        ResponseLinksOmitId = true,
+                        ResponseLinksMayOmitId = true,
                         PreferMisspeltContractPresentIndicator = true
                     },
                 DomesticVrpConsentGet =
@@ -182,13 +182,13 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                 DomesticVrpConsentPost =
                     new DomesticVrpConsentPostCustomBehaviour
                     {
-                        ResponseLinksOmitId = true,
+                        ResponseLinksMayOmitId = true,
                         PreferMisspeltContractPresentIndicator = true
                     },
                 DomesticVrpGet = new DomesticVrpGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
                 DomesticVrpPost = new DomesticVrpPostCustomBehaviour
                 {
-                    ResponseLinksOmitId = true,
+                    ResponseLinksMayOmitId = true,
                     PreferMisspeltContractPresentIndicator = true,
                     OmitVrpType = true
                 }

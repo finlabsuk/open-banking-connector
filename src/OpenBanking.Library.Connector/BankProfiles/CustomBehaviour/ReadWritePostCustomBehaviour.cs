@@ -6,5 +6,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehav
 
 public class ReadWritePostCustomBehaviour : ReadWriteGetCustomBehaviour
 {
-    public bool? ResponseLinksOmitId { get; set; }
+    public bool? ResponseLinksMayOmitId { get; set; }
 }
