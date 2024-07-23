@@ -47,7 +47,9 @@ internal class GrantPost : IGrantPost
     }
 
     public async Task<string?> ValidateIdTokenAuthEndpoint(
-        OAuth2RedirectData redirectData,
+        string idToken,
+        string code,
+        string state,
         IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour,
         string jwksUri,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
@@ -61,15 +63,15 @@ internal class GrantPost : IGrantPost
         string? externalApiUserId)
     {
         // Decode and deserialise ID token
-        var idToken = await DeserialiseIdToken<IdTokenAuthEndpoint>(
-            redirectData.IdToken,
+        var idTokenObject = await DeserialiseIdToken<IdTokenAuthEndpoint>(
+            idToken,
             idTokenProcessingCustomBehaviour,
             jwksUri,
             bankProfileForTppReportingMetrics,
             jwksGetCustomBehaviour);
 
         ValidateIdTokenCommon(
-            idToken,
+            idTokenObject,
             bankIssuerUrl,
             externalApiClientId,
             externalApiConsentId,
@@ -84,16 +86,16 @@ internal class GrantPost : IGrantPost
             case IdTokenSubClaimType.EndUserId:
                 if (externalApiUserId is null)
                 {
-                    if (string.IsNullOrEmpty(idToken.Subject))
+                    if (string.IsNullOrEmpty(idTokenObject.Subject))
                     {
                         throw new Exception("Subject from ID token is null or empty.");
                     }
 
-                    outputExternalApiUserId = idToken.Subject;
+                    outputExternalApiUserId = idTokenObject.Subject;
                 }
                 else
                 {
-                    if (!string.Equals(idToken.Subject, externalApiUserId))
+                    if (!string.Equals(idTokenObject.Subject, externalApiUserId))
                     {
                         throw new Exception("Subject from ID token does not match user ID.");
                     }
@@ -101,7 +103,7 @@ internal class GrantPost : IGrantPost
 
                 break;
             case IdTokenSubClaimType.ConsentId:
-                if (!string.Equals(idToken.Subject, externalApiConsentId))
+                if (!string.Equals(idTokenObject.Subject, externalApiConsentId))
                 {
                     throw new Exception("Subject from ID token does not match consent ID.");
                 }
@@ -111,14 +113,14 @@ internal class GrantPost : IGrantPost
                 throw new ArgumentOutOfRangeException(nameof(idTokenSubClaimType), idTokenSubClaimType, null);
         }
 
-        string codeHash = ComputeHash(redirectData.Code);
-        if (!string.Equals(idToken.CodeHash, codeHash))
+        string codeHash = ComputeHash(code);
+        if (!string.Equals(idTokenObject.CodeHash, codeHash))
         {
             throw new Exception("Code hash from ID token does not match code hash.");
         }
 
-        string stateHash = ComputeHash(redirectData.State);
-        if (!string.Equals(idToken.StateHash, stateHash))
+        string stateHash = ComputeHash(state);
+        if (!string.Equals(idTokenObject.StateHash, stateHash))
         {
             throw new Exception("State hash from ID token does not match state hash.");
         }

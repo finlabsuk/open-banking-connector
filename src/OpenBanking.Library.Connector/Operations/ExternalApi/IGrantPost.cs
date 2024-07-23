@@ -78,7 +78,9 @@ internal interface IGrantPost
         IApiClient mtlsApiClient);
 
     Task<string?> ValidateIdTokenAuthEndpoint(
-        OAuth2RedirectData redirectData,
+        string idToken,
+        string code,
+        string state,
         IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour,
         string jwksUri,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,

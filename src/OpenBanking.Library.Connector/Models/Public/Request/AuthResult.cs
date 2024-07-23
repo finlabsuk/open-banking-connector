@@ -28,9 +28,17 @@ public class AuthResult : ISupportsValidation
     /// </summary>
     public string? AppSessionId { get; init; }
 
-    public required OAuth2RedirectData RedirectData { get; init; }
+    /// <summary>
+    ///     OAuth2 state
+    /// </summary>
+    public required string State { get; init; }
+
+    /// <summary>
+    ///     Additional optional OAuth2 parameters
+    /// </summary>
+    public required OAuth2RedirectOptionalParameters OAuth2RedirectOptionalParameters { get; init; }
 
     public async Task<ValidationResult> ValidateAsync() =>
-        await new AuthorisationRedirectObjectValidator()
+        await new AuthResultValidator()
             .ValidateAsync(this)!;
 }

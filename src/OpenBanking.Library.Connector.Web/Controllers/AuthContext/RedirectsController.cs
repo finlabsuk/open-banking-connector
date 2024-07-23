@@ -31,6 +31,7 @@ public class RedirectsController : ControllerBase
     /// <param name="idToken">ID token provided by post-auth redirect</param>
     /// <param name="code">code provided by post-auth redirect</param>
     /// <param name="state">state provided by post-auth redirect</param>
+    /// <param name="error"></param>
     /// <param name="responseMode">response mode used by post-auth redirect (for checking), one of {"query", "fragment"}</param>
     /// <param name="modifiedBy">user or comment for any database updates</param>
     /// <param name="redirectUrl">redirect URL used by post-auth redirect (for checking)</param>
@@ -41,12 +42,14 @@ public class RedirectsController : ControllerBase
     [Consumes("application/x-www-form-urlencoded")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<AuthContextUpdateAuthResultResponse>> RedirectDelegatePostAsync(
-        [Required] [FromForm(Name = "id_token")]
-        string idToken,
-        [Required] [FromForm(Name = "code")]
-        string code,
         [Required] [FromForm(Name = "state")]
         string state,
+        [FromForm(Name = "code")]
+        string? code,
+        [FromForm(Name = "id_token")]
+        string? idToken,
+        [FromForm(Name = "error")]
+        string? error,
         [FromForm(Name = "response_mode")]
         string? responseMode,
         [FromForm(Name = "modified_by")]
@@ -76,7 +79,13 @@ public class RedirectsController : ControllerBase
                 ResponseMode = oAuth2ResponseMode,
                 RedirectUrl = redirectUrl,
                 AppSessionId = appSessionId,
-                RedirectData = new OAuth2RedirectData(idToken, code, state)
+                State = state,
+                OAuth2RedirectOptionalParameters = new OAuth2RedirectOptionalParameters
+                {
+                    Error = error,
+                    IdToken = idToken,
+                    Code = code
+                }
             };
         AuthContextUpdateAuthResultResponse fluentResponse = await _requestBuilder
             .AuthContexts

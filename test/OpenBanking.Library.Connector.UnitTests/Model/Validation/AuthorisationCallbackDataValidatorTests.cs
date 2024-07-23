@@ -16,12 +16,13 @@ public class AuthorisationCallbackDataValidatorTests
     [Fact]
     public void Validate_BodyIsNull()
     {
-        var validator = new AuthorisationRedirectObjectValidator();
+        var validator = new AuthResultValidator();
 
         var data = new AuthResult
         {
             ResponseMode = OAuth2ResponseMode.Fragment,
-            RedirectData = null!
+            State = "a",
+            OAuth2RedirectOptionalParameters = null!
         };
 
         IList<ValidationFailure>? results = validator.Validate(data).Errors;
@@ -33,29 +34,39 @@ public class AuthorisationCallbackDataValidatorTests
     [Fact]
     public void Validate_BodyIsDefault()
     {
-        var validator = new AuthorisationRedirectObjectValidator();
+        var validator = new AuthResultValidator();
 
         var data = new AuthResult
         {
             ResponseMode = OAuth2ResponseMode.Fragment,
-            RedirectData = new OAuth2RedirectData("", "", "")
+            State = "",
+            OAuth2RedirectOptionalParameters = new OAuth2RedirectOptionalParameters
+            {
+                IdToken = "",
+                Code = ""
+            }
         };
 
         IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
-        results.Should().HaveCountGreaterThan(1);
+        results.Should().HaveCount(1);
     }
 
 
     [Fact]
     public void Validate_BodyIsValid()
     {
-        var validator = new AuthorisationRedirectObjectValidator();
+        var validator = new AuthResultValidator();
 
         var data = new AuthResult
         {
             ResponseMode = OAuth2ResponseMode.Fragment,
-            RedirectData = new OAuth2RedirectData("a", "a", "a")
+            State = "a",
+            OAuth2RedirectOptionalParameters = new OAuth2RedirectOptionalParameters
+            {
+                IdToken = "a",
+                Code = "a"
+            }
         };
 
         IList<ValidationFailure>? results = validator.Validate(data).Errors;

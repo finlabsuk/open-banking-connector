@@ -80,10 +80,8 @@ internal class AuthContextUpdate :
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        _instrumentationClient.Trace("Received ID token: " + request.RedirectData.IdToken);
-
-        // Read auth context and consent from database
-        string state = request.RedirectData.State;
+        // Validate state and read auth context and consent from database
+        string state = request.State;
         AuthContext authContext =
             _authContextMethods
                 .DbSet
@@ -139,6 +137,27 @@ internal class AuthContextUpdate :
                 "Auth context exists but now stale (more than 10 minutes old) so will not process redirect. " +
                 "Please create a new auth context and authenticate again.");
         }
+
+        // Validate error parameter
+        if (request.OAuth2RedirectOptionalParameters.Error is not null)
+        {
+            throw new InvalidOperationException(
+                $"OAuth2 error parameter received: {request.OAuth2RedirectOptionalParameters.Error}");
+        }
+
+        // Validate code parameter
+        if (string.IsNullOrEmpty(request.OAuth2RedirectOptionalParameters.Code))
+        {
+            throw new InvalidOperationException("OAuth2 code parameter is null or empty.");
+        }
+        string code = request.OAuth2RedirectOptionalParameters.Code;
+
+        // Validate ID token parameter
+        if (string.IsNullOrEmpty(request.OAuth2RedirectOptionalParameters.IdToken))
+        {
+            throw new InvalidOperationException("OAuth2 id_token parameter is null or empty.");
+        }
+        string idToken = request.OAuth2RedirectOptionalParameters.IdToken;
 
         // Validate auth context app session ID
         if (request.AppSessionId is not null)
@@ -260,7 +279,9 @@ internal class AuthContextUpdate :
         if (doNotValidateIdToken is false)
         {
             string? newExternalApiUserId = await _grantPost.ValidateIdTokenAuthEndpoint(
-                request.RedirectData,
+                idToken,
+                code,
+                state,
                 consentAuthGetCustomBehaviour?.IdTokenProcessingCustomBehaviour,
                 jwksUri,
                 customBehaviour?.JwksGet,
@@ -301,7 +322,7 @@ internal class AuthContextUpdate :
 
             TokenEndpointResponseAuthCodeGrant tokenEndpointResponse =
                 await _grantPost.PostAuthCodeGrantAsync(
-                    request.RedirectData.Code,
+                    code,
                     redirectUrl,
                     bankTokenIssuerClaim,
                     externalApiClientId,

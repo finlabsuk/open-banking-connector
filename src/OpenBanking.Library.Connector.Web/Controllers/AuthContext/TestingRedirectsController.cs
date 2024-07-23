@@ -32,22 +32,31 @@ public class TestingRedirectsController : ControllerBase
     /// <param name="idToken"></param>
     /// <param name="code"></param>
     /// <param name="state"></param>
+    /// <param name="error"></param>
     /// <returns></returns>
     [HttpGet("query-redirect")]
     public async Task<ActionResult> QueryRedirectGetAsync(
-        [Required] [FromQuery(Name = "id_token")]
-        string idToken,
-        [Required] [FromQuery(Name = "code")]
-        string code,
         [Required] [FromQuery(Name = "state")]
-        string state)
+        string state,
+        [FromQuery(Name = "code")]
+        string? code,
+        [FromQuery(Name = "id_token")]
+        string? idToken,
+        [FromQuery(Name = "error")]
+        string? error)
     {
         // Operation
         var authResult =
             new AuthResult
             {
                 ResponseMode = OAuth2ResponseMode.Query,
-                RedirectData = new OAuth2RedirectData(idToken, code, state)
+                State = state,
+                OAuth2RedirectOptionalParameters = new OAuth2RedirectOptionalParameters
+                {
+                    Error = error,
+                    IdToken = idToken,
+                    Code = code
+                }
             };
         _ = await _requestBuilder
             .AuthContexts
@@ -62,6 +71,7 @@ public class TestingRedirectsController : ControllerBase
     /// <param name="idToken"></param>
     /// <param name="code"></param>
     /// <param name="state"></param>
+    /// <param name="error"></param>
     /// <param name="responseMode"></param>
     /// <param name="modifiedBy"></param>
     /// <param name="redirectUrl"></param>
@@ -71,12 +81,14 @@ public class TestingRedirectsController : ControllerBase
     [Consumes("application/x-www-form-urlencoded")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<AuthContextUpdateAuthResultResponse>> FragmentRedirectDelegatePostAsync(
-        [Required] [FromForm(Name = "id_token")]
-        string idToken,
-        [Required] [FromForm(Name = "code")]
-        string code,
         [Required] [FromForm(Name = "state")]
         string state,
+        [FromForm(Name = "code")]
+        string? code,
+        [FromForm(Name = "id_token")]
+        string? idToken,
+        [FromForm(Name = "error")]
+        string? error,
         [FromForm(Name = "response_mode")]
         string? responseMode,
         [FromForm(Name = "modified_by")]
@@ -108,7 +120,13 @@ public class TestingRedirectsController : ControllerBase
                 ResponseMode = oAuth2ResponseMode,
                 RedirectUrl = redirectUrl,
                 AppSessionId = appSessionId,
-                RedirectData = new OAuth2RedirectData(idToken, code, state)
+                State = state,
+                OAuth2RedirectOptionalParameters = new OAuth2RedirectOptionalParameters
+                {
+                    Error = error,
+                    IdToken = idToken,
+                    Code = code
+                }
             };
         AuthContextUpdateAuthResultResponse fluentResponse = await _requestBuilder
             .AuthContexts
