@@ -5,7 +5,6 @@
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
@@ -122,14 +121,13 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     if (bank is NatWestBank.Coutts)
                     {
                         elementsToRemove.AddRange(
-                            new[]
-                            {
-                                AccountAndTransactionModelsPublic.Permissions.ReadOffers,
-                                AccountAndTransactionModelsPublic.Permissions
-                                    .ReadStatementsBasic,
-                                AccountAndTransactionModelsPublic.Permissions
-                                    .ReadStatementsDetail
-                            });
+                        [
+                            AccountAndTransactionModelsPublic.Permissions.ReadOffers, AccountAndTransactionModelsPublic
+                                .Permissions
+                                .ReadStatementsBasic,
+                            AccountAndTransactionModelsPublic.Permissions
+                                .ReadStatementsDetail
+                        ]);
                     }
 
                     foreach (AccountAndTransactionModelsPublic.Permissions element in
@@ -173,30 +171,6 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     ? new ReadWritePostCustomBehaviour { ResponseLinksAddSlash = true }
                     : null,
                 AccountAccessConsentGet = bank is NatWestBank.Coutts
-                    ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
-                    : null,
-                AccountGet = bank is NatWestBank.Coutts
-                    ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
-                    : null,
-                BalanceGet = bank is NatWestBank.Coutts
-                    ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
-                    : null,
-                DirectDebitGet = bank is NatWestBank.Coutts
-                    ? new DirectDebitGetCustomBehaviour { ResponseLinksAddSlash = true }
-                    : null,
-                MonzoPotGet = bank is NatWestBank.Coutts
-                    ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
-                    : null,
-                Party2Get = bank is NatWestBank.Coutts
-                    ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
-                    : null,
-                PartyGet = bank is NatWestBank.Coutts
-                    ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
-                    : null,
-                StandingOrderGet = bank is NatWestBank.Coutts
-                    ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
-                    : null,
-                TransactionGet = bank is NatWestBank.Coutts
                     ? new ReadWriteGetCustomBehaviour { ResponseLinksAddSlash = true }
                     : null,
                 DomesticPaymentConsentAuthGet = new ConsentAuthGetCustomBehaviour
