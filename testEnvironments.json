@@ -2,9 +2,9 @@
   "version": "1",
   "environments": [
     {
-      "name": "WSL-Ubuntu-22.04",
+      "name": "WSL-Ubuntu",
       "type": "wsl",
-      "wslDistribution": "Ubuntu-22.04"
+      "wslDistribution": "Ubuntu"
     }
   ]
 }
