@@ -820,14 +820,6 @@ internal class
         bool supportsSca,
         IList<TokenEndpointAuthMethodOpenIdConfiguration>? tokenEndpointAuthMethodsSupported)
     {
-        if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.ClientSecretBasic &&
-            !supportsSca)
-        {
-            throw new InvalidOperationException(
-                $"TokenEndpointAuthMethod resolves to " +
-                $"{TokenEndpointAuthMethodSupportedValues.ClientSecretBasic} for bank supporting SCA which is not supported.");
-        }
-
         if (tokenEndpointAuthMethodsSupported is { } methodsSupported)
         {
             var methodsSupportedFilter = new List<TokenEndpointAuthMethodSupportedValues>();
@@ -841,10 +833,14 @@ internal class
                 methodsSupportedFilter.Add(TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt);
             }
 
-            if (methodsSupported.Contains(TokenEndpointAuthMethodOpenIdConfiguration.ClientSecretBasic) &&
-                !supportsSca)
+            if (methodsSupported.Contains(TokenEndpointAuthMethodOpenIdConfiguration.ClientSecretBasic))
             {
                 methodsSupportedFilter.Add(TokenEndpointAuthMethodSupportedValues.ClientSecretBasic);
+            }
+
+            if (methodsSupported.Contains(TokenEndpointAuthMethodOpenIdConfiguration.ClientSecretPost))
+            {
+                methodsSupportedFilter.Add(TokenEndpointAuthMethodSupportedValues.ClientSecretPost);
             }
 
             if (!methodsSupportedFilter.Contains(tokenEndpointAuthMethod))

@@ -17,6 +17,9 @@ public enum TokenEndpointAuthMethodSupportedValues
     [EnumMember(Value = "ClientSecretBasic")]
     ClientSecretBasic,
 
+    [EnumMember(Value = "ClientSecretPost")]
+    ClientSecretPost,
+
     [EnumMember(Value = "PrivateKeyJwt")]
     PrivateKeyJwt,
 

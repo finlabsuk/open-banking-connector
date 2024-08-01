@@ -173,6 +173,12 @@ internal class GrantPost : IGrantPost
                 }
             }
 
+            if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.ClientSecretPost)
+            {
+                keyValuePairs["client_id"] = externalApiClientId;
+                keyValuePairs["client_secret"] = externalApiClientSecret!;
+            }
+
             var response =
                 await PostGrantAsync<TokenEndpointResponseClientCredentialsGrant>(
                     keyValuePairs,
@@ -259,6 +265,12 @@ internal class GrantPost : IGrantPost
             // Add parameters
             keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
             keyValuePairs["client_assertion"] = jwt;
+        }
+        
+        if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.ClientSecretPost)
+        {
+            keyValuePairs["client_id"] = externalApiClientId;
+            keyValuePairs["client_secret"] = externalApiClientSecret!;
         }
 
         var response = await PostGrantAsync<TokenEndpointResponseAuthCodeGrant>(
@@ -362,6 +374,12 @@ internal class GrantPost : IGrantPost
             // Add parameters
             keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
             keyValuePairs["client_assertion"] = jwt;
+        }
+        
+        if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.ClientSecretPost)
+        {
+            keyValuePairs["client_id"] = externalApiClientId;
+            keyValuePairs["client_secret"] = externalApiClientSecret!;
         }
 
         var response = await PostGrantAsync<TokenEndpointResponseRefreshTokenGrant>(

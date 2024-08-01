@@ -53,6 +53,8 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
             }
             case TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt:
                 break;
+            case TokenEndpointAuthMethodSupportedValues.ClientSecretPost:
+                break;
             default:
                 throw new InvalidOperationException("Found unsupported TokenEndpointAuthMethod");
         }
