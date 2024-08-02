@@ -11,4 +11,9 @@ public class AuthCodeGrantPostCustomBehaviour : GrantPostCustomBehaviour
     public bool? UnexpectedResponseRefreshTokenMayBePresent { get; set; }
 
     public IdTokenProcessingCustomBehaviour? IdTokenProcessingCustomBehaviour { get; set; }
+
+    /// <summary>
+    ///     Use to specify custom scope.
+    /// </summary>
+    public string? Scope { get; init; }
 }

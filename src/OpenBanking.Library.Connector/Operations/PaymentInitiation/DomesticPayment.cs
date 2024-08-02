@@ -119,10 +119,10 @@ internal class DomesticPayment :
             (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
 
         // Get client credentials grant access token
-        bool addOpenIdScope = domesticPaymentGetCustomBehaviour?.AddOpenIdScope ?? false;
+        string scope = domesticPaymentGetCustomBehaviour?.Scope ?? "payments";
         string ccGrantAccessToken =
             await _grantPost.PostClientCredentialsGrantAsync(
-                GetClientCredentialsGrantScope(addOpenIdScope),
+                scope,
                 obSealKey,
                 tokenEndpointAuthMethod,
                 bankRegistration.TokenEndpoint,
@@ -278,12 +278,13 @@ internal class DomesticPayment :
             await _consentAccessTokenGet.GetAccessTokenAndUpdateConsent(
                 persistedConsent,
                 bankTokenIssuerClaim,
-                "openid payments",
+                "payments",
                 bankRegistration,
                 storedAccessToken,
                 storedRefreshToken,
                 tokenEndpointAuthMethod,
                 bankRegistration.TokenEndpoint,
+                bankProfile.UseOpenIdConnect,
                 apiClient,
                 obSealKey,
                 supportsSca,
@@ -422,10 +423,10 @@ internal class DomesticPayment :
             (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
 
         // Get client credentials grant access token
-        bool addOpenIdScope = domesticPaymentGetCustomBehaviour?.AddOpenIdScope ?? false;
+        string scope = domesticPaymentGetCustomBehaviour?.Scope ?? "payments";
         string ccGrantAccessToken =
             await _grantPost.PostClientCredentialsGrantAsync(
-                GetClientCredentialsGrantScope(addOpenIdScope),
+                scope,
                 obSealKey,
                 tokenEndpointAuthMethod,
                 bankRegistration.TokenEndpoint,
@@ -511,9 +512,6 @@ internal class DomesticPayment :
         };
         return response;
     }
-
-    private string GetClientCredentialsGrantScope(bool addOpenIdScope) =>
-        addOpenIdScope ? "openid payments" : "payments";
 
     private
         IApiRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,

@@ -47,7 +47,7 @@ internal class GrantPost : IGrantPost
     }
 
     public async Task<string?> ValidateIdTokenAuthEndpoint(
-        string idToken,
+        string idTokenEncoded,
         string code,
         string state,
         IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour,
@@ -62,9 +62,15 @@ internal class GrantPost : IGrantPost
         IdTokenSubClaimType idTokenSubClaimType,
         string? externalApiUserId)
     {
+        // Check for empty token
+        if (string.IsNullOrEmpty(idTokenEncoded))
+        {
+            throw new InvalidOperationException("Parameter id_token is empty string.");
+        }
+
         // Decode and deserialise ID token
         var idTokenObject = await DeserialiseIdToken<IdTokenAuthEndpoint>(
-            idToken,
+            idTokenEncoded,
             idTokenProcessingCustomBehaviour,
             jwksUri,
             bankProfileForTppReportingMetrics,
@@ -144,7 +150,7 @@ internal class GrantPost : IGrantPost
         bool includeClientIdWithPrivateKeyJwt = false,
         JwsAlgorithm? jwsAlgorithm = null)
     {
-        async Task<TokenEndpointResponseClientCredentialsGrant> GetTokenAsync()
+        async Task<TokenEndpointResponse> GetTokenAsync()
         {
             var keyValuePairs = new Dictionary<string, string> { { "grant_type", "client_credentials" } };
 
@@ -179,8 +185,8 @@ internal class GrantPost : IGrantPost
                 keyValuePairs["client_secret"] = externalApiClientSecret!;
             }
 
-            var response =
-                await PostGrantAsync<TokenEndpointResponseClientCredentialsGrant>(
+            TokenEndpointResponse response =
+                await PostGrantAsync(
                     keyValuePairs,
                     tokenEndpointAuthMethod,
                     tokenEndpoint,
@@ -192,6 +198,19 @@ internal class GrantPost : IGrantPost
                     requestScope,
                     clientCredentialsGrantPostCustomBehaviour);
 
+            // Validate response ID token
+            if (response.IdToken is not null)
+            {
+                throw new InvalidOperationException("Parameter id_token received when using client credentials grant.");
+            }
+
+            // Validate response refresh token
+            if (response.RefreshToken is not null)
+            {
+                throw new InvalidOperationException(
+                    "Parameter refresh_token received when using client credentials grant.");
+            }
+
             return response;
         }
 
@@ -202,7 +221,7 @@ internal class GrantPost : IGrantPost
                 cacheKey,
                 async cacheEntry =>
                 {
-                    TokenEndpointResponseClientCredentialsGrant response =
+                    TokenEndpointResponse response =
                         await GetTokenAsync();
                     // DateTimeOffset currentTime = _timeProvider.GetUtcNow();
                     // cacheEntry.AbsoluteExpiration =
@@ -215,7 +234,7 @@ internal class GrantPost : IGrantPost
         return accessToken;
     }
 
-    public async Task<TokenEndpointResponseAuthCodeGrant> PostAuthCodeGrantAsync(
+    public async Task<TokenEndpointResponse> PostAuthCodeGrantAsync(
         string authCode,
         string redirectUrl,
         string bankIssuerUrl,
@@ -239,6 +258,8 @@ internal class GrantPost : IGrantPost
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         IApiClient mtlsApiClient)
     {
+        bool useOpenIdConnect = requestScope.Split(' ').ToList().Contains("openid");
+
         var keyValuePairs = new Dictionary<string, string>
         {
             { "grant_type", "authorization_code" },
@@ -266,14 +287,14 @@ internal class GrantPost : IGrantPost
             keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
             keyValuePairs["client_assertion"] = jwt;
         }
-        
+
         if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.ClientSecretPost)
         {
             keyValuePairs["client_id"] = externalApiClientId;
             keyValuePairs["client_secret"] = externalApiClientSecret!;
         }
 
-        var response = await PostGrantAsync<TokenEndpointResponseAuthCodeGrant>(
+        TokenEndpointResponse response = await PostGrantAsync(
             keyValuePairs,
             tokenEndpointAuthMethod,
             tokenEndpoint,
@@ -308,32 +329,50 @@ internal class GrantPost : IGrantPost
         }
 
         // Validate response ID token
-        IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour =
-            authCodeGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour;
-        bool doNotValidateIdToken =
-            idTokenProcessingCustomBehaviour?.DoNotValidateIdToken ?? false;
-        if (doNotValidateIdToken is false)
+        if (response.IdToken is null)
         {
-            await ValidateIdTokenTokenEndpoint(
-                response.IdToken,
-                response.AccessToken,
-                idTokenProcessingCustomBehaviour,
-                jwksUri,
-                jwksGetCustomBehaviour,
-                bankIssuerUrl,
-                externalApiClientId,
-                externalApiConsentId,
-                expectedNonce,
-                bankProfileForTppReportingMetrics,
-                supportsSca,
-                idTokenSubClaimType,
-                externalApiUserId);
+            // Check valid to not get ID token
+            if (useOpenIdConnect)
+            {
+                throw new InvalidOperationException("Parameter id_token not received when using Open ID Connect.");
+            }
+        }
+        else
+        {
+            // Check valid to get ID token
+            if (!useOpenIdConnect)
+            {
+                throw new InvalidOperationException("Parameter id_token received when not using Open ID Connect.");
+            }
+
+            // Perform validation
+            IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour =
+                authCodeGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour;
+            bool doNotValidateIdToken =
+                idTokenProcessingCustomBehaviour?.DoNotValidateIdToken ?? false;
+            if (doNotValidateIdToken is false)
+            {
+                await ValidateIdTokenTokenEndpoint(
+                    response.IdToken,
+                    response.AccessToken,
+                    idTokenProcessingCustomBehaviour,
+                    jwksUri,
+                    jwksGetCustomBehaviour,
+                    bankIssuerUrl,
+                    externalApiClientId,
+                    externalApiConsentId,
+                    expectedNonce,
+                    bankProfileForTppReportingMetrics,
+                    supportsSca,
+                    idTokenSubClaimType,
+                    externalApiUserId);
+            }
         }
 
         return response;
     }
 
-    public async Task<TokenEndpointResponseRefreshTokenGrant> PostRefreshTokenGrantAsync(
+    public async Task<TokenEndpointResponse> PostRefreshTokenGrantAsync(
         string refreshToken,
         string bankIssuerUrl,
         string externalApiClientId,
@@ -354,6 +393,8 @@ internal class GrantPost : IGrantPost
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         IApiClient mtlsApiClient)
     {
+        bool useOpenIdConnect = refreshTokenScope.Split(' ').ToList().Contains("openid");
+
         var keyValuePairs = new Dictionary<string, string>
         {
             { "grant_type", "refresh_token" },
@@ -375,14 +416,14 @@ internal class GrantPost : IGrantPost
             keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
             keyValuePairs["client_assertion"] = jwt;
         }
-        
+
         if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.ClientSecretPost)
         {
             keyValuePairs["client_id"] = externalApiClientId;
             keyValuePairs["client_secret"] = externalApiClientSecret!;
         }
 
-        var response = await PostGrantAsync<TokenEndpointResponseRefreshTokenGrant>(
+        TokenEndpointResponse response = await PostGrantAsync(
             keyValuePairs,
             tokenEndpointAuthMethod,
             tokenEndpoint,
@@ -395,35 +436,45 @@ internal class GrantPost : IGrantPost
             refreshTokenGrantPostCustomBehaviour);
 
         // Validate response ID token
-        string? responseIdToken = string.IsNullOrEmpty(response.IdToken) ? null : response.IdToken;
-        bool idTokenMayBeAbsent = refreshTokenGrantPostCustomBehaviour?.IdTokenMayBeAbsent ?? false;
-        if (!idTokenMayBeAbsent &&
-            responseIdToken is null)
+        if (response.IdToken is null)
         {
-            throw new Exception("Expected but did not receive ID token when using refresh token grant.");
+            // Check valid to not get ID token
+            bool idTokenMayBeAbsent = refreshTokenGrantPostCustomBehaviour?.IdTokenMayBeAbsent ?? false;
+            if (useOpenIdConnect && !idTokenMayBeAbsent)
+            {
+                throw new InvalidOperationException("Parameter id_token not received when using Open ID Connect.");
+            }
         }
-
-        IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour =
-            refreshTokenGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour;
-        bool doNotValidateIdToken =
-            idTokenProcessingCustomBehaviour?.DoNotValidateIdToken ?? false;
-        if (responseIdToken is not null &&
-            doNotValidateIdToken is false)
+        else
         {
-            await ValidateIdTokenTokenEndpoint(
-                responseIdToken,
-                response.AccessToken,
-                idTokenProcessingCustomBehaviour,
-                jwksUri,
-                jwksGetCustomBehaviour,
-                bankIssuerUrl,
-                externalApiClientId,
-                externalApiConsentId,
-                expectedNonce,
-                bankProfileForTppReportingMetrics,
-                supportsSca,
-                idTokenSubClaimType,
-                externalApiUserId);
+            // Check valid to get ID token
+            if (!useOpenIdConnect)
+            {
+                throw new InvalidOperationException("Parameter id_token received when not using Open ID Connect.");
+            }
+
+            // Perform validation
+            IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour =
+                refreshTokenGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour;
+            bool doNotValidateIdToken =
+                idTokenProcessingCustomBehaviour?.DoNotValidateIdToken ?? false;
+            if (doNotValidateIdToken is false)
+            {
+                await ValidateIdTokenTokenEndpoint(
+                    response.IdToken,
+                    response.AccessToken,
+                    idTokenProcessingCustomBehaviour,
+                    jwksUri,
+                    jwksGetCustomBehaviour,
+                    bankIssuerUrl,
+                    externalApiClientId,
+                    externalApiConsentId,
+                    expectedNonce,
+                    bankProfileForTppReportingMetrics,
+                    supportsSca,
+                    idTokenSubClaimType,
+                    externalApiUserId);
+            }
         }
 
         return response;
@@ -440,6 +491,18 @@ internal class GrantPost : IGrantPost
         }
 
         return TimeSpan.FromSeconds(tokenExpiryRelativeToNow);
+    }
+
+    private static void ValidateRequestScope(bool useOpenIdConnect, string requestScope)
+    {
+        if (useOpenIdConnect)
+        {
+            List<string> scopeList = requestScope.Split(' ').ToList();
+            if (!scopeList.Contains("openid"))
+            {
+                throw new InvalidOperationException("When using Open ID Connect, grant scope must include 'openid'");
+            }
+        }
     }
 
     private static string CreateClientAssertionJwt(
@@ -594,6 +657,12 @@ internal class GrantPost : IGrantPost
         IdTokenSubClaimType idTokenSubClaimType,
         string? externalApiUserId)
     {
+        // Check for empty token
+        if (string.IsNullOrEmpty(idTokenEncoded))
+        {
+            throw new InvalidOperationException("Parameter id_token is empty string.");
+        }
+
         // Decode and deserialise ID token
         var idToken = await DeserialiseIdToken<IdTokenTokenEndpoint>(
             idTokenEncoded,
@@ -771,7 +840,7 @@ internal class GrantPost : IGrantPost
         return Base64UrlEncoder.Encode(hashValue, 0, 16);
     }
 
-    private async Task<TokenEndpointResponse> PostGrantAsync<TokenEndpointResponse>(
+    private async Task<TokenEndpointResponse> PostGrantAsync(
         Dictionary<string, string> keyValuePairs,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
@@ -782,7 +851,6 @@ internal class GrantPost : IGrantPost
         IApiClient mtlsApiClient,
         string? implicitOrExplicitRequestScope,
         GrantPostCustomBehaviour? grantPostCustomBehaviour)
-        where TokenEndpointResponse : TokenEndpointResponseBase
     {
         // POST grant to token endpoint
         var uri = new Uri(tokenEndpoint);
@@ -821,35 +889,51 @@ internal class GrantPost : IGrantPost
         // Validate response "scope"
         bool responseScopeMayIncludeExtraValues =
             grantPostCustomBehaviour?.ResponseScopeMayIncludeExtraValues ?? false;
-        if (string.IsNullOrEmpty(implicitOrExplicitRequestScope))
+        bool responseScopeEmptyTreatedAsNull = grantPostCustomBehaviour?.ResponseScopeEmptyTreatedAsNull ?? false;
+        if (implicitOrExplicitRequestScope is not null)
         {
-            // Check for unexpected value(s)
-            if (string.IsNullOrEmpty(response.Scope))
+            if (response.Scope is null ||
+                (responseScopeEmptyTreatedAsNull && response.Scope == string.Empty))
             {
-                throw new Exception("Received access token without scope and unable to infer scope.");
+                // Assume response (token) scope matches request scope
+                response.Scope = implicitOrExplicitRequestScope;
+            }
+            else
+            {
+                // Check response scope against request scope
+                string[] requestScopeArray = implicitOrExplicitRequestScope.Split(" ");
+                string[] responseScopeArray = response.Scope.Split(" ");
+
+                // Check for missing values
+                string[] missingScopeValues = requestScopeArray.Except(responseScopeArray).ToArray();
+                if (missingScopeValues.Any())
+                {
+                    throw new InvalidOperationException(
+                        $"Access token scope does not contain expected values {missingScopeValues}.");
+                }
+
+                // Check for extra values
+                string[] extraScopeValues = responseScopeArray.Except(requestScopeArray).ToArray();
+                if (!responseScopeMayIncludeExtraValues &&
+                    extraScopeValues.Any())
+                {
+                    throw new InvalidOperationException(
+                        $"Access token scope contains extra values {extraScopeValues}.");
+                }
             }
         }
         else
         {
-            // If response scope provided, check it. (Missing response scope implies value equal to requested scope.)
-            if (!string.IsNullOrEmpty(response.Scope))
+            // Perform basic validation on response scope
+            if (response.Scope == string.Empty)
             {
-                string[] expectedScopeArray = implicitOrExplicitRequestScope.Split(" ");
-                string[] responseScopeArray = response.Scope.Split(" ");
-
-                // Check for missing values
-                string[] missingScopeValues = expectedScopeArray.Except(responseScopeArray).ToArray();
-                if (missingScopeValues.Any())
+                if (responseScopeEmptyTreatedAsNull)
                 {
-                    throw new Exception($"Access token scope does not contain expected values {missingScopeValues}.");
+                    response.Scope = null;
                 }
-
-                // Check for extra values
-                string[] extraScopeValues = responseScopeArray.Except(expectedScopeArray).ToArray();
-                if (!responseScopeMayIncludeExtraValues &&
-                    extraScopeValues.Any())
+                else
                 {
-                    throw new Exception($"Access token scope contains extra values {extraScopeValues}.");
+                    throw new InvalidOperationException("Received access token with scope set to empty string.");
                 }
             }
         }

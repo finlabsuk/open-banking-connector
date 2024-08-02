@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 
 /// <summary>
-///     OAuth2 parameters apart from refresh token.
+///     Token endpoint response parameters for OAuth2 and Open ID Connect.
 /// </summary>
-public abstract class TokenEndpointResponseBase
+public class TokenEndpointResponse
 {
     [JsonProperty("access_token", Required = Required.Always)]
     public string AccessToken { get; set; } = null!;
@@ -20,29 +20,12 @@ public abstract class TokenEndpointResponseBase
     [JsonProperty("token_type", Required = Required.Always)]
     public string TokenType { get; set; } = null!;
 
-    public string? Scope { get; set; }
-}
-
-public class TokenEndpointResponseClientCredentialsGrant : TokenEndpointResponseBase
-{
     /// <summary>
-    ///     Allows checking for presence of ID token (not expected)
+    ///     Note that this parameter, when null, will be updated to match "request" scope where relevant.
     /// </summary>
-    [JsonProperty("id_token")]
-    public string? IdToken { get; set; }
-}
+    [JsonProperty("scope")]
+    public string? Scope { get; set; }
 
-public class TokenEndpointResponseAuthCodeGrant : TokenEndpointResponseBase
-{
-    [JsonProperty("refresh_token")]
-    public string? RefreshToken { get; set; }
-
-    [JsonProperty("id_token", Required = Required.Always)]
-    public string IdToken { get; set; } = null!;
-}
-
-public class TokenEndpointResponseRefreshTokenGrant : TokenEndpointResponseBase
-{
     [JsonProperty("refresh_token")]
     public string? RefreshToken { get; set; }
 

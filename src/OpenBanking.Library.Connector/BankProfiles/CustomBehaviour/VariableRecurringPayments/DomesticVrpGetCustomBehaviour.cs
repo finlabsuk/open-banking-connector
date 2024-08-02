@@ -8,9 +8,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehav
 
 public class DomesticVrpGetCustomBehaviour : ReadWriteGetCustomBehaviour
 {
-    public bool? AddOpenIdScope { get; set; }
-
     public DomesticVrpRefundConverterOptions? RefundResponseJsonConverter { get; set; }
 
     public bool? PreferMisspeltContractPresentIndicator { get; set; }
+
+    /// <summary>
+    ///     Use to specify custom scope for token grant.
+    /// </summary>
+    public string? Scope { get; init; }
 }

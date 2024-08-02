@@ -152,13 +152,6 @@ internal class AuthContextUpdate :
         }
         string code = request.OAuth2RedirectOptionalParameters.Code;
 
-        // Validate ID token parameter
-        if (string.IsNullOrEmpty(request.OAuth2RedirectOptionalParameters.IdToken))
-        {
-            throw new InvalidOperationException("OAuth2 id_token parameter is null or empty.");
-        }
-        string idToken = request.OAuth2RedirectOptionalParameters.IdToken;
-
         // Validate auth context app session ID
         if (request.AppSessionId is not null)
         {
@@ -170,14 +163,12 @@ internal class AuthContextUpdate :
 
         // Get consent info
         (BaseConsent consent,
-                string tokenRequestScope,
                 AccessTokenEntity? storedAccessToken,
                 RefreshTokenEntity? storedRefreshToken) =
             authContext switch
             {
                 AccountAccessConsentAuthContext ac1 => (
                     (BaseConsent) ac1.AccountAccessConsentNavigation,
-                    "openid accounts",
                     (AccessTokenEntity?) ac1.AccountAccessConsentNavigation
                         .AccountAccessConsentAccessTokensNavigation
                         .SingleOrDefault(x => !x.IsDeleted),
@@ -186,7 +177,6 @@ internal class AuthContextUpdate :
                         .SingleOrDefault(x => !x.IsDeleted)),
                 DomesticPaymentConsentAuthContext ac2 => (
                     ac2.DomesticPaymentConsentNavigation,
-                    "openid payments",
                     ac2.DomesticPaymentConsentNavigation
                         .DomesticPaymentConsentAccessTokensNavigation
                         .SingleOrDefault(x => !x.IsDeleted),
@@ -195,7 +185,6 @@ internal class AuthContextUpdate :
                         .SingleOrDefault(x => !x.IsDeleted)),
                 DomesticVrpConsentAuthContext ac3 => (
                     ac3.DomesticVrpConsentNavigation,
-                    "openid payments",
                     ac3.DomesticVrpConsentNavigation
                         .DomesticVrpConsentAccessTokensNavigation
                         .SingleOrDefault(x => !x.IsDeleted),
@@ -228,6 +217,28 @@ internal class AuthContextUpdate :
             defaultResponseMode,
             bankRegistration.DefaultFragmentRedirectUri,
             bankRegistration.DefaultQueryRedirectUri);
+        OAuth2ResponseType responseType = bankProfile.DefaultResponseType;
+        bool useOpenIdConnect = bankProfile.UseOpenIdConnect;
+
+        // Validate ID token parameter presence/absence
+        string? idToken = request.OAuth2RedirectOptionalParameters.IdToken;
+        if (idToken is null)
+        {
+            // Check valid to not get ID token
+            if (responseType is not OAuth2ResponseType.Code)
+            {
+                throw new InvalidOperationException(
+                    "Parameter id_token not received when response_type is 'code id_token'.");
+            }
+        }
+        else
+        {
+            // Check valid to get ID token
+            if (responseType is not OAuth2ResponseType.CodeIdToken)
+            {
+                throw new InvalidOperationException("Parameter id_token received when response_type is 'code'.");
+            }
+        }
 
         // Get IApiClient
         // IApiClient apiClient = bankRegistration.UseSimulatedBank
@@ -274,31 +285,34 @@ internal class AuthContextUpdate :
             requestObjectAudClaim ??
             issuerUrl;
         DateTimeOffset modified = _timeProvider.GetUtcNow();
-        bool doNotValidateIdToken =
-            consentAuthGetCustomBehaviour?.IdTokenProcessingCustomBehaviour?.DoNotValidateIdToken ?? false;
-        if (doNotValidateIdToken is false)
+        if (idToken is not null)
         {
-            string? newExternalApiUserId = await _grantPost.ValidateIdTokenAuthEndpoint(
-                idToken,
-                code,
-                state,
-                consentAuthGetCustomBehaviour?.IdTokenProcessingCustomBehaviour,
-                jwksUri,
-                customBehaviour?.JwksGet,
-                bankTokenIssuerClaim,
-                externalApiClientId,
-                externalApiConsentId,
-                nonce,
-                supportsSca,
-                bankProfile.BankProfileEnum,
-                idTokenSubClaimType,
-                consent.ExternalApiUserId);
-            if (newExternalApiUserId != consent.ExternalApiUserId)
+            bool doNotValidateIdToken =
+                consentAuthGetCustomBehaviour?.IdTokenProcessingCustomBehaviour?.DoNotValidateIdToken ?? false;
+            if (doNotValidateIdToken is false)
             {
-                consent.UpdateExternalApiUserId(
-                    newExternalApiUserId,
-                    modified,
-                    modifiedBy);
+                string? newExternalApiUserId = await _grantPost.ValidateIdTokenAuthEndpoint(
+                    idToken,
+                    code,
+                    state,
+                    consentAuthGetCustomBehaviour?.IdTokenProcessingCustomBehaviour,
+                    jwksUri,
+                    customBehaviour?.JwksGet,
+                    bankTokenIssuerClaim,
+                    externalApiClientId,
+                    externalApiConsentId,
+                    nonce,
+                    supportsSca,
+                    bankProfile.BankProfileEnum,
+                    idTokenSubClaimType,
+                    consent.ExternalApiUserId);
+                if (newExternalApiUserId != consent.ExternalApiUserId)
+                {
+                    consent.UpdateExternalApiUserId(
+                        newExternalApiUserId,
+                        modified,
+                        modifiedBy);
+                }
             }
         }
 
@@ -310,17 +324,25 @@ internal class AuthContextUpdate :
         {
             // Obtain token for consent
             JsonSerializerSettings? jsonSerializerSettings = null;
-            (AuthCodeGrantPostCustomBehaviour? consentAuthCodeGrantPostCustomBehaviour, bool expectRefreshToken) =
+            (AuthCodeGrantPostCustomBehaviour? consentAuthCodeGrantPostCustomBehaviour, bool expectRefreshToken,
+                    string defaultScope) =
                 authContext switch
                 {
-                    AccountAccessConsentAuthContext => (customBehaviour?.AccountAccessConsentAuthCodeGrantPost, true),
+                    AccountAccessConsentAuthContext => (customBehaviour?.AccountAccessConsentAuthCodeGrantPost, true,
+                        "accounts"),
                     DomesticPaymentConsentAuthContext => (customBehaviour?.DomesticPaymentConsentAuthCodeGrantPost,
-                        true),
-                    DomesticVrpConsentAuthContext => (customBehaviour?.DomesticVrpConsentAuthCodeGrantPost, true),
+                        true, "payments"),
+                    DomesticVrpConsentAuthContext => (customBehaviour?.DomesticVrpConsentAuthCodeGrantPost, true,
+                        "payments"),
                     _ => throw new ArgumentOutOfRangeException()
                 };
 
-            TokenEndpointResponseAuthCodeGrant tokenEndpointResponse =
+            string scope = consentAuthCodeGrantPostCustomBehaviour?.Scope ?? defaultScope;
+            if (useOpenIdConnect)
+            {
+                scope = "openid " + scope;
+            }
+            TokenEndpointResponse tokenEndpointResponse =
                 await _grantPost.PostAuthCodeGrantAsync(
                     code,
                     redirectUrl,
@@ -330,7 +352,7 @@ internal class AuthContextUpdate :
                     externalApiConsentId,
                     consent.ExternalApiUserId,
                     nonce,
-                    tokenRequestScope,
+                    scope,
                     obSealKey,
                     jwksUri,
                     tokenEndpointAuthMethod,

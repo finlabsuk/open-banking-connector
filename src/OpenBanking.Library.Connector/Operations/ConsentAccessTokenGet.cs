@@ -48,12 +48,13 @@ internal class ConsentAccessTokenGet
     public async Task<string> GetAccessTokenAndUpdateConsent<TConsentEntity>(
         TConsentEntity consent,
         string bankIssuerUrl,
-        string requestScope,
+        string defaultRequestScope,
         BankRegistrationEntity bankRegistration,
         AccessTokenEntity? storedAccessTokenEntity,
         RefreshTokenEntity? storedRefreshTokenEntity,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
+        bool useOpenIdConnect,
         IApiClient apiClient,
         OBSealKey obSealKey,
         bool supportsSca,
@@ -64,7 +65,7 @@ internal class ConsentAccessTokenGet
         string? modifiedBy)
         where TConsentEntity : BaseConsent
     {
-        string? consentAssociatedData = consent.GetAssociatedData(bankRegistration);
+        string consentAssociatedData = consent.GetAssociatedData(bankRegistration);
 
         // Check nonce available
         string nonce =
@@ -88,7 +89,13 @@ internal class ConsentAccessTokenGet
             // POST refresh token grant
             string externalApiClientId = bankRegistration.ExternalApiId;
             JsonSerializerSettings? jsonSerializerSettings = null;
-            TokenEndpointResponseRefreshTokenGrant tokenEndpointResponse =
+
+            string requestScope = refreshTokenGrantPostCustomBehaviour?.Scope ?? defaultRequestScope;
+            if (useOpenIdConnect)
+            {
+                requestScope = "openid " + requestScope;
+            }
+            TokenEndpointResponse tokenEndpointResponse =
                 await _grantPost.PostRefreshTokenGrantAsync(
                     storedRefreshToken,
                     bankIssuerUrl,

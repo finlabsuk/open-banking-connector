@@ -8,5 +8,7 @@ public abstract class GrantPostCustomBehaviour
 {
     public bool? ResponseScopeMayIncludeExtraValues { get; set; }
 
+    public bool? ResponseScopeEmptyTreatedAsNull { get; set; }
+
     public bool? ResponseTokenTypeCaseMayBeIncorrect { get; set; }
 }

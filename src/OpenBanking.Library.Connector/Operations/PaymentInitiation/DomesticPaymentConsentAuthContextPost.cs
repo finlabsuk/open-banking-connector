@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -73,6 +74,7 @@ internal class
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+        OAuth2ResponseType responseType = bankProfile.DefaultResponseType;
 
         string redirectUri = softwareStatement.GetRedirectUri(
             bankRegistration.DefaultResponseModeOverride ?? bankProfile.DefaultResponseMode,
@@ -92,12 +94,14 @@ internal class
             domesticPaymentConsent.ExternalApiId,
             obSealKey,
             bankRegistration.ExternalApiId,
+            bankProfile.UseOpenIdConnect,
             customBehaviour?.DomesticPaymentConsentAuthGet,
             authorizationEndpoint,
             consentAuthGetAudClaim,
             supportsSca,
             redirectUri,
             "payments",
+            responseType,
             _instrumentationClient);
 
         // Create persisted entity

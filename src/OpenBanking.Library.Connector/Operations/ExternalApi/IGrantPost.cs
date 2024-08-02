@@ -32,7 +32,7 @@ internal interface IGrantPost
         bool includeClientIdWithPrivateKeyJwt = false,
         JwsAlgorithm? jwsAlgorithm = null);
 
-    Task<TokenEndpointResponseAuthCodeGrant> PostAuthCodeGrantAsync(
+    Task<TokenEndpointResponse> PostAuthCodeGrantAsync(
         string authCode,
         string redirectUrl,
         string bankIssuerUrl,
@@ -56,7 +56,7 @@ internal interface IGrantPost
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         IApiClient mtlsApiClient);
 
-    Task<TokenEndpointResponseRefreshTokenGrant> PostRefreshTokenGrantAsync(
+    Task<TokenEndpointResponse> PostRefreshTokenGrantAsync(
         string refreshToken,
         string bankIssuerUrl,
         string externalApiClientId,

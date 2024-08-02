@@ -9,4 +9,9 @@ public class RefreshTokenGrantPostCustomBehaviour : GrantPostCustomBehaviour
     public bool? IdTokenMayBeAbsent { get; set; }
 
     public IdTokenProcessingCustomBehaviour? IdTokenProcessingCustomBehaviour { get; set; }
+
+    /// <summary>
+    ///     Use to specify custom scope.
+    /// </summary>
+    public string? Scope { get; init; }
 }

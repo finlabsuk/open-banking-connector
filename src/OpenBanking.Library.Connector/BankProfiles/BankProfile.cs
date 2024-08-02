@@ -126,9 +126,9 @@ public class AccountAndTransactionApiSettings
     /// <summary>
     ///     Describes whether GET /accounts/{AccountId}/party is used when testing with this bank
     /// </summary>
-    public bool UseGetPartyEndpoint { get; set; } = true;
+    public bool UseGetPartyEndpoint { get; init; } = true;
 
-    public bool UseReauth { get; set; } = true;
+    public bool UseReauth { get; init; } = true;
 
     public AccountAccessConsentExternalApiRequestAdjustments
         AccountAccessConsentExternalApiRequestAdjustments { get; set; } = x => x;
@@ -142,7 +142,7 @@ public class PaymentInitiationApiSettings
     public DomesticPaymentExternalApiRequestAdjustments
         DomesticPaymentExternalApiRequestAdjustments { get; set; } = x => x;
 
-    public bool UseDomesticPaymentGetPaymentDetailsEndpoint { get; set; } = false;
+    public bool UseDomesticPaymentGetPaymentDetailsEndpoint { get; init; } = false;
 }
 
 public class VariableRecurringPaymentsApiSettings
@@ -156,7 +156,9 @@ public class VariableRecurringPaymentsApiSettings
     public DomesticVrpExternalApiRequestAdjustments
         DomesticVrpExternalApiRequestAdjustments { get; set; } = x => x;
 
-    public bool UseDomesticVrpGetPaymentDetailsEndpoint { get; set; } = false;
+    public bool UseReauth { get; init; } = false;
+
+    public bool UseDomesticVrpGetPaymentDetailsEndpoint { get; init; } = false;
 }
 
 /// <summary>
@@ -165,6 +167,8 @@ public class VariableRecurringPaymentsApiSettings
 /// </summary>
 public class BankProfile
 {
+    private readonly OAuth2ResponseMode? _specifiedDefaultResponseMode;
+
     public BankProfile(
         BankProfileEnum bankProfileEnum,
         string issuerUrl,
@@ -203,7 +207,7 @@ public class BankProfile
     /// <summary>
     ///     Client Registration (DCR) API version.
     /// </summary>
-    public DynamicClientRegistrationApiVersion DynamicClientRegistrationApiVersion { get; set; } =
+    public DynamicClientRegistrationApiVersion DynamicClientRegistrationApiVersion { get; init; } =
         DynamicClientRegistrationApiVersion.Version3p2;
 
     /// <summary>
@@ -221,34 +225,49 @@ public class BankProfile
     /// </summary>
     public VariableRecurringPaymentsApi? VariableRecurringPaymentsApi { get; }
 
-    public OAuth2ResponseMode DefaultResponseMode { get; set; } = OAuth2ResponseMode.Fragment;
+    public OAuth2ResponseMode DefaultResponseMode
+    {
+        // When not specified, generate default response mode from default response type according to
+        // https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html 
+        get => _specifiedDefaultResponseMode ?? DefaultResponseType switch
+        {
+            OAuth2ResponseType.Code => OAuth2ResponseMode.Query,
+            OAuth2ResponseType.CodeIdToken => OAuth2ResponseMode.Fragment,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        init => _specifiedDefaultResponseMode = value;
+    }
+
+    public OAuth2ResponseType DefaultResponseType { get; init; } = OAuth2ResponseType.CodeIdToken;
+
+    public bool UseOpenIdConnect { get; init; } = true;
 
     public bool SupportsSca { get; }
 
-    public CustomBehaviourClass? CustomBehaviour { get; set; }
+    public CustomBehaviourClass? CustomBehaviour { get; init; }
 
     /// <summary>
     ///     Settings used when testing Client Registration API.
     /// </summary>
-    public BankConfigurationApiSettings BankConfigurationApiSettings { get; set; } =
+    public BankConfigurationApiSettings BankConfigurationApiSettings { get; init; } =
         new();
 
     /// <summary>
     ///     Settings used when testing Account and Transaction API.
     /// </summary>
-    public AccountAndTransactionApiSettings AccountAndTransactionApiSettings { get; set; } =
+    public AccountAndTransactionApiSettings AccountAndTransactionApiSettings { get; init; } =
         new();
 
     /// <summary>
     ///     Settings used when testing Payment Initiation API.
     /// </summary>
-    public PaymentInitiationApiSettings PaymentInitiationApiSettings { get; set; } =
+    public PaymentInitiationApiSettings PaymentInitiationApiSettings { get; init; } =
         new();
 
     /// <summary>
     ///     Settings used when testing Variable Recurring Payments API.
     /// </summary>
-    public VariableRecurringPaymentsApiSettings VariableRecurringPaymentsApiSettings { get; set; } =
+    public VariableRecurringPaymentsApiSettings VariableRecurringPaymentsApiSettings { get; init; } =
         new();
 
     public IApiClient ReplayApiClient { get; }

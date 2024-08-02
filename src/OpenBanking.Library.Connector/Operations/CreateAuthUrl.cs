@@ -51,29 +51,116 @@ public static class CreateAuthUrl
         string externalApiConsentId,
         OBSealKey obSealKey,
         string clientExternalApiId,
+        bool useOpenIdConnect,
         ConsentAuthGetCustomBehaviour? customBehaviourConsentAuthGet,
         string authorisationEndpoint,
         string consentAuthGetAudClaim,
         bool supportsSca,
         string redirectUrl,
         string scopeString,
+        OAuth2ResponseType responseType,
         IInstrumentationClient instrumentationClient)
     {
         const int lengthInBytes = 24;
         string state = GenerateRandomString(lengthInBytes);
         string nonce = GenerateRandomString(lengthInBytes);
         string appSessionId = GenerateRandomString(32);
+        string responseTypeString = JsonConvert.SerializeObject(responseType).Replace("\"", "");
 
+        // Add common parameters
+        var keyValuePairs = new Dictionary<string, string>
+        {
+            { "response_type", responseTypeString },
+            { "client_id", clientExternalApiId },
+            { "redirect_uri", redirectUrl } // required by some banks but not by spec for Open ID Connect
+        };
+
+        if (useOpenIdConnect)
+        {
+            // Add scope
+            string newScopeString = "openid " + scopeString;
+            keyValuePairs.Add("scope", newScopeString);
+
+            // Add state
+            if (customBehaviourConsentAuthGet?.AddRedundantOAuth2StateRequestParameter ?? false)
+            {
+                keyValuePairs.Add("state", state);
+            }
+
+            // Add request object
+            string requestObjectJwt = GenerateRequestObjectJwt(
+                externalApiConsentId,
+                obSealKey,
+                clientExternalApiId,
+                customBehaviourConsentAuthGet,
+                consentAuthGetAudClaim,
+                supportsSca,
+                redirectUrl,
+                instrumentationClient,
+                state,
+                nonce,
+                responseTypeString,
+                newScopeString);
+            keyValuePairs.Add("request", requestObjectJwt);
+        }
+        else
+        {
+            // Add scope and state
+            keyValuePairs.Add("scope", scopeString);
+            keyValuePairs.Add("state", state);
+        }
+
+        // Add nonce
+        if (customBehaviourConsentAuthGet?.AddRedundantOAuth2NonceRequestParameter ?? false)
+        {
+            keyValuePairs.Add("nonce", nonce);
+        }
+
+        // Add PKCE parameters
+        string? codeVerifier = null;
+        bool usePkce = customBehaviourConsentAuthGet?.UsePkce ?? false;
+        if (usePkce)
+        {
+            (codeVerifier, string codeChallenge) = GeneratePkceValues();
+            keyValuePairs.Add("code_challenge_method", "S256");
+            keyValuePairs.Add("code_challenge", codeChallenge);
+        }
+
+        string queryString = keyValuePairs.ToUrlEncoded();
+        string authUrl = authorisationEndpoint + "?" + queryString;
+        StringBuilder authUrlTraceSb = new StringBuilder()
+            .AppendLine("#### Auth URL (Consent)")
+            .Append(authUrl);
+        instrumentationClient.Trace(authUrlTraceSb.ToString());
+
+        return (authUrl, state, nonce, codeVerifier, appSessionId);
+    }
+
+    private static string GenerateRequestObjectJwt(
+        string externalApiConsentId,
+        OBSealKey obSealKey,
+        string clientExternalApiId,
+        ConsentAuthGetCustomBehaviour? customBehaviourConsentAuthGet,
+        string consentAuthGetAudClaim,
+        bool supportsSca,
+        string redirectUrl,
+        IInstrumentationClient instrumentationClient,
+        string state,
+        string nonce,
+        string responseTypeString,
+        string scopeString2)
+    {
         OAuth2RequestObjectClaims oAuth2RequestObjectClaims =
             OAuth2RequestObjectClaimsFactory.CreateOAuth2RequestObjectClaims(
                 clientExternalApiId,
                 redirectUrl,
-                ["openid", scopeString],
                 consentAuthGetAudClaim,
                 supportsSca,
                 state,
                 nonce,
-                customBehaviourConsentAuthGet?.ConsentIdClaimPrefix + externalApiConsentId);
+                customBehaviourConsentAuthGet?.ConsentIdClaimPrefix + externalApiConsentId,
+                responseTypeString,
+                scopeString2);
         var jsonSerializerSettings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
         string payloadJson = JsonConvert.SerializeObject(
             oAuth2RequestObjectClaims,
@@ -93,47 +180,6 @@ public static class CreateAuthUrl
             .AppendLine("#### JWT (Request Object)")
             .Append(requestObjectJwt);
         instrumentationClient.Trace(requestTraceSb.ToString());
-
-        // Create auth URL
-        var keyValuePairs = new Dictionary<string, string>
-        {
-            { "response_type", oAuth2RequestObjectClaims.ResponseType },
-            { "client_id", oAuth2RequestObjectClaims.ClientId },
-            { "scope", oAuth2RequestObjectClaims.Scope },
-            { "request", requestObjectJwt },
-            { "redirect_uri", oAuth2RequestObjectClaims.RedirectUri } // required by some banks but not by spec
-        };
-        // if (customBehaviourConsentAuthGet?.AddRedundantOAuth2RedirectUriRequestParameter ?? false)
-        // {
-        //     keyValuePairs.Add(
-        //         "redirect_uri",
-        //         oAuth2RequestObjectClaims.RedirectUri); // required by some banks but not by spec
-        // }
-        if (customBehaviourConsentAuthGet?.AddRedundantOAuth2StateRequestParameter ?? false)
-        {
-            keyValuePairs.Add("state", oAuth2RequestObjectClaims.State); // required by some banks but not by spec
-        }
-        if (customBehaviourConsentAuthGet?.AddRedundantOAuth2NonceRequestParameter ?? false)
-        {
-            keyValuePairs.Add("nonce", oAuth2RequestObjectClaims.Nonce); // required by some banks but not by spec
-        }
-
-        string? codeVerifier = null;
-        bool usePkce = customBehaviourConsentAuthGet?.UsePkce ?? false;
-        if (usePkce)
-        {
-            (codeVerifier, string codeChallenge) = GeneratePkceValues();
-            keyValuePairs.Add("code_challenge_method", "S256");
-            keyValuePairs.Add("code_challenge", codeChallenge);
-        }
-
-        string queryString = keyValuePairs.ToUrlEncoded();
-        string authUrl = authorisationEndpoint + "?" + queryString;
-        StringBuilder authUrlTraceSb = new StringBuilder()
-            .AppendLine("#### Auth URL (Consent)")
-            .Append(authUrl);
-        instrumentationClient.Trace(authUrlTraceSb.ToString());
-
-        return (authUrl, state, nonce, codeVerifier, appSessionId);
+        return requestObjectJwt;
     }
 }
