@@ -91,6 +91,8 @@ internal class
             customBehaviour?.DomesticVrpConsentAuthGet?.AudClaim ??
             issuerUrl;
 
+        string scope = customBehaviour?.DomesticVrpConsentAuthGet?.Scope ?? "payments";
+
         (string authUrl, string state, string nonce, string? codeVerifier, string sessionId) = CreateAuthUrl.Create(
             domesticVrpConsent.ExternalApiId,
             obSealKey,
@@ -101,7 +103,7 @@ internal class
             consentAuthGetAudClaim,
             supportsSca,
             redirectUri,
-            "payments",
+            scope,
             responseType,
             _instrumentationClient);
 

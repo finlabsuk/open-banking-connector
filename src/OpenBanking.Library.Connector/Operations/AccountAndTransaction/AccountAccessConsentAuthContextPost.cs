@@ -90,6 +90,8 @@ internal class
             customBehaviour?.AccountAccessConsentAuthGet?.AudClaim ??
             issuerUrl;
 
+        string scope = customBehaviour?.AccountAccessConsentAuthGet?.Scope ?? "accounts";
+
         (string authUrl, string state, string nonce, string? codeVerifier, string sessionId) = CreateAuthUrl.Create(
             accountAccessConsent.ExternalApiId,
             obSealKey,
@@ -100,7 +102,7 @@ internal class
             consentAuthGetAudClaim,
             supportsSca,
             redirectUri,
-            "accounts",
+            scope,
             responseType,
             _instrumentationClient);
 

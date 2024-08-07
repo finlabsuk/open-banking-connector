@@ -94,15 +94,14 @@ internal static class Extensions
         string.Join(delimiter, lines.ArgNotNull(nameof(lines)));
 
 
-    public static string ToUrlEncoded(this IEnumerable<KeyValuePair<string, string>> values)
-    {
-        string result = values.Select(
+    public static string ToUrlParameterString(
+        this IEnumerable<KeyValuePair<string, string>> values,
+        bool doNotUseUrlPathEncoding = false) =>
+        values.Select(
                 kvp =>
-                    $"{HttpUtility.UrlPathEncode(kvp.Key)}={HttpUtility.UrlPathEncode(kvp.Value)}")
+                    $"{(doNotUseUrlPathEncoding ? kvp.Key : HttpUtility.UrlPathEncode(kvp.Key))}=" +
+                    $"{(doNotUseUrlPathEncoding ? kvp.Value : HttpUtility.UrlPathEncode(kvp.Value))}")
             .JoinString("&");
-
-        return result;
-    }
 
     private static IEnumerable<T> WalkRecursiveInner<T>(T value, Func<T, T?> selector)
         where T : class

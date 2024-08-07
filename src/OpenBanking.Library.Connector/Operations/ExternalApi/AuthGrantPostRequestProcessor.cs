@@ -66,7 +66,7 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
             }
         }
 
-        string content = variantRequest.ToUrlEncoded();
+        string content = variantRequest.ToUrlParameterString();
 
         return (headers, content, "application/x-www-form-urlencoded");
     }

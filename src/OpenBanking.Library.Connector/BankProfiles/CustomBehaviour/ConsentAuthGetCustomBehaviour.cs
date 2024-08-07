@@ -2,6 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Concurrent;
+
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 
 public class ConsentAuthGetCustomBehaviour
@@ -13,6 +15,16 @@ public class ConsentAuthGetCustomBehaviour
     public string? AudClaim { get; set; }
 
     //public bool? AddRedundantOAuth2RedirectUriRequestParameter { get; set; }
+
+    public string? Scope { get; init; }
+
+    public ConcurrentDictionary<string, string>? ExtraParameters { get; init; }
+
+    public string? ExtraConsentParameterName { get; init; }
+
+    public bool? DoNotUseUrlPathEncoding { get; init; }
+
+    public string? SingleBase64EncodedParameterName { get; init; }
 
     public bool? AddRedundantOAuth2StateRequestParameter { get; set; }
 

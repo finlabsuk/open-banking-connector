@@ -90,6 +90,8 @@ internal class
             customBehaviour?.DomesticPaymentConsentAuthGet?.AudClaim ??
             issuerUrl;
 
+        string scope = customBehaviour?.DomesticPaymentConsentAuthGet?.Scope ?? "payments";
+
         (string authUrl, string state, string nonce, string? codeVerifier, string sessionId) = CreateAuthUrl.Create(
             domesticPaymentConsent.ExternalApiId,
             obSealKey,
@@ -100,7 +102,7 @@ internal class
             consentAuthGetAudClaim,
             supportsSca,
             redirectUri,
-            "payments",
+            scope,
             responseType,
             _instrumentationClient);
 

@@ -126,7 +126,29 @@ public static class CreateAuthUrl
             keyValuePairs.Add("code_challenge", codeChallenge);
         }
 
-        string queryString = keyValuePairs.ToUrlEncoded();
+        if (customBehaviourConsentAuthGet?.ExtraParameters is not null)
+        {
+            foreach ((string key, string value) in customBehaviourConsentAuthGet.ExtraParameters)
+            {
+                keyValuePairs.Add(key, value);
+            }
+        }
+
+        if (customBehaviourConsentAuthGet?.ExtraConsentParameterName is not null)
+        {
+            keyValuePairs.Add(customBehaviourConsentAuthGet.ExtraConsentParameterName, externalApiConsentId);
+        }
+
+        bool doNotUseUrlPathEncoding = customBehaviourConsentAuthGet?.DoNotUseUrlPathEncoding ?? false;
+        string queryString = keyValuePairs.ToUrlParameterString(doNotUseUrlPathEncoding);
+
+        if (customBehaviourConsentAuthGet?.SingleBase64EncodedParameterName is not null)
+        {
+            queryString =
+                $"{customBehaviourConsentAuthGet.SingleBase64EncodedParameterName}=" +
+                Base64UrlEncoder.Encode(queryString);
+        }
+
         string authUrl = authorisationEndpoint + "?" + queryString;
         StringBuilder authUrlTraceSb = new StringBuilder()
             .AppendLine("#### Auth URL (Consent)")
