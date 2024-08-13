@@ -31,11 +31,13 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
             new AuthCodeGrantPostCustomBehaviour
             {
                 ResponseTokenTypeCaseMayBeIncorrect = true,
+                ResponseScopeEmptyTreatedAsNull = true,
                 ResponseScopeMayIncludeExtraValues = true
             };
         var refreshTokenGrantPostCustomBehaviour = new RefreshTokenGrantPostCustomBehaviour
         {
             ResponseTokenTypeCaseMayBeIncorrect = true,
+            ResponseScopeEmptyTreatedAsNull = true,
             ResponseScopeMayIncludeExtraValues = true,
             IdTokenMayBeAbsent = true
         };
@@ -71,7 +73,11 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
                             SubjectDnOrgIdEncoding.DottedDecimalAttributeType
                     },
                 ClientCredentialsGrantPost =
-                    new ClientCredentialsGrantPostCustomBehaviour { ResponseTokenTypeCaseMayBeIncorrect = true },
+                    new ClientCredentialsGrantPostCustomBehaviour
+                    {
+                        ResponseTokenTypeCaseMayBeIncorrect = true,
+                        ResponseScopeEmptyTreatedAsNull = true
+                    },
                 AccountAccessConsentAuthCodeGrantPost = authCodeGrantPostCustomBehaviour,
                 DomesticPaymentConsentAuthCodeGrantPost = authCodeGrantPostCustomBehaviour,
                 DomesticVrpConsentAuthCodeGrantPost = authCodeGrantPostCustomBehaviour,
