@@ -141,12 +141,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                 DomesticPaymentConsentPost =
                     new DomesticPaymentConsentPostCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
                 DomesticPaymentGet =
-                    new DomesticPaymentGetCustomBehaviour
-                    {
-                        PreferMisspeltContractPresentIndicator = true,
-                        AddOpenIdScope = true
-                    },
-                DomesticPaymentGetPaymentDetails = new DomesticPaymentGetCustomBehaviour { AddOpenIdScope = true },
+                    new DomesticPaymentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
                 DomesticPaymentPost =
                     new DomesticPaymentPostCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
                 DomesticVrpGet =
