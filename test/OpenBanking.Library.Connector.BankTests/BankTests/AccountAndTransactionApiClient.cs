@@ -25,6 +25,14 @@ public class AccountAndTransactionApiClient(WebAppClient client)
 
         // Checks
         response.Warnings.Should().BeNull();
+        if (readParams.ExcludeExternalApiOperation)
+        {
+            response.ExternalApiResponse.Should().BeNull();
+        }
+        else
+        {
+            response.ExternalApiResponse.Should().NotBeNull();
+        }
 
         return response;
     }
@@ -39,6 +47,14 @@ public class AccountAndTransactionApiClient(WebAppClient client)
 
         // Checks
         response.Warnings.Should().BeNull();
+        if (request.ExternalApiObject is not null)
+        {
+            response.ExternalApiResponse.Should().BeNull();
+        }
+        else
+        {
+            response.ExternalApiResponse.Should().NotBeNull();
+        }
 
         return response;
     }
@@ -72,6 +88,7 @@ public class AccountAndTransactionApiClient(WebAppClient client)
 
         // Checks
         response.Warnings.Should().BeNull();
+        response.AuthUrl.Should().NotBeNull();
 
         return response;
     }
@@ -86,6 +103,232 @@ public class AccountAndTransactionApiClient(WebAppClient client)
 
         // Checks
         response.Warnings.Should().BeNull();
+
+        return response;
+    }
+
+    public async Task<AccountsResponse> AccountsRead(AccountAccessConsentExternalReadParams readParams)
+    {
+        // Read object
+        var uriPath = "/aisp/accounts";
+        if (readParams.ExternalApiAccountId is not null)
+        {
+            uriPath += $"/{readParams.ExternalApiAccountId}";
+        }
+        if (readParams.QueryString is not null)
+        {
+            uriPath += "?" + readParams.QueryString.TrimStart('?');
+        }
+
+        var response =
+            await client.GetAsync<AccountsResponse>(
+                uriPath,
+                GetExtraHeaders(readParams));
+
+        // Checks
+        response.Warnings.Should().BeNull();
+        response.ExternalApiResponse.Should().NotBeNull();
+
+        return response;
+    }
+
+    private static List<KeyValuePair<string, IEnumerable<string>>> GetExtraHeaders(
+        AccountAccessConsentExternalReadParams readParams)
+    {
+        List<KeyValuePair<string, IEnumerable<string>>> extraHeaders =
+            readParams.ExtraHeaders?
+                .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Name, [x.Value]))
+                .ToList()
+            ?? [];
+        extraHeaders.Add(
+            new KeyValuePair<string, IEnumerable<string>>(
+                "x-obc-account-access-consent-id",
+                [$"{readParams.ConsentId}"]));
+        return extraHeaders;
+    }
+
+    public async Task<BalancesResponse> BalancesRead(AccountAccessConsentExternalReadParams readParams)
+    {
+        // Read object
+        var uriPath = "/aisp";
+        if (readParams.ExternalApiAccountId is not null)
+        {
+            uriPath += $"/accounts/{readParams.ExternalApiAccountId}";
+        }
+        uriPath += "/balances";
+        if (readParams.QueryString is not null)
+        {
+            uriPath += "?" + readParams.QueryString.TrimStart('?');
+        }
+
+        var response =
+            await client.GetAsync<BalancesResponse>(
+                uriPath,
+                GetExtraHeaders(readParams));
+
+        // Checks
+        response.Warnings.Should().BeNull();
+        response.ExternalApiResponse.Should().NotBeNull();
+
+        return response;
+    }
+
+    public async Task<DirectDebitsResponse> DirectDebitsRead(AccountAccessConsentExternalReadParams readParams)
+    {
+        // Read object
+        var uriPath = "/aisp";
+        if (readParams.ExternalApiAccountId is not null)
+        {
+            uriPath += $"/accounts/{readParams.ExternalApiAccountId}";
+        }
+        uriPath += "/direct-debits";
+        if (readParams.QueryString is not null)
+        {
+            uriPath += "?" + readParams.QueryString.TrimStart('?');
+        }
+
+        var response =
+            await client.GetAsync<DirectDebitsResponse>(
+                uriPath,
+                GetExtraHeaders(readParams));
+
+        // Checks
+        response.Warnings.Should().BeNull();
+        response.ExternalApiResponse.Should().NotBeNull();
+
+        return response;
+    }
+
+    public async Task<MonzoPotsResponse> MonzoPotsRead(AccountAccessConsentExternalReadParams readParams)
+    {
+        // Read object
+        var uriPath = "/aisp";
+        if (readParams.ExternalApiAccountId is not null)
+        {
+            throw new ArgumentException();
+        }
+        uriPath += "/monzo-pots";
+        if (readParams.QueryString is not null)
+        {
+            uriPath += "?" + readParams.QueryString.TrimStart('?');
+        }
+
+        var response =
+            await client.GetAsync<MonzoPotsResponse>(
+                uriPath,
+                GetExtraHeaders(readParams));
+
+        // Checks
+        response.Warnings.Should().BeNull();
+        response.ExternalApiResponse.Should().NotBeNull();
+
+        return response;
+    }
+
+    public async Task<PartiesResponse> PartiesRead(AccountAccessConsentExternalReadParams readParams)
+    {
+        // Read object
+        var uriPath = "/aisp";
+        if (readParams.ExternalApiAccountId is not null)
+        {
+            uriPath += $"/accounts/{readParams.ExternalApiAccountId}";
+        }
+        uriPath += "/party";
+        if (readParams.QueryString is not null)
+        {
+            uriPath += "?" + readParams.QueryString.TrimStart('?');
+        }
+
+        var response =
+            await client.GetAsync<PartiesResponse>(
+                uriPath,
+                GetExtraHeaders(readParams));
+
+        // Checks
+        response.Warnings.Should().BeNull();
+        response.ExternalApiResponse.Should().NotBeNull();
+
+        return response;
+    }
+
+    public async Task<Parties2Response> Parties2Read(AccountAccessConsentExternalReadParams readParams)
+    {
+        // Read object
+        var uriPath = "/aisp";
+        if (readParams.ExternalApiAccountId is not null)
+        {
+            uriPath += $"/accounts/{readParams.ExternalApiAccountId}";
+        }
+        else
+        {
+            throw new ArgumentException();
+        }
+        uriPath += "/parties";
+        if (readParams.QueryString is not null)
+        {
+            uriPath += "?" + readParams.QueryString.TrimStart('?');
+        }
+
+        var response =
+            await client.GetAsync<Parties2Response>(
+                uriPath,
+                GetExtraHeaders(readParams));
+
+        // Checks
+        response.Warnings.Should().BeNull();
+        response.ExternalApiResponse.Should().NotBeNull();
+
+        return response;
+    }
+
+    public async Task<StandingOrdersResponse> StandingOrdersRead(AccountAccessConsentExternalReadParams readParams)
+    {
+        // Read object
+        var uriPath = "/aisp";
+        if (readParams.ExternalApiAccountId is not null)
+        {
+            uriPath += $"/accounts/{readParams.ExternalApiAccountId}";
+        }
+        uriPath += "/standing-orders";
+        if (readParams.QueryString is not null)
+        {
+            uriPath += "?" + readParams.QueryString.TrimStart('?');
+        }
+
+        var response =
+            await client.GetAsync<StandingOrdersResponse>(
+                uriPath,
+                GetExtraHeaders(readParams));
+
+        // Checks
+        response.Warnings.Should().BeNull();
+        response.ExternalApiResponse.Should().NotBeNull();
+
+        return response;
+    }
+
+    public async Task<TransactionsResponse> TransactionsRead(AccountAccessConsentExternalReadParams readParams)
+    {
+        // Read object
+        var uriPath = "/aisp";
+        if (readParams.ExternalApiAccountId is not null)
+        {
+            uriPath += $"/accounts/{readParams.ExternalApiAccountId}";
+        }
+        uriPath += "/transactions";
+        if (readParams.QueryString is not null)
+        {
+            uriPath += "?" + readParams.QueryString.TrimStart('?');
+        }
+
+        var response =
+            await client.GetAsync<TransactionsResponse>(
+                uriPath,
+                GetExtraHeaders(readParams));
+
+        // Checks
+        response.Warnings.Should().BeNull();
+        response.ExternalApiResponse.Should().NotBeNull();
 
         return response;
     }

@@ -288,10 +288,11 @@ internal class
         }
 
         // Create response
-        var response = new MonzoPotsResponse(
-            externalApiResponse,
-            null,
-            new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId });
+        var response = new MonzoPotsResponse
+        {
+            ExternalApiResponse = externalApiResponse,
+            ExternalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId }
+        };
 
         return (response, nonErrorMessages);
     }

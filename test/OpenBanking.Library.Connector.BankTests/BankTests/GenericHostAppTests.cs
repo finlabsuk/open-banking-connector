@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -36,11 +35,7 @@ public class GenericHostAppTests : AppTests, IClassFixture<BankTestingFixture>
         // Connect output to logging
         SetTestLogging();
 
-        await TestAllInner(
-            testGroup,
-            bankProfile,
-            () => new ServiceScopeFromDependencyInjection(_serviceProvider),
-            true);
+        await TestAllInner(testGroup, bankProfile, true);
 
         UnsetTestLogging();
     }

@@ -7,7 +7,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.Payme
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
@@ -17,8 +16,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Web;
-using FluentAssertions;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.
     DomesticPaymentConsent;
@@ -36,14 +33,12 @@ public class DomesticPaymentConsentSubtest(
         BankProfile bankProfile,
         Guid bankRegistrationId,
         OAuth2ResponseMode defaultResponseMode,
-        Func<IServiceScopeContainer> serviceScopeGenerator,
         string testNameUnique,
         string modifiedBy,
         FilePathBuilder pispFluentRequestLogging,
         ConsentAuth? consentAuth,
         string authUrlLeftPart,
-        BankUser? bankUser,
-        IMemoryCache memoryCache)
+        BankUser? bankUser)
     {
         bool subtestSkipped = subtestEnum switch
         {
@@ -58,11 +53,7 @@ public class DomesticPaymentConsentSubtest(
             return;
         }
 
-        // Get request builder
-        using IServiceScopeContainer serviceScopeContainer = serviceScopeGenerator();
-        IRequestBuilder requestBuilder = serviceScopeContainer.RequestBuilder;
-
-        // Create DomesticPaymentConsent request
+        // Create DomesticPaymentConsent
         var initiationInstructionIdentification = Guid.NewGuid().ToString("N");
         var initiationEndToEndIdentification = Guid.NewGuid().ToString("N");
         var domesticPaymentTemplateRequest = new DomesticPaymentTemplateRequest
@@ -84,10 +75,21 @@ public class DomesticPaymentConsentSubtest(
             domesticPaymentTemplateRequest,
             initiationInstructionIdentification,
             initiationEndToEndIdentification);
+        DomesticPaymentConsentCreateResponse domesticPaymentConsentCreateResponse =
+            await paymentInitiationApiClient.DomesticPaymentConsentCreate(domesticPaymentConsentRequest);
+        Guid domesticPaymentConsentId = domesticPaymentConsentCreateResponse.Id;
 
-        DomesticPaymentConsentCreateResponse domesticPaymentConsentResp =
-            await DomesticPaymentConsentCreate(domesticPaymentConsentRequest);
-        Guid domesticPaymentConsentId = domesticPaymentConsentResp.Id;
+        // Read DomesticPaymentConsent
+        DomesticPaymentConsentCreateResponse domesticPaymentConsentReadResponse =
+            await paymentInitiationApiClient.DomesticPaymentConsentRead(
+                new ConsentReadParams
+                {
+                    Id = domesticPaymentConsentId,
+                    ModifiedBy = null,
+                    ExtraHeaders = null,
+                    PublicRequestUrlWithoutQuery = null,
+                    ExcludeExternalApiOperation = false
+                });
 
         // Consent authorisation
         if (consentAuth is not null)
@@ -108,9 +110,19 @@ public class DomesticPaymentConsentSubtest(
                     Reference = testNameUnique + "_DomesticPaymentConsent",
                     CreatedBy = modifiedBy
                 };
-                DomesticPaymentConsentAuthContextCreateResponse domesticPaymentConsentAuthContextCreateResponse =
-                    await DomesticPaymentConsentAuthContextCreate(authContextRequest);
-                return domesticPaymentConsentAuthContextCreateResponse;
+                DomesticPaymentConsentAuthContextCreateResponse authContextCreateResponse =
+                    await paymentInitiationApiClient.DomesticPaymentConsentAuthContextCreate(authContextRequest);
+
+                // Read AuthContext
+                DomesticPaymentConsentAuthContextReadResponse authContextReadResponse =
+                    await paymentInitiationApiClient.DomesticPaymentConsentAuthContextRead(
+                        new LocalReadParams
+                        {
+                            Id = authContextCreateResponse.Id,
+                            ModifiedBy = null
+                        });
+
+                return authContextCreateResponse;
             }
 
             var redirectObserver = new RedirectObserver
@@ -122,9 +134,18 @@ public class DomesticPaymentConsentSubtest(
             };
 
             // Determine auth URL
-            string authUrl = bankProfile.SupportsSca
-                ? (await DomesticPaymentConsentAuthContextCreateResponse()).AuthUrl
-                : $"{authUrlLeftPart}/dev1/pisp/domestic-payment-consents/{domesticPaymentConsentId}/auth";
+            string authUrl;
+            if (bankProfile.SupportsSca)
+            {
+                DomesticPaymentConsentAuthContextCreateResponse authContext =
+                    await DomesticPaymentConsentAuthContextCreateResponse();
+                authUrl = authContext.AuthUrl;
+                redirectObserver.AssociatedStates.Add(authContext.State);
+            }
+            else
+            {
+                authUrl = $"{authUrlLeftPart}/dev1/pisp/domestic-payment-consents/{domesticPaymentConsentId}/auth";
+            }
 
             // Perform auth
             AuthContextUpdateAuthResultResponse authResultResponse = await consentAuth.PerformAuth(
@@ -136,13 +157,18 @@ public class DomesticPaymentConsentSubtest(
                 bankProfile.BankProfileEnum,
                 ConsentVariety.DomesticPaymentConsent);
 
-            // Refresh scope to ensure user token acquired following consent is available
-            using IServiceScopeContainer scopedServiceScopeNew = serviceScopeGenerator();
-            IRequestBuilder requestBuilderNew = scopedServiceScopeNew.RequestBuilder;
+            // Read DomesticPaymentConsent FundsConfirmation
+            DomesticPaymentConsentFundsConfirmationResponse domesticPaymentConsentFundsConfirmationResponse =
+                await paymentInitiationApiClient.DomesticPaymentConsentReadFundsConfirmation(
+                    new ConsentBaseReadParams
+                    {
+                        ExtraHeaders = null,
+                        PublicRequestUrlWithoutQuery = null,
+                        Id = domesticPaymentConsentId,
+                        ModifiedBy = null
+                    });
 
-            // Read DomesticPaymentConsentFundsConfirmation
-            await DomesticPaymentConsentReadFundsConfirmation(domesticPaymentConsentId);
-
+            // Create DomesticPayment
             DomesticPaymentRequest domesticPaymentRequest = await GetDomesticPaymentRequest(
                 bankProfile,
                 modifiedBy,
@@ -152,25 +178,31 @@ public class DomesticPaymentConsentSubtest(
                 initiationEndToEndIdentification,
                 domesticPaymentConsentId);
             DomesticPaymentResponse domesticPaymentResp =
-                await requestBuilderNew.PaymentInitiation.DomesticPayments
-                    .CreateAsync(
-                        domesticPaymentRequest,
-                        new ConsentExternalCreateParams
-                        {
-                            ExtraHeaders = null,
-                            PublicRequestUrlWithoutQuery = null
-                        });
-
-            // Checks
-            domesticPaymentResp.Should().NotBeNull();
-            domesticPaymentResp.Warnings.Should().BeNull();
-            domesticPaymentResp.ExternalApiResponse.Should().NotBeNull();
+                await paymentInitiationApiClient.DomesticPaymentCreate(
+                    domesticPaymentRequest,
+                    new ConsentExternalCreateParams
+                    {
+                        ExtraHeaders = null,
+                        PublicRequestUrlWithoutQuery = null
+                    });
             string domesticPaymentExternalId = domesticPaymentResp.ExternalApiResponse.Data.DomesticPaymentId;
 
-            // GET domestic payment
-            DomesticPaymentResponse domesticPaymentResp2 =
-                await requestBuilderNew.PaymentInitiation.DomesticPayments
-                    .ReadAsync(
+            // Read DomesticPayment
+            DomesticPaymentResponse domesticPaymentReadResponse = await paymentInitiationApiClient.DomesticPaymentRead(
+                new ConsentExternalEntityReadParams
+                {
+                    ConsentId = domesticPaymentConsentId,
+                    ModifiedBy = null,
+                    ExtraHeaders = null,
+                    PublicRequestUrlWithoutQuery = null,
+                    ExternalApiId = domesticPaymentExternalId
+                });
+
+            // Read DomesticPayment PaymentDetails
+            if (bankProfile.PaymentInitiationApiSettings.UseDomesticPaymentGetPaymentDetailsEndpoint)
+            {
+                DomesticPaymentPaymentDetailsResponse domesticPaymentReadPaymentDetailsResponse =
+                    await paymentInitiationApiClient.DomesticPaymentReadPaymentDetails(
                         new ConsentExternalEntityReadParams
                         {
                             ConsentId = domesticPaymentConsentId,
@@ -179,35 +211,17 @@ public class DomesticPaymentConsentSubtest(
                             PublicRequestUrlWithoutQuery = null,
                             ExternalApiId = domesticPaymentExternalId
                         });
-
-            // Checks
-            domesticPaymentResp2.Should().NotBeNull();
-            domesticPaymentResp2.Warnings.Should().BeNull();
-            domesticPaymentResp2.ExternalApiResponse.Should().NotBeNull();
-
-            // GET domestic payment payment details
-            if (bankProfile.PaymentInitiationApiSettings.UseDomesticPaymentGetPaymentDetailsEndpoint)
-            {
-                DomesticPaymentPaymentDetailsResponse paymentDetailsResponse =
-                    await requestBuilderNew.PaymentInitiation.DomesticPayments
-                        .ReadPaymentDetailsAsync(
-                            new ConsentExternalEntityReadParams
-                            {
-                                ConsentId = domesticPaymentConsentId,
-                                ModifiedBy = null,
-                                ExtraHeaders = null,
-                                PublicRequestUrlWithoutQuery = null,
-                                ExternalApiId = domesticPaymentExternalId
-                            });
-
-                // Checks
-                paymentDetailsResponse.Should().NotBeNull();
-                paymentDetailsResponse.Warnings.Should().BeNull();
-                paymentDetailsResponse.ExternalApiResponse.Should().NotBeNull();
             }
         }
 
-        await DomesticPaymentConsentDelete(requestBuilder, domesticPaymentConsentId);
+        // Delete DomesticPaymentConsent
+        BaseResponse domesticPaymentConsentDeleteResponse =
+            await paymentInitiationApiClient.DomesticPaymentConsentDelete(
+                new LocalDeleteParams
+                {
+                    Id = domesticPaymentConsentId,
+                    ModifiedBy = null
+                });
     }
 
     private static async Task<DomesticPaymentRequest> GetDomesticPaymentRequest(
@@ -244,121 +258,6 @@ public class DomesticPaymentConsentSubtest(
         domesticPaymentRequest.ModifiedBy = modifiedBy;
 
         return domesticPaymentRequest;
-    }
-
-    private async Task<DomesticPaymentConsentFundsConfirmationResponse> DomesticPaymentConsentReadFundsConfirmation(
-        Guid domesticPaymentConsentId)
-    {
-        // GET consent funds confirmation
-        DomesticPaymentConsentFundsConfirmationResponse domesticPaymentConsentFundsConfirmationResponse =
-            await paymentInitiationApiClient.DomesticPaymentConsentReadFundsConfirmation(
-                new ConsentBaseReadParams
-                {
-                    ExtraHeaders = null,
-                    PublicRequestUrlWithoutQuery = null,
-                    Id = domesticPaymentConsentId,
-                    ModifiedBy = null
-                });
-
-        // Checks
-        domesticPaymentConsentFundsConfirmationResponse.ExternalApiResponse.Should().NotBeNull();
-        return domesticPaymentConsentFundsConfirmationResponse;
-    }
-
-    private async Task<DomesticPaymentConsentAuthContextCreateResponse> DomesticPaymentConsentAuthContextCreate(
-        DomesticPaymentConsentAuthContext authContextRequest)
-    {
-        DomesticPaymentConsentAuthContextCreateResponse authContextResponse =
-            await paymentInitiationApiClient.DomesticPaymentConsentAuthContextCreate(authContextRequest);
-
-        // Checks
-        authContextResponse.AuthUrl.Should().NotBeNull();
-
-        // GET auth context
-        await DomesticPaymentConsentAuthContextRead(authContextResponse.Id);
-
-        return authContextResponse;
-    }
-
-    private async Task<DomesticPaymentConsentAuthContextReadResponse> DomesticPaymentConsentAuthContextRead(
-        Guid authContextId)
-    {
-        DomesticPaymentConsentAuthContextReadResponse authContextResponse =
-            await paymentInitiationApiClient.DomesticPaymentConsentAuthContextRead(
-                new LocalReadParams
-                {
-                    Id = authContextId,
-                    ModifiedBy = null
-                });
-
-        return authContextResponse;
-    }
-
-    private async Task<BaseResponse> DomesticPaymentConsentDelete(
-        IRequestBuilder requestBuilder,
-        Guid domesticPaymentConsentId)
-    {
-        BaseResponse domesticPaymentConsentResponse =
-            await paymentInitiationApiClient.DomesticPaymentConsentDelete(
-                new LocalDeleteParams
-                {
-                    Id = domesticPaymentConsentId,
-                    ModifiedBy = null
-                });
-
-        return domesticPaymentConsentResponse;
-    }
-
-    private async Task<DomesticPaymentConsentCreateResponse> DomesticPaymentConsentCreate(
-        DomesticPaymentConsentRequest domesticPaymentConsentRequest)
-    {
-        // Create DomesticPaymentConsent
-        DomesticPaymentConsentCreateResponse domesticPaymentConsentResponse =
-            await paymentInitiationApiClient.DomesticPaymentConsentCreate(domesticPaymentConsentRequest);
-
-        // Checks
-        if (domesticPaymentConsentRequest.ExternalApiObject is not null)
-        {
-            domesticPaymentConsentResponse.ExternalApiResponse.Should().BeNull();
-        }
-        else
-        {
-            domesticPaymentConsentResponse.ExternalApiResponse.Should().NotBeNull();
-        }
-
-        // Read DomesticPaymentConsent
-        await DomesticPaymentConsentRead(domesticPaymentConsentResponse.Id, false);
-
-        return domesticPaymentConsentResponse;
-    }
-
-    private async Task<DomesticPaymentConsentCreateResponse> DomesticPaymentConsentRead(
-        Guid domesticPaymentConsentId,
-        bool excludeExternalApiOperation)
-    {
-        // GET domestic payment consent
-        DomesticPaymentConsentCreateResponse domesticPaymentConsentCreateResponse =
-            await paymentInitiationApiClient.DomesticPaymentConsentRead(
-                new ConsentReadParams
-                {
-                    Id = domesticPaymentConsentId,
-                    ModifiedBy = null,
-                    ExtraHeaders = null,
-                    PublicRequestUrlWithoutQuery = null,
-                    ExcludeExternalApiOperation = excludeExternalApiOperation
-                });
-
-        // Checks
-        if (excludeExternalApiOperation)
-        {
-            domesticPaymentConsentCreateResponse.ExternalApiResponse.Should().BeNull();
-        }
-        else
-        {
-            domesticPaymentConsentCreateResponse.ExternalApiResponse.Should().NotBeNull();
-        }
-
-        return domesticPaymentConsentCreateResponse;
     }
 
     private static async Task<DomesticPaymentConsentRequest> GetDomesticPaymentConsentRequest(

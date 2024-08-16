@@ -2,23 +2,15 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 
 /// <summary>
 ///     Response to Parties read requests
 /// </summary>
-public class Parties2Response
+public class Parties2Response : BaseResponse
 {
-    internal Parties2Response(
-        AccountAndTransactionModelsPublic.OBReadParty3 externalApiResponse,
-        IList<string>? warnings,
-        ExternalApiResponseInfo externalApiResponseInfo)
-    {
-        ExternalApiResponse = externalApiResponse;
-        Warnings = warnings;
-        ExternalApiResponseInfo = externalApiResponseInfo;
-    }
-
     /// <summary>
     ///     Response object OBReadParty3 from UK Open Banking Read-Write Account and Transaction API spec
     ///     <a
@@ -26,15 +18,10 @@ public class Parties2Response
     ///     v3.1.10 <a />. Open Banking Connector will automatically
     ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
     /// </summary>
-    public AccountAndTransactionModelsPublic.OBReadParty3 ExternalApiResponse { get; }
+    public required AccountAndTransactionModelsPublic.OBReadParty3 ExternalApiResponse { get; init; }
 
     /// <summary>
     ///     Additional info relating to response from external (bank) API.
     /// </summary>
-    public ExternalApiResponseInfo ExternalApiResponseInfo { get; }
-
-    /// <summary>
-    ///     Optional list of warning messages from Open Banking Connector.
-    /// </summary>
-    public IList<string>? Warnings { get; }
+    public required ExternalApiResponseInfo ExternalApiResponseInfo { get; init; }
 }

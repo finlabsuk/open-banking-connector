@@ -191,10 +191,11 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, A
         }
 
         // Create response
-        var response = new Parties2Response(
-            externalApiResponse,
-            null,
-            new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId });
+        var response = new Parties2Response
+        {
+            ExternalApiResponse = externalApiResponse,
+            ExternalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId }
+        };
 
         return (response, nonErrorMessages);
     }

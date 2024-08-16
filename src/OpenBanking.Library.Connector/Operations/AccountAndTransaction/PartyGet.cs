@@ -190,10 +190,11 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Acc
         }
 
         // Create response
-        var response = new PartiesResponse(
-            externalApiResponse,
-            null,
-            new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId });
+        var response = new PartiesResponse
+        {
+            ExternalApiResponse = externalApiResponse,
+            ExternalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId }
+        };
 
         return (response, nonErrorMessages);
     }

@@ -190,10 +190,11 @@ internal class AccountGet : IAccountAccessConsentExternalRead<AccountsResponse, 
         }
 
         // Create response
-        var response = new AccountsResponse(
-            externalApiResponse,
-            null,
-            new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId });
+        var response = new AccountsResponse
+        {
+            ExternalApiResponse = externalApiResponse,
+            ExternalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId }
+        };
 
         return (response, nonErrorMessages);
     }

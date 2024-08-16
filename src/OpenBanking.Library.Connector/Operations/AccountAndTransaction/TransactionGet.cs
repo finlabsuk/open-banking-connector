@@ -197,11 +197,11 @@ internal class
         }
 
         // Create response
-        var response = new TransactionsResponse(
-            externalApiResponse,
-            new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId },
-            null);
-
+        var response = new TransactionsResponse
+        {
+            ExternalApiResponse = externalApiResponse,
+            ExternalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId }
+        };
         return (response, nonErrorMessages);
     }
 }

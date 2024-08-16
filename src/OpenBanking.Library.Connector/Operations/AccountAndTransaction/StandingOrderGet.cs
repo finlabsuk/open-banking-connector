@@ -189,11 +189,11 @@ internal class StandingOrderGet : IAccountAccessConsentExternalRead<StandingOrde
         }
 
         // Create response
-        var response = new StandingOrdersResponse(
-            externalApiResponse,
-            null,
-            new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId });
-
+        var response = new StandingOrdersResponse
+        {
+            ExternalApiResponse = externalApiResponse,
+            ExternalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId }
+        };
         return (response, nonErrorMessages);
     }
 }

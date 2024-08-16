@@ -209,10 +209,11 @@ internal class
         }
 
         // Create response
-        var response = new DirectDebitsResponse(
-            externalApiResponse,
-            null,
-            new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId });
+        var response = new DirectDebitsResponse
+        {
+            ExternalApiResponse = externalApiResponse,
+            ExternalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId }
+        };
 
         return (response, nonErrorMessages);
     }

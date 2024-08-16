@@ -13,7 +13,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests
     DomesticVrpConsent;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
@@ -40,12 +39,13 @@ public abstract class AppTests
 {
     private readonly AccountAccessConsentSubtest _accountAccessConsentSubtest;
     private readonly AppContextFixture _appContextFixture;
+    protected readonly IServiceProvider _appServiceProvider;
     private readonly AuthContextsApiClient _authContextsApiClient;
     private readonly DomesticPaymentConsentSubtest _domesticPaymentConsentSubtest;
     private readonly DomesticVrpConsentSubtest _domesticVrpConsentSubtest;
     private readonly ManagementApiClient _managementApiClient;
     private readonly ITestOutputHelper _outputHelper;
-    protected readonly IServiceProvider _serviceProvider;
+    protected readonly IServiceProvider _testServiceProvider;
 
     protected AppTests(
         ITestOutputHelper outputHelper,
@@ -53,9 +53,10 @@ public abstract class AppTests
         BankTestingFixture bankTestingFixture)
     {
         _outputHelper = outputHelper ?? throw new ArgumentNullException(nameof(outputHelper));
-        _serviceProvider = appContextFixture.Host.Services;
+        _testServiceProvider = appContextFixture.Host.Services;
         _appContextFixture = appContextFixture;
         bankTestingFixture.OutputHelper = outputHelper;
+        _appServiceProvider = bankTestingFixture.Services;
         var webAppClient = new WebAppClient(bankTestingFixture);
         _managementApiClient = new ManagementApiClient(webAppClient);
         _authContextsApiClient = new AuthContextsApiClient(webAppClient);
@@ -188,11 +189,7 @@ public abstract class AppTests
         return data;
     }
 
-    protected async Task TestAllInner(
-        BankTestData1 testData1,
-        BankTestData2 testData2,
-        Func<IServiceScopeContainer> serviceScopeGenerator,
-        bool genericNotPlainAppTest)
+    protected async Task TestAllInner(BankTestData1 testData1, BankTestData2 testData2, bool genericNotPlainAppTest)
     {
         // Set test name
         var testName =
@@ -201,14 +198,14 @@ public abstract class AppTests
 
         // Get bank test settings
         BankTestSettings bankTestSettings =
-            _serviceProvider.GetRequiredService<ISettingsProvider<BankTestSettings>>().GetSettings();
+            _testServiceProvider.GetRequiredService<ISettingsProvider<BankTestSettings>>().GetSettings();
 
         // Get logger
-        var instrumentationClient = _serviceProvider.GetRequiredService<IInstrumentationClient>();
+        var instrumentationClient = _testServiceProvider.GetRequiredService<IInstrumentationClient>();
 
         // Get bank profile definitions
         var bankProfileDefinitions =
-            _serviceProvider.GetRequiredService<IBankProfileService>();
+            _testServiceProvider.GetRequiredService<IBankProfileService>();
         BankProfile bankProfile =
             bankProfileDefinitions.GetBankProfile(testData2.BankProfileEnum);
 
@@ -226,14 +223,14 @@ public abstract class AppTests
 
         // Get software statement profile
         var processedSoftwareStatementProfileStore =
-            _serviceProvider.GetRequiredService<IProcessedSoftwareStatementProfileStore>();
+            _testServiceProvider.GetRequiredService<IProcessedSoftwareStatementProfileStore>();
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
             await processedSoftwareStatementProfileStore.GetAsync(
                 testData1.SoftwareStatementProfileId,
                 testData1.SoftwareStatementAndCertificateProfileOverride);
 
-        // Get memory cache
-        var memoryCache = _serviceProvider.GetRequiredService<IMemoryCache>();
+        // Get application memory cache
+        var memoryCache = _appServiceProvider.GetRequiredService<IMemoryCache>();
 
         // Create test data writers
         string topLevelFolderName = genericNotPlainAppTest ? "genericAppTests" : "plainAppTests";
@@ -349,7 +346,6 @@ public abstract class AppTests
                     testData2,
                     bankRegistrationId,
                     defaultResponseMode,
-                    serviceScopeGenerator,
                     testNameUnique,
                     modifiedBy,
                     testDataProcessorFluentRequestLogging
@@ -358,6 +354,7 @@ public abstract class AppTests
                     consentAuth,
                     authUrlLeftPart,
                     bankUser,
+                    _appServiceProvider,
                     memoryCache);
             }
         }
@@ -375,7 +372,6 @@ public abstract class AppTests
                         bankProfile,
                         bankRegistrationId,
                         defaultResponseMode,
-                        serviceScopeGenerator,
                         testNameUnique,
                         modifiedBy,
                         testDataProcessorFluentRequestLogging
@@ -383,8 +379,7 @@ public abstract class AppTests
                             .AppendToPath($"{subTest.ToString()}"),
                         consentAuth,
                         authUrlLeftPart,
-                        bankUser,
-                        memoryCache);
+                        bankUser);
                 }
             }
 
@@ -399,7 +394,6 @@ public abstract class AppTests
                         bankProfile,
                         bankRegistrationId,
                         defaultResponseMode,
-                        serviceScopeGenerator,
                         testNameUnique,
                         modifiedBy,
                         testDataProcessorFluentRequestLogging

@@ -47,7 +47,10 @@ public class WebAppClient
         return response;
     }
 
-    public async Task<TResponse> CreateAsync<TResponse, TRequest>(string uriPath, TRequest request)
+    public async Task<TResponse> CreateAsync<TResponse, TRequest>(
+        string uriPath,
+        TRequest request,
+        HttpStatusCode expectedResponseStatusCode = HttpStatusCode.Created)
     {
         // Serialise content
         string requestContentString = JsonConvert.SerializeObject(
@@ -61,7 +64,7 @@ public class WebAppClient
             requestContent);
 
         // Check status code
-        httpResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        httpResponse.StatusCode.Should().Be(expectedResponseStatusCode);
 
         // De-serialise content
         string responseContentString = await httpResponse.Content.ReadAsStringAsync();

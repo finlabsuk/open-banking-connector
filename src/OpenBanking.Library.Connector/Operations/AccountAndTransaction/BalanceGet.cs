@@ -190,10 +190,11 @@ internal class BalanceGet : IAccountAccessConsentExternalRead<BalancesResponse, 
         }
 
         // Create response
-        var response = new BalancesResponse(
-            externalApiResponse,
-            null,
-            new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId });
+        var response = new BalancesResponse
+        {
+            ExternalApiResponse = externalApiResponse,
+            ExternalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId }
+        };
 
         return (response, nonErrorMessages);
     }

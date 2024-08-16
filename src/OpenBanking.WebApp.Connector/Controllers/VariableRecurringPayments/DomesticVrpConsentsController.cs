@@ -162,7 +162,7 @@ public class DomesticVrpConsentsController : ControllerBase
                     Request = request
                 });
 
-        return Ok(fluentResponse);
+        return Created((string?) null, fluentResponse);
     }
 
     /// <summary>
