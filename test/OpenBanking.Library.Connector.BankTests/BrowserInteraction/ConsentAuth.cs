@@ -10,6 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using Microsoft.Playwright;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
@@ -40,6 +41,49 @@ public class ConsentAuth
         };
     }
 
+    public async Task<AuthContextUpdateAuthResultResponse> PerformAuth(
+        RedirectObserver redirectObserver,
+        string authUrl,
+        bool useScaAuth,
+        OAuth2ResponseMode defaultResponseMode,
+        BankUser? bankUser,
+        BankProfileEnum bankProfileEnum,
+        ConsentVariety consentVariety)
+    {
+        // Subscribe to "catch" redirects
+        using IDisposable sub = RedirectObservable.Instance.Subscribe(redirectObserver);
+
+        // Use email or automated auth
+        Task<AuthContextUpdateAuthResultResponse> waitForRedirect;
+        if (useScaAuth)
+        {
+            // Perform email auth
+            waitForRedirect = redirectObserver.WaitForRedirect(TimeSpan.FromSeconds(60));
+            SendEmail(
+                "Open Banking Connector Test",
+                "This is the auth URL: " + authUrl);
+        }
+        else
+        {
+            if (bankUser is null)
+            {
+                throw new ArgumentException("No user specified for consent auth.");
+            }
+
+            // Perform automated auth
+            waitForRedirect = redirectObserver.WaitForRedirect(TimeSpan.FromSeconds(30));
+            await AutomatedAuthAsync(
+                authUrl,
+                bankProfileEnum,
+                consentVariety,
+                bankUser,
+                defaultResponseMode);
+        }
+
+        // Await redirect
+        return await waitForRedirect;
+    }
+
     private IBankUiMethods GetBankGroupUiMethods(BankProfileEnum bankProfileEnum)
     {
         return BankProfileService.GetBankGroupEnum(bankProfileEnum) switch
@@ -55,26 +99,14 @@ public class ConsentAuth
         };
     }
 
-    public Task EmailAuthAsync(
+    private async Task AutomatedAuthAsync(
         string authUrl,
-        Func<Task<bool>> authIsCompleteFcn)
-    {
-        SendEmail(
-            "Open Banking Connector Test",
-            "This is the auth URL: " + authUrl);
-        EnsureTokenAvailable(authIsCompleteFcn, 90000);
-        return Task.CompletedTask;
-    }
-
-    public async Task AutomatedAuthAsync(
-        string authUrl,
-        BankProfile bankProfile,
+        BankProfileEnum bankProfileEnum,
         ConsentVariety consentVariety,
         BankUser bankUser,
-        OAuth2ResponseMode defaultResponseMode,
-        Func<Task<bool>> authIsCompleteFcn)
+        OAuth2ResponseMode defaultResponseMode)
     {
-        IBankUiMethods bankUiMethods = GetBankGroupUiMethods(bankProfile.BankProfileEnum);
+        IBankUiMethods bankUiMethods = GetBankGroupUiMethods(bankProfileEnum);
         using IPlaywright playwright = await Playwright.CreateAsync();
         await using IBrowser browser = await playwright.Chromium.LaunchAsync(_launchOptions);
         IPage page = await browser.NewPageAsync();
@@ -94,11 +126,11 @@ public class ConsentAuth
                     Timeout = redirectTimeout
                 });
 
-            // Wait for delegate API call (allows 5s)
+            // Wait for delegate API call
             IJSHandle pageStatusJsHandle = await page.WaitForFunctionAsync(
                 "window.pageStatus",
                 null,
-                new PageWaitForFunctionOptions { Timeout = 12000 });
+                new PageWaitForFunctionOptions { Timeout = 0 });
 
             var pageStatus = await pageStatusJsHandle.JsonValueAsync<string>();
             if (pageStatus is not "POST of fragment succeeded")
@@ -110,29 +142,9 @@ public class ConsentAuth
         {
             // Wait for network activity to complete
             await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        }
 
-        EnsureTokenAvailable(authIsCompleteFcn, 10000);
-    }
-
-    private static void EnsureTokenAvailable(Func<Task<bool>> authIsCompleteFcn, int maxWaitTimeForConsentMs)
-    {
-        // Ensure token available
-        Task checkAuthCompleteTask = Task.Run(
-            async () =>
-            {
-                var authIsComplete = false;
-                while (!authIsComplete)
-                {
-                    Thread.Sleep(1000); // sleep 1s between retries
-                    authIsComplete = await authIsCompleteFcn();
-                }
-            });
-
-        if (!checkAuthCompleteTask.Wait(TimeSpan.FromMilliseconds(maxWaitTimeForConsentMs)))
-        {
-            throw new TimeoutException(
-                $"Consent auth not completed successfully within {maxWaitTimeForConsentMs / 1000} seconds.");
+            // Seems necessary to give additional delay as sometimes this point is hit before query redirect has been processed
+            await Task.Delay(TimeSpan.FromSeconds(1));
         }
     }
 
@@ -140,11 +152,9 @@ public class ConsentAuth
     {
         using var mailMessage = new MailMessage(
             new MailAddress(_emailOptions.FromEmailAddress, _emailOptions.FromEmailName),
-            new MailAddress(_emailOptions.ToEmailAddress, _emailOptions.ToEmailName))
-        {
-            Subject = subject,
-            Body = body
-        };
+            new MailAddress(_emailOptions.ToEmailAddress, _emailOptions.ToEmailName));
+        mailMessage.Subject = subject;
+        mailMessage.Body = body;
         _smtpClient.Send(mailMessage);
     }
 }

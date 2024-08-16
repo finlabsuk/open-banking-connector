@@ -43,18 +43,26 @@ public class TestingAccountAccessConsentsController : ControllerBase
         string? reference)
     {
         // Create auth context
-        var authContextRequest = new AccountAccessConsentAuthContext
+        AccountAccessConsentAuthContextCreateResponse authContextResponse;
+        if (TestingMethods.Instance.CreateAccountAccessConsentAuthContext is not null)
         {
-            AccountAccessConsentId = accountAccessConsentId,
-            Reference = reference,
-            CreatedBy = modifiedBy
-        };
-        AccountAccessConsentAuthContextCreateResponse authContextResponse =
-            await _requestBuilder
+            authContextResponse =
+                await TestingMethods.Instance.CreateAccountAccessConsentAuthContext(accountAccessConsentId);
+        }
+        else
+        {
+            var authContextRequest = new AccountAccessConsentAuthContext
+            {
+                AccountAccessConsentId = accountAccessConsentId,
+                Reference = reference,
+                CreatedBy = modifiedBy
+            };
+            authContextResponse = await _requestBuilder
                 .AccountAndTransaction
                 .AccountAccessConsents
                 .AuthContexts
                 .CreateLocalAsync(authContextRequest);
+        }
 
         // Set cookie
         Response.Cookies.Append(

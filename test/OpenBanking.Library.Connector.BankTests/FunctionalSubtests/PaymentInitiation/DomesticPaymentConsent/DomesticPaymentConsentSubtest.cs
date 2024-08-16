@@ -10,18 +10,22 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Web;
 using FluentAssertions;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.
     DomesticPaymentConsent;
 
-public class DomesticPaymentConsentSubtest(PaymentInitiationApiClient paymentInitiationApiClient)
+public class DomesticPaymentConsentSubtest(
+    PaymentInitiationApiClient paymentInitiationApiClient,
+    AuthContextsApiClient authContextsApiClient)
 {
     public static ISet<DomesticPaymentSubtestEnum> DomesticPaymentFunctionalSubtestsSupported(
         BankProfile bankProfile) =>
@@ -88,16 +92,14 @@ public class DomesticPaymentConsentSubtest(PaymentInitiationApiClient paymentIni
         // Consent authorisation
         if (consentAuth is not null)
         {
-            // Method that checks for auth completion
-            async Task<bool> AuthIsComplete()
+            // Create redirect observer which will "catch" redirect
+            async Task<AuthContextUpdateAuthResultResponse> ProcessRedirectFcn(TestingAuthResult result)
             {
-                DomesticPaymentConsentCreateResponse consentResponse =
-                    await DomesticPaymentConsentRead(domesticPaymentConsentId, true);
-                return consentResponse.Created < consentResponse.AuthContextModified;
+                return await authContextsApiClient.RedirectDelegate(result.RedirectParameters);
             }
 
-            // Perform auth
-            if (bankProfile.SupportsSca)
+            async Task<DomesticPaymentConsentAuthContextCreateResponse>
+                DomesticPaymentConsentAuthContextCreateResponse()
             {
                 // Create AuthContext
                 var authContextRequest = new DomesticPaymentConsentAuthContext
@@ -106,32 +108,33 @@ public class DomesticPaymentConsentSubtest(PaymentInitiationApiClient paymentIni
                     Reference = testNameUnique + "_DomesticPaymentConsent",
                     CreatedBy = modifiedBy
                 };
-                DomesticPaymentConsentAuthContextCreateResponse authContextResponse =
+                DomesticPaymentConsentAuthContextCreateResponse domesticPaymentConsentAuthContextCreateResponse =
                     await DomesticPaymentConsentAuthContextCreate(authContextRequest);
-
-                // Perform email auth
-                await consentAuth.EmailAuthAsync(
-                    authContextResponse.AuthUrl,
-                    AuthIsComplete);
+                return domesticPaymentConsentAuthContextCreateResponse;
             }
-            else
+
+            var redirectObserver = new RedirectObserver
             {
-                if (bankUser is null)
-                {
-                    throw new ArgumentException("No user specified for consent auth.");
-                }
+                ConsentId = domesticPaymentConsentId,
+                ConsentType = ConsentType.DomesticPaymentConsent,
+                ProcessRedirectFcn = ProcessRedirectFcn,
+                DomesticPaymentConsentAuthContextCreateFcn = DomesticPaymentConsentAuthContextCreateResponse
+            };
 
-                // Perform automated auth
-                var authUrl =
-                    $"{authUrlLeftPart}/dev1/pisp/domestic-payment-consents/{domesticPaymentConsentId}/auth";
-                await consentAuth.AutomatedAuthAsync(
-                    authUrl,
-                    bankProfile,
-                    ConsentVariety.DomesticPaymentConsent,
-                    bankUser,
-                    defaultResponseMode,
-                    AuthIsComplete);
-            }
+            // Determine auth URL
+            string authUrl = bankProfile.SupportsSca
+                ? (await DomesticPaymentConsentAuthContextCreateResponse()).AuthUrl
+                : $"{authUrlLeftPart}/dev1/pisp/domestic-payment-consents/{domesticPaymentConsentId}/auth";
+
+            // Perform auth
+            AuthContextUpdateAuthResultResponse authResultResponse = await consentAuth.PerformAuth(
+                redirectObserver,
+                authUrl,
+                bankProfile.SupportsSca,
+                defaultResponseMode,
+                bankUser,
+                bankProfile.BankProfileEnum,
+                ConsentVariety.DomesticPaymentConsent);
 
             // Refresh scope to ensure user token acquired following consent is available
             using IServiceScopeContainer scopedServiceScopeNew = serviceScopeGenerator();

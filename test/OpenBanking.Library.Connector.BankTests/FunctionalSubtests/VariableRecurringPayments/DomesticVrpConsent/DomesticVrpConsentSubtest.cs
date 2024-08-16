@@ -10,17 +10,21 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Web;
 using FluentAssertions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.
     DomesticVrpConsent;
 
-public class DomesticVrpConsentSubtest(VariableRecurringPaymentsApiClient variableRecurringPaymentsApiClient)
+public class DomesticVrpConsentSubtest(
+    VariableRecurringPaymentsApiClient variableRecurringPaymentsApiClient,
+    AuthContextsApiClient authContextsApiClient)
 {
     public static ISet<DomesticVrpSubtestEnum> DomesticVrpFunctionalSubtestsSupported(BankProfile bankProfile) =>
         DomesticVrpSubtestHelper.AllDomesticVrpSubtests;
@@ -35,6 +39,7 @@ public class DomesticVrpConsentSubtest(VariableRecurringPaymentsApiClient variab
         string modifiedBy,
         FilePathBuilder vrpFluentRequestLogging,
         ConsentAuth? consentAuth,
+        string authUrlLeftPart,
         BankUser? bankUser)
     {
         bool subtestSkipped = subtestEnum switch
@@ -116,74 +121,52 @@ public class DomesticVrpConsentSubtest(VariableRecurringPaymentsApiClient variab
         domesticVrpConsentResp2.Warnings.Should().BeNull();
         domesticVrpConsentResp2.ExternalApiResponse.Should().NotBeNull();
 
-        // POST auth context
-        var authContextRequest = new DomesticVrpConsentAuthContext
-        {
-            DomesticVrpConsentId = domesticVrpConsentId,
-            Reference = testNameUnique,
-            CreatedBy = modifiedBy
-        };
-        DomesticVrpConsentAuthContextCreateResponse authContextResponse =
-            await requestBuilder.VariableRecurringPayments
-                .DomesticVrpConsents
-                .AuthContexts
-                .CreateLocalAsync(authContextRequest);
-
-        // Checks
-        authContextResponse.Should().NotBeNull();
-        authContextResponse.Warnings.Should().BeNull();
-        authContextResponse.AuthUrl.Should().NotBeNull();
-        Guid authContextId = authContextResponse.Id;
-        string authUrl = authContextResponse.AuthUrl;
-
-        // GET auth context
-        DomesticVrpConsentAuthContextReadResponse authContextResponse2 =
-            await requestBuilder.VariableRecurringPayments.DomesticVrpConsents
-                .AuthContexts
-                .ReadLocalAsync(
-                    new LocalReadParams
-                    {
-                        Id = authContextId,
-                        ModifiedBy = null
-                    });
-        // Checks
-        authContextResponse2.Should().NotBeNull();
-        authContextResponse2.Warnings.Should().BeNull();
-
         // Consent authorisation
         if (consentAuth is not null)
         {
-            async Task<bool> AuthIsComplete()
+            // Create redirect observer which will "catch" redirect
+            async Task<AuthContextUpdateAuthResultResponse> ProcessRedirectFcn(TestingAuthResult result)
             {
-                DomesticVrpConsentCreateResponse consentResponse =
-                    await requestBuilder
-                        .VariableRecurringPayments
-                        .DomesticVrpConsents
-                        .ReadAsync(
-                            new ConsentReadParams
-                            {
-                                Id = domesticVrpConsentId,
-                                ModifiedBy = null,
-                                ExtraHeaders = null,
-                                PublicRequestUrlWithoutQuery = null,
-                                ExcludeExternalApiOperation = true
-                            });
-                return consentResponse.Created < consentResponse.AuthContextModified;
+                return await authContextsApiClient.RedirectDelegate(result.RedirectParameters);
             }
 
-            if (bankUser is null)
+            async Task<DomesticVrpConsentAuthContextCreateResponse>
+                DomesticVrpConsentAuthContextCreateResponse()
             {
-                throw new ArgumentException("No user specified for consent auth.");
+                // Create AuthContext
+                var authContextRequest = new DomesticVrpConsentAuthContext
+                {
+                    DomesticVrpConsentId = domesticVrpConsentId,
+                    Reference = testNameUnique + "_DomesticVrpConsent",
+                    CreatedBy = modifiedBy
+                };
+                DomesticVrpConsentAuthContextCreateResponse domesticVrpConsentAuthContextCreateResponse =
+                    await DomesticVrpConsentAuthContextCreate(authContextRequest);
+                return domesticVrpConsentAuthContextCreateResponse;
             }
 
-            // Authorise consent in UI via Playwright
-            await consentAuth.AutomatedAuthAsync(
+            var redirectObserver = new RedirectObserver
+            {
+                ConsentId = domesticVrpConsentId,
+                ConsentType = ConsentType.DomesticVrpConsent,
+                ProcessRedirectFcn = ProcessRedirectFcn,
+                DomesticVrpConsentAuthContextCreateFcn = DomesticVrpConsentAuthContextCreateResponse
+            };
+
+            // Determine auth URL
+            string authUrl = bankProfile.SupportsSca
+                ? (await DomesticVrpConsentAuthContextCreateResponse()).AuthUrl
+                : $"{authUrlLeftPart}/dev1/vrp/domestic-vrp-consents/{domesticVrpConsentId}/auth";
+
+            // Perform auth
+            AuthContextUpdateAuthResultResponse authResultResponse = await consentAuth.PerformAuth(
+                redirectObserver,
                 authUrl,
-                bankProfile,
-                ConsentVariety.DomesticVrpConsent,
-                bankUser,
+                bankProfile.SupportsSca,
                 defaultResponseMode,
-                AuthIsComplete);
+                bankUser,
+                bankProfile.BankProfileEnum,
+                ConsentVariety.DomesticVrpConsent);
 
             // Refresh scope to ensure user token acquired following consent is available
             using IServiceScopeContainer scopedServiceScopeNew = serviceScopeGenerator();
@@ -317,5 +300,34 @@ public class DomesticVrpConsentSubtest(VariableRecurringPaymentsApiClient variab
             domesticVrpConsentResp3.Should().NotBeNull();
             domesticVrpConsentResp3.Warnings.Should().BeNull();
         }
+    }
+
+    private async Task<DomesticVrpConsentAuthContextCreateResponse> DomesticVrpConsentAuthContextCreate(
+        DomesticVrpConsentAuthContext authContextRequest)
+    {
+        DomesticVrpConsentAuthContextCreateResponse authContextResponse =
+            await variableRecurringPaymentsApiClient.DomesticVrpConsentAuthContextCreate(authContextRequest);
+
+        // Checks
+        authContextResponse.AuthUrl.Should().NotBeNull();
+
+        // GET auth context
+        await DomesticVrpConsentAuthContextRead(authContextResponse.Id);
+
+        return authContextResponse;
+    }
+
+    private async Task<DomesticVrpConsentAuthContextReadResponse> DomesticVrpConsentAuthContextRead(
+        Guid authContextId)
+    {
+        DomesticVrpConsentAuthContextReadResponse authContextResponse =
+            await variableRecurringPaymentsApiClient.DomesticVrpConsentAuthContextRead(
+                new LocalReadParams
+                {
+                    Id = authContextId,
+                    ModifiedBy = null
+                });
+
+        return authContextResponse;
     }
 }

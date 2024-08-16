@@ -72,6 +72,28 @@ public class WebAppClient
         return response;
     }
 
+    public async Task<TResponse> CreateFromFormAsync<TResponse>(
+        string uriPath,
+        IEnumerable<KeyValuePair<string, string?>> formCollection)
+    {
+        // Send request
+        using var requestContent = new FormUrlEncodedContent(formCollection);
+        using HttpResponseMessage httpResponse = await _client.PostAsync(
+            uriPath,
+            requestContent);
+
+        // Check status code
+        httpResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+
+        // De-serialise content
+        string responseContentString = await httpResponse.Content.ReadAsStringAsync();
+        TResponse response = JsonConvert.DeserializeObject<TResponse>(
+            responseContentString,
+            ApiClient.GetDefaultJsonSerializerSettings) ?? throw new Exception("De-serialisation failure.");
+
+        return response;
+    }
+
     public async Task<TResponse> DeleteAsync<TResponse>(
         string uriPath,
         IEnumerable<KeyValuePair<string, IEnumerable<string>>> extraHeaders)

@@ -40,6 +40,7 @@ public abstract class AppTests
 {
     private readonly AccountAccessConsentSubtest _accountAccessConsentSubtest;
     private readonly AppContextFixture _appContextFixture;
+    private readonly AuthContextsApiClient _authContextsApiClient;
     private readonly DomesticPaymentConsentSubtest _domesticPaymentConsentSubtest;
     private readonly DomesticVrpConsentSubtest _domesticVrpConsentSubtest;
     private readonly ManagementApiClient _managementApiClient;
@@ -57,12 +58,13 @@ public abstract class AppTests
         bankTestingFixture.OutputHelper = outputHelper;
         var webAppClient = new WebAppClient(bankTestingFixture);
         _managementApiClient = new ManagementApiClient(webAppClient);
+        _authContextsApiClient = new AuthContextsApiClient(webAppClient);
         _accountAccessConsentSubtest =
-            new AccountAccessConsentSubtest(new AccountAndTransactionApiClient(webAppClient));
+            new AccountAccessConsentSubtest(new AccountAndTransactionApiClient(webAppClient), _authContextsApiClient);
         _domesticPaymentConsentSubtest =
-            new DomesticPaymentConsentSubtest(new PaymentInitiationApiClient(webAppClient));
+            new DomesticPaymentConsentSubtest(new PaymentInitiationApiClient(webAppClient), _authContextsApiClient);
         _domesticVrpConsentSubtest =
-            new DomesticVrpConsentSubtest(new VariableRecurringPaymentsApiClient(webAppClient));
+            new DomesticVrpConsentSubtest(new VariableRecurringPaymentsApiClient(webAppClient), _authContextsApiClient);
     }
 
     public static TheoryData<BankTestData1, BankTestData2>
@@ -396,6 +398,7 @@ public abstract class AppTests
                             .AppendToPath("vrp")
                             .AppendToPath($"{subTest.ToString()}"),
                         consentAuth,
+                        authUrlLeftPart,
                         bankUser);
                 }
             }

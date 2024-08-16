@@ -7,10 +7,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers.AuthContext;
+namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AuthContext;
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "auth-contexts")]

@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
@@ -16,6 +17,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using FinnovationLabs.OpenBanking.Library.Connector.Web;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -27,7 +29,9 @@ using OBAccount6 = FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.AccountAndTransaction.
     AccountAccessConsent;
 
-public class AccountAccessConsentSubtest(AccountAndTransactionApiClient accountAndTransactionApiClient)
+public class AccountAccessConsentSubtest(
+    AccountAndTransactionApiClient accountAndTransactionApiClient,
+    AuthContextsApiClient authContextsApiClient)
 {
     public static ISet<AccountAccessConsentSubtestEnum> AccountAccessConsentSubtestsSupported(
         BankProfile bankProfile) =>
@@ -107,16 +111,14 @@ public class AccountAccessConsentSubtest(AccountAndTransactionApiClient accountA
             if (consentAuth is not null &&
                 testData2.AuthDisable is not true)
             {
-                // Method that checks for auth completion
-                async Task<bool> AuthIsComplete()
+                // Create redirect observer which will "catch" redirect
+                async Task<AuthContextUpdateAuthResultResponse> ProcessRedirectFcn(TestingAuthResult result)
                 {
-                    AccountAccessConsentCreateResponse consentResponse =
-                        await AccountAccessConsentRead(accountAccessConsentId, true);
-                    return consentResponse.Created < consentResponse.AuthContextModified;
+                    return await authContextsApiClient.RedirectDelegate(result.RedirectParameters);
                 }
 
-                // Perform auth
-                if (bankProfile.SupportsSca)
+                async Task<AccountAccessConsentAuthContextCreateResponse>
+                    AccountAccessConsentAuthContextCreateResponse()
                 {
                     // Create AuthContext
                     var authContextRequest = new AccountAccessConsentAuthContext
@@ -125,32 +127,34 @@ public class AccountAccessConsentSubtest(AccountAndTransactionApiClient accountA
                         Reference = testNameUnique + "_AccountAccessConsent",
                         CreatedBy = modifiedBy
                     };
-                    AccountAccessConsentAuthContextCreateResponse authContextResponse =
+                    AccountAccessConsentAuthContextCreateResponse accountAccessConsentAuthContextCreateResponse =
                         await AccountAccessConsentAuthContextCreate(authContextRequest);
 
-                    // Perform email auth
-                    await consentAuth.EmailAuthAsync(
-                        authContextResponse.AuthUrl,
-                        AuthIsComplete);
+                    return accountAccessConsentAuthContextCreateResponse;
                 }
-                else
-                {
-                    if (bankUser is null)
-                    {
-                        throw new ArgumentException("No user specified for consent auth.");
-                    }
 
-                    // Perform automated auth
-                    var authUrl =
-                        $"{authUrlLeftPart}/dev1/aisp/account-access-consents/{accountAccessConsentId}/auth";
-                    await consentAuth.AutomatedAuthAsync(
-                        authUrl,
-                        bankProfile,
-                        ConsentVariety.AccountAccessConsent,
-                        bankUser,
-                        defaultResponseMode,
-                        AuthIsComplete);
-                }
+                var redirectObserver = new RedirectObserver
+                {
+                    ConsentId = accountAccessConsentId,
+                    ConsentType = ConsentType.AccountAccessConsent,
+                    ProcessRedirectFcn = ProcessRedirectFcn,
+                    AccountAccessConsentAuthContextCreateFcn = AccountAccessConsentAuthContextCreateResponse
+                };
+
+                // Determine auth URL
+                string authUrl = bankProfile.SupportsSca
+                    ? (await AccountAccessConsentAuthContextCreateResponse()).AuthUrl
+                    : $"{authUrlLeftPart}/dev1/aisp/account-access-consents/{accountAccessConsentId}/auth";
+
+                // Peform auth
+                AuthContextUpdateAuthResultResponse authResultResponse = await consentAuth.PerformAuth(
+                    redirectObserver,
+                    authUrl,
+                    bankProfile.SupportsSca,
+                    defaultResponseMode,
+                    bankUser,
+                    bankProfile.BankProfileEnum,
+                    ConsentVariety.AccountAccessConsent);
 
                 bool refreshTokenMayBeAbsent = bankProfile.CustomBehaviour
                     ?.AccountAccessConsentAuthCodeGrantPost
@@ -439,6 +443,7 @@ public class AccountAccessConsentSubtest(AccountAndTransactionApiClient accountA
                 usingReAuth);
         }
     }
+
 
     private async Task<AccountAccessConsentAuthContextCreateResponse> AccountAccessConsentAuthContextCreate(
         AccountAccessConsentAuthContext authContextRequest)

@@ -29,9 +29,9 @@ public class TestingRedirectsController : ControllerBase
     /// <summary>
     ///     OAuth2 query redirect endpoint
     /// </summary>
-    /// <param name="idToken"></param>
-    /// <param name="code"></param>
     /// <param name="state"></param>
+    /// <param name="code"></param>
+    /// <param name="idToken"></param>
     /// <param name="error"></param>
     /// <returns></returns>
     [HttpGet("query-redirect")]
@@ -45,22 +45,43 @@ public class TestingRedirectsController : ControllerBase
         [FromQuery(Name = "error")]
         string? error)
     {
-        // Operation
-        var authResult =
-            new AuthResult
-            {
-                ResponseMode = OAuth2ResponseMode.Query,
-                State = state,
-                OAuth2RedirectOptionalParameters = new OAuth2RedirectOptionalParameters
+        if (TestingMethods.Instance.ProcessRedirect is null)
+        {
+            var authResult =
+                new AuthResult
                 {
-                    Error = error,
-                    IdToken = idToken,
-                    Code = code
-                }
-            };
-        _ = await _requestBuilder
-            .AuthContexts
-            .UpdateAuthResultAsync(authResult, "Redirect to /auth/query-redirect");
+                    ResponseMode = OAuth2ResponseMode.Query,
+                    State = state,
+                    OAuth2RedirectOptionalParameters = new OAuth2RedirectOptionalParameters
+                    {
+                        Error = error,
+                        IdToken = idToken,
+                        Code = code
+                    }
+                };
+            _ = await _requestBuilder
+                .AuthContexts
+                .UpdateAuthResultAsync(authResult, "Redirect to /auth/query-redirect");
+        }
+        else
+        {
+            // Create form collection from query parameters
+            List<KeyValuePair<string, string?>> formCollection = Request.Query
+                .SelectMany(
+                    pair => pair.Value,
+                    (pair, value) => new KeyValuePair<string, string?>(pair.Key, value))
+                .ToList();
+
+            // Add response_mode
+            formCollection.Add(new KeyValuePair<string, string?>("response_mode", "query"));
+            var authResult =
+                new TestingAuthResult
+                {
+                    State = state,
+                    RedirectParameters = formCollection
+                };
+            await TestingMethods.Instance.ProcessRedirect(authResult);
+        }
 
         return Ok(); // We do not return data to bank following query redirect
     }
@@ -68,12 +89,11 @@ public class TestingRedirectsController : ControllerBase
     /// <summary>
     ///     Delegate endpoint for forwarding data captured elsewhere from OAuth2 redirect
     /// </summary>
-    /// <param name="idToken"></param>
-    /// <param name="code"></param>
     /// <param name="state"></param>
+    /// <param name="code"></param>
+    /// <param name="idToken"></param>
     /// <param name="error"></param>
     /// <param name="responseMode"></param>
-    /// <param name="modifiedBy"></param>
     /// <param name="redirectUrl"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
@@ -91,8 +111,6 @@ public class TestingRedirectsController : ControllerBase
         string? error,
         [FromForm(Name = "response_mode")]
         string? responseMode,
-        [FromForm(Name = "modified_by")]
-        string? modifiedBy,
         [FromForm(Name = "redirect_uri")]
         string? redirectUrl)
     {
@@ -100,37 +118,63 @@ public class TestingRedirectsController : ControllerBase
         string cookieKey = TestingAccountAccessConsentsController.BrowserCookieKey;
         Request.Cookies.TryGetValue(cookieKey, out string? appSessionId);
 
-        // Parse response_mode (ASP.NET model binding will only do simple conversion)
-        OAuth2ResponseMode? oAuth2ResponseMode = responseMode switch
+        AuthContextUpdateAuthResultResponse fluentResponse;
+        if (TestingMethods.Instance.ProcessRedirect is null)
         {
-            null => null,
-            "query" => OAuth2ResponseMode.Query,
-            "fragment" => OAuth2ResponseMode.Fragment,
-            "form_post" => OAuth2ResponseMode.FormPost,
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(responseMode),
-                responseMode,
-                "Unknown value for response_mode.")
-        };
-
-        // Operation
-        var authResult =
-            new AuthResult
+            // Parse response_mode (ASP.NET model binding will only do simple conversion)
+            OAuth2ResponseMode? oAuth2ResponseMode = responseMode switch
             {
-                ResponseMode = oAuth2ResponseMode,
-                RedirectUrl = redirectUrl,
-                AppSessionId = appSessionId,
-                State = state,
-                OAuth2RedirectOptionalParameters = new OAuth2RedirectOptionalParameters
-                {
-                    Error = error,
-                    IdToken = idToken,
-                    Code = code
-                }
+                null => null,
+                "query" => OAuth2ResponseMode.Query,
+                "fragment" => OAuth2ResponseMode.Fragment,
+                "form_post" => OAuth2ResponseMode.FormPost,
+                _ => throw new ArgumentOutOfRangeException(
+                    nameof(responseMode),
+                    responseMode,
+                    "Unknown value for response_mode.")
             };
-        AuthContextUpdateAuthResultResponse fluentResponse = await _requestBuilder
-            .AuthContexts
-            .UpdateAuthResultAsync(authResult, modifiedBy);
+
+            // Operation
+            var authResult =
+                new AuthResult
+                {
+                    ResponseMode = oAuth2ResponseMode,
+                    RedirectUrl = redirectUrl,
+                    AppSessionId = appSessionId,
+                    State = state,
+                    OAuth2RedirectOptionalParameters = new OAuth2RedirectOptionalParameters
+                    {
+                        Error = error,
+                        IdToken = idToken,
+                        Code = code
+                    }
+                };
+            fluentResponse = await _requestBuilder
+                .AuthContexts
+                .UpdateAuthResultAsync(authResult);
+        }
+        else
+        {
+            // Create form collection
+            List<KeyValuePair<string, string?>> formCollection = Request.Form
+                .SelectMany(
+                    pair => pair.Value,
+                    (pair, value) => new KeyValuePair<string, string?>(pair.Key, value)).ToList();
+
+            // Add app session ID to form collection
+            if (appSessionId is not null)
+            {
+                formCollection.Add(new KeyValuePair<string, string?>("app_session_id", appSessionId));
+            }
+
+            var authResult =
+                new TestingAuthResult
+                {
+                    State = state,
+                    RedirectParameters = formCollection
+                };
+            fluentResponse = await TestingMethods.Instance.ProcessRedirect(authResult);
+        }
 
         return Created("about:blank", fluentResponse);
     }
