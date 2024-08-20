@@ -28,7 +28,8 @@ internal class DomesticVrpConsentCommon
     public async
         Task<(DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
             DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
-            SoftwareStatementEntity softwareStatement)> GetDomesticVrpConsent(Guid consentId, bool dbTracking)
+            SoftwareStatementEntity softwareStatementEntity, ExternalApiSecretEntity? externalApiSecret)>
+        GetDomesticVrpConsent(Guid consentId, bool dbTracking)
     {
         IQueryable<DomesticVrpConsent> db = dbTracking
             ? _entityMethods.DbSet
@@ -38,6 +39,7 @@ internal class DomesticVrpConsentCommon
         DomesticVrpConsentPersisted persistedConsent =
             await db
                 .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
+                .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
                 .Include(o => o.DomesticVrpConsentAccessTokensNavigation)
                 .Include(o => o.DomesticVrpConsentRefreshTokensNavigation)
                 .AsSplitQuery() // Load collections in separate SQL queries
@@ -54,8 +56,11 @@ internal class DomesticVrpConsentCommon
         BankRegistrationEntity bankRegistration = persistedConsent.BankRegistrationNavigation;
         SoftwareStatementEntity softwareStatementEntity =
             persistedConsent.BankRegistrationNavigation.SoftwareStatementNavigation!;
+        ExternalApiSecretEntity? externalApiSecret =
+            bankRegistration.ExternalApiSecretsNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
 
         return (persistedConsent, bankRegistration, storedAccessToken, storedRefreshToken,
-            softwareStatementEntity);
+            softwareStatementEntity, externalApiSecret);
     }
 }

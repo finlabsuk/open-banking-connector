@@ -31,10 +31,8 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistrationEntity>
             .HasColumnOrder(1);
         builder.Property(e => e.ExternalApiId)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property(e => e.ExternalApiSecret)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property(e => e.RegistrationAccessToken)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.ExternalApiSecret);
+        builder.Property(e => e.RegistrationAccessToken);
         builder.Property(e => e.DefaultResponseModeOverride)
             .HasConversion(new EnumToStringConverter<OAuth2ResponseMode>())
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);

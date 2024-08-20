@@ -27,9 +27,9 @@ internal class DomesticPaymentConsentCommon
 
     public async
         Task<(DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
-            DomesticPaymentConsentAccessToken? storedAccessToken,
-            DomesticPaymentConsentRefreshToken? storedRefreshToken,
-            SoftwareStatementEntity softwareStatement)> GetDomesticPaymentConsent(
+            DomesticPaymentConsentAccessToken? storedAccessToken, DomesticPaymentConsentRefreshToken? storedRefreshToken
+            , SoftwareStatementEntity softwareStatementEntity, ExternalApiSecretEntity? externalApiSecret)>
+        GetDomesticPaymentConsent(
             Guid consentId,
             bool dbTracking)
     {
@@ -41,6 +41,7 @@ internal class DomesticPaymentConsentCommon
         DomesticPaymentConsentPersisted persistedConsent =
             await db
                 .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
+                .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
                 .Include(o => o.DomesticPaymentConsentAccessTokensNavigation)
                 .Include(o => o.DomesticPaymentConsentRefreshTokensNavigation)
                 .AsSplitQuery() // Load collections in separate SQL queries
@@ -57,8 +58,11 @@ internal class DomesticPaymentConsentCommon
         BankRegistrationEntity bankRegistration = persistedConsent.BankRegistrationNavigation;
         SoftwareStatementEntity softwareStatementEntity =
             persistedConsent.BankRegistrationNavigation.SoftwareStatementNavigation!;
+        ExternalApiSecretEntity? externalApiSecret =
+            bankRegistration.ExternalApiSecretsNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
 
         return (persistedConsent, bankRegistration, storedAccessToken, storedRefreshToken,
-            softwareStatementEntity);
+            softwareStatementEntity, externalApiSecret);
     }
 }

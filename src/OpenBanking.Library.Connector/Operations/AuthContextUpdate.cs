@@ -92,6 +92,10 @@ internal class AuthContextUpdate :
                 .Include(
                     o => ((AccountAccessConsentAuthContext) o)
                         .AccountAccessConsentNavigation
+                        .BankRegistrationNavigation.ExternalApiSecretsNavigation)
+                .Include(
+                    o => ((AccountAccessConsentAuthContext) o)
+                        .AccountAccessConsentNavigation
                         .AccountAccessConsentAccessTokensNavigation)
                 .Include(
                     o => ((AccountAccessConsentAuthContext) o)
@@ -104,6 +108,10 @@ internal class AuthContextUpdate :
                 .Include(
                     o => ((DomesticPaymentConsentAuthContext) o)
                         .DomesticPaymentConsentNavigation
+                        .BankRegistrationNavigation.ExternalApiSecretsNavigation)
+                .Include(
+                    o => ((DomesticPaymentConsentAuthContext) o)
+                        .DomesticPaymentConsentNavigation
                         .DomesticPaymentConsentAccessTokensNavigation)
                 .Include(
                     o => ((DomesticPaymentConsentAuthContext) o)
@@ -113,6 +121,10 @@ internal class AuthContextUpdate :
                     o => ((DomesticVrpConsentAuthContext) o)
                         .DomesticVrpConsentNavigation
                         .BankRegistrationNavigation.SoftwareStatementNavigation)
+                .Include(
+                    o => ((DomesticVrpConsentAuthContext) o)
+                        .DomesticVrpConsentNavigation
+                        .BankRegistrationNavigation.ExternalApiSecretsNavigation)
                 .Include(
                     o => ((DomesticVrpConsentAuthContext) o)
                         .DomesticVrpConsentNavigation
@@ -198,15 +210,18 @@ internal class AuthContextUpdate :
         BankRegistrationEntity bankRegistration = consent.BankRegistrationNavigation;
         string tokenEndpoint = bankRegistration.TokenEndpoint;
         string externalApiClientId = bankRegistration.ExternalApiId;
-        string? externalApiSecret = bankRegistration.ExternalApiSecret;
         string jwksUri = bankRegistration.JwksUri;
         string consentAssociatedData = consent.GetAssociatedData(bankRegistration);
         SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
+        ExternalApiSecretEntity? externalApiSecretEntity =
+            bankRegistration.ExternalApiSecretsNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
+            bankRegistration.TokenEndpointAuthMethod;
+        string bankRegistrationAssociatedData = bankRegistration.GetAssociatedData();
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
-            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         OAuth2ResponseMode defaultResponseMode =
             bankRegistration.DefaultResponseModeOverride ?? bankProfile.DefaultResponseMode;
         bool supportsSca = bankProfile.SupportsSca;
@@ -322,6 +337,23 @@ internal class AuthContextUpdate :
         // Wrap remaining processing in try block to ensure DB changes persisted
         try
         {
+            // Get client secret if required
+            string? clientSecret = null;
+            if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.ClientSecretBasic
+                or TokenEndpointAuthMethodSupportedValues.ClientSecretPost)
+            {
+                if (externalApiSecretEntity is null)
+                {
+                    throw new InvalidOperationException("No client secret is available.");
+                }
+
+                // Extract client secret
+                clientSecret = externalApiSecretEntity
+                    .GetClientSecret(
+                        bankRegistrationAssociatedData,
+                        _encryptionKeyInfo.GetEncryptionKey(externalApiSecretEntity.KeyId));
+            }
+
             // Obtain token for consent
             JsonSerializerSettings? jsonSerializerSettings = null;
             (AuthCodeGrantPostCustomBehaviour? consentAuthCodeGrantPostCustomBehaviour, bool expectRefreshToken,
@@ -348,7 +380,7 @@ internal class AuthContextUpdate :
                     redirectUrl,
                     bankTokenIssuerClaim,
                     externalApiClientId,
-                    externalApiSecret,
+                    clientSecret,
                     externalApiConsentId,
                     consent.ExternalApiUserId,
                     nonce,

@@ -11,7 +11,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
@@ -42,6 +41,7 @@ internal class
         DomesticVrpConsentFundsConfirmationResponse>
 {
     private readonly IBankProfileService _bankProfileService;
+    private readonly ClientAccessTokenGet _clientAccessTokenGet;
     private readonly ConsentAccessTokenGet _consentAccessTokenGet;
 
     private readonly ConsentCommon<DomesticVrpConsentPersisted,
@@ -53,7 +53,6 @@ internal class
     private readonly IDbReadWriteEntityMethods<DomesticVrpConsentPersisted> _consentEntityMethods;
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly DomesticVrpConsentCommon _domesticVrpConsentCommon;
-    private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
@@ -66,19 +65,19 @@ internal class
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
-        IGrantPost grantPost,
         IBankProfileService bankProfileService,
         ConsentAccessTokenGet consentAccessTokenGet,
         IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
         ObWacCertificateMethods obWacCertificateMethods,
-        ObSealCertificateMethods obSealCertificateMethods)
+        ObSealCertificateMethods obSealCertificateMethods,
+        ClientAccessTokenGet clientAccessTokenGet)
     {
         _consentEntityMethods = entityMethods;
-        _grantPost = grantPost;
         _bankProfileService = bankProfileService;
         _consentAccessTokenGet = consentAccessTokenGet;
         _obWacCertificateMethods = obWacCertificateMethods;
         _obSealCertificateMethods = obSealCertificateMethods;
+        _clientAccessTokenGet = clientAccessTokenGet;
         _domesticVrpConsentCommon = new DomesticVrpConsentCommon(
             entityMethods,
             instrumentationClient);
@@ -116,7 +115,7 @@ internal class
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
-                SoftwareStatementEntity softwareStatement) =
+                SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(createParams.ConsentId, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
 
@@ -136,8 +135,6 @@ internal class
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         VariableRecurringPaymentsApi variableRecurringPaymentsApi =
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
-        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
-            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         bool supportsSca = bankProfile.SupportsSca;
         string bankFinancialId = bankProfile.FinancialId;
         string issuerUrl = bankProfile.IssuerUrl;
@@ -170,7 +167,7 @@ internal class
                 bankRegistration,
                 storedAccessToken,
                 storedRefreshToken,
-                tokenEndpointAuthMethod,
+                externalApiSecret,
                 bankRegistration.TokenEndpoint,
                 bankProfile.UseOpenIdConnect,
                 apiClient,
@@ -252,15 +249,13 @@ internal class
         {
             // Load BankRegistration and related
             (BankRegistrationEntity bankRegistration, string tokenEndpoint,
-                    SoftwareStatementEntity softwareStatement) =
+                    SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             VariableRecurringPaymentsApi variableRecurringPaymentsApi =
                 bankProfile.GetRequiredVariableRecurringPaymentsApi();
-            TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
-                bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
             string bankFinancialId = bankProfile.FinancialId;
             ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
                 bankProfile.CustomBehaviour?.ClientCredentialsGrantPost;
@@ -278,15 +273,11 @@ internal class
 
             // Get client credentials grant access token
             string ccGrantAccessToken =
-                await _grantPost.PostClientCredentialsGrantAsync(
+                await _clientAccessTokenGet.GetAccessToken(
                     ClientCredentialsGrantScope,
                     obSealKey,
-                    tokenEndpointAuthMethod,
-                    tokenEndpoint,
-                    bankRegistration.ExternalApiId,
-                    bankRegistration.ExternalApiSecret,
-                    bankRegistration.Id.ToString(),
-                    null,
+                    bankRegistration,
+                    externalApiSecret,
                     clientCredentialsGrantPostCustomBehaviour,
                     apiClient,
                     bankProfile.BankProfileEnum);
@@ -453,7 +444,7 @@ internal class
 
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration, _, _,
-                SoftwareStatementEntity softwareStatement) =
+                SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id, false);
         string externalApiConsentId = persistedConsent.ExternalApiId;
 
@@ -467,8 +458,6 @@ internal class
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             VariableRecurringPaymentsApi variableRecurringPaymentsApi =
                 bankProfile.GetRequiredVariableRecurringPaymentsApi();
-            TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
-                bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
             string bankFinancialId = bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
@@ -483,15 +472,11 @@ internal class
 
             // Get client credentials grant access token
             string ccGrantAccessToken =
-                await _grantPost.PostClientCredentialsGrantAsync(
+                await _clientAccessTokenGet.GetAccessToken(
                     ClientCredentialsGrantScope,
                     obSealKey,
-                    tokenEndpointAuthMethod,
-                    bankRegistration.TokenEndpoint,
-                    bankRegistration.ExternalApiId,
-                    bankRegistration.ExternalApiSecret,
-                    bankRegistration.Id.ToString(),
-                    null,
+                    bankRegistration,
+                    externalApiSecret,
                     customBehaviour?.ClientCredentialsGrantPost,
                     apiClient,
                     bankProfile.BankProfileEnum);

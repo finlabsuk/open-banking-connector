@@ -46,12 +46,17 @@ internal class PaymentInitiationContext : IPaymentInitiationContext
             _sharedContext.Instrumentation,
             _sharedContext.MemoryCache,
             _sharedContext.TimeProvider);
+        var clientAccessTokenGet = new ClientAccessTokenGet(
+            sharedContext.TimeProvider,
+            grantPost,
+            sharedContext.Instrumentation,
+            sharedContext.MemoryCache,
+            sharedContext.EncryptionKeyInfo);
         _domesticPayments = new DomesticPaymentOperations(
             _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentPersisted>(),
             _sharedContext.Instrumentation,
             _sharedContext.ApiVariantMapper,
             _sharedContext.TimeProvider,
-            grantPost,
             new ConsentAccessTokenGet(
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
@@ -61,7 +66,8 @@ internal class PaymentInitiationContext : IPaymentInitiationContext
                 _sharedContext.EncryptionKeyInfo),
             _sharedContext.BankProfileService,
             _sharedContext.ObWacCertificateMethods,
-            _sharedContext.ObSealCertificateMethods);
+            _sharedContext.ObSealCertificateMethods,
+            clientAccessTokenGet);
     }
 
     public IDomesticPaymentConsentsContext DomesticPaymentConsents =>

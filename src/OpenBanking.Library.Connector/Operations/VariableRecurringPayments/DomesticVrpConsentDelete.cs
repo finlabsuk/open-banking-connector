@@ -8,7 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
@@ -24,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, ConsentDeleteParams>
 {
     private readonly IBankProfileService _bankProfileService;
-    private readonly IGrantPost _grantPost;
+    private readonly ClientAccessTokenGet _clientAccessTokenGet;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
 
@@ -34,17 +33,17 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IBankProfileService bankProfileService,
-        IGrantPost grantPost,
         ObWacCertificateMethods obWacCertificateMethods,
-        ObSealCertificateMethods obSealCertificateMethods) : base(
+        ObSealCertificateMethods obSealCertificateMethods,
+        ClientAccessTokenGet clientAccessTokenGet) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
         instrumentationClient)
     {
-        _grantPost = grantPost;
         _obWacCertificateMethods = obWacCertificateMethods;
         _obSealCertificateMethods = obSealCertificateMethods;
+        _clientAccessTokenGet = clientAccessTokenGet;
         _bankProfileService = bankProfileService;
     }
 
@@ -65,6 +64,7 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
             await _entityMethods
                 .DbSet
                 .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
+                .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
                 .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
             throw new KeyNotFoundException($"No record found for Domestic VRP Consent with ID {deleteParams.Id}.");
 
@@ -73,14 +73,15 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
             BankRegistrationEntity bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankApiId = persistedObject.ExternalApiId;
             SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
+            ExternalApiSecretEntity? externalApiSecret =
+                bankRegistration.ExternalApiSecretsNavigation
+                    .SingleOrDefault(x => !x.IsDeleted);
 
             // Get bank profile
             BankProfile bankProfile =
                 _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             VariableRecurringPaymentsApi variableRecurringPaymentsApi =
                 bankProfile.GetRequiredVariableRecurringPaymentsApi();
-            TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
-                bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
             string bankFinancialId = bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
@@ -99,15 +100,11 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
 
             // Get client credentials grant token
             string ccGrantAccessToken =
-                await _grantPost.PostClientCredentialsGrantAsync(
+                await _clientAccessTokenGet.GetAccessToken(
                     "payments",
                     obSealKey,
-                    tokenEndpointAuthMethod,
-                    persistedObject.BankRegistrationNavigation.TokenEndpoint,
-                    persistedObject.BankRegistrationNavigation.ExternalApiId,
-                    persistedObject.BankRegistrationNavigation.ExternalApiSecret,
-                    persistedObject.BankRegistrationNavigation.Id.ToString(),
-                    null,
+                    persistedObject.BankRegistrationNavigation,
+                    externalApiSecret,
                     customBehaviour?.ClientCredentialsGrantPost,
                     apiClient,
                     bankProfile.BankProfileEnum);

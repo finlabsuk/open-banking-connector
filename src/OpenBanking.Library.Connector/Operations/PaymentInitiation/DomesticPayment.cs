@@ -11,7 +11,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
@@ -43,9 +42,9 @@ internal class DomesticPayment :
         ConsentExternalCreateParams, ConsentExternalEntityReadParams>
 {
     private readonly IBankProfileService _bankProfileService;
+    private readonly ClientAccessTokenGet _clientAccessTokenGet;
     private readonly ConsentAccessTokenGet _consentAccessTokenGet;
     private readonly DomesticPaymentConsentCommon _domesticPaymentConsentCommon;
-    private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
@@ -57,20 +56,20 @@ internal class DomesticPayment :
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         ITimeProvider timeProvider,
-        IGrantPost grantPost,
         ConsentAccessTokenGet consentAccessTokenGet,
         IBankProfileService bankProfileService,
         ObWacCertificateMethods obWacCertificateMethods,
-        ObSealCertificateMethods obSealCertificateMethods)
+        ObSealCertificateMethods obSealCertificateMethods,
+        ClientAccessTokenGet clientAccessTokenGet)
     {
         _instrumentationClient = instrumentationClient;
         _mapper = mapper;
         _timeProvider = timeProvider;
-        _grantPost = grantPost;
         _consentAccessTokenGet = consentAccessTokenGet;
         _bankProfileService = bankProfileService;
         _obWacCertificateMethods = obWacCertificateMethods;
         _obSealCertificateMethods = obSealCertificateMethods;
+        _clientAccessTokenGet = clientAccessTokenGet;
         _domesticPaymentConsentCommon = new DomesticPaymentConsentCommon(
             entityMethods,
             instrumentationClient);
@@ -88,15 +87,13 @@ internal class DomesticPayment :
 
         // Load DomesticPaymentConsent and related
         (_, BankRegistrationEntity bankRegistration, _, _,
-                SoftwareStatementEntity softwareStatement) =
+                SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.ConsentId, false);
         string externalApiId = readParams.ExternalApiId;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
-        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
-            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         string bankFinancialId = bankProfile.FinancialId;
         DomesticPaymentGetCustomBehaviour? domesticPaymentGetCustomBehaviour =
             bankProfile.CustomBehaviour?.DomesticPaymentGetPaymentDetails;
@@ -121,15 +118,11 @@ internal class DomesticPayment :
         // Get client credentials grant access token
         string scope = domesticPaymentGetCustomBehaviour?.Scope ?? "payments";
         string ccGrantAccessToken =
-            await _grantPost.PostClientCredentialsGrantAsync(
+            await _clientAccessTokenGet.GetAccessToken(
                 scope,
                 obSealKey,
-                tokenEndpointAuthMethod,
-                bankRegistration.TokenEndpoint,
-                bankRegistration.ExternalApiId,
-                bankRegistration.ExternalApiSecret,
-                bankRegistration.Id.ToString(),
-                null,
+                bankRegistration,
+                externalApiSecret,
                 clientCredentialsGrantPostCustomBehaviour,
                 apiClient,
                 bankProfile.BankProfileEnum);
@@ -229,7 +222,7 @@ internal class DomesticPayment :
         (DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 DomesticPaymentConsentAccessToken? storedAccessToken,
                 DomesticPaymentConsentRefreshToken? storedRefreshToken,
-                SoftwareStatementEntity softwareStatement) =
+                SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(request.DomesticPaymentConsentId, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
 
@@ -248,8 +241,6 @@ internal class DomesticPayment :
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
-        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
-            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
         string bankFinancialId = bankProfile.FinancialId;
@@ -282,7 +273,7 @@ internal class DomesticPayment :
                 bankRegistration,
                 storedAccessToken,
                 storedRefreshToken,
-                tokenEndpointAuthMethod,
+                externalApiSecret,
                 bankRegistration.TokenEndpoint,
                 bankProfile.UseOpenIdConnect,
                 apiClient,
@@ -398,15 +389,13 @@ internal class DomesticPayment :
 
         // Load DomesticPaymentConsent and related
         (_, BankRegistrationEntity bankRegistration, _, _,
-                SoftwareStatementEntity softwareStatement) =
+                SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.ConsentId, false);
         string externalApiId = readParams.ExternalApiId;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
-        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
-            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         string bankFinancialId = bankProfile.FinancialId;
         DomesticPaymentGetCustomBehaviour? domesticPaymentGetCustomBehaviour =
             bankProfile.CustomBehaviour?.DomesticPaymentGet;
@@ -425,15 +414,11 @@ internal class DomesticPayment :
         // Get client credentials grant access token
         string scope = domesticPaymentGetCustomBehaviour?.Scope ?? "payments";
         string ccGrantAccessToken =
-            await _grantPost.PostClientCredentialsGrantAsync(
+            await _clientAccessTokenGet.GetAccessToken(
                 scope,
                 obSealKey,
-                tokenEndpointAuthMethod,
-                bankRegistration.TokenEndpoint,
-                bankRegistration.ExternalApiId,
-                bankRegistration.ExternalApiSecret,
-                bankRegistration.Id.ToString(),
-                null,
+                bankRegistration,
+                externalApiSecret,
                 clientCredentialsGrantPostCustomBehaviour,
                 apiClient,
                 bankProfile.BankProfileEnum);

@@ -79,14 +79,26 @@ internal class BankRegistrationEntity :
     }
 
     /// <summary>
+    ///     Associated client secrets.
+    /// </summary>
+    public IList<ExternalApiSecretEntity> ExternalApiSecretsNavigation { get; } =
+        new List<ExternalApiSecretEntity>();
+
+    /// <summary>
+    ///     Associated registration access tokens.
+    /// </summary>
+    public IList<RegistrationAccessTokenEntity> RegistrationAccessTokensNavigation { get; } =
+        new List<RegistrationAccessTokenEntity>();
+
+    /// <summary>
     ///     External API secret. Present to allow use of legacy token auth method "client_secret_basic" in sandboxes etc.
     /// </summary>
-    public string? ExternalApiSecret { get; }
+    public string? ExternalApiSecret { get; set; }
 
     /// <summary>
     ///     External API registration access token. Sometimes used to support registration adjustments etc.
     /// </summary>
-    public string? RegistrationAccessToken { get; }
+    public string? RegistrationAccessToken { get; set; }
 
     /// <summary>
     ///     Bank group
@@ -170,4 +182,58 @@ internal class BankRegistrationEntity :
     ///     Functional APIs used for bank registration.
     /// </summary>
     public RegistrationScopeEnum RegistrationScope { get; }
+
+    public string GetCacheKey(string? requestScope) => string.Join(":", "token", "client", Id, requestScope ?? "");
+
+    public string GetAssociatedData() => string.Join(
+        ":",
+        Id.ToString(),
+        ExternalApiId,
+        BankProfile.ToString());
+
+    public ExternalApiSecretEntity AddNewClientSecret(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy)
+    {
+        var externalApiSecret =
+            new ExternalApiSecretEntity(
+                id,
+                reference,
+                isDeleted,
+                isDeletedModified,
+                isDeletedModifiedBy,
+                created,
+                createdBy,
+                Id);
+        ExternalApiSecretsNavigation.Add(externalApiSecret);
+        return externalApiSecret;
+    }
+
+    public RegistrationAccessTokenEntity AddNewRegistrationAccessToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy)
+    {
+        var registrationAccessToken =
+            new RegistrationAccessTokenEntity(
+                id,
+                reference,
+                isDeleted,
+                isDeletedModified,
+                isDeletedModifiedBy,
+                created,
+                createdBy,
+                Id);
+        RegistrationAccessTokensNavigation.Add(registrationAccessToken);
+        return registrationAccessToken;
+    }
 }

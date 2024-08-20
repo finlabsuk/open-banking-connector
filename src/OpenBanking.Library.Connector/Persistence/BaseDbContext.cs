@@ -93,6 +93,12 @@ public abstract class BaseDbContext : DbContext
     internal DbSet<DomesticVrpConsentRefreshToken> DomesticVrpConsentRefreshToken =>
         Set<DomesticVrpConsentRefreshToken>();
 
+    internal DbSet<ExternalApiSecretEntity> ExternalApiSecret =>
+        Set<ExternalApiSecretEntity>();
+
+    internal DbSet<RegistrationAccessTokenEntity> RegistrationAccessToken =>
+        Set<RegistrationAccessTokenEntity>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Bank configuration
@@ -114,7 +120,6 @@ public abstract class BaseDbContext : DbContext
         modelBuilder.ApplyConfiguration(new DomesticVrpConsentConfig(DbProvider, true, JsonFormatting));
 
         // Encrypted objects
-        // var y = new EncryptedObjectConfig<EncryptedObject>(DbProvider, true, JsonFormatting);
         modelBuilder.ApplyConfiguration(new EncryptedObjectConfig<EncryptedObject>(DbProvider, true, JsonFormatting));
         modelBuilder.ApplyConfiguration(new AccountAccessConsentAccessTokenConfig(DbProvider, false, JsonFormatting));
         modelBuilder.ApplyConfiguration(new AccountAccessConsentRefreshTokenConfig(DbProvider, false, JsonFormatting));
@@ -123,6 +128,8 @@ public abstract class BaseDbContext : DbContext
             new DomesticPaymentConsentRefreshTokenConfig(DbProvider, false, JsonFormatting));
         modelBuilder.ApplyConfiguration(new DomesticVrpConsentAccessTokenConfig(DbProvider, false, JsonFormatting));
         modelBuilder.ApplyConfiguration(new DomesticVrpConsentRefreshTokenConfig(DbProvider, false, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new ExternalApiSecretConfig(DbProvider, false, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new RegistrationAccessTokenConfig(DbProvider, false, JsonFormatting));
 
         base.OnModelCreating(modelBuilder);
     }

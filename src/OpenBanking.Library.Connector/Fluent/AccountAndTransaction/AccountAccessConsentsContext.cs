@@ -46,21 +46,27 @@ internal class AccountAccessConsentsConsentContext :
     public AccountAccessConsentsConsentContext(ISharedContext sharedContext)
     {
         _sharedContext = sharedContext;
+        var clientAccessTokenGet = new ClientAccessTokenGet(
+            sharedContext.TimeProvider,
+            new GrantPost(
+                _sharedContext.ApiClient,
+                _sharedContext.Instrumentation,
+                _sharedContext.MemoryCache,
+                _sharedContext.TimeProvider),
+            sharedContext.Instrumentation,
+            sharedContext.MemoryCache,
+            sharedContext.EncryptionKeyInfo);
         var accountAccessConsentOperations = new AccountAccessConsentOperations(
             sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
             sharedContext.TimeProvider,
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
-            new GrantPost(
-                _sharedContext.ApiClient,
-                _sharedContext.Instrumentation,
-                _sharedContext.MemoryCache,
-                _sharedContext.TimeProvider),
             sharedContext.BankProfileService,
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
             _sharedContext.ObWacCertificateMethods,
-            _sharedContext.ObSealCertificateMethods);
+            _sharedContext.ObSealCertificateMethods,
+            clientAccessTokenGet);
         CreateObject = accountAccessConsentOperations;
         ReadObject = accountAccessConsentOperations;
         DeleteObject =
@@ -69,14 +75,10 @@ internal class AccountAccessConsentsConsentContext :
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
                 sharedContext.Instrumentation,
-                new GrantPost(
-                    _sharedContext.ApiClient,
-                    _sharedContext.Instrumentation,
-                    _sharedContext.MemoryCache,
-                    _sharedContext.TimeProvider),
                 _sharedContext.BankProfileService,
                 sharedContext.ObSealCertificateMethods,
-                sharedContext.ObWacCertificateMethods);
+                sharedContext.ObWacCertificateMethods,
+                clientAccessTokenGet);
     }
 
     public ILocalEntityContext<AccountAccessConsentAuthContextRequest,

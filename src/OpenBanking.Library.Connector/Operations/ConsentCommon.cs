@@ -31,20 +31,25 @@ internal class
     }
 
     public async
-        Task<(BankRegistrationEntity bankRegistration, string tokenEndpoint,
-            SoftwareStatementEntity softwareStatement)> GetBankRegistration(Guid bankRegistrationId)
+        Task<(BankRegistrationEntity bankRegistration, string tokenEndpoint, SoftwareStatementEntity softwareStatement,
+            ExternalApiSecretEntity? externalApiSecret)> GetBankRegistration(
+            Guid bankRegistrationId)
     {
         // Load BankRegistration
         BankRegistrationEntity bankRegistration =
             await _bankRegistrationMethods
                 .DbSetNoTracking
                 .Include(o => o.SoftwareStatementNavigation)
+                .Include(o => o.ExternalApiSecretsNavigation)
                 .SingleOrDefaultAsync(x => x.Id == bankRegistrationId) ??
             throw new KeyNotFoundException(
                 $"No record found for BankRegistrationId {bankRegistrationId} specified by request.");
         string tokenEndpoint = bankRegistration.TokenEndpoint;
-        SoftwareStatementEntity softwareStatementEntity = bankRegistration.SoftwareStatementNavigation!;
+        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
+        ExternalApiSecretEntity? externalApiSecret =
+            bankRegistration.ExternalApiSecretsNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
 
-        return (bankRegistration, tokenEndpoint, softwareStatementEntity);
+        return (bankRegistration, tokenEndpoint, softwareStatement, externalApiSecret);
     }
 }

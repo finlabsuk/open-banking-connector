@@ -9,7 +9,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
@@ -64,14 +63,12 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, A
         (AccountAccessConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 AccountAccessConsentAccessToken? storedAccessToken,
                 AccountAccessConsentRefreshToken? storedRefreshToken,
-                SoftwareStatementEntity softwareStatement) =
+                SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.ConsentId, true);
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
-        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
-            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
@@ -101,7 +98,7 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, A
                 bankRegistration,
                 storedAccessToken,
                 storedRefreshToken,
-                tokenEndpointAuthMethod,
+                externalApiSecret,
                 persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 bankProfile.UseOpenIdConnect,
                 apiClient,

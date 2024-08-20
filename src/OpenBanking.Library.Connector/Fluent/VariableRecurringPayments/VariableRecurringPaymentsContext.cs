@@ -47,13 +47,18 @@ internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsCont
             _sharedContext.Instrumentation,
             _sharedContext.MemoryCache,
             _sharedContext.TimeProvider);
+        var clientAccessTokenGet = new ClientAccessTokenGet(
+            sharedContext.TimeProvider,
+            grantPost,
+            sharedContext.Instrumentation,
+            sharedContext.MemoryCache,
+            sharedContext.EncryptionKeyInfo);
         _domesticVrp = new DomesticVrpOperations(
             _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
             _sharedContext.Instrumentation,
             _sharedContext.ApiVariantMapper,
             _sharedContext.DbService.GetDbSaveChangesMethodClass(),
             _sharedContext.TimeProvider,
-            grantPost,
             new ConsentAccessTokenGet(
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
@@ -63,7 +68,8 @@ internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsCont
                 _sharedContext.EncryptionKeyInfo),
             _sharedContext.BankProfileService,
             _sharedContext.ObWacCertificateMethods,
-            _sharedContext.ObSealCertificateMethods);
+            _sharedContext.ObSealCertificateMethods,
+            clientAccessTokenGet);
     }
 
     public IDomesticVrpConsentsContext DomesticVrpConsents =>

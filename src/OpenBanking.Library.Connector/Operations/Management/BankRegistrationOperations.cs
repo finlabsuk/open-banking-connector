@@ -26,6 +26,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Jose;
 using Microsoft.EntityFrameworkCore;
@@ -48,8 +49,10 @@ internal class
     IObjectRead<BankRegistrationResponse, BankRegistrationReadParams>
 {
     private readonly IBankProfileService _bankProfileService;
+    private readonly ClientAccessTokenGet _clientAccessTokenGet;
     private readonly IOpenIdConfigurationRead _configurationRead;
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly IEncryptionKeyInfo _encryptionKeyInfo;
     private readonly IDbReadWriteEntityMethods<BankRegistrationEntity> _entityMethods;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
@@ -67,16 +70,20 @@ internal class
         IApiVariantMapper mapper,
         IOpenIdConfigurationRead configurationRead,
         IBankProfileService bankProfileService,
-        IGrantPost grantPost,
         IDbReadWriteEntityMethods<SoftwareStatementEntity> softwareStatementEntityMethods,
         ObWacCertificateMethods obWacCertificateMethods,
-        ObSealCertificateMethods obSealCertificateMethods)
+        ObSealCertificateMethods obSealCertificateMethods,
+        ClientAccessTokenGet clientAccessTokenGet,
+        IGrantPost grantPost,
+        IEncryptionKeyInfo encryptionKeyInfo)
     {
         _bankProfileService = bankProfileService;
-        _grantPost = grantPost;
         _softwareStatementEntityMethods = softwareStatementEntityMethods;
         _obWacCertificateMethods = obWacCertificateMethods;
         _obSealCertificateMethods = obSealCertificateMethods;
+        _clientAccessTokenGet = clientAccessTokenGet;
+        _grantPost = grantPost;
+        _encryptionKeyInfo = encryptionKeyInfo;
         _configurationRead = configurationRead;
         _entityMethods = entityMethods;
         _dbSaveChangesMethod = dbSaveChangesMethod;
@@ -311,8 +318,8 @@ internal class
             request.CreatedBy,
             utcNow,
             request.CreatedBy,
-            externalApiSecret,
-            registrationAccessToken,
+            null,
+            null,
             null,
             tokenEndpointAuthMethod,
             bankGroup,
@@ -330,6 +337,48 @@ internal class
             defaultQueryRedirectUri,
             redirectUris,
             registrationScope);
+
+        // Add client secret
+        if (externalApiSecret is not null)
+        {
+            ExternalApiSecretEntity clientSecretEntity = entity.AddNewClientSecret(
+                Guid.NewGuid(),
+                request.Reference,
+                false,
+                utcNow,
+                request.CreatedBy,
+                utcNow,
+                request.CreatedBy);
+            string? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
+            clientSecretEntity.UpdateClientSecret(
+                externalApiSecret,
+                entity.GetAssociatedData(),
+                _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
+                utcNow,
+                request.CreatedBy,
+                currentKeyId);
+        }
+
+        // Add registration access token
+        if (registrationAccessToken is not null)
+        {
+            RegistrationAccessTokenEntity registrationAccessTokenEntity = entity.AddNewRegistrationAccessToken(
+                Guid.NewGuid(),
+                request.Reference,
+                false,
+                utcNow,
+                request.CreatedBy,
+                utcNow,
+                request.CreatedBy);
+            string? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
+            registrationAccessTokenEntity.UpdateRegistrationAccessToken(
+                registrationAccessToken,
+                entity.GetAssociatedData(),
+                _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
+                utcNow,
+                request.CreatedBy,
+                currentKeyId);
+        }
 
         // Save entity
         await _entityMethods.AddAsync(entity);
@@ -383,15 +432,20 @@ internal class
             await _entityMethods
                 .DbSetNoTracking
                 .Include(o => o.SoftwareStatementNavigation)
+                .Include(o => o.ExternalApiSecretsNavigation)
+                .Include(o => o.RegistrationAccessTokensNavigation)
                 .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
             throw new KeyNotFoundException($"No record found for BankRegistration with ID {readParams.Id}.");
         string externalApiId = entity.ExternalApiId;
         SoftwareStatementEntity softwareStatement = entity.SoftwareStatementNavigation!;
+        ExternalApiSecretEntity? externalApiSecret =
+            entity.ExternalApiSecretsNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
+        RegistrationAccessTokenEntity? registrationAccessTokenEntity = entity.RegistrationAccessTokensNavigation
+            .SingleOrDefault(x => !x.IsDeleted);
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
-        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
-            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
         DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
             bankProfile.DynamicClientRegistrationApiVersion;
@@ -407,9 +461,6 @@ internal class
                 throw new InvalidOperationException(
                     "BankRegistration does not have a registration endpoint configured.");
 
-            bool useRegistrationAccessTokenValue =
-                bankProfile.BankConfigurationApiSettings.UseRegistrationAccessToken;
-
             // Get IApiClient
             IApiClient apiClient = entity.UseSimulatedBank
                 ? bankProfile.ReplayApiClient
@@ -421,27 +472,33 @@ internal class
 
             // Get client credentials grant access token if necessary
             string accessToken;
-            if (useRegistrationAccessTokenValue)
+            bool useRegistrationAccessToken =
+                bankProfile.BankConfigurationApiSettings.UseRegistrationAccessToken;
+            if (useRegistrationAccessToken)
             {
-                accessToken =
-                    entity.RegistrationAccessToken ??
-                    throw new InvalidOperationException("No registration access token available");
+                if (registrationAccessTokenEntity is null)
+                {
+                    throw new InvalidOperationException("No registration access token is available.");
+                }
+
+                // Extract registration access token
+                accessToken = registrationAccessTokenEntity
+                    .GetRegistrationAccessToken(
+                        entity.GetAssociatedData(),
+                        _encryptionKeyInfo.GetEncryptionKey(registrationAccessTokenEntity.KeyId));
             }
             else
             {
                 string? scope = customBehaviour?.BankRegistrationPut?.CustomTokenScope;
-                accessToken = await _grantPost.PostClientCredentialsGrantAsync(
-                    scope,
-                    obSealKey,
-                    tokenEndpointAuthMethod,
-                    entity.TokenEndpoint,
-                    entity.ExternalApiId,
-                    entity.ExternalApiSecret,
-                    entity.Id.ToString(),
-                    null,
-                    customBehaviour?.ClientCredentialsGrantPost,
-                    apiClient,
-                    bankProfile.BankProfileEnum);
+                accessToken =
+                    await _clientAccessTokenGet.GetAccessToken(
+                        scope,
+                        obSealKey,
+                        entity,
+                        externalApiSecret,
+                        customBehaviour?.ClientCredentialsGrantPost,
+                        apiClient,
+                        bankProfile.BankProfileEnum);
             }
 
             // Read object from external API
@@ -620,12 +677,12 @@ internal class
         // TODO: compare redirect URLs?
 
         if (tokenEndpointAuthMethod !=
-            existingRegistrationBankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod)
+            existingRegistration.TokenEndpointAuthMethod)
         {
             throw new
                 InvalidOperationException(
                     $"Previous registration for BankRegistrationGroup {registrationGroupString} " +
-                    $"used TokenEndpointAuthMethod {existingRegistrationBankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod} " +
+                    $"used TokenEndpointAuthMethod {existingRegistration.TokenEndpointAuthMethod} " +
                     $"which is different from expected {tokenEndpointAuthMethod}.");
         }
 
@@ -651,21 +708,20 @@ internal class
         string tokenEndpoint = softwareStatement.SandboxEnvironment
             ? "https://matls-sso.openbankingtest.org.uk/as/token.oauth2"
             : "https://matls-sso.openbanking.org.uk/as/token.oauth2";
-        string accessToken = await _grantPost.PostClientCredentialsGrantAsync(
+        string accessToken = (await _grantPost.PostClientCredentialsGrantAsync(
             scope,
             obSealKey,
             TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt,
             tokenEndpoint,
             softwareStatement.SoftwareId,
             null,
-            softwareStatement.SoftwareId,
             null,
             null,
             apiClient,
             null,
             new Dictionary<string, JsonNode?> { ["scope"] = scope },
             true,
-            JwsAlgorithm.RS256);
+            JwsAlgorithm.RS256)).AccessToken;
 
         // Get software statement assertion
         var headers = new List<HttpHeader> { new("Authorization", "Bearer " + accessToken) };

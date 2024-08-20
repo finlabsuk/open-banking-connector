@@ -52,7 +52,7 @@ internal class ConsentAccessTokenGet
         BankRegistrationEntity bankRegistration,
         AccessTokenEntity? storedAccessTokenEntity,
         RefreshTokenEntity? storedRefreshTokenEntity,
-        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
+        ExternalApiSecretEntity? externalApiSecretEntity,
         string tokenEndpoint,
         bool useOpenIdConnect,
         IApiClient apiClient,
@@ -66,6 +66,8 @@ internal class ConsentAccessTokenGet
         where TConsentEntity : BaseConsent
     {
         string consentAssociatedData = consent.GetAssociatedData(bankRegistration);
+        string bankRegistrationAssociatedData = bankRegistration.GetAssociatedData();
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod = bankRegistration.TokenEndpointAuthMethod;
 
         // Check nonce available
         string nonce =
@@ -74,6 +76,23 @@ internal class ConsentAccessTokenGet
 
         async Task<AccessToken> GetNewAccessTokenAsync()
         {
+            // Get client secret if required
+            string? clientSecret = null;
+            if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.ClientSecretBasic
+                or TokenEndpointAuthMethodSupportedValues.ClientSecretPost)
+            {
+                if (externalApiSecretEntity is null)
+                {
+                    throw new InvalidOperationException("No client secret is available.");
+                }
+
+                // Extract client secret
+                clientSecret = externalApiSecretEntity
+                    .GetClientSecret(
+                        bankRegistrationAssociatedData,
+                        _encryptionKeyInfo.GetEncryptionKey(externalApiSecretEntity.KeyId));
+            }
+
             // Get stored refresh token, throw if doesn't exist
             if (storedRefreshTokenEntity is null)
             {
@@ -81,10 +100,11 @@ internal class ConsentAccessTokenGet
             }
 
             // Extract token
-            byte[] encryptionKey = _encryptionKeyInfo.GetEncryptionKey(storedRefreshTokenEntity.KeyId);
             string storedRefreshToken =
                 storedRefreshTokenEntity
-                    .GetRefreshToken(consentAssociatedData, encryptionKey);
+                    .GetRefreshToken(
+                        consentAssociatedData,
+                        _encryptionKeyInfo.GetEncryptionKey(storedRefreshTokenEntity.KeyId));
 
             // POST refresh token grant
             string externalApiClientId = bankRegistration.ExternalApiId;
@@ -100,7 +120,7 @@ internal class ConsentAccessTokenGet
                     storedRefreshToken,
                     bankIssuerUrl,
                     externalApiClientId,
-                    bankRegistration.ExternalApiSecret,
+                    clientSecret,
                     consent.ExternalApiId,
                     consent.ExternalApiUserId,
                     nonce,

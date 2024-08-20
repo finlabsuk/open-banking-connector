@@ -25,7 +25,8 @@ internal class AccountAccessConsentCommon
     public async
         Task<(AccountAccessConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
             AccountAccessConsentAccessToken? storedAccessToken, AccountAccessConsentRefreshToken? storedRefreshToken,
-            SoftwareStatementEntity softwareStatement)> GetAccountAccessConsent(
+            SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret)>
+        GetAccountAccessConsent(
             Guid consentId,
             bool dbTracking)
     {
@@ -36,6 +37,7 @@ internal class AccountAccessConsentCommon
         AccountAccessConsentPersisted persistedConsent =
             await db
                 .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
+                .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
                 .Include(o => o.AccountAccessConsentAccessTokensNavigation)
                 .Include(o => o.AccountAccessConsentRefreshTokensNavigation)
                 .AsSplitQuery() // Load collections in separate SQL queries
@@ -53,8 +55,12 @@ internal class AccountAccessConsentCommon
 
         SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
 
+        ExternalApiSecretEntity? externalApiSecret =
+            bankRegistration.ExternalApiSecretsNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
+
         return (persistedConsent, bankRegistration, storedAccessToken, storedRefreshToken,
-            softwareStatement);
+            softwareStatement, externalApiSecret);
     }
 
     public static string GetBankTokenIssuerClaim(CustomBehaviourClass? customBehaviour, string issuerUrl) =>

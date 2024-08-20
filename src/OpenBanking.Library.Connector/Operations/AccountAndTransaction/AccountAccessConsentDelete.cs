@@ -8,7 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
@@ -24,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, ConsentDeleteParams>
 {
     private readonly IBankProfileService _bankProfileService;
-    private readonly IGrantPost _grantPost;
+    private readonly ClientAccessTokenGet _clientAccessTokenGet;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
 
@@ -33,19 +32,19 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
-        IGrantPost grantPost,
         IBankProfileService bankProfileService,
         ObSealCertificateMethods obSealCertificateMethods,
-        ObWacCertificateMethods obWacCertificateMethods) : base(
+        ObWacCertificateMethods obWacCertificateMethods,
+        ClientAccessTokenGet clientAccessTokenGet) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
         instrumentationClient)
     {
-        _grantPost = grantPost;
         _bankProfileService = bankProfileService;
         _obSealCertificateMethods = obSealCertificateMethods;
         _obWacCertificateMethods = obWacCertificateMethods;
+        _clientAccessTokenGet = clientAccessTokenGet;
     }
 
     protected string RelativePathBeforeId => "/account-access-consents";
@@ -65,6 +64,7 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
             await _entityMethods
                 .DbSet
                 .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
+                .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
                 .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
             throw new KeyNotFoundException($"No record found for Account Access Consent with ID {deleteParams.Id}.");
 
@@ -73,14 +73,15 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
             BankRegistrationEntity bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankApiId = persistedObject.ExternalApiId;
             SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
+            ExternalApiSecretEntity? externalApiSecret =
+                bankRegistration.ExternalApiSecretsNavigation
+                    .SingleOrDefault(x => !x.IsDeleted);
 
             // Get bank profile
             BankProfile bankProfile =
                 _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             AccountAndTransactionApi accountAndTransactionApi =
                 bankProfile.GetRequiredAccountAndTransactionApi();
-            TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
-                bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
             string bankFinancialId = bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
@@ -101,15 +102,11 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
 
             // Get client credentials grant token
             string ccGrantAccessToken =
-                await _grantPost.PostClientCredentialsGrantAsync(
+                await _clientAccessTokenGet.GetAccessToken(
                     "accounts",
                     obSealKey,
-                    tokenEndpointAuthMethod,
-                    persistedObject.BankRegistrationNavigation.TokenEndpoint,
-                    persistedObject.BankRegistrationNavigation.ExternalApiId,
-                    persistedObject.BankRegistrationNavigation.ExternalApiSecret,
-                    persistedObject.BankRegistrationNavigation.Id.ToString(),
-                    null,
+                    persistedObject.BankRegistrationNavigation,
+                    externalApiSecret,
                     customBehaviour?.ClientCredentialsGrantPost,
                     apiClient,
                     bankProfile.BankProfileEnum);

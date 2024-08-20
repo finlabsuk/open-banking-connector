@@ -9,7 +9,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
@@ -35,6 +34,7 @@ internal class
 {
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
     private readonly IBankProfileService _bankProfileService;
+    private readonly ClientAccessTokenGet _clientAccessTokenGet;
 
     private readonly ConsentCommon<AccountAccessConsentPersisted,
         AccountAccessConsentRequest,
@@ -44,7 +44,6 @@ internal class
 
     private readonly IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _consentEntityMethods;
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
-    private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
@@ -57,17 +56,17 @@ internal class
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
-        IGrantPost grantPost,
         IBankProfileService bankProfileService,
         IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
         ObWacCertificateMethods obWacCertificateMethods,
-        ObSealCertificateMethods obSealCertificateMethods)
+        ObSealCertificateMethods obSealCertificateMethods,
+        ClientAccessTokenGet clientAccessTokenGet)
     {
         _consentEntityMethods = consentEntityMethods;
-        _grantPost = grantPost;
         _bankProfileService = bankProfileService;
         _obWacCertificateMethods = obWacCertificateMethods;
         _obSealCertificateMethods = obSealCertificateMethods;
+        _clientAccessTokenGet = clientAccessTokenGet;
         _accountAccessConsentCommon =
             new AccountAccessConsentCommon(consentEntityMethods);
         _mapper = mapper;
@@ -108,14 +107,12 @@ internal class
         {
             // Load BankRegistration and related
             (BankRegistrationEntity bankRegistration, string tokenEndpoint,
-                    SoftwareStatementEntity softwareStatement) =
+                    SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
-            TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
-                bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
             string bankFinancialId = bankProfile.FinancialId;
 
@@ -132,15 +129,11 @@ internal class
 
             // Get client credentials grant access token
             string ccGrantAccessToken =
-                await _grantPost.PostClientCredentialsGrantAsync(
+                await _clientAccessTokenGet.GetAccessToken(
                     ClientCredentialsGrantScope,
                     obSealKey,
-                    tokenEndpointAuthMethod,
-                    tokenEndpoint,
-                    bankRegistration.ExternalApiId,
-                    bankRegistration.ExternalApiSecret,
-                    bankRegistration.Id.ToString(),
-                    null,
+                    bankRegistration,
+                    externalApiSecret,
                     customBehaviour?.ClientCredentialsGrantPost,
                     apiClient,
                     bankProfile.BankProfileEnum);
@@ -302,7 +295,7 @@ internal class
 
         // Load AccountAccessConsent and related
         (AccountAccessConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration, _, _,
-                SoftwareStatementEntity softwareStatement) =
+                SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.Id, false);
         string externalApiConsentId = persistedConsent.ExternalApiId;
 
@@ -315,8 +308,6 @@ internal class
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
-            TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
-                bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
             string bankFinancialId = bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
@@ -333,15 +324,11 @@ internal class
 
             // Get client credentials grant access token
             string ccGrantAccessToken =
-                await _grantPost.PostClientCredentialsGrantAsync(
+                await _clientAccessTokenGet.GetAccessToken(
                     ClientCredentialsGrantScope,
                     obSealKey,
-                    tokenEndpointAuthMethod,
-                    bankRegistration.TokenEndpoint,
-                    bankRegistration.ExternalApiId,
-                    bankRegistration.ExternalApiSecret,
-                    bankRegistration.Id.ToString(),
-                    null,
+                    bankRegistration,
+                    externalApiSecret,
                     customBehaviour?.ClientCredentialsGrantPost,
                     apiClient,
                     bankProfile.BankProfileEnum);

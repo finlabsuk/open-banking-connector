@@ -8,13 +8,13 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,7 +23,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Management;
 internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankRegistrationDeleteParams>
 {
     private readonly IBankProfileService _bankProfileService;
-    private readonly IGrantPost _grantPost;
+    private readonly ClientAccessTokenGet _clientAccessTokenGet;
+    private readonly IEncryptionKeyInfo _encryptionKeyInfo;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
 
@@ -33,18 +34,20 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IBankProfileService bankProfileService,
-        IGrantPost grantPost,
         ObWacCertificateMethods obWacCertificateMethods,
-        ObSealCertificateMethods obSealCertificateMethods) : base(
+        ObSealCertificateMethods obSealCertificateMethods,
+        ClientAccessTokenGet clientAccessTokenGet,
+        IEncryptionKeyInfo encryptionKeyInfo) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
         instrumentationClient)
     {
         _bankProfileService = bankProfileService;
-        _grantPost = grantPost;
         _obWacCertificateMethods = obWacCertificateMethods;
         _obSealCertificateMethods = obSealCertificateMethods;
+        _clientAccessTokenGet = clientAccessTokenGet;
+        _encryptionKeyInfo = encryptionKeyInfo;
     }
 
     protected override async
@@ -60,14 +63,19 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
             await _entityMethods
                 .DbSet
                 .Include(o => o.SoftwareStatementNavigation)
+                .Include(o => o.ExternalApiSecretsNavigation)
+                .Include(o => o.RegistrationAccessTokensNavigation)
                 .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
             throw new KeyNotFoundException($"No record found for Bank Registration with ID {deleteParams.Id}.");
         SoftwareStatementEntity softwareStatement = entity.SoftwareStatementNavigation!;
+        ExternalApiSecretEntity? externalApiSecret =
+            entity.ExternalApiSecretsNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
+        RegistrationAccessTokenEntity? registrationAccessTokenEntity = entity.RegistrationAccessTokensNavigation
+            .SingleOrDefault(x => !x.IsDeleted);
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
-        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
-            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
         bool excludeExternalApiOperation =
@@ -79,9 +87,6 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
                 entity.RegistrationEndpoint ??
                 throw new InvalidOperationException(
                     "BankRegistration does not have a registration endpoint configured.");
-
-            bool useRegistrationAccessTokenValue =
-                bankProfile.BankConfigurationApiSettings.UseRegistrationAccessToken;
 
             // Get API client
             // Get IApiClient
@@ -99,27 +104,33 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
 
             // Get appropriate token
             string accessToken;
-            if (useRegistrationAccessTokenValue)
+            bool useRegistrationAccessToken =
+                bankProfile.BankConfigurationApiSettings.UseRegistrationAccessToken;
+            if (useRegistrationAccessToken)
             {
-                accessToken =
-                    entity.RegistrationAccessToken ??
-                    throw new InvalidOperationException("No registration access token available");
+                if (registrationAccessTokenEntity is null)
+                {
+                    throw new InvalidOperationException("No registration access token is available.");
+                }
+
+                // Extract registration access token
+                accessToken = registrationAccessTokenEntity
+                    .GetRegistrationAccessToken(
+                        entity.GetAssociatedData(),
+                        _encryptionKeyInfo.GetEncryptionKey(registrationAccessTokenEntity.KeyId));
             }
             else
             {
                 string? scope = customBehaviour?.BankRegistrationPut?.CustomTokenScope;
-                accessToken = await _grantPost.PostClientCredentialsGrantAsync(
-                    scope,
-                    obSealKey,
-                    tokenEndpointAuthMethod,
-                    entity.TokenEndpoint,
-                    entity.ExternalApiId,
-                    entity.ExternalApiSecret,
-                    entity.Id.ToString(),
-                    null,
-                    customBehaviour?.ClientCredentialsGrantPost,
-                    apiClient,
-                    bankProfile.BankProfileEnum);
+                accessToken =
+                    await _clientAccessTokenGet.GetAccessToken(
+                        scope,
+                        obSealKey,
+                        entity,
+                        externalApiSecret,
+                        customBehaviour?.ClientCredentialsGrantPost,
+                        apiClient,
+                        bankProfile.BankProfileEnum);
             }
 
             // Delete at API

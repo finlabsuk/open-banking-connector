@@ -44,17 +44,22 @@ internal class DomesticPaymentConsentsConsentContext :
     public DomesticPaymentConsentsConsentContext(ISharedContext sharedContext)
     {
         _sharedContext = sharedContext;
+        var clientAccessTokenGet = new ClientAccessTokenGet(
+            sharedContext.TimeProvider,
+            new GrantPost(
+                sharedContext.ApiClient,
+                sharedContext.Instrumentation,
+                sharedContext.MemoryCache,
+                sharedContext.TimeProvider),
+            sharedContext.Instrumentation,
+            sharedContext.MemoryCache,
+            sharedContext.EncryptionKeyInfo);
         _domesticPaymentConsentOperations = new DomesticPaymentConsentOperations(
             sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
             sharedContext.TimeProvider,
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
-            new GrantPost(
-                _sharedContext.ApiClient,
-                _sharedContext.Instrumentation,
-                _sharedContext.MemoryCache,
-                _sharedContext.TimeProvider),
             sharedContext.BankProfileService,
             new ConsentAccessTokenGet(
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
@@ -69,7 +74,8 @@ internal class DomesticPaymentConsentsConsentContext :
                 _sharedContext.EncryptionKeyInfo),
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
             _sharedContext.ObWacCertificateMethods,
-            _sharedContext.ObSealCertificateMethods);
+            _sharedContext.ObSealCertificateMethods,
+            clientAccessTokenGet);
         CreateObject = _domesticPaymentConsentOperations;
         ReadObject = _domesticPaymentConsentOperations;
         DeleteLocalObject = new LocalEntityDelete<DomesticPaymentConsent, LocalDeleteParams>(

@@ -47,17 +47,22 @@ internal class DomesticVrpConsentsContext :
     public DomesticVrpConsentsContext(ISharedContext sharedContext)
     {
         _sharedContext = sharedContext;
+        var clientAccessTokenGet = new ClientAccessTokenGet(
+            sharedContext.TimeProvider,
+            new GrantPost(
+                sharedContext.ApiClient,
+                sharedContext.Instrumentation,
+                sharedContext.MemoryCache,
+                sharedContext.TimeProvider),
+            sharedContext.Instrumentation,
+            sharedContext.MemoryCache,
+            sharedContext.EncryptionKeyInfo);
         _domesticVrpConsentOperations = new DomesticVrpConsentOperations(
             sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
             sharedContext.TimeProvider,
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
-            new GrantPost(
-                _sharedContext.ApiClient,
-                _sharedContext.Instrumentation,
-                _sharedContext.MemoryCache,
-                _sharedContext.TimeProvider),
             sharedContext.BankProfileService,
             new ConsentAccessTokenGet(
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
@@ -72,7 +77,8 @@ internal class DomesticVrpConsentsContext :
                 _sharedContext.EncryptionKeyInfo),
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
             _sharedContext.ObWacCertificateMethods,
-            _sharedContext.ObSealCertificateMethods);
+            _sharedContext.ObSealCertificateMethods,
+            clientAccessTokenGet);
         CreateObject = _domesticVrpConsentOperations;
         ReadObject = _domesticVrpConsentOperations;
         DeleteObject =
@@ -82,13 +88,9 @@ internal class DomesticVrpConsentsContext :
                 sharedContext.TimeProvider,
                 sharedContext.Instrumentation,
                 sharedContext.BankProfileService,
-                new GrantPost(
-                    _sharedContext.ApiClient,
-                    _sharedContext.Instrumentation,
-                    _sharedContext.MemoryCache,
-                    _sharedContext.TimeProvider),
                 sharedContext.ObWacCertificateMethods,
-                sharedContext.ObSealCertificateMethods);
+                sharedContext.ObSealCertificateMethods,
+                clientAccessTokenGet);
     }
 
     public IObjectRead<DomesticVrpConsentCreateResponse, ConsentReadParams> ReadObject { get; }

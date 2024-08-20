@@ -22,6 +22,17 @@ internal class BankRegistrationsContext :
 {
     public BankRegistrationsContext(ISharedContext sharedContext)
     {
+        var grantPost = new GrantPost(
+            sharedContext.ApiClient,
+            sharedContext.Instrumentation,
+            sharedContext.MemoryCache,
+            sharedContext.TimeProvider);
+        var clientAccessTokenGet = new ClientAccessTokenGet(
+            sharedContext.TimeProvider,
+            grantPost,
+            sharedContext.Instrumentation,
+            sharedContext.MemoryCache,
+            sharedContext.EncryptionKeyInfo);
         var bankRegistrationOperations = new BankRegistrationOperations(
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
@@ -30,14 +41,12 @@ internal class BankRegistrationsContext :
             sharedContext.ApiVariantMapper,
             new OpenIdConfigurationRead(sharedContext.ApiClient),
             sharedContext.BankProfileService,
-            new GrantPost(
-                sharedContext.ApiClient,
-                sharedContext.Instrumentation,
-                sharedContext.MemoryCache,
-                sharedContext.TimeProvider),
             sharedContext.DbService.GetDbEntityMethodsClass<SoftwareStatementEntity>(),
             sharedContext.ObWacCertificateMethods,
-            sharedContext.ObSealCertificateMethods);
+            sharedContext.ObSealCertificateMethods,
+            clientAccessTokenGet,
+            grantPost,
+            sharedContext.EncryptionKeyInfo);
         ReadObject = bankRegistrationOperations;
         DeleteObject = new BankRegistrationDelete(
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
@@ -45,13 +54,10 @@ internal class BankRegistrationsContext :
             sharedContext.TimeProvider,
             sharedContext.Instrumentation,
             sharedContext.BankProfileService,
-            new GrantPost(
-                sharedContext.ApiClient,
-                sharedContext.Instrumentation,
-                sharedContext.MemoryCache,
-                sharedContext.TimeProvider),
             sharedContext.ObWacCertificateMethods,
-            sharedContext.ObSealCertificateMethods);
+            sharedContext.ObSealCertificateMethods,
+            clientAccessTokenGet,
+            sharedContext.EncryptionKeyInfo);
         CreateObject = bankRegistrationOperations;
     }
 

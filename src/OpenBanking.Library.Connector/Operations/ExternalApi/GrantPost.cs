@@ -134,14 +134,13 @@ internal class GrantPost : IGrantPost
         return outputExternalApiUserId;
     }
 
-    public async Task<string> PostClientCredentialsGrantAsync(
+    public async Task<TokenEndpointResponse> PostClientCredentialsGrantAsync(
         string? requestScope,
         OBSealKey obSealKey,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         string externalApiClientId,
         string? externalApiClientSecret,
-        string cacheKeyId,
         JsonSerializerSettings? jsonSerializerSettings,
         ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour,
         IApiClient mtlsApiClient,
@@ -150,88 +149,66 @@ internal class GrantPost : IGrantPost
         bool includeClientIdWithPrivateKeyJwt = false,
         JwsAlgorithm? jwsAlgorithm = null)
     {
-        async Task<TokenEndpointResponse> GetTokenAsync()
+        var keyValuePairs = new Dictionary<string, string> { { "grant_type", "client_credentials" } };
+
+        if (requestScope is not null)
         {
-            var keyValuePairs = new Dictionary<string, string> { { "grant_type", "client_credentials" } };
-
-            if (requestScope is not null)
-            {
-                keyValuePairs["scope"] = requestScope;
-            }
-
-            if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt)
-            {
-                string jwt = CreateClientAssertionJwt(
-                    obSealKey,
-                    externalApiClientId,
-                    tokenEndpoint,
-                    _instrumentationClient,
-                    jwsAlgorithm,
-                    extraClientAssertionClaims ?? new Dictionary<string, JsonNode?>());
-
-                // Add parameters
-                keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
-                keyValuePairs["client_assertion"] = jwt;
-
-                if (includeClientIdWithPrivateKeyJwt)
-                {
-                    keyValuePairs["client_id"] = externalApiClientId;
-                }
-            }
-
-            if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.ClientSecretPost)
-            {
-                keyValuePairs["client_id"] = externalApiClientId;
-                keyValuePairs["client_secret"] = externalApiClientSecret!;
-            }
-
-            TokenEndpointResponse response =
-                await PostGrantAsync(
-                    keyValuePairs,
-                    tokenEndpointAuthMethod,
-                    tokenEndpoint,
-                    externalApiClientId,
-                    externalApiClientSecret,
-                    jsonSerializerSettings,
-                    bankProfileForTppReportingMetrics,
-                    mtlsApiClient,
-                    requestScope,
-                    clientCredentialsGrantPostCustomBehaviour);
-
-            // Validate response ID token
-            if (response.IdToken is not null)
-            {
-                throw new InvalidOperationException("Parameter id_token received when using client credentials grant.");
-            }
-
-            // Validate response refresh token
-            if (response.RefreshToken is not null)
-            {
-                throw new InvalidOperationException(
-                    "Parameter refresh_token received when using client credentials grant.");
-            }
-
-            return response;
+            keyValuePairs["scope"] = requestScope;
         }
 
-        // Get or create cache entry
-        string cacheKey = string.Join(":", "token", "client", cacheKeyId, requestScope ?? "");
-        string accessToken =
-            (await _memoryCache.GetOrCreateAsync(
-                cacheKey,
-                async cacheEntry =>
-                {
-                    TokenEndpointResponse response =
-                        await GetTokenAsync();
-                    // DateTimeOffset currentTime = _timeProvider.GetUtcNow();
-                    // cacheEntry.AbsoluteExpiration =
-                    //     currentTime.AddSeconds(response.ExpiresIn);
-                    cacheEntry.AbsoluteExpirationRelativeToNow =
-                        GetTokenAdjustedDuration(response.ExpiresIn);
-                    return response.AccessToken;
-                }))!;
+        if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt)
+        {
+            string jwt = CreateClientAssertionJwt(
+                obSealKey,
+                externalApiClientId,
+                tokenEndpoint,
+                _instrumentationClient,
+                jwsAlgorithm,
+                extraClientAssertionClaims ?? new Dictionary<string, JsonNode?>());
 
-        return accessToken;
+            // Add parameters
+            keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
+            keyValuePairs["client_assertion"] = jwt;
+
+            if (includeClientIdWithPrivateKeyJwt)
+            {
+                keyValuePairs["client_id"] = externalApiClientId;
+            }
+        }
+
+        if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.ClientSecretPost)
+        {
+            keyValuePairs["client_id"] = externalApiClientId;
+            keyValuePairs["client_secret"] = externalApiClientSecret!;
+        }
+
+        TokenEndpointResponse response =
+            await PostGrantAsync(
+                keyValuePairs,
+                tokenEndpointAuthMethod,
+                tokenEndpoint,
+                externalApiClientId,
+                externalApiClientSecret,
+                jsonSerializerSettings,
+                bankProfileForTppReportingMetrics,
+                mtlsApiClient,
+                requestScope,
+                clientCredentialsGrantPostCustomBehaviour);
+
+        // Validate response ID token
+        if (response.IdToken is not null)
+        {
+            throw new InvalidOperationException("Parameter id_token received when using client credentials grant.");
+        }
+
+        // Validate response refresh token
+        if (response.RefreshToken is not null)
+        {
+            throw new InvalidOperationException(
+                "Parameter refresh_token received when using client credentials grant.");
+        }
+
+        return response;
     }
 
     public async Task<TokenEndpointResponse> PostAuthCodeGrantAsync(
