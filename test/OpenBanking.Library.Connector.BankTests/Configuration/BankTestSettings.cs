@@ -88,6 +88,12 @@ public class AuthUiInputData
     public string UserName { get; set; } = string.Empty;
 
     public string Password { get; set; } = string.Empty;
+
+    public string ExtraWord1 { get; set; } = string.Empty;
+
+    public string ExtraWord2 { get; set; } = string.Empty;
+
+    public string ExtraWord3 { get; set; } = string.Empty;
 }
 
 public class AuthData

@@ -37,26 +37,13 @@ public class DomesticVrpAccountIndexPair
 
 public class BankUser
 {
-    public BankUser(
-        string userNameOrNumber,
-        string password,
-        List<Account> accounts,
-        List<DomesticVrpAccountIndexPair> domesticVrpAccountIndexPairs)
-    {
-        UserNameOrNumber = userNameOrNumber;
-        Password = password;
-        Accounts = accounts;
-        DomesticVrpAccountIndexPairs = domesticVrpAccountIndexPairs;
-    }
+    public required string UserNameOrNumber { get; init; }
 
-    public List<Account> Accounts { get; }
+    public required string Password { get; init; }
 
-    /// <summary>
-    ///     List of account index pairs which specify debtor (from) and creditor (to) accounts for domestic VRP payments.
-    /// </summary>
-    public List<DomesticVrpAccountIndexPair> DomesticVrpAccountIndexPairs { get; }
+    public required string ExtraWord1 { get; init; }
 
-    public string UserNameOrNumber { get; }
+    public required string ExtraWord2 { get; init; }
 
-    public string Password { get; }
+    public required string ExtraWord3 { get; init; }
 }

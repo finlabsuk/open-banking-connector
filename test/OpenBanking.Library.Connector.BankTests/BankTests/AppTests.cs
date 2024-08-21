@@ -145,10 +145,12 @@ public abstract class AppTests
                     .TestDomesticVrpConsent
                     .TryGetValue(bankProfileEnum, out bool testDomesticVrpConsent);
 
-
                 bool? authDisable = authData?.DisableAuth;
                 string? authUiInputUserName = authData?.UiInput?.UserName; // can only be null when UiInput null
                 string? authUiInputPassword = authData?.UiInput?.Password; // can only be null when UiInput null
+                string? authUiExtraWord1 = authData?.UiInput?.ExtraWord1;
+                string? authUiExtraWord2 = authData?.UiInput?.ExtraWord2;
+                string? authUiExtraWord3 = authData?.UiInput?.ExtraWord3;
 
                 // Add test case to theory data if skip status matches that of theory data
                 if (!skippedNotUnskipped)
@@ -173,6 +175,9 @@ public abstract class AppTests
                             AuthDisable = authDisable,
                             AuthUiInputUserName = authUiInputUserName,
                             AuthUiInputPassword = authUiInputPassword,
+                            AuthUiExtraWord1 = authUiExtraWord1,
+                            AuthUiExtraWord2 = authUiExtraWord2,
+                            AuthUiExtraWord3 = authUiExtraWord3,
                             TestDomesticPaymentConsent = testDomesticPaymentConsent,
                             TestDomesticVrpConsent = testDomesticVrpConsent
                         });
@@ -209,11 +214,14 @@ public abstract class AppTests
 
         // Get bank user
         BankUser? bankUser = testData2.AuthUiInputUserName is not null
-            ? new BankUser(
-                testData2.AuthUiInputUserName,
-                testData2.AuthUiInputPassword!, // not null when AuthUiInputUserName not null
-                new List<Account>(),
-                new List<DomesticVrpAccountIndexPair>())
+            ? new BankUser
+            {
+                UserNameOrNumber = testData2.AuthUiInputUserName,
+                Password = testData2.AuthUiInputPassword!, // not null when AuthUiInputUserName not null
+                ExtraWord1 = testData2.AuthUiExtraWord1!,
+                ExtraWord2 = testData2.AuthUiExtraWord2!,
+                ExtraWord3 = testData2.AuthUiExtraWord3!
+            }
             : null;
 
         // Get software statement profile

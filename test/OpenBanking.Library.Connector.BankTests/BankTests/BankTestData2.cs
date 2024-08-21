@@ -32,6 +32,12 @@ public class BankTestData2 : IXunitSerializable
 
     public string? AuthUiInputPassword { get; set; }
 
+    public string? AuthUiExtraWord1 { get; set; }
+
+    public string? AuthUiExtraWord2 { get; set; }
+
+    public string? AuthUiExtraWord3 { get; set; }
+
     public bool? AuthDisable { get; set; }
 
     public bool TestDomesticPaymentConsent { get; set; }
@@ -50,6 +56,9 @@ public class BankTestData2 : IXunitSerializable
         RegistrationScope = info.GetValue<RegistrationScopeEnum>(nameof(RegistrationScope));
         AuthUiInputUserName = info.GetValue<string?>(nameof(AuthUiInputUserName));
         AuthUiInputPassword = info.GetValue<string?>(nameof(AuthUiInputPassword));
+        AuthUiExtraWord1 = info.GetValue<string?>(nameof(AuthUiExtraWord1));
+        AuthUiExtraWord2 = info.GetValue<string?>(nameof(AuthUiExtraWord2));
+        AuthUiExtraWord3 = info.GetValue<string?>(nameof(AuthUiExtraWord3));
         AuthDisable = info.GetValue<bool?>(nameof(AuthDisable));
         TestDomesticPaymentConsent = info.GetValue<bool>(nameof(TestDomesticPaymentConsent));
         TestDomesticVrpConsent = info.GetValue<bool>(nameof(TestDomesticVrpConsent));
@@ -66,6 +75,9 @@ public class BankTestData2 : IXunitSerializable
         info.AddValue(nameof(RegistrationScope), RegistrationScope);
         info.AddValue(nameof(AuthUiInputUserName), AuthUiInputUserName);
         info.AddValue(nameof(AuthUiInputPassword), AuthUiInputPassword);
+        info.AddValue(nameof(AuthUiExtraWord1), AuthUiExtraWord1);
+        info.AddValue(nameof(AuthUiExtraWord2), AuthUiExtraWord2);
+        info.AddValue(nameof(AuthUiExtraWord3), AuthUiExtraWord3);
         info.AddValue(nameof(AuthDisable), AuthDisable);
         info.AddValue(nameof(TestDomesticPaymentConsent), TestDomesticPaymentConsent);
         info.AddValue(nameof(TestDomesticVrpConsent), TestDomesticVrpConsent);
