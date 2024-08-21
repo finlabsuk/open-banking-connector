@@ -76,10 +76,20 @@ public class BankRegistration : EntityBase, ISupportsValidation
     public string? ExternalApiSecret { get; set; }
 
     /// <summary>
+    ///     Same as <see cref="ExternalApiSecret" /> but supplied via secrets.
+    /// </summary>
+    public SecretDescription? ExternalApiSecretFromSecrets { get; set; }
+
+    /// <summary>
     ///     External (bank) API registration access token. Sometimes used to support registration adjustments etc. Only
     ///     relevant/used when <see cref="ExternalApiId" /> is non-null.
     /// </summary>
     public string? RegistrationAccessToken { get; set; }
+
+    /// <summary>
+    ///     Same as <see cref="RegistrationAccessToken" /> but supplied via secrets.
+    /// </summary>
+    public SecretDescription? RegistrationAccessTokenFromSecrets { get; set; }
 
     /// <summary>
     ///     Use simulated bank (only supported for some bank profiles).

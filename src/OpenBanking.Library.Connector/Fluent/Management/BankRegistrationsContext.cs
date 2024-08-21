@@ -46,7 +46,8 @@ internal class BankRegistrationsContext :
             sharedContext.ObSealCertificateMethods,
             clientAccessTokenGet,
             grantPost,
-            sharedContext.EncryptionKeyInfo);
+            sharedContext.EncryptionKeyInfo,
+            sharedContext.SecretProvider);
         ReadObject = bankRegistrationOperations;
         DeleteObject = new BankRegistrationDelete(
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),

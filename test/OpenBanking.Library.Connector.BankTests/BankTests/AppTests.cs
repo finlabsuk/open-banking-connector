@@ -317,7 +317,11 @@ public abstract class AppTests
         bankRegistrationRequest.ExternalApiId =
             testData2.BankRegistrationExternalApiId ??
             throw new InvalidOperationException("No external API BankRegistration ID provided.");
-        bankRegistrationRequest.ExternalApiSecret = testData2.BankRegistrationExternalApiSecret;
+        if (testData2.BankRegistrationExternalApiSecret is not null)
+        {
+            bankRegistrationRequest.ExternalApiSecretFromSecrets =
+                new SecretDescription { Name = testData2.BankRegistrationExternalApiSecret };
+        }
         bankRegistrationRequest.RegistrationAccessToken = testData2.BankRegistrationRegistrationAccessToken;
         BankRegistrationResponse bankRegistrationCreateResponse =
             await BankRegistrationCreate(

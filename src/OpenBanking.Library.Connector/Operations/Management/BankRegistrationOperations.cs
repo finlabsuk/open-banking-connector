@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -59,6 +60,7 @@ internal class
     private readonly IApiVariantMapper _mapper;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
+    private readonly ISecretProvider _secretProvider;
     private readonly IDbReadWriteEntityMethods<SoftwareStatementEntity> _softwareStatementEntityMethods;
     private readonly ITimeProvider _timeProvider;
 
@@ -75,7 +77,8 @@ internal class
         ObSealCertificateMethods obSealCertificateMethods,
         ClientAccessTokenGet clientAccessTokenGet,
         IGrantPost grantPost,
-        IEncryptionKeyInfo encryptionKeyInfo)
+        IEncryptionKeyInfo encryptionKeyInfo,
+        ISecretProvider secretProvider)
     {
         _bankProfileService = bankProfileService;
         _softwareStatementEntityMethods = softwareStatementEntityMethods;
@@ -84,6 +87,7 @@ internal class
         _clientAccessTokenGet = clientAccessTokenGet;
         _grantPost = grantPost;
         _encryptionKeyInfo = encryptionKeyInfo;
+        _secretProvider = secretProvider;
         _configurationRead = configurationRead;
         _entityMethods = entityMethods;
         _dbSaveChangesMethod = dbSaveChangesMethod;
@@ -129,6 +133,41 @@ internal class
         // Get OBSeal key
         OBSealKey obSealKey =
             (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
+
+        // Get external API secret
+        string? requestExternalApiSecret = null;
+        if (request.ExternalApiSecret is not null &&
+            request.ExternalApiSecretFromSecrets is not null)
+        {
+            throw new ArgumentException(
+                "Only one of ExternalApiSecret or ExternalApiSecretFromSecrets should be specified.");
+        }
+        if (request.ExternalApiSecretFromSecrets is not null)
+        {
+            requestExternalApiSecret = await _secretProvider.GetSecretAsync(request.ExternalApiSecretFromSecrets);
+        }
+        if (request.ExternalApiSecret is not null)
+        {
+            requestExternalApiSecret = request.ExternalApiSecret;
+        }
+
+        // Get registration access token
+        string? requestRegistrationAccessToken = null;
+        if (request.RegistrationAccessToken is not null &&
+            request.RegistrationAccessTokenFromSecrets is not null)
+        {
+            throw new ArgumentException(
+                "Only one of RegistrationAccessToken or RegistrationAccessTokenFromSecrets should be specified.");
+        }
+        if (request.RegistrationAccessTokenFromSecrets is not null)
+        {
+            requestRegistrationAccessToken =
+                await _secretProvider.GetSecretAsync(request.RegistrationAccessTokenFromSecrets);
+        }
+        if (request.RegistrationAccessToken is not null)
+        {
+            requestRegistrationAccessToken = request.RegistrationAccessToken;
+        }
 
         // Get and process software statement assertion
         string softwareStatementAssertion =
@@ -250,8 +289,8 @@ internal class
         {
             // Use supplied external (bank) API registration
             externalApiId = request.ExternalApiId;
-            externalApiSecret = request.ExternalApiSecret;
-            registrationAccessToken = request.RegistrationAccessToken;
+            externalApiSecret = requestExternalApiSecret;
+            registrationAccessToken = requestRegistrationAccessToken;
             externalApiResponse = null;
         }
         else
