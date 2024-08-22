@@ -14,6 +14,9 @@ public enum BankGroupEnum
     [EnumMember(Value = "Barclays")]
     Barclays,
 
+    [EnumMember(Value = "Cooperative")]
+    Cooperative,
+
     [EnumMember(Value = "Danske")]
     Danske,
 

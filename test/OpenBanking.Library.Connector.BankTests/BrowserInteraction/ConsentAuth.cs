@@ -88,13 +88,15 @@ public class ConsentAuth
     {
         return BankProfileService.GetBankGroupEnum(bankProfileEnum) switch
         {
+            BankGroupEnum.Barclays => new BarclaysUiMethods(_bankProfileService.GetBank<BarclaysBank>(bankProfileEnum)),
+            BankGroupEnum.Cooperative => new CooperativeUiMethods(
+                _bankProfileService.GetBank<CooperativeBank>(bankProfileEnum)),
             BankGroupEnum.Danske => new DanskeUiMethods(_bankProfileService.GetBank<DanskeBank>(bankProfileEnum)),
             BankGroupEnum.Hsbc => new HsbcUiMethods(_bankProfileService.GetBank<HsbcBank>(bankProfileEnum)),
             BankGroupEnum.Lloyds => new LloydsUiMethods(_bankProfileService.GetBank<LloydsBank>(bankProfileEnum)),
             BankGroupEnum.Obie => new ObieUiMethods(_bankProfileService.GetBank<ObieBank>(bankProfileEnum)),
             BankGroupEnum.Monzo => new MonzoUiMethods(_bankProfileService.GetBank<MonzoBank>(bankProfileEnum)),
             BankGroupEnum.NatWest => new NatWestUiMethods(_bankProfileService.GetBank<NatWestBank>(bankProfileEnum)),
-            BankGroupEnum.Barclays => new BarclaysUiMethods(_bankProfileService.GetBank<BarclaysBank>(bankProfileEnum)),
             _ => throw new ArgumentOutOfRangeException()
         };
     }

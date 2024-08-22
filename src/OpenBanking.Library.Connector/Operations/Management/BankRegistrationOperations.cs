@@ -248,6 +248,7 @@ internal class
             IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> getExistingRegistration = bankGroup switch
         {
             BankGroupEnum.Barclays => GetExistingRegistration<BarclaysBank, BarclaysRegistrationGroup>,
+            BankGroupEnum.Cooperative => GetExistingRegistration<CooperativeBank, CooperativeRegistrationGroup>,
             BankGroupEnum.Danske => GetExistingRegistration<DanskeBank, DanskeRegistrationGroup>,
             BankGroupEnum.Hsbc => GetExistingRegistration<HsbcBank, HsbcRegistrationGroup>,
             BankGroupEnum.Lloyds => GetExistingRegistration<LloydsBank, LloydsRegistrationGroup>,

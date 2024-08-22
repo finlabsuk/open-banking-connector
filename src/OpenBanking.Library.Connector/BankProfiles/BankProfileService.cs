@@ -48,6 +48,7 @@ public class BankProfileService : IBankProfileService
         _bankGroupsDictionary = new BankGroupsDictionary
         {
             [BankGroupEnum.Barclays] = new Barclays(BankGroupEnum.Barclays),
+            [BankGroupEnum.Cooperative] = new Cooperative(BankGroupEnum.Cooperative),
             [BankGroupEnum.Danske] = new Danske(BankGroupEnum.Danske),
             [BankGroupEnum.Hsbc] = new Hsbc(BankGroupEnum.Hsbc),
             [BankGroupEnum.Lloyds] = new Lloyds(BankGroupEnum.Lloyds),
@@ -66,6 +67,9 @@ public class BankProfileService : IBankProfileService
             [BankGroupEnum.Barclays] = new BarclaysGenerator(
                 bankProfilesSettingsProvider,
                 GetBankGroup<BarclaysBank>(BankGroupEnum.Barclays)),
+            [BankGroupEnum.Cooperative] = new CooperativeGenerator(
+                bankProfilesSettingsProvider,
+                GetBankGroup<CooperativeBank>(BankGroupEnum.Cooperative)),
             [BankGroupEnum.Danske] = new DanskeGenerator(
                 bankProfilesSettingsProvider,
                 GetBankGroup<DanskeBank>(BankGroupEnum.Danske)),
@@ -106,6 +110,9 @@ public class BankProfileService : IBankProfileService
                     () => GetBankGroupEnum(profileEnum) switch
                     {
                         BankGroupEnum.Barclays => GetBankProfile<BarclaysBank>(profileEnum, _instrumentationClient),
+                        BankGroupEnum.Cooperative => GetBankProfile<CooperativeBank>(
+                            profileEnum,
+                            _instrumentationClient),
                         BankGroupEnum.Danske => GetBankProfile<DanskeBank>(profileEnum, _instrumentationClient),
                         BankGroupEnum.Hsbc => GetBankProfile<HsbcBank>(profileEnum, _instrumentationClient),
                         BankGroupEnum.Lloyds => GetBankProfile<LloydsBank>(profileEnum, _instrumentationClient),
@@ -152,6 +159,9 @@ public class BankProfileService : IBankProfileService
             BankProfileEnum.Barclays_Business => BankGroupEnum.Barclays,
             BankProfileEnum.Barclays_Corporate => BankGroupEnum.Barclays,
             BankProfileEnum.Barclays_BarclaycardCommercialPayments => BankGroupEnum.Barclays,
+            BankProfileEnum.Cooperative_Cooperative => BankGroupEnum.Cooperative,
+            BankProfileEnum.Cooperative_CooperativeSandbox => BankGroupEnum.Cooperative,
+            BankProfileEnum.Cooperative_Smile => BankGroupEnum.Cooperative,
             BankProfileEnum.Danske_Sandbox => BankGroupEnum.Danske,
             BankProfileEnum.Hsbc_FirstDirect => BankGroupEnum.Hsbc,
             BankProfileEnum.Hsbc_Sandbox => BankGroupEnum.Hsbc,

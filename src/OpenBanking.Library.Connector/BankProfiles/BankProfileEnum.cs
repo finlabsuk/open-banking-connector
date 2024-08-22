@@ -36,6 +36,15 @@ public enum BankProfileEnum
     [EnumMember(Value = "Barclays_BarclaycardCommercialPayments")]
     Barclays_BarclaycardCommercialPayments,
 
+    [EnumMember(Value = "Cooperative_Cooperative")]
+    Cooperative_Cooperative,
+
+    [EnumMember(Value = "Cooperative_CooperativeSandbox")]
+    Cooperative_CooperativeSandbox,
+
+    [EnumMember(Value = "Cooperative_Smile")]
+    Cooperative_Smile,
+
     [EnumMember(Value = "Danske_Sandbox")]
     Danske_Sandbox,
 
