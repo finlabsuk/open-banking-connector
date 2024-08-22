@@ -243,7 +243,7 @@ internal class
             openIdConfiguration.TokenEndpointAuthMethodsSupported);
 
         // Get re-usable existing bank registration if possible
-        Func<BankRegistrationRequest, BankProfile, BankGroupEnum, Guid, TokenEndpointAuthMethodSupportedValues,
+        Func<string?, string?, string?, BankProfile, BankGroupEnum, Guid, TokenEndpointAuthMethodSupportedValues,
             RegistrationScopeEnum, IBankProfileService, (BankRegistrationEntity? existingRegistration,
             IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> getExistingRegistration = bankGroup switch
         {
@@ -263,7 +263,9 @@ internal class
         };
         (BankRegistrationEntity? existingGroupRegistration,
             IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2) = getExistingRegistration(
-            request,
+            request.ExternalApiId,
+            requestExternalApiSecret,
+            requestRegistrationAccessToken,
             bankProfile,
             bankGroup,
             softwareStatementId,
@@ -281,8 +283,8 @@ internal class
         {
             // Re-use existing external (bank) API registration
             externalApiId = existingGroupRegistration.ExternalApiId;
-            externalApiSecret = existingGroupRegistration.ExternalApiSecret;
-            registrationAccessToken = existingGroupRegistration.RegistrationAccessToken;
+            externalApiSecret = requestExternalApiSecret; // has been checked to match existing registration
+            registrationAccessToken = requestRegistrationAccessToken; // has been checked to match existing registration
             externalApiResponse = null;
         }
         else if (request.ExternalApiId is not null)
@@ -473,6 +475,7 @@ internal class
                 .Include(o => o.SoftwareStatementNavigation)
                 .Include(o => o.ExternalApiSecretsNavigation)
                 .Include(o => o.RegistrationAccessTokensNavigation)
+                .AsSplitQuery()
                 .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
             throw new KeyNotFoundException($"No record found for BankRegistration with ID {readParams.Id}.");
         string externalApiId = entity.ExternalApiId;
@@ -607,7 +610,9 @@ internal class
 
     private (BankRegistrationEntity? existingRegistration, IList<IFluentResponseInfoOrWarningMessage>
         nonErrorMessages) GetExistingRegistration<TBank, TRegistrationGroup>(
-            BankRegistrationRequest request,
+            string? requestExternalApiId,
+            string? requestExternalApiSecret,
+            string? requestRegistrationAccessToken,
             BankProfile bankProfile,
             BankGroupEnum bankGroupEnum,
             Guid softwareStatementId,
@@ -621,59 +626,78 @@ internal class
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        BankRegistrationEntity? existingGroupRegistration = null;
         IBankGroup<TBank, TRegistrationGroup> bankGroup =
             bankProfileService.GetBankGroup<TBank, TRegistrationGroup>(bankGroupEnum);
         TBank bank = bankGroup.GetBank(bankProfile.BankProfileEnum);
-        TRegistrationGroup? registrationGroup = bankGroup.GetRegistrationGroup(bank, registrationScope);
-        if (registrationGroup is not null)
+        TRegistrationGroup registrationGroup = bankGroup.GetRegistrationGroup(bank, registrationScope);
+        var registrationGroupString = registrationGroup.ToString()!;
+
+        // Get existing registrations with same software statement, bank group, and bank registration group
+        IEnumerable<BankRegistrationEntity> existingRegistrationsFirstPass =
+            _entityMethods
+                .DbSetNoTracking
+                .Include(x => x.ExternalApiSecretsNavigation)
+                .Include(x => x.RegistrationAccessTokensNavigation)
+                .AsSplitQuery()
+                .Where(
+                    x => x.SoftwareStatementId == softwareStatementId &&
+                         x.BankGroup == bankGroupEnum)
+                .OrderByDescending(x => x.Created) // most recent first
+                .AsEnumerable(); // force next where clause to run client-side as cannot be translated
+        List<BankRegistrationEntity> existingRegistrations = existingRegistrationsFirstPass
+            .Where(
+                x => EqualityComparer<TRegistrationGroup>.Default.Equals(
+                    bankGroup.GetRegistrationGroup(bankGroup.GetBank(x.BankProfile), x.RegistrationScope),
+                    registrationGroup))
+            .ToList();
+
+        // Check first registration in same registration group for compatibility (error if not compatible)
+        BankRegistrationEntity? existingRegistration = null;
+        if (existingRegistrations.Any())
         {
-            // Get existing registrations with same bank group and software statement (i.e. Software ID)
-            IOrderedQueryable<BankRegistrationEntity> existingRegistrations =
-                _entityMethods
-                    .DbSetNoTracking
-                    .Where(
-                        x => x.BankGroup == bankGroupEnum &&
-                             x.SoftwareStatementId == softwareStatementId)
-                    .OrderByDescending(x => x.Created); // most recent first
+            existingRegistration = existingRegistrations.First();
+            ExternalApiSecretEntity? externalApiSecretEntity =
+                existingRegistration.ExternalApiSecretsNavigation
+                    .SingleOrDefault(x => !x.IsDeleted);
+            RegistrationAccessTokenEntity? registrationAccessTokenEntity = existingRegistration
+                .RegistrationAccessTokensNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
 
-            // Search for first registration in same registration group and check compatible (error if not)
-            foreach (BankRegistrationEntity existingReg in existingRegistrations)
+            IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2 =
+                CheckExistingRegistrationCompatible(
+                    existingRegistration,
+                    externalApiSecretEntity,
+                    registrationAccessTokenEntity,
+                    requestExternalApiId,
+                    requestExternalApiSecret,
+                    requestRegistrationAccessToken,
+                    registrationGroupString,
+                    tokenEndpointAuthMethod,
+                    registrationScope);
+            nonErrorMessages.AddRange(nonErrorMessages2);
+
+            int numberOfExistingRegistrations = existingRegistrations.Count();
+            if (numberOfExistingRegistrations > 1)
             {
-                BankProfile existingRegBankProfile = _bankProfileService.GetBankProfile(existingReg.BankProfile);
-                TBank existingRegBank = bankGroup.GetBank(existingRegBankProfile.BankProfileEnum);
-                TRegistrationGroup? existingRegRegistrationGroup =
-                    bankGroup.GetRegistrationGroup(existingRegBank, existingReg.RegistrationScope);
-
-                // Continue if reg group does not match
-                if (existingRegRegistrationGroup is null ||
-                    !EqualityComparer<TRegistrationGroup>.Default.Equals(
-                        existingRegRegistrationGroup.Value,
-                        registrationGroup.Value))
-                {
-                    continue;
-                }
-
-                existingGroupRegistration = existingReg;
-                IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2 =
-                    CheckExistingRegistrationCompatible(
-                        existingGroupRegistration,
-                        existingRegBankProfile,
-                        request.ExternalApiId,
-                        registrationGroup.ToString()!,
-                        tokenEndpointAuthMethod,
-                        registrationScope);
-                nonErrorMessages.AddRange(nonErrorMessages2);
-                break;
+                string warningMessage =
+                    $"More than one (in fact {numberOfExistingRegistrations}) previous registrations were found for " +
+                    $"BankRegistrationGroup {registrationGroupString}. The most recently created of these will be re-used. " +
+                    $"Normally we expect to find only one previous registration for a given registration group.";
+                nonErrorMessages.Add(new FluentResponseWarningMessage(warningMessage));
+                _instrumentationClient.Warning(warningMessage);
             }
         }
-        return (existingGroupRegistration, nonErrorMessages);
+
+        return (existingRegistration, nonErrorMessages);
     }
 
     private IList<IFluentResponseInfoOrWarningMessage> CheckExistingRegistrationCompatible(
         BankRegistrationEntity existingRegistration,
-        BankProfile existingRegistrationBankProfile,
-        string? externalApiId,
+        ExternalApiSecretEntity? externalApiSecretEntity,
+        RegistrationAccessTokenEntity? registrationAccessTokenEntity,
+        string? requestExternalApiId,
+        string? requestExternalApiSecret,
+        string? requestRegistrationAccessToken,
         string registrationGroupString,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         RegistrationScopeEnum registrationScope)
@@ -682,35 +706,56 @@ internal class
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        if (externalApiId is not null)
+        // If request contains external API ID, check details match existing registration
+        if (requestExternalApiId is not null)
         {
-            if (externalApiId !=
-                existingRegistration.ExternalApiId)
+            // Check ExternalApiId
+            if (requestExternalApiId != existingRegistration.ExternalApiId)
             {
                 throw new
                     InvalidOperationException(
                         $"Previous registration for BankRegistrationGroup {registrationGroupString} " +
-                        $"used ExternalApiObject with ExternalApiId {existingRegistration.ExternalApiId} " +
-                        $"which is different from expected {externalApiId}.");
+                        $"used ExternalApiId {existingRegistration.ExternalApiId} " +
+                        $"which is different from specified {requestExternalApiId}.");
             }
 
-            string warningMessage1 =
-                $"Previous registration for BankRegistrationGroup {registrationGroupString} " +
-                "exists whose ExternalApiId matches ExternalApiId from " +
-                $"ExternalApiObject provided in request ({externalApiId}). " +
-                "Therefore this registration will be re-used and any ExternalApiSecret from ExternalApiObject provided in request will be ignored and value from " +
-                "previous registration re-used.";
-            nonErrorMessages.Add(new FluentResponseWarningMessage(warningMessage1));
-            _instrumentationClient.Warning(warningMessage1);
+            // Check ExternalApiSecret
+            string? existingRegExternalApiSecret = null;
+            if (externalApiSecretEntity is not null)
+            {
+                existingRegExternalApiSecret = externalApiSecretEntity
+                    .GetClientSecret(
+                        existingRegistration.GetAssociatedData(),
+                        _encryptionKeyInfo.GetEncryptionKey(externalApiSecretEntity.KeyId));
+            }
 
-            string warningMessage2 =
-                $"Previous registration for BankRegistrationGroup {registrationGroupString} " +
-                "exists whose ExternalApiId matches ExternalApiId from " +
-                $"ExternalApiObject provided in request ({externalApiId}). " +
-                "Therefore this registration will be re-used and any RegistrationAccessToken from ExternalApiObject provided in request will be ignored and value from " +
-                "previous registration re-used.";
-            nonErrorMessages.Add(new FluentResponseWarningMessage(warningMessage2));
-            _instrumentationClient.Warning(warningMessage2);
+            if (requestExternalApiSecret != existingRegExternalApiSecret)
+            {
+                throw new
+                    InvalidOperationException(
+                        $"Previous registration for BankRegistrationGroup {registrationGroupString} " +
+                        $"used ExternalApiSecret " +
+                        $"which is different from specified ExternalApiSecret.");
+            }
+
+            // Check RegistrationAccessToken
+            string? existingRegRegistrationAccessToken = null;
+            if (registrationAccessTokenEntity is not null)
+            {
+                existingRegRegistrationAccessToken = registrationAccessTokenEntity
+                    .GetRegistrationAccessToken(
+                        existingRegistration.GetAssociatedData(),
+                        _encryptionKeyInfo.GetEncryptionKey(registrationAccessTokenEntity.KeyId));
+            }
+
+            if (requestRegistrationAccessToken != existingRegRegistrationAccessToken)
+            {
+                throw new
+                    InvalidOperationException(
+                        $"Previous registration for BankRegistrationGroup {registrationGroupString} " +
+                        $"used RegistrationAccessToken " +
+                        $"which is different from specified RegistrationAccessToken.");
+            }
         }
 
         // TODO: compare redirect URLs?

@@ -32,7 +32,7 @@ public class Monzo : BankGroupBase<MonzoBank, MonzoRegistrationGroup>
             [BankProfileEnum.Monzo_Monzo] = MonzoBank.Monzo
         };
 
-    public override MonzoRegistrationGroup? GetRegistrationGroup(
+    public override MonzoRegistrationGroup GetRegistrationGroup(
         MonzoBank bank,
         RegistrationScopeEnum registrationScopeEnum) =>
         (bank, registrationScopeEnum) switch

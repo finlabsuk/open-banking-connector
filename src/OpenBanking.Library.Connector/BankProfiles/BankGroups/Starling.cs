@@ -19,7 +19,7 @@ public class Starling : BankGroupBase<StarlingBank, StarlingRegistrationGroup>
     protected override ConcurrentDictionary<BankProfileEnum, StarlingBank> BankProfileToBank { get; } =
         new() { [BankProfileEnum.Starling_Starling] = StarlingBank.Starling };
 
-    public override StarlingRegistrationGroup? GetRegistrationGroup(
+    public override StarlingRegistrationGroup GetRegistrationGroup(
         StarlingBank bank,
         RegistrationScopeEnum registrationScopeEnum) => bank;
 }

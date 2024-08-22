@@ -40,7 +40,7 @@ public class Barclays : BankGroupBase<BarclaysBank, BarclaysRegistrationGroup>
             [BankProfileEnum.Barclays_BarclaycardCommercialPayments] = BarclaysBank.BarclaycardCommercialPayments
         };
 
-    public override BarclaysRegistrationGroup? GetRegistrationGroup(
+    public override BarclaysRegistrationGroup GetRegistrationGroup(
         BarclaysBank bank,
         RegistrationScopeEnum registrationScopeEnum) =>
         bank is BarclaysBank.Sandbox

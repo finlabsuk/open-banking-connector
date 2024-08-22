@@ -24,7 +24,7 @@ public class Obie : BankGroupBase<ObieBank, ObieRegistrationGroup>
             [BankProfileEnum.Obie_Model2023] = ObieBank.Model2023
         };
 
-    public override ObieRegistrationGroup? GetRegistrationGroup(
+    public override ObieRegistrationGroup GetRegistrationGroup(
         ObieBank bank,
         RegistrationScopeEnum registrationScopeEnum) => bank;
 }

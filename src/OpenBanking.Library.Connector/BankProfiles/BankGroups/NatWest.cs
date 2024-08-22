@@ -63,7 +63,7 @@ public class NatWest : BankGroupBase<NatWestBank, NatWestRegistrationGroup>
             [BankProfileEnum.NatWest_Coutts] = NatWestBank.Coutts
         };
 
-    public override NatWestRegistrationGroup? GetRegistrationGroup(
+    public override NatWestRegistrationGroup GetRegistrationGroup(
         NatWestBank bank,
         RegistrationScopeEnum registrationScopeEnum) => bank switch
     {

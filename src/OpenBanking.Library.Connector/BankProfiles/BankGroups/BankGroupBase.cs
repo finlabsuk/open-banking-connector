@@ -18,7 +18,7 @@ public abstract class BankGroupBase<TBank, TRegistrationGroup> : IBankGroup<TBan
 
     protected abstract ConcurrentDictionary<BankProfileEnum, TBank> BankProfileToBank { get; }
 
-    public abstract TRegistrationGroup? GetRegistrationGroup(TBank bank, RegistrationScopeEnum registrationScopeEnum);
+    public abstract TRegistrationGroup GetRegistrationGroup(TBank bank, RegistrationScopeEnum registrationScopeEnum);
 
     public BankGroupEnum BankGroupEnum { get; }
 

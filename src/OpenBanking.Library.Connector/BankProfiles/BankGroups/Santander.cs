@@ -19,7 +19,7 @@ public class Santander : BankGroupBase<SantanderBank, SantanderRegistrationGroup
     protected override ConcurrentDictionary<BankProfileEnum, SantanderBank> BankProfileToBank { get; } =
         new() { [BankProfileEnum.Santander_Santander] = SantanderBank.Santander };
 
-    public override SantanderRegistrationGroup? GetRegistrationGroup(
+    public override SantanderRegistrationGroup GetRegistrationGroup(
         SantanderBank bank,
         RegistrationScopeEnum registrationScopeEnum) => bank;
 }

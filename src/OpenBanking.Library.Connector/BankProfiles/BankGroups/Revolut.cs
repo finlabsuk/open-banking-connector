@@ -19,7 +19,7 @@ public class Revolut : BankGroupBase<RevolutBank, RevolutRegistrationGroup>
     protected override ConcurrentDictionary<BankProfileEnum, RevolutBank> BankProfileToBank { get; } =
         new() { [BankProfileEnum.Revolut_Revolut] = RevolutBank.Revolut };
 
-    public override RevolutRegistrationGroup? GetRegistrationGroup(
+    public override RevolutRegistrationGroup GetRegistrationGroup(
         RevolutBank bank,
         RegistrationScopeEnum registrationScopeEnum) => bank;
 }

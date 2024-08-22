@@ -19,7 +19,7 @@ public class Nationwide : BankGroupBase<NationwideBank, NationwideRegistrationGr
     protected override ConcurrentDictionary<BankProfileEnum, NationwideBank> BankProfileToBank { get; } =
         new() { [BankProfileEnum.Nationwide_Nationwide] = NationwideBank.Nationwide };
 
-    public override NationwideRegistrationGroup? GetRegistrationGroup(
+    public override NationwideRegistrationGroup GetRegistrationGroup(
         NationwideBank bank,
         RegistrationScopeEnum registrationScopeEnum) => bank;
 }

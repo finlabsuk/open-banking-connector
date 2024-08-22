@@ -32,7 +32,7 @@ public class Hsbc : BankGroupBase<HsbcBank, HsbcRegistrationGroup>
             [BankProfileEnum.Hsbc_HsbcNetUk] = HsbcBank.HsbcNetUk
         };
 
-    public override HsbcRegistrationGroup? GetRegistrationGroup(
+    public override HsbcRegistrationGroup GetRegistrationGroup(
         HsbcBank bank,
         RegistrationScopeEnum registrationScopeEnum) => bank;
 }

@@ -20,5 +20,5 @@ public interface IBankGroup<TBank, TRegistrationGroup> : IBankGroup<TBank>
     where TRegistrationGroup : struct, Enum
     where TBank : struct, Enum
 {
-    TRegistrationGroup? GetRegistrationGroup(TBank bank, RegistrationScopeEnum registrationScopeEnum);
+    TRegistrationGroup GetRegistrationGroup(TBank bank, RegistrationScopeEnum registrationScopeEnum);
 }

@@ -19,7 +19,7 @@ public class Danske : BankGroupBase<DanskeBank, DanskeRegistrationGroup>
     protected override ConcurrentDictionary<BankProfileEnum, DanskeBank> BankProfileToBank { get; } =
         new() { [BankProfileEnum.Danske_Sandbox] = DanskeBank.Sandbox };
 
-    public override DanskeRegistrationGroup? GetRegistrationGroup(
+    public override DanskeRegistrationGroup GetRegistrationGroup(
         DanskeBank bank,
         RegistrationScopeEnum registrationScopeEnum) => bank;
 }

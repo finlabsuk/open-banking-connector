@@ -44,7 +44,7 @@ public class Lloyds : BankGroupBase<LloydsBank, LloydsRegistrationGroup>
             [BankProfileEnum.Lloyds_MbnaPersonal] = LloydsBank.MbnaPersonal
         };
 
-    public override LloydsRegistrationGroup? GetRegistrationGroup(
+    public override LloydsRegistrationGroup GetRegistrationGroup(
         LloydsBank bank,
         RegistrationScopeEnum registrationScopeEnum) => bank is LloydsBank.Sandbox
         ? LloydsRegistrationGroup.Sandbox
