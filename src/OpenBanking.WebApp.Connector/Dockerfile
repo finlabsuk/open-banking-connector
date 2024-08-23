@@ -35,6 +35,6 @@ RUN chmod 644 /usr/local/share/ca-certificates/open-banking-sandbox-root-ca.crt
 RUN chmod 644 /usr/local/share/ca-certificates/open-banking-prod-root-ca.crt
 RUN update-ca-certificates
 
-EXPOSE 80
+EXPOSE 8080
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "FinnovationLabs.OpenBanking.WebApp.Connector.dll"]
