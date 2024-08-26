@@ -41,6 +41,7 @@ public abstract class AppTests
     private readonly AppContextFixture _appContextFixture;
     protected readonly IServiceProvider _appServiceProvider;
     private readonly AuthContextsApiClient _authContextsApiClient;
+    private readonly BankTestingFixture _bankTestingFixture;
     private readonly DomesticPaymentConsentSubtest _domesticPaymentConsentSubtest;
     private readonly DomesticVrpConsentSubtest _domesticVrpConsentSubtest;
     private readonly ManagementApiClient _managementApiClient;
@@ -55,7 +56,7 @@ public abstract class AppTests
         _outputHelper = outputHelper ?? throw new ArgumentNullException(nameof(outputHelper));
         _testServiceProvider = appContextFixture.Host.Services;
         _appContextFixture = appContextFixture;
-        bankTestingFixture.OutputHelper = outputHelper;
+        _bankTestingFixture = bankTestingFixture;
         _appServiceProvider = bankTestingFixture.Services;
         var webAppClient = new WebAppClient(bankTestingFixture);
         _managementApiClient = new ManagementApiClient(webAppClient);
@@ -602,10 +603,12 @@ public abstract class AppTests
     protected void SetTestLogging()
     {
         _appContextFixture.OutputHelper = _outputHelper;
+        _bankTestingFixture.OutputHelper = _outputHelper;
     }
 
     protected void UnsetTestLogging()
     {
         _appContextFixture.OutputHelper = null;
+        _bankTestingFixture.OutputHelper = null;
     }
 }
