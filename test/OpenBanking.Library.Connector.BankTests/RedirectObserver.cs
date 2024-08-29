@@ -50,7 +50,7 @@ public class RedirectObserver
     {
         AuthContextUpdateAuthResultResponse response = await ProcessRedirectFcn(authResult);
         _taskCompletionSource.TrySetResult(response);
-        
+
         return response;
     }
 

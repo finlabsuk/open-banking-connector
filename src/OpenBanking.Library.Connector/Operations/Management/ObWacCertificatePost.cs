@@ -72,28 +72,25 @@ internal class ObWacCertificatePost : IObjectCreate<ObWacCertificate,
             request.Certificate);
 
         // Add cache entry
-        HttpClientSettings httpClientSettings = _httpClientSettingsProvider.GetSettings();
-        ObWacCertificateCached obWacCertificate;
-        try
-        {
-            obWacCertificate = await ObWacCertificateCached.CreateInstance(
-                entity,
-                _secretProvider,
-                httpClientSettings,
-                _instrumentationClient,
-                _tppReportingMetrics);
-        }
-        catch (GetSecretException ex)
+        SecretResult associatedKeyResult = await _secretProvider.GetSecretAsync(entity.AssociatedKey);
+        if (!associatedKeyResult.SecretObtained)
         {
             string fullMessage =
-                $"Request property AssociatedKey specifies Source {entity.AssociatedKey.Source} " +
-                $"and Name {entity.AssociatedKey.Name}. {ex.Message} " +
+                $"Request specifies AssociatedKey with Source {entity.AssociatedKey.Source} " +
+                $"and Name {entity.AssociatedKey.Name} which could not be obtained. {associatedKeyResult.ErrorMessage} " +
                 "ObWacCertificate record will therefore not be created.";
             throw new KeyNotFoundException(fullMessage);
         }
+        HttpClientSettings httpClientSettings = _httpClientSettingsProvider.GetSettings();
         _memoryCache.Set(
             ObWacCertificateCached.GetCacheKey(entity.Id),
-            obWacCertificate);
+            ObWacCertificateCached.CreateInstance(
+                entity,
+                associatedKeyResult.Secret!,
+                _secretProvider,
+                httpClientSettings,
+                _instrumentationClient,
+                _tppReportingMetrics));
 
         // Add entity
         await _entityMethods.AddAsync(entity);

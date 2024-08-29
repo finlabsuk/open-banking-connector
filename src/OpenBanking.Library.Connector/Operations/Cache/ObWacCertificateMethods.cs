@@ -34,26 +34,22 @@ public class ObWacCertificateMethods(
                         .SingleOrDefaultAsync(x => x.Id == obWacId) ??
                     throw new KeyNotFoundException($"No record found for ObWacCertificate with ID {obWacId}.");
 
-                ObWacCertificate obWacCertificate;
-                try
-                {
-                    obWacCertificate = await ObWacCertificate.CreateInstance(
-                        obWac,
-                        secretProvider,
-                        httpClientSettings,
-                        instrumentationClient,
-                        tppReportingMetrics);
-                }
-                catch (GetSecretException ex)
+                SecretResult associatedKeyResult = await secretProvider.GetSecretAsync(obWac.AssociatedKey);
+                if (!associatedKeyResult.SecretObtained)
                 {
                     string fullMessage =
                         $"ObWacCertificate record with ID {obWac.Id} " +
                         $"specifies AssociatedKey with Source {obWac.AssociatedKey.Source} " +
-                        $"and Name {obWac.AssociatedKey.Name}. {ex.Message} " +
-                        "Any SoftwareStatement records depending " +
-                        "on this ObWacCertificate will not be able to be used.";
+                        $"and Name {obWac.AssociatedKey.Name} which could not be obtained. {associatedKeyResult.ErrorMessage}";
                     throw new KeyNotFoundException(fullMessage);
                 }
+                var obWacCertificate = ObWacCertificate.CreateInstance(
+                    obWac,
+                    associatedKeyResult.Secret!,
+                    secretProvider,
+                    httpClientSettings,
+                    instrumentationClient,
+                    tppReportingMetrics);
 
                 return obWacCertificate;
             }))!;

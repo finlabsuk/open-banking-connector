@@ -35,10 +35,23 @@ public class SoftwareStatementCleanup
 
         foreach (ObWacCertificateEntity obWac in obWacList)
         {
+            SecretResult associatedKeyResult = await secretProvider.GetSecretAsync(obWac.AssociatedKey);
+            if (!associatedKeyResult.SecretObtained)
+            {
+                string fullMessage =
+                    $"ObWacCertificate record with ID {obWac.Id} " +
+                    $"specifies AssociatedKey with Source {obWac.AssociatedKey.Source} " +
+                    $"and Name {obWac.AssociatedKey.Name} which could not be obtained. {associatedKeyResult.ErrorMessage} " +
+                    "Any SoftwareStatement records depending " +
+                    "on this ObWacCertificate will not be able to be used.";
+                instrumentationClient.Warning(fullMessage);
+                continue;
+            }
             try
             {
-                var obWacCertificate = await ObWacCertificate.CreateInstance(
+                var obWacCertificate = ObWacCertificate.CreateInstance(
                     obWac,
+                    associatedKeyResult.Secret!,
                     secretProvider,
                     httpClientSettings,
                     instrumentationClient,
@@ -47,21 +60,13 @@ public class SoftwareStatementCleanup
                     ObWacCertificate.GetCacheKey(obWac.Id),
                     obWacCertificate);
             }
-            catch (GetSecretException ex)
-            {
-                string fullMessage =
-                    $"ObWacCertificate record with ID {obWac.Id} " +
-                    $"specifies AssociatedKey with Source {obWac.AssociatedKey.Source} " +
-                    $"and Name {obWac.AssociatedKey.Name}. {ex.Message} " + "Any SoftwareStatement records depending " +
-                    "on this ObWacCertificate will not be able to be used.";
-                instrumentationClient.Warning(fullMessage);
-            }
             catch (CryptographicException ex)
             {
                 string fullMessage =
                     $"ObWacCertificate record with ID {obWac.Id} " +
                     $"specifies AssociatedKey with Source {obWac.AssociatedKey.Source} " +
-                    $"and Name {obWac.AssociatedKey.Name}. {ex.Message} " + "Any SoftwareStatement records depending " +
+                    $"and Name {obWac.AssociatedKey.Name} which caused a cryptographic exception. {ex.Message} " +
+                    "Any SoftwareStatement records depending " +
                     "on this ObWacCertificate will not be able to be used.";
                 instrumentationClient.Warning(fullMessage);
             }
@@ -69,26 +74,25 @@ public class SoftwareStatementCleanup
 
         foreach (ObSealCertificateEntity obSeal in obSealList)
         {
-            try
-            {
-                var obSealCertificate = await ObSealCertificate.CreateInstance(
-                    obSeal,
-                    secretProvider,
-                    instrumentationClient);
-                memoryCache.Set(
-                    ObSealCertificate.GetCacheKey(obSeal.Id),
-                    obSealCertificate);
-            }
-            catch (GetSecretException ex)
+            SecretResult associatedKeyResult = await secretProvider.GetSecretAsync(obSeal.AssociatedKey);
+            if (!associatedKeyResult.SecretObtained)
             {
                 string fullMessage =
                     $"ObSealCertificate record with ID {obSeal.Id} " +
                     $"specifies AssociatedKey with Source {obSeal.AssociatedKey.Source} " +
-                    $"and Name {obSeal.AssociatedKey.Name}. {ex.Message} " +
+                    $"and Name {obSeal.AssociatedKey.Name} which could not be obtained. {associatedKeyResult.ErrorMessage} " +
                     "Any SoftwareStatement records depending " +
                     "on this ObSealCertificate will not be able to be used.";
                 instrumentationClient.Warning(fullMessage);
+                continue;
             }
+            var obSealCertificate = ObSealCertificate.CreateInstance(
+                obSeal,
+                associatedKeyResult.Secret!,
+                instrumentationClient);
+            memoryCache.Set(
+                ObSealCertificate.GetCacheKey(obSeal.Id),
+                obSealCertificate);
         }
     }
 }

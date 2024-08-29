@@ -8,5 +8,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 
 public interface ISecretProvider
 {
-    Task<string> GetSecretAsync(SecretDescription secretDescription);
+    Task<SecretResult> GetSecretAsync(SecretDescription secretDescription);
 }

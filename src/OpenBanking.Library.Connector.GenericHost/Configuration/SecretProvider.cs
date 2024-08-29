@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Configuratio
 
 public class SecretProvider(IConfiguration configuration) : ISecretProvider
 {
-    public async Task<string> GetSecretAsync(
+    public async Task<SecretResult> GetSecretAsync(
         SecretDescription secretDescription)
     {
         if (secretDescription.Source is SecretSource.AwsSsmParameterStore)
@@ -28,20 +28,40 @@ public class SecretProvider(IConfiguration configuration) : ISecretProvider
                             Name = secretDescription.Name,
                             WithDecryption = true
                         });
-                return response.Parameter.Value;
+                return new SecretResult
+                {
+                    SecretObtained = true,
+                    Secret = response.Parameter.Value
+                };
             }
             catch (AmazonClientException ex)
             {
-                throw new GetSecretException($"The following Amazon SDK exception occurred: {ex.Message}.");
+                return new SecretResult
+                {
+                    SecretObtained = false,
+                    ErrorMessage = $"The following Amazon SDK exception occurred: {ex.Message}."
+                };
             }
             catch (ParameterNotFoundException)
             {
-                throw new GetSecretException($"No value with key {secretDescription.Name} can be found.");
+                return new SecretResult
+                {
+                    SecretObtained = false,
+                    ErrorMessage = $"No value with key {secretDescription.Name} can be found."
+                };
             }
         }
         var tmp = configuration.GetValue<string>(secretDescription.Name, "");
-        return !string.IsNullOrEmpty(tmp)
-            ? tmp
-            : throw new GetSecretException($"No value with key {secretDescription.Name} can be found.");
+        return string.IsNullOrEmpty(tmp)
+            ? new SecretResult
+            {
+                SecretObtained = false,
+                ErrorMessage = $"No value with key {secretDescription.Name} can be found."
+            }
+            : new SecretResult
+            {
+                SecretObtained = true,
+                Secret = tmp
+            };
     }
 }

@@ -30,24 +30,19 @@ public class ObSealCertificateMethods(
                         .SingleOrDefaultAsync(x => x.Id == obSealId) ??
                     throw new KeyNotFoundException($"No record found for ObSealCertificate with ID {obSealId}.");
 
-                ObSealCertificate obSealCertificate;
-                try
-                {
-                    obSealCertificate = await ObSealCertificate.CreateInstance(
-                        obSeal,
-                        secretProvider,
-                        instrumentationClient);
-                }
-                catch (GetSecretException ex)
+                SecretResult associatedKeyResult = await secretProvider.GetSecretAsync(obSeal.AssociatedKey);
+                if (!associatedKeyResult.SecretObtained)
                 {
                     string fullMessage =
                         $"ObSealCertificate record with ID {obSeal.Id} " +
                         $"specifies AssociatedKey with Source {obSeal.AssociatedKey.Source} " +
-                        $"and Name {obSeal.AssociatedKey.Name}. {ex.Message} " +
-                        "Any SoftwareStatement records depending " +
-                        "on this ObSealCertificate will not be able to be used.";
+                        $"and Name {obSeal.AssociatedKey.Name} which could not be obtained. {associatedKeyResult.ErrorMessage}";
                     throw new KeyNotFoundException(fullMessage);
                 }
+                var obSealCertificate = ObSealCertificate.CreateInstance(
+                    obSeal,
+                    associatedKeyResult.Secret!,
+                    instrumentationClient);
 
                 return obSealCertificate;
             }))!;

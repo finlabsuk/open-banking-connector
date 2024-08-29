@@ -96,8 +96,9 @@ public class ObWacCertificate
 
     public ConcurrentDictionary<SubjectDnOrgIdEncoding, string> SubjectDn { get; }
 
-    public static async Task<ObWacCertificate> CreateInstance(
+    public static ObWacCertificate CreateInstance(
         ObWacCertificateEntity obWac,
+        string associatedKey,
         ISecretProvider secretProvider,
         HttpClientSettings httpClientSettings,
         IInstrumentationClient instrumentationClient,
@@ -108,7 +109,7 @@ public class ObWacCertificate
                 Active = true,
                 DisableTlsCertificateVerification = false,
                 Certificate = obWac.Certificate,
-                AssociatedKey = await secretProvider.GetSecretAsync(obWac.AssociatedKey)
+                AssociatedKey = associatedKey
             },
             obWac.Id.ToString(),
             null,

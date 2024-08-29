@@ -4,4 +4,11 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 
-public class GetSecretException(string message) : Exception(message);
+public class SecretResult
+{
+    public required bool SecretObtained { get; init; }
+
+    public string? Secret { get; init; }
+
+    public string? ErrorMessage { get; init; }
+}

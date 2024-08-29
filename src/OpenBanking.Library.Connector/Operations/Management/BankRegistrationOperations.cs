@@ -144,7 +144,16 @@ internal class
         }
         if (request.ExternalApiSecretFromSecrets is not null)
         {
-            requestExternalApiSecret = await _secretProvider.GetSecretAsync(request.ExternalApiSecretFromSecrets);
+            SecretResult clientSecretResult =
+                await _secretProvider.GetSecretAsync(request.ExternalApiSecretFromSecrets);
+            if (!clientSecretResult.SecretObtained)
+            {
+                string fullMessage =
+                    $"Request specifies ExternalApiSecret with Source {request.ExternalApiSecretFromSecrets.Source} " +
+                    $"and Name {request.ExternalApiSecretFromSecrets.Name} which could not be obtained. {clientSecretResult.ErrorMessage}";
+                throw new KeyNotFoundException(fullMessage);
+            }
+            requestExternalApiSecret = clientSecretResult.Secret!;
         }
         if (request.ExternalApiSecret is not null)
         {
@@ -161,8 +170,16 @@ internal class
         }
         if (request.RegistrationAccessTokenFromSecrets is not null)
         {
-            requestRegistrationAccessToken =
+            SecretResult registrationAccessTokenResult =
                 await _secretProvider.GetSecretAsync(request.RegistrationAccessTokenFromSecrets);
+            if (!registrationAccessTokenResult.SecretObtained)
+            {
+                string fullMessage =
+                    $"Request specifies RegistrationAccessToken with Source {request.RegistrationAccessTokenFromSecrets.Source} " +
+                    $"and Name {request.RegistrationAccessTokenFromSecrets.Name} which could not be obtained. {registrationAccessTokenResult.ErrorMessage}";
+                throw new KeyNotFoundException(fullMessage);
+            }
+            requestRegistrationAccessToken = registrationAccessTokenResult.Secret!;
         }
         if (request.RegistrationAccessToken is not null)
         {
