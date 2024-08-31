@@ -58,7 +58,7 @@ public class ConsentAuth
         if (useScaAuth)
         {
             // Perform email auth
-            waitForRedirect = redirectObserver.WaitForRedirect(TimeSpan.FromSeconds(180));
+            waitForRedirect = redirectObserver.WaitForRedirect(TimeSpan.FromMinutes(5));
             SendEmail(
                 "Open Banking Connector Test",
                 "This is the auth URL: " + authUrl);
@@ -71,7 +71,7 @@ public class ConsentAuth
             }
 
             // Perform automated auth
-            waitForRedirect = redirectObserver.WaitForRedirect(TimeSpan.FromSeconds(120));
+            waitForRedirect = redirectObserver.WaitForRedirect(TimeSpan.FromMinutes(2));
             await AutomatedAuthAsync(
                 authUrl,
                 bankProfileEnum,

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="MSTest.Sdk/3.5.2">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
@@ -9,35 +9,18 @@
         <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.BankTests</RootNamespace>
         <Copyright>Finnovation Labs Limited</Copyright>
         <Company>Finnovation Labs Limited</Company>
-        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
         <PackageReference Include="FluentAssertions" Version="6.12.0"/>
-        <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.4.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.8"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.8"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0"/>
         <PackageReference Include="Microsoft.Playwright" Version="1.46.0"/>
-        <PackageReference Include="NSubstitute" Version="5.1.0"/>
-        <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.17">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="RichardSzalay.MockHttp" Version="7.0.0"/>
-        <PackageReference Include="TestStack.BDDfy.Xunit" Version="1.2.0"/>
-        <PackageReference Include="xunit" Version="2.9.0"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="coverlet.collector" Version="6.0.2">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0"/>
+        <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.11.0"/>
+        <PackageReference Update="Microsoft.Testing.Extensions.CodeCoverage" Version="17.12.2"/>
     </ItemGroup>
 
     <ItemGroup>

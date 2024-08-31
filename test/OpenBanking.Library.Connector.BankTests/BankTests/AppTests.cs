@@ -26,8 +26,6 @@ using FluentAssertions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
-using Xunit;
-using Xunit.Abstractions;
 using ObSealCertificateRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.ObSealCertificate;
 using ObWacCertificateRequest =
@@ -37,57 +35,53 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
 public abstract class AppTests
 {
+    private static AppContextFixture _appContextFixture = null!;
+    private static BankTestingFixture _bankTestingFixture = null!;
     private readonly AccountAccessConsentSubtest _accountAccessConsentSubtest;
-    private readonly AppContextFixture _appContextFixture;
-    protected readonly IServiceProvider _appServiceProvider;
-    private readonly AuthContextsApiClient _authContextsApiClient;
-    private readonly BankTestingFixture _bankTestingFixture;
+    private readonly IServiceProvider _appServiceProvider;
     private readonly DomesticPaymentConsentSubtest _domesticPaymentConsentSubtest;
     private readonly DomesticVrpConsentSubtest _domesticVrpConsentSubtest;
     private readonly ManagementApiClient _managementApiClient;
-    private readonly ITestOutputHelper _outputHelper;
-    protected readonly IServiceProvider _testServiceProvider;
+    private readonly IServiceProvider _testServiceProvider;
 
-    protected AppTests(
-        ITestOutputHelper outputHelper,
-        AppContextFixture appContextFixture,
-        BankTestingFixture bankTestingFixture)
+    protected AppTests()
     {
-        _outputHelper = outputHelper ?? throw new ArgumentNullException(nameof(outputHelper));
-        _testServiceProvider = appContextFixture.Host.Services;
-        _appContextFixture = appContextFixture;
-        _bankTestingFixture = bankTestingFixture;
-        _appServiceProvider = bankTestingFixture.Services;
-        var webAppClient = new WebAppClient(bankTestingFixture);
+        _testServiceProvider = _appContextFixture.Host.Services;
+        _appServiceProvider = _bankTestingFixture.Services;
+        var webAppClient = new WebAppClient(_bankTestingFixture);
         _managementApiClient = new ManagementApiClient(webAppClient);
-        _authContextsApiClient = new AuthContextsApiClient(webAppClient);
+        var authContextsApiClient = new AuthContextsApiClient(webAppClient);
         _accountAccessConsentSubtest =
-            new AccountAccessConsentSubtest(new AccountAndTransactionApiClient(webAppClient), _authContextsApiClient);
+            new AccountAccessConsentSubtest(new AccountAndTransactionApiClient(webAppClient), authContextsApiClient);
         _domesticPaymentConsentSubtest =
-            new DomesticPaymentConsentSubtest(new PaymentInitiationApiClient(webAppClient), _authContextsApiClient);
+            new DomesticPaymentConsentSubtest(new PaymentInitiationApiClient(webAppClient), authContextsApiClient);
         _domesticVrpConsentSubtest =
-            new DomesticVrpConsentSubtest(new VariableRecurringPaymentsApiClient(webAppClient), _authContextsApiClient);
+            new DomesticVrpConsentSubtest(new VariableRecurringPaymentsApiClient(webAppClient), authContextsApiClient);
     }
 
-    public static TheoryData<BankTestData1, BankTestData2>
-        TestedSkippedBanksById(bool genericAppNotPlainAppTest) =>
-        TestedBanksById(true, genericAppNotPlainAppTest);
+    public TestContext TestContext { get; set; } = null!;
 
-    public static TheoryData<BankTestData1, BankTestData2>
-        TestedUnskippedBanksById(bool genericAppNotPlainAppTest) =>
-        TestedBanksById(false, genericAppNotPlainAppTest);
+    [ClassInitialize(InheritanceBehavior.BeforeEachDerivedClass)]
+    public static void ClassInitialize(TestContext context)
+    {
+        _appContextFixture = new AppContextFixture();
+        _bankTestingFixture = new BankTestingFixture();
+    }
 
-    public static TheoryData<BankTestData1, BankTestData2> TestedBanksById(
+    [ClassCleanup(InheritanceBehavior.BeforeEachDerivedClass)]
+    public static void ClassCleanup()
+    {
+        _appContextFixture.Dispose();
+        _bankTestingFixture.Dispose();
+    }
+
+    public static IEnumerable<object[]> TestedBanksById(
         bool skippedNotUnskipped,
         bool genericAppNotPlainAppTest)
     {
         // Get bank test settings
         var bankTestSettings = AppConfiguration.GetSettings<BankTestSettings>();
         //var env = AppConfiguration.EnvironmentName;
-
-        // Get bank profile definitions
-        var data =
-            new TheoryData<BankTestData1, BankTestData2>();
 
         // Loop through test groups
         foreach ((string groupName, TestGroup testGroup) in bankTestSettings.TestGroups)
@@ -157,7 +151,8 @@ public abstract class AppTests
                 // Add test case to theory data if skip status matches that of theory data
                 if (!skippedNotUnskipped)
                 {
-                    data.Add(
+                    yield return
+                    [
                         new BankTestData1
                         {
                             TestGroupName = groupName,
@@ -182,12 +177,11 @@ public abstract class AppTests
                             AuthUiExtraWord3 = authUiExtraWord3,
                             TestDomesticPaymentConsent = testDomesticPaymentConsent,
                             TestDomesticVrpConsent = testDomesticVrpConsent
-                        });
+                        }
+                    ];
                 }
             }
         }
-
-        return data;
     }
 
     protected async Task TestAllInner(BankTestData1 testData1, BankTestData2 testData2, bool genericNotPlainAppTest)
@@ -602,13 +596,13 @@ public abstract class AppTests
 
     protected void SetTestLogging()
     {
-        _appContextFixture.OutputHelper = _outputHelper;
-        _bankTestingFixture.OutputHelper = _outputHelper;
+        _bankTestingFixture.TestContext = TestContext;
+        _appContextFixture.TestContext = TestContext;
     }
 
     protected void UnsetTestLogging()
     {
-        _appContextFixture.OutputHelper = null;
-        _bankTestingFixture.OutputHelper = null;
+        _bankTestingFixture.TestContext = null;
+        _appContextFixture.TestContext = null;
     }
 }

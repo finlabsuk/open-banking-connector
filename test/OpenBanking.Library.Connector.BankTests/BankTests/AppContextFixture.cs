@@ -4,26 +4,24 @@
 
 using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Logging;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
-using MartinCostello.Logging.XUnit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Xunit;
-using Xunit.Abstractions;
 using ServiceCollectionExtensions =
     FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions.ServiceCollectionExtensions;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests;
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
-public class AppContextFixture : ITestOutputHelperAccessor, IDisposable
+public class AppContextFixture : IDisposable
 {
-    private readonly AsyncLocal<ITestOutputHelper?>
-        _asyncLocalOutputHelper = new(); // to debug, can replace with "private ITestOutputHelper? _outputHelper" 
+    private readonly AsyncLocal<TestContext?>
+        _asyncLocalTestContext = new(); // to debug, can replace with "private TestContext? _testContext"
 
     public AppContextFixture()
     {
@@ -72,7 +70,7 @@ public class AppContextFixture : ITestOutputHelperAccessor, IDisposable
             .AddWebHostLogging(builder.Configuration, null);
 
         // Add test logging
-        builder.Logging.AddXUnit(this);
+        builder.Services.AddSingleton<ILoggerProvider>(new MsTestLoggerProvider(() => TestContext));
 
         // Build app
         WebApplication app = builder.Build();
@@ -96,22 +94,16 @@ public class AppContextFixture : ITestOutputHelperAccessor, IDisposable
         Host = app;
     }
 
+    public TestContext? TestContext
+    {
+        get => _asyncLocalTestContext.Value;
+        set => _asyncLocalTestContext.Value = value;
+    }
+
     public IHost Host { get; }
 
     public void Dispose()
     {
         Host.Dispose();
-    }
-
-    public ITestOutputHelper? OutputHelper
-    {
-        get => _asyncLocalOutputHelper.Value;
-        set => _asyncLocalOutputHelper.Value = value;
-    }
-
-    [CollectionDefinition("App context collection")]
-    public class AppContextCollection : ICollectionFixture<AppContextFixture>
-    {
-        // Class solely for [CollectionDefinition] purpose.
     }
 }

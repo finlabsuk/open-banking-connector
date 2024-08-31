@@ -3,23 +3,34 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Runtime.InteropServices;
-using MartinCostello.Logging.XUnit;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Xunit.Abstractions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
-public class BankTestingFixture : WebApplicationFactory<Program>, ITestOutputHelperAccessor
+public class BankTestingFixture : WebApplicationFactory<Program>
 {
-    public ITestOutputHelper? OutputHelper { get; set; }
+    private readonly AsyncLocal<TestContext?>
+        _asyncLocalTestContext = new();
+
+    public TestContext? TestContext
+    {
+        get => _asyncLocalTestContext.Value;
+        set => _asyncLocalTestContext.Value = value;
+    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureLogging(
-            x =>
-                x.AddXUnit(this));
+        // builder.ConfigureLogging(
+        //     logging =>
+        //     {
+        //         logging.AddProvider(new MsTestLoggerProvider(() => TestContext));
+        //     });
+        builder.ConfigureServices(
+            services => { services.AddSingleton<ILoggerProvider>(new MsTestLoggerProvider(() => TestContext)); });
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
             builder.UseContentRoot("");
