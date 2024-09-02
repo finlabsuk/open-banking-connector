@@ -4,13 +4,11 @@
 
 using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Logging;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ServiceCollectionExtensions =
@@ -20,9 +18,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
 public class AppContextFixture : IDisposable
 {
-    private readonly AsyncLocal<TestContext?>
-        _asyncLocalTestContext = new(); // to debug, can replace with "private TestContext? _testContext"
-
     public AppContextFixture()
     {
         // Create builder
@@ -69,11 +64,9 @@ public class AppContextFixture : IDisposable
             .Logging
             .AddWebHostLogging(builder.Configuration, null);
 
-        // Add test logging
-        builder.Services.AddSingleton<ILoggerProvider>(new MsTestLoggerProvider(() => TestContext));
-
         // Build app
         WebApplication app = builder.Build();
+        Host = app;
 
         // Errors
         if (!app.Environment.IsDevelopment())
@@ -89,15 +82,7 @@ public class AppContextFixture : IDisposable
         app.MapControllers();
 
         // Create and start .NET Generic Host
-        app.Start();
-
-        Host = app;
-    }
-
-    public TestContext? TestContext
-    {
-        get => _asyncLocalTestContext.Value;
-        set => _asyncLocalTestContext.Value = value;
+        app.StartAsync();
     }
 
     public IHost Host { get; }

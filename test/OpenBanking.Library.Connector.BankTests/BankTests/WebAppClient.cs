@@ -6,21 +6,12 @@ using System.Net;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
-public class WebAppClient
+public class WebAppClient(HttpClient client)
 {
-    private readonly HttpClient _client;
-
-    public WebAppClient(BankTestingFixture bankTestingFixture)
-    {
-        _client = bankTestingFixture.CreateClient(
-            new WebApplicationFactoryClientOptions { BaseAddress = new Uri("http://localhost:5000") });
-    }
-
     public async Task<TResponse> GetAsync<TResponse>(
         string uriPath,
         IEnumerable<KeyValuePair<string, IEnumerable<string>>> extraHeaders)
@@ -33,7 +24,7 @@ public class WebAppClient
         }
 
         // Send request
-        using HttpResponseMessage httpResponse = await _client.SendAsync(httpRequestMessage);
+        using HttpResponseMessage httpResponse = await client.SendAsync(httpRequestMessage);
 
         // Check status code
         httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -59,7 +50,7 @@ public class WebAppClient
 
         // Send request
         using var requestContent = new StringContent(requestContentString, Encoding.UTF8, "application/json");
-        using HttpResponseMessage httpResponse = await _client.PostAsync(
+        using HttpResponseMessage httpResponse = await client.PostAsync(
             uriPath,
             requestContent);
 
@@ -81,7 +72,7 @@ public class WebAppClient
     {
         // Send request
         using var requestContent = new FormUrlEncodedContent(formCollection);
-        using HttpResponseMessage httpResponse = await _client.PostAsync(
+        using HttpResponseMessage httpResponse = await client.PostAsync(
             uriPath,
             requestContent);
 
@@ -109,7 +100,7 @@ public class WebAppClient
         }
 
         // Send request
-        using HttpResponseMessage httpResponse = await _client.SendAsync(httpRequestMessage);
+        using HttpResponseMessage httpResponse = await client.SendAsync(httpRequestMessage);
 
         // Check status code
         httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);

@@ -33,7 +33,8 @@ using ObWacCertificateRequest =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
-public abstract class AppTests
+[TestClass]
+public class AppTests
 {
     private static AppContextFixture _appContextFixture = null!;
     private static BankTestingFixture _bankTestingFixture = null!;
@@ -44,11 +45,13 @@ public abstract class AppTests
     private readonly ManagementApiClient _managementApiClient;
     private readonly IServiceProvider _testServiceProvider;
 
-    protected AppTests()
+    public AppTests()
     {
+        Console.WriteLine("AppTest Start (1)");
         _testServiceProvider = _appContextFixture.Host.Services;
         _appServiceProvider = _bankTestingFixture.Services;
-        var webAppClient = new WebAppClient(_bankTestingFixture);
+        HttpClient bankFixtureHttpClient = _bankTestingFixture.CreateClient();
+        var webAppClient = new WebAppClient(bankFixtureHttpClient);
         _managementApiClient = new ManagementApiClient(webAppClient);
         var authContextsApiClient = new AuthContextsApiClient(webAppClient);
         _accountAccessConsentSubtest =
@@ -59,16 +62,29 @@ public abstract class AppTests
             new DomesticVrpConsentSubtest(new VariableRecurringPaymentsApiClient(webAppClient), authContextsApiClient);
     }
 
-    public TestContext TestContext { get; set; } = null!;
+    public static IEnumerable<object[]>
+        TestedUnskippedBanksById() =>
+        TestedBanksById(false, true);
 
-    [ClassInitialize(InheritanceBehavior.BeforeEachDerivedClass)]
-    public static void ClassInitialize(TestContext context)
+    [DataTestMethod]
+    [DynamicData(nameof(TestedUnskippedBanksById), DynamicDataSourceType.Method)]
+    public async Task GenericHostAppTests(
+        BankTestData1 testGroup, // name chosen to customise label in test runner
+        BankTestData2 bankProfile) // name chosen to customise label in test runner
     {
-        _appContextFixture = new AppContextFixture();
-        _bankTestingFixture = new BankTestingFixture();
+        await TestAllInner(testGroup, bankProfile, true);
     }
 
-    [ClassCleanup(InheritanceBehavior.BeforeEachDerivedClass)]
+    [ClassInitialize]
+    public static void ClassInitialize(TestContext context)
+    {
+        Console.WriteLine("AppTest ClassInitialize Start");
+        _bankTestingFixture = new BankTestingFixture();
+        _appContextFixture = new AppContextFixture();
+        Console.WriteLine("AppTest ClassInitialize End");
+    }
+
+    [ClassCleanup]
     public static void ClassCleanup()
     {
         _appContextFixture.Dispose();
@@ -184,8 +200,10 @@ public abstract class AppTests
         }
     }
 
-    protected async Task TestAllInner(BankTestData1 testData1, BankTestData2 testData2, bool genericNotPlainAppTest)
+    private async Task TestAllInner(BankTestData1 testData1, BankTestData2 testData2, bool genericNotPlainAppTest)
     {
+        Console.WriteLine("AppTest Start (2)");
+
         // Set test name
         var testName =
             $"{testData2.BankProfileEnum}_{testData1.SoftwareStatementProfileId}_{testData2.RegistrationScope.AbbreviatedName()}";
@@ -592,17 +610,5 @@ public abstract class AppTests
         registrationRequest.Reference = testNameUnique;
         registrationRequest.CreatedBy = modifiedBy;
         return registrationRequest;
-    }
-
-    protected void SetTestLogging()
-    {
-        _bankTestingFixture.TestContext = TestContext;
-        _appContextFixture.TestContext = TestContext;
-    }
-
-    protected void UnsetTestLogging()
-    {
-        _bankTestingFixture.TestContext = null;
-        _appContextFixture.TestContext = null;
     }
 }
