@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Runtime.InteropServices;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
@@ -24,8 +23,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FluentAssertions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
@@ -40,9 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 public class AppTests
 {
     private static AppContextFixture _appContextFixture = null!;
-    private static WebApplicationFactory<Program> _classLevelWebApplicationFactory = null!;
-    private HttpClient _bankFixtureHttpClient = null!;
-    private WebApplicationFactory<Program> _testLevelWebApplicationFactory = null!;
+    private static BankTestingFixture _classLevelWebApplicationFactory = null!;
 
     public static IEnumerable<object[]>
         TestedUnskippedBanksById() =>
@@ -61,7 +56,10 @@ public class AppTests
     public static void ClassInitialize(TestContext context)
     {
         Console.WriteLine("AppTest ClassInitialize");
-        _classLevelWebApplicationFactory = new WebApplicationFactory<Program>();
+        _classLevelWebApplicationFactory = new BankTestingFixture();
+        using HttpClient
+            httpClient = _classLevelWebApplicationFactory
+                .CreateClient(); // seems required to ensure application fully set up
         _appContextFixture = new AppContextFixture();
     }
 
@@ -181,35 +179,15 @@ public class AppTests
         }
     }
 
-    [TestInitialize]
-    public void TestInitialize()
-    {
-        Console.WriteLine("AppTest TestInitialize");
-        _testLevelWebApplicationFactory = _classLevelWebApplicationFactory.WithWebHostBuilder(
-            builder =>
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    builder.UseContentRoot("");
-                }
-            });
-        _bankFixtureHttpClient = _testLevelWebApplicationFactory.CreateClient();
-    }
-
-    [TestCleanup]
-    public async Task TestCleanup()
-    {
-        _bankFixtureHttpClient.Dispose();
-        await _testLevelWebApplicationFactory.DisposeAsync();
-    }
-
     private async Task TestAllInner(BankTestData1 testData1, BankTestData2 testData2, bool genericNotPlainAppTest)
     {
         Console.WriteLine("AppTest Start");
+        BankTestingFixture testLevelWebApplicationFactory = _classLevelWebApplicationFactory;
+        using HttpClient httpClient = testLevelWebApplicationFactory.CreateClient();
 
         IServiceProvider testServiceProvider = _appContextFixture.Host.Services;
-        IServiceProvider appServiceProvider = _testLevelWebApplicationFactory.Services;
-        var webAppClient = new WebAppClient(_bankFixtureHttpClient);
+        IServiceProvider appServiceProvider = testLevelWebApplicationFactory.Services;
+        var webAppClient = new WebAppClient(httpClient);
         var managementApiClient = new ManagementApiClient(webAppClient);
         var authContextsApiClient = new AuthContextsApiClient(webAppClient);
         var accountAccessConsentSubtest =
