@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Runtime.InteropServices;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
@@ -23,6 +24,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FluentAssertions;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
@@ -37,30 +40,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 public class AppTests
 {
     private static AppContextFixture _appContextFixture = null!;
-    private static BankTestingFixture _bankTestingFixture = null!;
-    private readonly AccountAccessConsentSubtest _accountAccessConsentSubtest;
-    private readonly IServiceProvider _appServiceProvider;
-    private readonly DomesticPaymentConsentSubtest _domesticPaymentConsentSubtest;
-    private readonly DomesticVrpConsentSubtest _domesticVrpConsentSubtest;
-    private readonly ManagementApiClient _managementApiClient;
-    private readonly IServiceProvider _testServiceProvider;
-
-    public AppTests()
-    {
-        Console.WriteLine("AppTest Start (1)");
-        _testServiceProvider = _appContextFixture.Host.Services;
-        _appServiceProvider = _bankTestingFixture.Services;
-        HttpClient bankFixtureHttpClient = _bankTestingFixture.CreateClient();
-        var webAppClient = new WebAppClient(bankFixtureHttpClient);
-        _managementApiClient = new ManagementApiClient(webAppClient);
-        var authContextsApiClient = new AuthContextsApiClient(webAppClient);
-        _accountAccessConsentSubtest =
-            new AccountAccessConsentSubtest(new AccountAndTransactionApiClient(webAppClient), authContextsApiClient);
-        _domesticPaymentConsentSubtest =
-            new DomesticPaymentConsentSubtest(new PaymentInitiationApiClient(webAppClient), authContextsApiClient);
-        _domesticVrpConsentSubtest =
-            new DomesticVrpConsentSubtest(new VariableRecurringPaymentsApiClient(webAppClient), authContextsApiClient);
-    }
+    private static WebApplicationFactory<Program> _classLevelWebApplicationFactory = null!;
+    private HttpClient _bankFixtureHttpClient = null!;
+    private WebApplicationFactory<Program> _testLevelWebApplicationFactory = null!;
 
     public static IEnumerable<object[]>
         TestedUnskippedBanksById() =>
@@ -78,17 +60,16 @@ public class AppTests
     [ClassInitialize]
     public static void ClassInitialize(TestContext context)
     {
-        Console.WriteLine("AppTest ClassInitialize Start");
-        _bankTestingFixture = new BankTestingFixture();
+        Console.WriteLine("AppTest ClassInitialize");
+        _classLevelWebApplicationFactory = new WebApplicationFactory<Program>();
         _appContextFixture = new AppContextFixture();
-        Console.WriteLine("AppTest ClassInitialize End");
     }
 
     [ClassCleanup]
     public static void ClassCleanup()
     {
         _appContextFixture.Dispose();
-        _bankTestingFixture.Dispose();
+        _classLevelWebApplicationFactory.Dispose();
     }
 
     public static IEnumerable<object[]> TestedBanksById(
@@ -200,9 +181,43 @@ public class AppTests
         }
     }
 
+    [TestInitialize]
+    public void TestInitialize()
+    {
+        Console.WriteLine("AppTest TestInitialize");
+        _testLevelWebApplicationFactory = _classLevelWebApplicationFactory.WithWebHostBuilder(
+            builder =>
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    builder.UseContentRoot("");
+                }
+            });
+        _bankFixtureHttpClient = _testLevelWebApplicationFactory.CreateClient();
+    }
+
+    [TestCleanup]
+    public async Task TestCleanup()
+    {
+        _bankFixtureHttpClient.Dispose();
+        await _testLevelWebApplicationFactory.DisposeAsync();
+    }
+
     private async Task TestAllInner(BankTestData1 testData1, BankTestData2 testData2, bool genericNotPlainAppTest)
     {
-        Console.WriteLine("AppTest Start (2)");
+        Console.WriteLine("AppTest Start");
+
+        IServiceProvider testServiceProvider = _appContextFixture.Host.Services;
+        IServiceProvider appServiceProvider = _testLevelWebApplicationFactory.Services;
+        var webAppClient = new WebAppClient(_bankFixtureHttpClient);
+        var managementApiClient = new ManagementApiClient(webAppClient);
+        var authContextsApiClient = new AuthContextsApiClient(webAppClient);
+        var accountAccessConsentSubtest =
+            new AccountAccessConsentSubtest(new AccountAndTransactionApiClient(webAppClient), authContextsApiClient);
+        var domesticPaymentConsentSubtest =
+            new DomesticPaymentConsentSubtest(new PaymentInitiationApiClient(webAppClient), authContextsApiClient);
+        var domesticVrpConsentSubtest =
+            new DomesticVrpConsentSubtest(new VariableRecurringPaymentsApiClient(webAppClient), authContextsApiClient);
 
         // Set test name
         var testName =
@@ -211,14 +226,14 @@ public class AppTests
 
         // Get bank test settings
         BankTestSettings bankTestSettings =
-            _testServiceProvider.GetRequiredService<ISettingsProvider<BankTestSettings>>().GetSettings();
+            testServiceProvider.GetRequiredService<ISettingsProvider<BankTestSettings>>().GetSettings();
 
         // Get logger
-        var instrumentationClient = _testServiceProvider.GetRequiredService<IInstrumentationClient>();
+        var instrumentationClient = testServiceProvider.GetRequiredService<IInstrumentationClient>();
 
         // Get bank profile definitions
         var bankProfileDefinitions =
-            _testServiceProvider.GetRequiredService<IBankProfileService>();
+            testServiceProvider.GetRequiredService<IBankProfileService>();
         BankProfile bankProfile =
             bankProfileDefinitions.GetBankProfile(testData2.BankProfileEnum);
 
@@ -236,14 +251,14 @@ public class AppTests
 
         // Get software statement profile
         var processedSoftwareStatementProfileStore =
-            _testServiceProvider.GetRequiredService<IProcessedSoftwareStatementProfileStore>();
+            testServiceProvider.GetRequiredService<IProcessedSoftwareStatementProfileStore>();
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
             await processedSoftwareStatementProfileStore.GetAsync(
                 testData1.SoftwareStatementProfileId,
                 testData1.SoftwareStatementAndCertificateProfileOverride);
 
         // Get application memory cache
-        var memoryCache = _appServiceProvider.GetRequiredService<IMemoryCache>();
+        var memoryCache = appServiceProvider.GetRequiredService<IMemoryCache>();
 
         // Create test data writers
         string topLevelFolderName = genericNotPlainAppTest ? "genericAppTests" : "plainAppTests";
@@ -298,7 +313,8 @@ public class AppTests
         (ObWacCertificateResponse obWacCertificateResponse, ObSealCertificateResponse obSealCertificateResponse,
             SoftwareStatementResponse softwareStatementResponse) = await SoftwareStatementCreate(
             processedSoftwareStatementProfile,
-            modifiedBy);
+            modifiedBy,
+            managementApiClient);
         Guid obWacCertificateId = obWacCertificateResponse.Id;
         Guid obSealCertificateId = obSealCertificateResponse.Id;
         Guid softwareStatementId = softwareStatementResponse.Id;
@@ -320,10 +336,11 @@ public class AppTests
             BankRegistrationResponse bankRegistrationResponseTmp =
                 await BankRegistrationCreate(
                     bankRegistrationRequest,
-                    bankProfile.BankConfigurationApiSettings.UseRegistrationGetEndpoint);
+                    bankProfile.BankConfigurationApiSettings.UseRegistrationGetEndpoint,
+                    managementApiClient);
 
             // Delete BankRegistration (includes external API delete as appropriate)
-            await BankRegistrationDelete(bankRegistrationResponseTmp.Id, false);
+            await BankRegistrationDelete(bankRegistrationResponseTmp.Id, false, managementApiClient);
         }
 
         // Create BankRegistration using existing external API registration
@@ -339,7 +356,8 @@ public class AppTests
         BankRegistrationResponse bankRegistrationCreateResponse =
             await BankRegistrationCreate(
                 bankRegistrationRequest,
-                bankProfile.BankConfigurationApiSettings.UseRegistrationGetEndpoint);
+                bankProfile.BankConfigurationApiSettings.UseRegistrationGetEndpoint,
+                managementApiClient);
         Guid bankRegistrationId = bankRegistrationCreateResponse.Id;
         OAuth2ResponseMode defaultResponseMode =
             bankRegistrationCreateResponse.DefaultResponseModeOverride ?? bankProfile.DefaultResponseMode;
@@ -357,7 +375,7 @@ public class AppTests
             foreach (AccountAccessConsentSubtestEnum subTest in
                      AccountAccessConsentSubtest.AccountAccessConsentSubtestsSupported(bankProfile))
             {
-                await _accountAccessConsentSubtest.RunTest(
+                await accountAccessConsentSubtest.RunTest(
                     subTest,
                     bankProfile,
                     testData2,
@@ -371,7 +389,7 @@ public class AppTests
                     consentAuth,
                     authUrlLeftPart,
                     bankUser,
-                    _appServiceProvider,
+                    appServiceProvider,
                     memoryCache);
             }
         }
@@ -384,7 +402,7 @@ public class AppTests
                 foreach (DomesticPaymentSubtestEnum subTest in
                          DomesticPaymentConsentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
                 {
-                    await _domesticPaymentConsentSubtest.RunTest(
+                    await domesticPaymentConsentSubtest.RunTest(
                         subTest,
                         bankProfile,
                         bankRegistrationId,
@@ -406,7 +424,7 @@ public class AppTests
                 foreach (DomesticVrpSubtestEnum subTest in
                          DomesticVrpConsentSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
                 {
-                    await _domesticVrpConsentSubtest.RunTest(
+                    await domesticVrpConsentSubtest.RunTest(
                         subTest,
                         bankProfile,
                         bankRegistrationId,
@@ -424,12 +442,13 @@ public class AppTests
         }
 
         // Delete BankRegistration (excludes external API delete)
-        await BankRegistrationDelete(bankRegistrationId, true);
+        await BankRegistrationDelete(bankRegistrationId, true, managementApiClient);
 
         await SoftwareStatementDelete(
             obWacCertificateId,
             obSealCertificateId,
-            softwareStatementId);
+            softwareStatementId,
+            managementApiClient);
     }
 
     private async
@@ -437,16 +456,17 @@ public class AppTests
             softwareStatementDeleteResponse)> SoftwareStatementDelete(
             Guid obWacCertificateId,
             Guid obSealCertificateId,
-            Guid softwareStatementId)
+            Guid softwareStatementId,
+            ManagementApiClient managementApiClient)
     {
         BaseResponse obWacCertificateDeleteResponse =
-            await _managementApiClient.ObWacCertificateDelete(obWacCertificateId);
+            await managementApiClient.ObWacCertificateDelete(obWacCertificateId);
 
         BaseResponse obSealCertificateDeleteResponse =
-            await _managementApiClient.ObSealCertificateDelete(obSealCertificateId);
+            await managementApiClient.ObSealCertificateDelete(obSealCertificateId);
 
         BaseResponse softwareStatementDeleteResponse =
-            await _managementApiClient.SoftwareStatementDelete(softwareStatementId);
+            await managementApiClient.SoftwareStatementDelete(softwareStatementId);
 
         return (obWacCertificateDeleteResponse, obSealCertificateDeleteResponse, softwareStatementDeleteResponse);
     }
@@ -455,7 +475,8 @@ public class AppTests
         Task<(ObWacCertificateResponse obWacCertificateResponse, ObSealCertificateResponse obSealCertificateResponse,
             SoftwareStatementResponse softwareStatementResponse)> SoftwareStatementCreate(
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
-            string createdBy)
+            string createdBy,
+            ManagementApiClient managementApiClient)
     {
         // Create OBWAC certificate
         string obWacReference = processedSoftwareStatementProfile.TransportCertificateId;
@@ -471,10 +492,10 @@ public class AppTests
             Certificate = processedSoftwareStatementProfile.TransportCertificate
         };
         ObWacCertificateResponse obWacCertificateResponse =
-            await _managementApiClient.ObWacCertificateCreate(obWacRequest);
+            await managementApiClient.ObWacCertificateCreate(obWacRequest);
 
         // Read OBWAC certificate
-        _ = await _managementApiClient.ObWacCertificateRead(obWacCertificateResponse.Id);
+        _ = await managementApiClient.ObWacCertificateRead(obWacCertificateResponse.Id);
 
         // Create OBSeal certificate
         string obSealReference = processedSoftwareStatementProfile.SigningCertificateId;
@@ -491,10 +512,10 @@ public class AppTests
             Certificate = processedSoftwareStatementProfile.SigningCertificate
         };
         ObSealCertificateResponse obSealCertificateResponse =
-            await _managementApiClient.ObSealCertificateCreate(obSealRequest);
+            await managementApiClient.ObSealCertificateCreate(obSealRequest);
 
         // Read OBSeal certificate
-        _ = await _managementApiClient.ObSealCertificateRead(obSealCertificateResponse.Id);
+        _ = await managementApiClient.ObSealCertificateRead(obSealCertificateResponse.Id);
 
         // Create software statement
         string sReference = processedSoftwareStatementProfile.Id;
@@ -511,21 +532,22 @@ public class AppTests
             DefaultFragmentRedirectUrl = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl
         };
         SoftwareStatementResponse softwareStatementResponse =
-            await _managementApiClient.SoftwareStatementCreate(softwareStatementRequest);
+            await managementApiClient.SoftwareStatementCreate(softwareStatementRequest);
 
         // Read software statement
-        _ = await _managementApiClient.SoftwareStatementRead(softwareStatementResponse.Id);
+        _ = await managementApiClient.SoftwareStatementRead(softwareStatementResponse.Id);
 
         return (obWacCertificateResponse, obSealCertificateResponse, softwareStatementResponse);
     }
 
     private async Task<BankRegistrationResponse> BankRegistrationCreate(
         BankRegistration bankRegistrationRequest,
-        bool bankProfileUseRegistrationGetEndpoint)
+        bool bankProfileUseRegistrationGetEndpoint,
+        ManagementApiClient managementApiClient)
     {
         // Create BankRegistration
         BankRegistrationResponse bankRegistrationCreateResponse =
-            await _managementApiClient.BankRegistrationCreate(bankRegistrationRequest);
+            await managementApiClient.BankRegistrationCreate(bankRegistrationRequest);
 
         // Checks
         if (bankRegistrationRequest.ExternalApiId is not null)
@@ -538,7 +560,11 @@ public class AppTests
         }
 
         // Read BankRegistration
-        await BankRegistrationRead(bankRegistrationCreateResponse.Id, false, bankProfileUseRegistrationGetEndpoint);
+        await BankRegistrationRead(
+            bankRegistrationCreateResponse.Id,
+            false,
+            bankProfileUseRegistrationGetEndpoint,
+            managementApiClient);
 
         return bankRegistrationCreateResponse;
     }
@@ -546,9 +572,10 @@ public class AppTests
     private async Task<BankRegistrationResponse> BankRegistrationRead(
         Guid bankRegistrationId,
         bool excludeExternalApiOperation,
-        bool bankProfileUseRegistrationGetEndpoint)
+        bool bankProfileUseRegistrationGetEndpoint,
+        ManagementApiClient managementApiClient)
     {
-        BankRegistrationResponse bankRegistrationReadResponse = await _managementApiClient.BankRegistrationRead(
+        BankRegistrationResponse bankRegistrationReadResponse = await managementApiClient.BankRegistrationRead(
             new BankRegistrationReadParams
             {
                 ExcludeExternalApiOperation = excludeExternalApiOperation,
@@ -574,9 +601,10 @@ public class AppTests
 
     private async Task<BaseResponse> BankRegistrationDelete(
         Guid bankRegistrationId,
-        bool excludeExternalApiOperation)
+        bool excludeExternalApiOperation,
+        ManagementApiClient managementApiClient)
     {
-        BaseResponse baseResponse = await _managementApiClient.BankRegistrationDelete(
+        BaseResponse baseResponse = await managementApiClient.BankRegistrationDelete(
             new BankRegistrationDeleteParams
             {
                 ExcludeExternalApiOperation = excludeExternalApiOperation,
