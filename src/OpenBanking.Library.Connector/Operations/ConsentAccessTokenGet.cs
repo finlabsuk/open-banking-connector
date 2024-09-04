@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Concurrent;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -26,6 +27,8 @@ internal delegate Task<RefreshTokenEntity?> GetRefreshTokenDelegate(Guid consent
 
 internal class ConsentAccessTokenGet
 {
+    private static readonly ConcurrentDictionary<string, SemaphoreSlim> LockDictionary = new();
+
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly IEncryptionKeyInfo _encryptionKeyInfo;
     private readonly IGrantPost _grantPost;
@@ -78,8 +81,42 @@ internal class ConsentAccessTokenGet
             consent.AuthContextNonce ??
             throw new InvalidOperationException("No nonce is available for Consent.");
 
-        async Task<AccessToken> GetNewAccessTokenAsync()
+        async Task<string> GetAccessTokenAsync(ICacheEntry cacheEntry)
         {
+            // Load stored access token
+            AccessTokenEntity? storedAccessTokenEntity = await getAccessToken(consent.Id, true);
+
+            // Use stored access token if unexpired, else delete
+            if (storedAccessTokenEntity is not null)
+            {
+                // Extract token
+                byte[] encryptionKey = _encryptionKeyInfo.GetEncryptionKey(storedAccessTokenEntity.KeyId);
+                AccessToken storedAccessToken =
+                    storedAccessTokenEntity
+                        .GetAccessToken(consentAssociatedData, encryptionKey);
+
+                // Calculate time since token stored
+                DateTimeOffset timeWhenStored = storedAccessTokenEntity.Created;
+                TimeSpan elapsedTime =
+                    _timeProvider.GetUtcNow()
+                        .Subtract(timeWhenStored); // subtract time when token stored
+
+                // Calculate remaining token duration
+                TimeSpan tokenRemainingDuration =
+                    _grantPost.GetTokenAdjustedDuration(storedAccessToken.ExpiresIn)
+                        .Subtract(elapsedTime);
+
+                // Return unexpired access token if available
+                if (tokenRemainingDuration > TimeSpan.Zero)
+                {
+                    cacheEntry.AbsoluteExpirationRelativeToNow = tokenRemainingDuration;
+                    return storedAccessToken.Token;
+                }
+
+                // Delete expired access token
+                storedAccessTokenEntity.UpdateIsDeleted(true, _timeProvider.GetUtcNow(), modifiedBy);
+            }
+
             // Get client secret if required
             string? clientSecret = null;
             if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.ClientSecretBasic
@@ -191,59 +228,45 @@ internal class ConsentAccessTokenGet
                     currentKeyId);
             }
 
-            return newAccessToken;
+            cacheEntry.AbsoluteExpirationRelativeToNow =
+                _grantPost.GetTokenAdjustedDuration(newAccessToken.ExpiresIn);
+
+            // Persist updates (this happens last so as not to happen if there are any previous errors)
+            await _dbSaveChangesMethod.SaveChangesAsync();
+
+            return newAccessToken.Token;
         }
 
         // Get or create cache entry
+        string cacheKey = consent.GetCacheKey();
         string accessTokenOut =
             (await _memoryCache.GetOrCreateAsync(
-                consent.GetCacheKey(),
+                cacheKey,
                 async cacheEntry =>
                 {
-                    // Load stored access token
-                    AccessTokenEntity? storedAccessTokenEntity = await getAccessToken(consent.Id, true);
+                    SemaphoreSlim tokenRetrievalLock = LockDictionary.GetOrAdd(cacheKey, _ => new SemaphoreSlim(1, 1));
 
-                    // Use stored access token if unexpired, else delete
-                    if (storedAccessTokenEntity is not null)
+                    if (!await tokenRetrievalLock.WaitAsync(TimeSpan.FromSeconds(8)))
                     {
-                        // Extract token
-                        byte[] encryptionKey = _encryptionKeyInfo.GetEncryptionKey(storedAccessTokenEntity.KeyId);
-                        AccessToken storedAccessToken =
-                            storedAccessTokenEntity
-                                .GetAccessToken(consentAssociatedData, encryptionKey);
-
-                        // Calculate time since token stored
-                        DateTimeOffset timeWhenStored = storedAccessTokenEntity.Created;
-                        TimeSpan elapsedTime =
-                            _timeProvider.GetUtcNow()
-                                .Subtract(timeWhenStored); // subtract time when token stored
-
-                        // Calculate remaining token duration
-                        TimeSpan tokenRemainingDuration =
-                            _grantPost.GetTokenAdjustedDuration(storedAccessToken.ExpiresIn)
-                                .Subtract(elapsedTime);
-
-                        // Return unexpired access token if available
-                        if (tokenRemainingDuration > TimeSpan.Zero)
-                        {
-                            cacheEntry.AbsoluteExpirationRelativeToNow = tokenRemainingDuration;
-                            return storedAccessToken.Token;
-                        }
-
-                        // Delete expired access token
-                        DateTimeOffset modified = _timeProvider.GetUtcNow();
-                        storedAccessTokenEntity.UpdateIsDeleted(true, modified, modifiedBy);
+                        throw new TimeoutException(
+                            "Token retrieval reached timeout waiting for other threads to release lock.");
                     }
-
-                    // Else get new access token
-                    AccessToken response = await GetNewAccessTokenAsync();
-                    cacheEntry.AbsoluteExpirationRelativeToNow =
-                        _grantPost.GetTokenAdjustedDuration(response.ExpiresIn);
-
-                    // Persist updates (this happens last so as not to happen if there are any previous errors)
-                    await _dbSaveChangesMethod.SaveChangesAsync();
-
-                    return response.Token;
+                    try
+                    {
+                        // Get access token
+                        return await GetAccessTokenAsync(cacheEntry);
+                    }
+                    finally
+                    {
+                        tokenRetrievalLock.Release();
+                        if (tokenRetrievalLock.CurrentCount == 1)
+                        {
+                            if (!LockDictionary.TryRemove(cacheKey, out _))
+                            {
+                                throw new InvalidOperationException("This thread cannot release token retrieval lock");
+                            }
+                        }
+                    }
                 }))!;
 
         return accessTokenOut;
