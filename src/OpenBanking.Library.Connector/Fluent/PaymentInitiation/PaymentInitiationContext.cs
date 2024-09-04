@@ -3,10 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 using DomesticPaymentOperations =
     FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation.DomesticPayment;
 using DomesticPaymentConsentPersisted =
@@ -67,7 +69,12 @@ internal class PaymentInitiationContext : IPaymentInitiationContext
             _sharedContext.BankProfileService,
             _sharedContext.ObWacCertificateMethods,
             _sharedContext.ObSealCertificateMethods,
-            clientAccessTokenGet);
+            clientAccessTokenGet,
+            new DomesticPaymentConsentCommon(
+                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentPersisted>(),
+                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentAccessToken>(),
+                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentRefreshToken>(),
+                _sharedContext.Instrumentation));
     }
 
     public IDomesticPaymentConsentsContext DomesticPaymentConsents =>

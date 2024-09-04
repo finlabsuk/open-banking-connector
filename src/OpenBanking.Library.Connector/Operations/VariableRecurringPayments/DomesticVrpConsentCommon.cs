@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -14,20 +15,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
 internal class DomesticVrpConsentCommon
 {
+    private readonly IDbReadWriteEntityMethods<DomesticVrpConsentAccessToken> _accessTokenEntityMethods;
     private readonly IDbReadWriteEntityMethods<DomesticVrpConsentPersisted> _entityMethods;
     private readonly IInstrumentationClient _instrumentationClient;
+    private readonly IDbReadWriteEntityMethods<DomesticVrpConsentRefreshToken> _refreshTokenEntityMethods;
 
     public DomesticVrpConsentCommon(
         IDbReadWriteEntityMethods<DomesticVrpConsentPersisted> entityMethods,
+        IDbReadWriteEntityMethods<DomesticVrpConsentAccessToken> accessTokenEntityMethods,
+        IDbReadWriteEntityMethods<DomesticVrpConsentRefreshToken> refreshTokenEntityMethods,
         IInstrumentationClient instrumentationClient)
     {
         _entityMethods = entityMethods;
         _instrumentationClient = instrumentationClient;
+        _refreshTokenEntityMethods = refreshTokenEntityMethods;
+        _accessTokenEntityMethods = accessTokenEntityMethods;
     }
 
     public async
         Task<(DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
-            DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
             SoftwareStatementEntity softwareStatementEntity, ExternalApiSecretEntity? externalApiSecret)>
         GetDomesticVrpConsent(Guid consentId, bool dbTracking)
     {
@@ -40,19 +46,9 @@ internal class DomesticVrpConsentCommon
             await db
                 .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
                 .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
-                .Include(o => o.DomesticVrpConsentAccessTokensNavigation)
-                .Include(o => o.DomesticVrpConsentRefreshTokensNavigation)
                 .AsSplitQuery() // Load collections in separate SQL queries
                 .SingleOrDefaultAsync(x => x.Id == consentId) ??
             throw new KeyNotFoundException($"No record found for Domestic VRP Consent with ID {consentId}.");
-        DomesticVrpConsentAccessToken? storedAccessToken =
-            persistedConsent
-                .DomesticVrpConsentAccessTokensNavigation
-                .SingleOrDefault(x => !x.IsDeleted);
-        DomesticVrpConsentRefreshToken? storedRefreshToken =
-            persistedConsent
-                .DomesticVrpConsentRefreshTokensNavigation
-                .SingleOrDefault(x => !x.IsDeleted);
         BankRegistrationEntity bankRegistration = persistedConsent.BankRegistrationNavigation;
         SoftwareStatementEntity softwareStatementEntity =
             persistedConsent.BankRegistrationNavigation.SoftwareStatementNavigation!;
@@ -60,7 +56,32 @@ internal class DomesticVrpConsentCommon
             bankRegistration.ExternalApiSecretsNavigation
                 .SingleOrDefault(x => !x.IsDeleted);
 
-        return (persistedConsent, bankRegistration, storedAccessToken, storedRefreshToken,
-            softwareStatementEntity, externalApiSecret);
+        return (persistedConsent, bankRegistration, softwareStatementEntity, externalApiSecret);
+    }
+
+    public async Task<AccessTokenEntity?> GetAccessToken(Guid consentId, bool dbTracking)
+    {
+        IQueryable<DomesticVrpConsentAccessToken> db = dbTracking
+            ? _accessTokenEntityMethods.DbSet
+            : _accessTokenEntityMethods.DbSetNoTracking;
+
+        DomesticVrpConsentAccessToken? accessToken =
+            await db
+                .SingleOrDefaultAsync(x => x.DomesticVrpConsentId == consentId && !x.IsDeleted);
+
+        return accessToken;
+    }
+
+    public async Task<RefreshTokenEntity?> GetRefreshToken(Guid consentId, bool dbTracking)
+    {
+        IQueryable<DomesticVrpConsentRefreshToken> db = dbTracking
+            ? _refreshTokenEntityMethods.DbSet
+            : _refreshTokenEntityMethods.DbSetNoTracking;
+
+        DomesticVrpConsentRefreshToken? refreshToken =
+            await db
+                .SingleOrDefaultAsync(x => x.DomesticVrpConsentId == consentId && !x.IsDeleted);
+
+        return refreshToken;
     }
 }

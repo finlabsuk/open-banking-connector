@@ -12,7 +12,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
@@ -70,7 +69,8 @@ internal class
         IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
-        ClientAccessTokenGet clientAccessTokenGet)
+        ClientAccessTokenGet clientAccessTokenGet,
+        DomesticPaymentConsentCommon domesticPaymentConsentCommon)
     {
         _consentEntityMethods = consentEntityMethods;
         _bankProfileService = bankProfileService;
@@ -78,9 +78,7 @@ internal class
         _obWacCertificateMethods = obWacCertificateMethods;
         _obSealCertificateMethods = obSealCertificateMethods;
         _clientAccessTokenGet = clientAccessTokenGet;
-        _domesticPaymentConsentCommon = new DomesticPaymentConsentCommon(
-            consentEntityMethods,
-            instrumentationClient);
+        _domesticPaymentConsentCommon = domesticPaymentConsentCommon;
         _mapper = mapper;
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
@@ -309,7 +307,7 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticPaymentConsent and related
-        (DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration, _, _,
+        (DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id, false);
         string externalApiConsentId = persistedConsent.ExternalApiId;
@@ -451,8 +449,6 @@ internal class
 
         // Load DomesticPaymentConsent and related
         (DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
-                DomesticPaymentConsentAccessToken? storedAccessToken,
-                DomesticPaymentConsentRefreshToken? storedRefreshToken,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
@@ -490,8 +486,8 @@ internal class
                 bankTokenIssuerClaim,
                 "payments",
                 bankRegistration,
-                storedAccessToken,
-                storedRefreshToken,
+                _domesticPaymentConsentCommon.GetAccessToken,
+                _domesticPaymentConsentCommon.GetRefreshToken,
                 externalApiSecret,
                 bankRegistration.TokenEndpoint,
                 bankProfile.UseOpenIdConnect,

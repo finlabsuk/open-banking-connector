@@ -20,6 +20,10 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
+internal delegate Task<AccessTokenEntity?> GetAccessTokenDelegate(Guid consentId, bool dbTracking);
+
+internal delegate Task<RefreshTokenEntity?> GetRefreshTokenDelegate(Guid consentId, bool dbTracking);
+
 internal class ConsentAccessTokenGet
 {
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
@@ -50,8 +54,8 @@ internal class ConsentAccessTokenGet
         string bankIssuerUrl,
         string defaultRequestScope,
         BankRegistrationEntity bankRegistration,
-        AccessTokenEntity? storedAccessTokenEntity,
-        RefreshTokenEntity? storedRefreshTokenEntity,
+        GetAccessTokenDelegate getAccessToken,
+        GetRefreshTokenDelegate getRefreshToken,
         ExternalApiSecretEntity? externalApiSecretEntity,
         string tokenEndpoint,
         bool useOpenIdConnect,
@@ -93,7 +97,8 @@ internal class ConsentAccessTokenGet
                         _encryptionKeyInfo.GetEncryptionKey(externalApiSecretEntity.KeyId));
             }
 
-            // Get stored refresh token, throw if doesn't exist
+            // Load stored refresh token
+            RefreshTokenEntity? storedRefreshTokenEntity = await getRefreshToken(consent.Id, true);
             if (storedRefreshTokenEntity is null)
             {
                 throw new InvalidOperationException("No unexpired access token or refresh token is available.");
@@ -137,13 +142,9 @@ internal class ConsentAccessTokenGet
                     jwksGetCustomBehaviour,
                     apiClient);
 
-            // Delete old stored access token if exists
-            DateTimeOffset modified = _timeProvider.GetUtcNow();
-            storedAccessTokenEntity?.UpdateIsDeleted(true, modified, modifiedBy);
-
             // Conditionally store new access token
             var newAccessToken = new AccessToken(tokenEndpointResponse.AccessToken, tokenEndpointResponse.ExpiresIn);
-
+            DateTimeOffset modified = _timeProvider.GetUtcNow();
             const int expiryThresholdForSaving = 24 * 60 * 60; // one day
             if (newAccessToken.ExpiresIn > expiryThresholdForSaving)
             {
@@ -199,6 +200,9 @@ internal class ConsentAccessTokenGet
                 consent.GetCacheKey(),
                 async cacheEntry =>
                 {
+                    // Load stored access token
+                    AccessTokenEntity? storedAccessTokenEntity = await getAccessToken(consent.Id, true);
+
                     // Use stored access token if unexpired, else delete
                     if (storedAccessTokenEntity is not null)
                     {
@@ -225,6 +229,10 @@ internal class ConsentAccessTokenGet
                             cacheEntry.AbsoluteExpirationRelativeToNow = tokenRemainingDuration;
                             return storedAccessToken.Token;
                         }
+
+                        // Delete expired access token
+                        DateTimeOffset modified = _timeProvider.GetUtcNow();
+                        storedAccessTokenEntity.UpdateIsDeleted(true, modified, modifiedBy);
                     }
 
                     // Else get new access token

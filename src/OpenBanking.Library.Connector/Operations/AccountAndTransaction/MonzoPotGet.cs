@@ -167,8 +167,6 @@ internal class
 
         // Get consent and associated data
         (AccountAccessConsent persistedConsent, BankRegistrationEntity bankRegistration,
-                AccountAccessConsentAccessToken? storedAccessToken,
-                AccountAccessConsentRefreshToken? storedRefreshToken,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.ConsentId, true);
 
@@ -202,8 +200,8 @@ internal class
                 bankTokenIssuerClaim,
                 "accounts",
                 bankRegistration,
-                storedAccessToken,
-                storedRefreshToken,
+                _accountAccessConsentCommon.GetAccessToken,
+                _accountAccessConsentCommon.GetRefreshToken,
                 externalApiSecret,
                 persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 bankProfile.UseOpenIdConnect,

@@ -60,15 +60,15 @@ internal class
         IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
-        ClientAccessTokenGet clientAccessTokenGet)
+        ClientAccessTokenGet clientAccessTokenGet,
+        AccountAccessConsentCommon accountAccessConsentCommon)
     {
         _consentEntityMethods = consentEntityMethods;
         _bankProfileService = bankProfileService;
         _obWacCertificateMethods = obWacCertificateMethods;
         _obSealCertificateMethods = obSealCertificateMethods;
         _clientAccessTokenGet = clientAccessTokenGet;
-        _accountAccessConsentCommon =
-            new AccountAccessConsentCommon(consentEntityMethods);
+        _accountAccessConsentCommon = accountAccessConsentCommon;
         _mapper = mapper;
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
@@ -294,7 +294,7 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load AccountAccessConsent and related
-        (AccountAccessConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration, _, _,
+        (AccountAccessConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.Id, false);
         string externalApiConsentId = persistedConsent.ExternalApiId;

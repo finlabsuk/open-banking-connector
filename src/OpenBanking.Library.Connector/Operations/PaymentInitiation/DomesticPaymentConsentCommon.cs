@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -14,21 +15,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
 internal class DomesticPaymentConsentCommon
 {
+    private readonly IDbReadWriteEntityMethods<DomesticPaymentConsentAccessToken> _accessTokenEntityMethods;
     private readonly IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> _entityMethods;
     private readonly IInstrumentationClient _instrumentationClient;
+    private readonly IDbReadWriteEntityMethods<DomesticPaymentConsentRefreshToken> _refreshTokenEntityMethods;
 
     public DomesticPaymentConsentCommon(
         IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> entityMethods,
+        IDbReadWriteEntityMethods<DomesticPaymentConsentAccessToken> accessTokenEntityMethods,
+        IDbReadWriteEntityMethods<DomesticPaymentConsentRefreshToken> refreshTokenEntityMethods,
         IInstrumentationClient instrumentationClient)
     {
         _entityMethods = entityMethods;
         _instrumentationClient = instrumentationClient;
+        _refreshTokenEntityMethods = refreshTokenEntityMethods;
+        _accessTokenEntityMethods = accessTokenEntityMethods;
     }
 
     public async
         Task<(DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
-            DomesticPaymentConsentAccessToken? storedAccessToken, DomesticPaymentConsentRefreshToken? storedRefreshToken
-            , SoftwareStatementEntity softwareStatementEntity, ExternalApiSecretEntity? externalApiSecret)>
+            SoftwareStatementEntity softwareStatementEntity, ExternalApiSecretEntity? externalApiSecret)>
         GetDomesticPaymentConsent(
             Guid consentId,
             bool dbTracking)
@@ -42,19 +48,9 @@ internal class DomesticPaymentConsentCommon
             await db
                 .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
                 .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
-                .Include(o => o.DomesticPaymentConsentAccessTokensNavigation)
-                .Include(o => o.DomesticPaymentConsentRefreshTokensNavigation)
                 .AsSplitQuery() // Load collections in separate SQL queries
                 .SingleOrDefaultAsync(x => x.Id == consentId) ??
             throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {consentId}.");
-        DomesticPaymentConsentAccessToken? storedAccessToken =
-            persistedConsent
-                .DomesticPaymentConsentAccessTokensNavigation
-                .SingleOrDefault(x => !x.IsDeleted);
-        DomesticPaymentConsentRefreshToken? storedRefreshToken =
-            persistedConsent
-                .DomesticPaymentConsentRefreshTokensNavigation
-                .SingleOrDefault(x => !x.IsDeleted);
         BankRegistrationEntity bankRegistration = persistedConsent.BankRegistrationNavigation;
         SoftwareStatementEntity softwareStatementEntity =
             persistedConsent.BankRegistrationNavigation.SoftwareStatementNavigation!;
@@ -62,7 +58,32 @@ internal class DomesticPaymentConsentCommon
             bankRegistration.ExternalApiSecretsNavigation
                 .SingleOrDefault(x => !x.IsDeleted);
 
-        return (persistedConsent, bankRegistration, storedAccessToken, storedRefreshToken,
-            softwareStatementEntity, externalApiSecret);
+        return (persistedConsent, bankRegistration, softwareStatementEntity, externalApiSecret);
+    }
+
+    public async Task<AccessTokenEntity?> GetAccessToken(Guid consentId, bool dbTracking)
+    {
+        IQueryable<DomesticPaymentConsentAccessToken> db = dbTracking
+            ? _accessTokenEntityMethods.DbSet
+            : _accessTokenEntityMethods.DbSetNoTracking;
+
+        DomesticPaymentConsentAccessToken? accessToken =
+            await db
+                .SingleOrDefaultAsync(x => x.DomesticPaymentConsentId == consentId && !x.IsDeleted);
+
+        return accessToken;
+    }
+
+    public async Task<RefreshTokenEntity?> GetRefreshToken(Guid consentId, bool dbTracking)
+    {
+        IQueryable<DomesticPaymentConsentRefreshToken> db = dbTracking
+            ? _refreshTokenEntityMethods.DbSet
+            : _refreshTokenEntityMethods.DbSetNoTracking;
+
+        DomesticPaymentConsentRefreshToken? refreshToken =
+            await db
+                .SingleOrDefaultAsync(x => x.DomesticPaymentConsentId == consentId && !x.IsDeleted);
+
+        return refreshToken;
     }
 }

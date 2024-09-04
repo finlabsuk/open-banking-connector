@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -78,7 +79,12 @@ internal class DomesticVrpConsentsContext :
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
             _sharedContext.ObWacCertificateMethods,
             _sharedContext.ObSealCertificateMethods,
-            clientAccessTokenGet);
+            clientAccessTokenGet,
+            new DomesticVrpConsentCommon(
+                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
+                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentAccessToken>(),
+                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentRefreshToken>(),
+                _sharedContext.Instrumentation));
         CreateObject = _domesticVrpConsentOperations;
         ReadObject = _domesticVrpConsentOperations;
         DeleteObject =

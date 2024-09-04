@@ -12,7 +12,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
@@ -60,7 +59,8 @@ internal class DomesticPayment :
         IBankProfileService bankProfileService,
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
-        ClientAccessTokenGet clientAccessTokenGet)
+        ClientAccessTokenGet clientAccessTokenGet,
+        DomesticPaymentConsentCommon domesticPaymentConsentCommon)
     {
         _instrumentationClient = instrumentationClient;
         _mapper = mapper;
@@ -70,9 +70,7 @@ internal class DomesticPayment :
         _obWacCertificateMethods = obWacCertificateMethods;
         _obSealCertificateMethods = obSealCertificateMethods;
         _clientAccessTokenGet = clientAccessTokenGet;
-        _domesticPaymentConsentCommon = new DomesticPaymentConsentCommon(
-            entityMethods,
-            instrumentationClient);
+        _domesticPaymentConsentCommon = domesticPaymentConsentCommon;
     }
 
     private string RelativePathBeforeId => "/domestic-payments";
@@ -86,7 +84,7 @@ internal class DomesticPayment :
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticPaymentConsent and related
-        (_, BankRegistrationEntity bankRegistration, _, _,
+        (_, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.ConsentId, false);
         string externalApiId = readParams.ExternalApiId;
@@ -220,8 +218,6 @@ internal class DomesticPayment :
 
         // Load DomesticPaymentConsent and related
         (DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
-                DomesticPaymentConsentAccessToken? storedAccessToken,
-                DomesticPaymentConsentRefreshToken? storedRefreshToken,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(request.DomesticPaymentConsentId, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
@@ -271,8 +267,8 @@ internal class DomesticPayment :
                 bankTokenIssuerClaim,
                 "payments",
                 bankRegistration,
-                storedAccessToken,
-                storedRefreshToken,
+                _domesticPaymentConsentCommon.GetAccessToken,
+                _domesticPaymentConsentCommon.GetRefreshToken,
                 externalApiSecret,
                 bankRegistration.TokenEndpoint,
                 bankProfile.UseOpenIdConnect,
@@ -388,7 +384,7 @@ internal class DomesticPayment :
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticPaymentConsent and related
-        (_, BankRegistrationEntity bankRegistration, _, _,
+        (_, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.ConsentId, false);
         string externalApiId = readParams.ExternalApiId;

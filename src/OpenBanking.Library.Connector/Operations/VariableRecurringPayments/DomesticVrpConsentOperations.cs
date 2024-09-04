@@ -12,7 +12,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
@@ -70,7 +69,8 @@ internal class
         IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
-        ClientAccessTokenGet clientAccessTokenGet)
+        ClientAccessTokenGet clientAccessTokenGet,
+        DomesticVrpConsentCommon domesticVrpConsentCommon)
     {
         _consentEntityMethods = entityMethods;
         _bankProfileService = bankProfileService;
@@ -78,9 +78,7 @@ internal class
         _obWacCertificateMethods = obWacCertificateMethods;
         _obSealCertificateMethods = obSealCertificateMethods;
         _clientAccessTokenGet = clientAccessTokenGet;
-        _domesticVrpConsentCommon = new DomesticVrpConsentCommon(
-            entityMethods,
-            instrumentationClient);
+        _domesticVrpConsentCommon = domesticVrpConsentCommon;
         _mapper = mapper;
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
@@ -114,7 +112,6 @@ internal class
 
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
-                DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(createParams.ConsentId, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
@@ -165,8 +162,8 @@ internal class
                 bankTokenIssuerClaim,
                 "payments",
                 bankRegistration,
-                storedAccessToken,
-                storedRefreshToken,
+                _domesticVrpConsentCommon.GetAccessToken,
+                _domesticVrpConsentCommon.GetRefreshToken,
                 externalApiSecret,
                 bankRegistration.TokenEndpoint,
                 bankProfile.UseOpenIdConnect,
@@ -443,7 +440,7 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticVrpConsent and related
-        (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration, _, _,
+        (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id, false);
         string externalApiConsentId = persistedConsent.ExternalApiId;

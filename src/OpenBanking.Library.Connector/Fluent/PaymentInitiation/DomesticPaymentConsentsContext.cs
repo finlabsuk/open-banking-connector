@@ -75,7 +75,12 @@ internal class DomesticPaymentConsentsConsentContext :
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
             _sharedContext.ObWacCertificateMethods,
             _sharedContext.ObSealCertificateMethods,
-            clientAccessTokenGet);
+            clientAccessTokenGet,
+            new DomesticPaymentConsentCommon(
+                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
+                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentAccessToken>(),
+                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentRefreshToken>(),
+                _sharedContext.Instrumentation));
         CreateObject = _domesticPaymentConsentOperations;
         ReadObject = _domesticPaymentConsentOperations;
         DeleteLocalObject = new LocalEntityDelete<DomesticPaymentConsent, LocalDeleteParams>(
