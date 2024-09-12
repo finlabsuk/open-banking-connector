@@ -1189,8 +1189,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// Factor used to convert an amount from one currency into another. This reflects the price at which one currency was bought with another currency.
         /// <br/>Usage: ExchangeRate expresses the ratio between UnitCurrency and QuotedCurrency (ExchangeRate = UnitCurrency/QuotedCurrency).
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("ExchangeRate", Required = Newtonsoft.Json.Required.Always)]
-        public double ExchangeRate { get; set; } = default!;
+        [Newtonsoft.Json.JsonProperty("ExchangeRate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? ExchangeRate { get; set; } = default!;
 
         /// <summary>
         /// Unique identification to unambiguously identify the foreign exchange contract.
