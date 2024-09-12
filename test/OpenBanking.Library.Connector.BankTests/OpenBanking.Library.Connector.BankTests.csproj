@@ -1,4 +1,4 @@
-<Project Sdk="MSTest.Sdk/3.5.2">
+<Project Sdk="MSTest.Sdk/3.6.0">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
@@ -13,13 +13,13 @@
 
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
-        <PackageReference Include="FluentAssertions" Version="6.12.0"/>
+        <PackageReference Include="FluentAssertions" Version="6.12.1"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.8"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.8"/>
         <PackageReference Include="Microsoft.Playwright" Version="1.46.0"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0"/>
-        <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.11.0"/>
+        <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.11.1"/>
         <PackageReference Update="Microsoft.Testing.Extensions.CodeCoverage" Version="17.12.2"/>
     </ItemGroup>
 
