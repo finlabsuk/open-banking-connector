@@ -69,7 +69,10 @@ public static class ServiceCollectionExtensions
                 break;
             case DbProvider.PostgreSql:
                 services.AddDbContext<BaseDbContext, PostgreSqlDbContext>(
-                    options => { options.UseNpgsql(connectionString); });
+                    optionsBuilder =>
+                    {
+                        optionsBuilder.UseNpgsql(connectionString, options => options.EnableRetryOnFailure());
+                    });
                 break;
             default:
                 throw new ArgumentException("Unsupported DB provider", configuration["DbProvider"]);
