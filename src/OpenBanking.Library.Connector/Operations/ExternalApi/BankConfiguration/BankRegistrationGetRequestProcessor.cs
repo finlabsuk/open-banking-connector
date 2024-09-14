@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.BankConfiguration;
 
@@ -15,9 +17,13 @@ internal class BankRegistrationGetRequestProcessor : IGetRequestProcessor
         _accessToken = accessToken;
     }
 
-    (List<HttpHeader> headers, string acceptType) IGetRequestProcessor.HttpGetRequestData(
-        string requestDescription,
+    public async Task<(TResponse response, string? xFapiInteractionId)> GetAsync<TResponse>(
+        Uri uri,
+        TppReportingRequestInfo? tppReportingRequestInfo,
+        JsonSerializerSettings? jsonSerializerSettings,
+        IApiClient apiClient,
         IEnumerable<HttpHeader>? extraHeaders)
+        where TResponse : class
     {
         // Assemble headers and body
         var headers = new List<HttpHeader> { new("Authorization", "Bearer " + _accessToken) };
@@ -29,6 +35,17 @@ internal class BankRegistrationGetRequestProcessor : IGetRequestProcessor
             }
         }
 
-        return (headers, "application/json");
+        // Send request
+        (TResponse response, string? xFapiInteractionId) = await new HttpRequestBuilder()
+            .SetMethod(HttpMethod.Get)
+            .SetUri(uri)
+            .SetHeaders(headers)
+            .Create()
+            .SendExpectingJsonResponseAsync<TResponse>(
+                apiClient,
+                tppReportingRequestInfo,
+                jsonSerializerSettings);
+
+        return (response, xFapiInteractionId);
     }
 }

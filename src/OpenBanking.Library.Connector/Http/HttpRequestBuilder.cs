@@ -2,148 +2,87 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
+using System.Net.Http.Headers;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http;
 
-public class HttpRequestBuilder : IHttpRequestBuilder
+public class HttpRequestBuilder
 {
-    private readonly HttpMessageHandlerFactory _messageHandlerFactory;
-
     public HttpRequestBuilder()
     {
-        _messageHandlerFactory = new HttpMessageHandlerFactory();
+        HttpRequestMessage = new HttpRequestMessage();
+        HttpRequestMessage.Headers.UserAgent.ParseAdd("OpenBankingConnector");
     }
 
-    internal HttpRequestInfo RequestInfo { get; } = new();
+    protected HttpRequestMessage HttpRequestMessage { get; }
 
-    public IHttpRequestBuilder SetUri(Uri value)
+    public HttpRequestBuilder SetUri(Uri value)
     {
-        RequestInfo.RequestUri = value.ArgNotNull(nameof(value));
-
+        HttpRequestMessage.RequestUri = value.ArgNotNull(nameof(value));
         return this;
     }
 
-    public IHttpRequestBuilder SetUri(string value) => SetUri(new Uri(value));
+    public HttpRequestBuilder SetUri(string value) => SetUri(new Uri(value));
 
-    public IHttpRequestBuilder SetUseDefaultCredentials(bool value)
+    public HttpRequestBuilder SetMethod(HttpMethod method)
     {
-        RequestInfo.UseDefaultCredentials = value;
-
+        HttpRequestMessage.Method = method.ArgNotNull(nameof(method));
         return this;
     }
 
-    public IHttpRequestBuilder SetCredentials(ICredentials value)
+    public HttpRequestBuilder SetHeaders(IEnumerable<HttpHeader> values)
     {
-        RequestInfo.Credentials = value.ArgNotNull(nameof(value));
-
+        IList<HttpHeader> infoHeaders = values.ArgNotNull(nameof(values)).ToList();
+        if (infoHeaders.Count > 0)
+        {
+            IEnumerable<IGrouping<string, HttpHeader>> headers = infoHeaders.GroupBy(h => h.Name);
+            foreach (IGrouping<string, HttpHeader> headerGroup in headers)
+            {
+                IEnumerable<string> values1 = headerGroup.Select(h => h.Value);
+                HttpRequestMessage.Headers.Add(headerGroup.Key, values1);
+            }
+        }
         return this;
     }
 
-    public IHttpRequestBuilder SetPreAuthenticate(bool value)
+    public HttpRequestBuilder SetJsonContent<TRequest>(
+        TRequest request,
+        JsonSerializerSettings? requestJsonSerializerSettings)
     {
-        RequestInfo.PreAuthenticate = value;
-
+        JsonSerializerSettings jsonSerializerSettings =
+            requestJsonSerializerSettings ?? new JsonSerializerSettings();
+        jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+        string content = JsonConvert.SerializeObject(
+            request,
+            jsonSerializerSettings);
+        HttpRequestMessage.Content = new StringContent(
+            content,
+            Encoding.UTF8,
+            new MediaTypeWithQualityHeaderValue("application/json"));
         return this;
     }
 
-    public IHttpRequestBuilder SetMethod(HttpMethod method)
+    public HttpRequestBuilder SetTextContent(string content, string contentType)
     {
-        RequestInfo.Method = method.ArgNotNull(nameof(method)).Method;
-
+        if (!string.IsNullOrWhiteSpace(content))
+        {
+            HttpRequestMessage.Content = new StringContent(
+                content,
+                Encoding.UTF8,
+                new MediaTypeWithQualityHeaderValue(contentType));
+        }
         return this;
     }
 
-    public IHttpRequestBuilder SetHeaders(IEnumerable<HttpHeader> values)
+    public HttpRequestMessage Create()
     {
-        RequestInfo.Headers = values.ArgNotNull(nameof(values)).ToList();
+        if (!HttpRequestMessage.Headers.Accept.Any())
+        {
+            HttpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        }
 
-        return this;
+        return HttpRequestMessage;
     }
-
-    public IHttpRequestBuilder SetCookies(IEnumerable<Cookie> values)
-    {
-        RequestInfo.Cookies = values.ArgNotNull(nameof(values)).ToList();
-
-        return this;
-    }
-
-    public IHttpRequestBuilder SetUserAgent(string value)
-    {
-        RequestInfo.UserAgent = value.ArgNotNull(nameof(value));
-        return this;
-    }
-
-    public IHttpRequestBuilder SetClientCertificate(X509Certificate2 certificate)
-    {
-        return SetClientCertificates(new[] { certificate.ArgNotNull(nameof(certificate)) });
-    }
-
-    public IHttpRequestBuilder SetClientCertificates(IEnumerable<X509Certificate> certificates)
-    {
-        RequestInfo.Certificates = certificates.ArgNotNull(nameof(certificates)).ToList();
-
-        return this;
-    }
-
-    public IHttpRequestBuilder SetServerCertificateValidator(IServerCertificateValidator validator)
-    {
-        RequestInfo.ServerCertificateValidator = validator;
-
-        return this;
-    }
-
-    public IHttpRequestBuilder SetProxy(IWebProxy value)
-    {
-        RequestInfo.Proxy = value.ArgNotNull(nameof(value));
-
-        return this;
-    }
-
-    public IHttpRequestBuilder SetContent(string content)
-    {
-        RequestInfo.Content = content;
-
-        return this;
-    }
-
-    public IHttpRequestBuilder SetAccept(string accept)
-    {
-        RequestInfo.Accept.Add(accept);
-
-        return this;
-    }
-
-    public IHttpRequestBuilder SetContentType(string contentType)
-    {
-        RequestInfo.ContentTypes.Add(contentType);
-
-        return this;
-    }
-
-    public IHttpRequestBuilder SetTimeout(TimeSpan value)
-    {
-        RequestInfo.Timeout = value;
-
-        return this;
-    }
-
-    public IHttpRequestBuilder SetReadWriteTimeout(TimeSpan value)
-    {
-        RequestInfo.ReadWriteTimeout = value;
-
-        return this;
-    }
-
-    public IHttpRequestBuilder SetMaxRedirects(int value)
-    {
-        RequestInfo.MaxRedirects = value;
-
-        return this;
-    }
-
-    public HttpMessageHandler CreateMessageHandler() => _messageHandlerFactory.Create(RequestInfo);
-
-    public HttpRequestMessage Create() => RequestInfo.CreateRequestMessage();
 }

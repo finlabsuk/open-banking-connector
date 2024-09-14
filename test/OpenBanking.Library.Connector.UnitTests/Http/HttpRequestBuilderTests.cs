@@ -2,96 +2,50 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Net;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
-using FluentAssertions;
 using FsCheck.Xunit;
-using NSubstitute;
-using Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http;
 
+public class TestHttpRequestBuilder : HttpRequestBuilder
+{
+    public HttpRequestMessage GetHttpRequestMessage() => HttpRequestMessage;
+}
+
 public class HttpRequestBuilderTests
 {
-    [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(UriArbitrary) })]
+    [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = [typeof(UriArbitrary)])]
     public bool SetUri(Uri value)
     {
-        var b = new HttpRequestBuilder().SetUri(value) as HttpRequestBuilder;
+        var b = (TestHttpRequestBuilder) new TestHttpRequestBuilder().SetUri(value);
 
-        return b!.RequestInfo.RequestUri == value;
-    }
-
-    [Property(Verbose = PropertyTests.VerboseTests)]
-    public bool SetUseDefaultCredentials(bool value)
-    {
-        var b = new HttpRequestBuilder().SetUseDefaultCredentials(value) as HttpRequestBuilder;
-
-        return b!.RequestInfo.UseDefaultCredentials == value;
-    }
-
-
-    [Property(Verbose = PropertyTests.VerboseTests)]
-    public bool SetPreAuthenticate(bool value)
-    {
-        var b = new HttpRequestBuilder().SetPreAuthenticate(value) as HttpRequestBuilder;
-
-        return b!.RequestInfo.PreAuthenticate == value;
+        return b.GetHttpRequestMessage().RequestUri == value;
     }
 
     [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(HttpMethodArbitrary) })]
     public bool SetMethod(HttpMethod value)
     {
-        var b = new HttpRequestBuilder().SetMethod(value) as HttpRequestBuilder;
+        var b = (TestHttpRequestBuilder) new TestHttpRequestBuilder().SetMethod(value);
 
-        return b!.RequestInfo.Method == value.ToString();
+        return b.GetHttpRequestMessage().Method == value;
     }
 
-
-    [Property(Verbose = PropertyTests.VerboseTests)]
+    [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = [typeof(HeaderValueArbitrary)])]
     public bool SetHeaders(IList<string> values)
     {
+        var headerName = "hdr";
         List<HttpHeader> headers =
-            values.NullToEmpty().Select(v => new HttpHeader("hdr", v)).ToList();
+            values.NullToEmpty().Select(v => new HttpHeader(headerName, v)).ToList();
 
-        var b = new HttpRequestBuilder().SetHeaders(headers) as HttpRequestBuilder;
+        var b = (TestHttpRequestBuilder) new TestHttpRequestBuilder().SetHeaders(headers);
 
-        return b!.RequestInfo.Headers.SequenceEqual(headers);
-    }
+        if (!b.GetHttpRequestMessage().Headers.TryGetValues(headerName, out IEnumerable<string>? foundHeaders))
+        {
+            foundHeaders = [];
+        }
 
-    [Property(Verbose = PropertyTests.VerboseTests)]
-    public bool SetTimeeout(TimeSpan value)
-    {
-        var b = new HttpRequestBuilder().SetTimeout(value) as HttpRequestBuilder;
-
-        return b!.RequestInfo.Timeout == value;
-    }
-
-
-    [Property(Verbose = PropertyTests.VerboseTests)]
-    public bool SetReadWriteTimeeout(TimeSpan value)
-    {
-        var b = new HttpRequestBuilder().SetReadWriteTimeout(value) as HttpRequestBuilder;
-
-        return b!.RequestInfo.ReadWriteTimeout == value;
-    }
-
-
-    [Property(Verbose = PropertyTests.VerboseTests)]
-    public bool SetMaxRedirects(int value)
-    {
-        var b = new HttpRequestBuilder().SetMaxRedirects(value) as HttpRequestBuilder;
-
-        return b!.RequestInfo.MaxRedirects == value;
-    }
-
-    [Fact]
-    public void SetCredentials()
-    {
-        var value = Substitute.For<ICredentials>();
-        var b = new HttpRequestBuilder().SetCredentials(value) as HttpRequestBuilder;
-
-        b!.RequestInfo.Credentials.Should().Be(value);
+        return foundHeaders.SequenceEqual(values);
     }
 }

@@ -5,6 +5,7 @@
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using Newtonsoft.Json;
@@ -30,21 +31,27 @@ internal class BankRegistrationPostRequestProcessor<TVariantApiRequest> :
             useApplicationJoseNotApplicationJwtContentTypeHeader;
     }
 
-    (List<HttpHeader> headers, string body, string contentType) IPostRequestProcessor<TVariantApiRequest>.
-        HttpPostRequestData(
-            TVariantApiRequest variantRequest,
-            JsonSerializerSettings? requestJsonSerializerSettings,
-            string requestDescription,
-            IEnumerable<HttpHeader>? extraHeaders)
+    public async Task<(TResponse response, string? xFapiInteractionId)> PostAsync<TResponse>(
+        Uri uri,
+        IEnumerable<HttpHeader>? extraHeaders,
+        TVariantApiRequest request,
+        TppReportingRequestInfo? tppReportingRequestInfo,
+        JsonSerializerSettings? requestJsonSerializerSettings,
+        JsonSerializerSettings? responseJsonSerializerSettings,
+        IApiClient apiClient)
+        where TResponse : class
     {
+        // Process request
+        var requestDescription = $"POST {uri})";
+
         // Create JWT and log
         JsonSerializerSettings jsonSerializerSettings =
             requestJsonSerializerSettings ?? new JsonSerializerSettings();
         jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
         string payloadJson = JsonConvert.SerializeObject(
-            variantRequest,
+            request,
             jsonSerializerSettings);
-        string jwt = JwtFactory.CreateJwt(
+        string content = JwtFactory.CreateJwt(
             JwtFactory.DefaultJwtHeadersIncludingTyp(_obSealKey.KeyId),
             payloadJson,
             _obSealKey.Key,
@@ -53,11 +60,11 @@ internal class BankRegistrationPostRequestProcessor<TVariantApiRequest> :
             .AppendLine($"#### Claims ({requestDescription})")
             .AppendLine(
                 JsonConvert.SerializeObject(
-                    variantRequest,
+                    request,
                     Formatting.Indented,
                     new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }))
             .AppendLine($"#### JWT ({requestDescription})")
-            .Append(jwt);
+            .Append(content);
         _instrumentationClient.Trace(requestTraceSb.ToString());
 
         var headers = new List<HttpHeader>();
@@ -69,7 +76,22 @@ internal class BankRegistrationPostRequestProcessor<TVariantApiRequest> :
             }
         }
 
-        return (headers, jwt,
-            _useApplicationJoseNotApplicationJwtContentTypeHeader ? "application/jose" : "application/jwt");
+        string contentType = _useApplicationJoseNotApplicationJwtContentTypeHeader
+            ? "application/jose"
+            : "application/jwt";
+
+        // Send request
+        (TResponse response, string? xFapiInteractionId) = await new HttpRequestBuilder()
+            .SetMethod(HttpMethod.Post)
+            .SetUri(uri)
+            .SetHeaders(headers)
+            .SetTextContent(content, contentType)
+            .Create()
+            .SendExpectingJsonResponseAsync<TResponse>(
+                apiClient,
+                tppReportingRequestInfo,
+                responseJsonSerializerSettings);
+
+        return (response, xFapiInteractionId);
     }
 }

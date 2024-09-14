@@ -18,13 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 internal interface IPostRequestProcessor<in TRequest>
     where TRequest : class
 {
-    protected (List<HttpHeader> headers, string body, string contentType) HttpPostRequestData(
-        TRequest variantRequest,
-        JsonSerializerSettings? requestJsonSerializerSettings,
-        string requestDescription,
-        IEnumerable<HttpHeader>? extraHeaders);
-
-    public async Task<(TResponse response, string? xFapiInteractionId)> PostAsync<TResponse>(
+    public Task<(TResponse response, string? xFapiInteractionId)> PostAsync<TResponse>(
         Uri uri,
         IEnumerable<HttpHeader>? extraHeaders,
         TRequest request,
@@ -32,25 +26,5 @@ internal interface IPostRequestProcessor<in TRequest>
         JsonSerializerSettings? requestJsonSerializerSettings,
         JsonSerializerSettings? responseJsonSerializerSettings,
         IApiClient apiClient)
-        where TResponse : class
-    {
-        // Process request
-        (List<HttpHeader> headers, string content, string contentType) =
-            HttpPostRequestData(request, requestJsonSerializerSettings, $"POST {uri})", extraHeaders);
-
-        // POST request
-        (TResponse response, string? xFapiInteractionId) = await new HttpRequestBuilder()
-            .SetMethod(HttpMethod.Post)
-            .SetUri(uri)
-            .SetHeaders(headers)
-            .SetContentType(contentType)
-            .SetContent(content)
-            .Create()
-            .SendExpectingJsonResponseAsync<TResponse>(
-                apiClient,
-                tppReportingRequestInfo,
-                responseJsonSerializerSettings);
-
-        return (response, xFapiInteractionId);
-    }
+        where TResponse : class;
 }

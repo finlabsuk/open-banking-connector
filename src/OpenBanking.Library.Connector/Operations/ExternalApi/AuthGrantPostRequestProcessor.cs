@@ -5,6 +5,7 @@
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using Newtonsoft.Json;
 
@@ -27,18 +28,22 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
         _tokenEndpointAuthMethod = tokenEndpointAuthMethod;
     }
 
-    (List<HttpHeader> headers, string body, string contentType) IPostRequestProcessor<TRequest>.HttpPostRequestData(
-        TRequest variantRequest,
+    public async Task<(TResponse response, string? xFapiInteractionId)> PostAsync<TResponse>(
+        Uri uri,
+        IEnumerable<HttpHeader>? extraHeaders,
+        TRequest request,
+        TppReportingRequestInfo? tppReportingRequestInfo,
         JsonSerializerSettings? requestJsonSerializerSettings,
-        string requestDescription,
-        IEnumerable<HttpHeader>? extraHeaders)
+        JsonSerializerSettings? responseJsonSerializerSettings,
+        IApiClient apiClient)
+        where TResponse : class
     {
         // Assemble headers and body
         var headers = new List<HttpHeader>();
         switch (_tokenEndpointAuthMethod)
         {
             case TokenEndpointAuthMethodSupportedValues.TlsClientAuth:
-                variantRequest["client_id"] = _externalApiClientId;
+                request["client_id"] = _externalApiClientId;
                 break;
             case TokenEndpointAuthMethodSupportedValues.ClientSecretBasic:
             {
@@ -65,9 +70,21 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
                 headers.Add(header);
             }
         }
+        string content = request.ToUrlParameterString();
+        var contentType = "application/x-www-form-urlencoded";
 
-        string content = variantRequest.ToUrlParameterString();
+        // Send request
+        (TResponse response, string? xFapiInteractionId) = await new HttpRequestBuilder()
+            .SetMethod(HttpMethod.Post)
+            .SetUri(uri)
+            .SetHeaders(headers)
+            .SetTextContent(content, contentType)
+            .Create()
+            .SendExpectingJsonResponseAsync<TResponse>(
+                apiClient,
+                tppReportingRequestInfo,
+                responseJsonSerializerSettings);
 
-        return (headers, content, "application/x-www-form-urlencoded");
+        return (response, xFapiInteractionId);
     }
 }

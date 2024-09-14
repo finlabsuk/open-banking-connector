@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.BankConfiguration;
 
@@ -15,9 +16,11 @@ public class BankRegistrationDeleteRequestProcessor : IDeleteRequestProcessor
         _accessToken = accessToken;
     }
 
-    List<HttpHeader> IDeleteRequestProcessor.HttpDeleteRequestData(
-        string requestDescription,
-        IEnumerable<HttpHeader>? extraHeaders)
+    public async Task DeleteAsync(
+        Uri uri,
+        IEnumerable<HttpHeader>? extraHeaders,
+        TppReportingRequestInfo? tppReportingRequestInfo,
+        IApiClient apiClient)
     {
         // Assemble headers and body
         var headers = new List<HttpHeader> { new("Authorization", "Bearer " + _accessToken) };
@@ -30,6 +33,12 @@ public class BankRegistrationDeleteRequestProcessor : IDeleteRequestProcessor
             }
         }
 
-        return headers;
+        // Send request
+        await new HttpRequestBuilder()
+            .SetMethod(HttpMethod.Delete)
+            .SetUri(uri)
+            .SetHeaders(headers)
+            .Create()
+            .SendExpectingNoResponseAsync(tppReportingRequestInfo, apiClient);
     }
 }

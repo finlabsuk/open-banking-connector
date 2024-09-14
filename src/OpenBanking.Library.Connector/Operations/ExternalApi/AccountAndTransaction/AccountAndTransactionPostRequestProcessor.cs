@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.AccountAndTransaction;
@@ -26,12 +27,15 @@ internal class
         _accessToken = accessToken;
     }
 
-    (List<HttpHeader> headers, string body, string contentType) IPostRequestProcessor<TVariantApiRequest>.
-        HttpPostRequestData(
-            TVariantApiRequest variantRequest,
-            JsonSerializerSettings? requestJsonSerializerSettings,
-            string requestDescription,
-            IEnumerable<HttpHeader>? extraHeaders)
+    public async Task<(TResponse response, string? xFapiInteractionId)> PostAsync<TResponse>(
+        Uri uri,
+        IEnumerable<HttpHeader>? extraHeaders,
+        TVariantApiRequest request,
+        TppReportingRequestInfo? tppReportingRequestInfo,
+        JsonSerializerSettings? requestJsonSerializerSettings,
+        JsonSerializerSettings? responseJsonSerializerSettings,
+        IApiClient apiClient)
+        where TResponse : class
     {
         // Assemble headers and body
         var headers = new List<HttpHeader>
@@ -48,12 +52,18 @@ internal class
             }
         }
 
-        JsonSerializerSettings jsonSerializerSettings =
-            requestJsonSerializerSettings ?? new JsonSerializerSettings();
-        jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-        string content = JsonConvert.SerializeObject(
-            variantRequest,
-            jsonSerializerSettings);
-        return (headers, content, "application/json");
+        // Send request
+        (TResponse response, string? xFapiInteractionId) = await new HttpRequestBuilder()
+            .SetMethod(HttpMethod.Post)
+            .SetUri(uri)
+            .SetHeaders(headers)
+            .SetJsonContent(request, requestJsonSerializerSettings)
+            .Create()
+            .SendExpectingJsonResponseAsync<TResponse>(
+                apiClient,
+                tppReportingRequestInfo,
+                responseJsonSerializerSettings);
+
+        return (response, xFapiInteractionId);
     }
 }

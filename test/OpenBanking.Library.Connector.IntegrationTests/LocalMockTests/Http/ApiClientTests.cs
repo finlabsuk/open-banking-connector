@@ -17,7 +17,7 @@ public class ApiClientTests
     [InlineData("https://www.google.com/")]
     public async Task ApiClient_SendAsync_Success(string url)
     {
-        IHttpRequestBuilder b = new HttpRequestBuilder()
+        HttpRequestBuilder b = new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
             .SetUri(url);
 
@@ -39,7 +39,7 @@ public class ApiClientTests
     [InlineData("https://github.com/a5b2a8a9-1220-4aa4-aa83-0036a7bd1e69")]
     public async Task ApiClient_SendAsync_NotFound(string url)
     {
-        IHttpRequestBuilder b = new HttpRequestBuilder()
+        HttpRequestBuilder b = new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
             .SetUri(url);
 

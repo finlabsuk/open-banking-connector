@@ -15,24 +15,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 /// </summary>
 internal interface IDeleteRequestProcessor
 {
-    protected List<HttpHeader> HttpDeleteRequestData(string requestDescription, IEnumerable<HttpHeader>? extraHeaders);
-
-    public async Task DeleteAsync(
+    public Task DeleteAsync(
         Uri uri,
         IEnumerable<HttpHeader>? extraHeaders,
         TppReportingRequestInfo? tppReportingRequestInfo,
-        IApiClient apiClient)
-    {
-        // Process request
-        List<HttpHeader> headers =
-            HttpDeleteRequestData($"DELETE {uri})", extraHeaders);
-
-        // POST request
-        await new HttpRequestBuilder()
-            .SetMethod(HttpMethod.Delete)
-            .SetUri(uri)
-            .SetHeaders(headers)
-            .Create()
-            .SendExpectingNoResponseAsync(tppReportingRequestInfo, apiClient);
-    }
+        IApiClient apiClient);
 }

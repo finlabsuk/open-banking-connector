@@ -5,6 +5,7 @@
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
@@ -37,18 +38,24 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
         _accessToken = accessToken;
     }
 
-    (List<HttpHeader> headers, string body, string contentType) IPostRequestProcessor<TVariantApiRequest>.
-        HttpPostRequestData(
-            TVariantApiRequest variantRequest,
-            JsonSerializerSettings? requestJsonSerializerSettings,
-            string requestDescription,
-            IEnumerable<HttpHeader>? extraHeaders)
+    public async Task<(TResponse response, string? xFapiInteractionId)> PostAsync<TResponse>(
+        Uri uri,
+        IEnumerable<HttpHeader>? extraHeaders,
+        TVariantApiRequest request,
+        TppReportingRequestInfo? tppReportingRequestInfo,
+        JsonSerializerSettings? requestJsonSerializerSettings,
+        JsonSerializerSettings? responseJsonSerializerSettings,
+        IApiClient apiClient)
+        where TResponse : class
     {
+        // Process request
+        var requestDescription = $"POST {uri})";
+
         // Create JWT and log
         var jsonSerializerSettings =
             new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
         string payloadJson = JsonConvert.SerializeObject(
-            variantRequest,
+            request,
             jsonSerializerSettings);
         string jwt = JwtFactory.CreateJwt(
             GetJoseHeaders(
@@ -80,13 +87,19 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
             }
         }
 
-        JsonSerializerSettings jsonSerializerSettings2 =
-            requestJsonSerializerSettings ?? new JsonSerializerSettings();
-        jsonSerializerSettings2.NullValueHandling = NullValueHandling.Ignore;
-        string content = JsonConvert.SerializeObject(
-            variantRequest,
-            jsonSerializerSettings2);
-        return (headers, content, "application/json");
+        // Send request
+        (TResponse response, string? xFapiInteractionId) = await new HttpRequestBuilder()
+            .SetMethod(HttpMethod.Post)
+            .SetUri(uri)
+            .SetHeaders(headers)
+            .SetJsonContent(request, requestJsonSerializerSettings)
+            .Create()
+            .SendExpectingJsonResponseAsync<TResponse>(
+                apiClient,
+                tppReportingRequestInfo,
+                responseJsonSerializerSettings);
+
+        return (response, xFapiInteractionId);
     }
 
     private static HttpHeader CreateJwsSignatureHeader(string jwt)

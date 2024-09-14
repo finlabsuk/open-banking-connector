@@ -826,7 +826,11 @@ internal class
             JwsAlgorithm.RS256)).AccessToken;
 
         // Get software statement assertion
-        var headers = new List<HttpHeader> { new("Authorization", "Bearer " + accessToken) };
+        var headers = new List<HttpHeader>
+        {
+            new("Authorization", "Bearer " + accessToken),
+            new("Accept", "application/jws+json")
+        };
         string url = softwareStatement.SandboxEnvironment
             ? "https://matls-ssaapi.openbankingtest.org.uk/api/v2/tpp/"
             : "https://matls-ssaapi.openbanking.org.uk/api/v2/tpp/";
@@ -834,7 +838,6 @@ internal class
         string response = await new HttpRequestBuilder()
             .SetUri(url)
             .SetHeaders(headers)
-            .SetAccept("application/jws+json")
             .Create()
             .SendExpectingStringResponseAsync(null, apiClient);
 
