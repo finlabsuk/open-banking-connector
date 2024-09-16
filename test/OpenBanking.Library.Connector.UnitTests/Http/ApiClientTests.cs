@@ -34,7 +34,7 @@ public class ApiClientTests
         HttpRequestMessage req = new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
             .SetUri(url)
-            .Create();
+            .CreateHttpRequestMessage();
 
         HttpResponseMessage response = await apiClient.LowLevelSendAsync(req);
 
@@ -62,7 +62,7 @@ public class ApiClientTests
         HttpRequestMessage req = new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
             .SetUri(url)
-            .Create();
+            .CreateHttpRequestMessage();
 
         HttpResponseMessage response = await apiClient.LowLevelSendAsync(req);
     }
@@ -83,7 +83,7 @@ public class ApiClientTests
         HttpRequestMessage req = new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
             .SetUri(url)
-            .Create();
+            .CreateHttpRequestMessage();
 
         Func<Task> a = async () => await apiClient.LowLevelSendAsync(req);
 
@@ -98,7 +98,7 @@ public class ApiClientTests
         HttpRequestMessage req = new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
             .SetUri(url)
-            .Create();
+            .CreateHttpRequestMessage();
 
         var entity = new SerialisedEntity { Message = "test message" };
         string content = JsonConvert.SerializeObject(entity);
@@ -114,6 +114,7 @@ public class ApiClientTests
             (SerialisedEntity result, string? xFapiInteractionId) =
                 await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
                     req,
+                    "",
                     null,
                     null);
 
@@ -128,7 +129,7 @@ public class ApiClientTests
         HttpRequestMessage req = new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
             .SetUri(url)
-            .Create();
+            .CreateHttpRequestMessage();
 
         var entity = new SerialisedEntity { Message = "test message" };
         string content = JsonConvert.SerializeObject(entity);
@@ -144,6 +145,7 @@ public class ApiClientTests
         Func<Task> a = async () =>
             await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
                 req,
+                "",
                 null,
                 null);
 
@@ -157,7 +159,7 @@ public class ApiClientTests
         HttpRequestMessage req = new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
             .SetUri(url)
-            .Create();
+            .CreateHttpRequestMessage();
 
         var entity = new SerialisedEntity { Message = "test message" };
         string content = JsonConvert.SerializeObject(entity);
@@ -180,6 +182,7 @@ public class ApiClientTests
         Func<Task> a = async () =>
             await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
                 req,
+                "",
                 null,
                 null);
 
@@ -194,7 +197,7 @@ public class ApiClientTests
         HttpRequestMessage req = new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
             .SetUri(url)
-            .Create();
+            .CreateHttpRequestMessage();
 
         var entity = new SerialisedEntity { Message = "test message" };
         string content = JsonConvert.SerializeObject(entity);
@@ -216,6 +219,7 @@ public class ApiClientTests
         Func<Task> a = async () =>
             await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
                 req,
+                "",
                 null,
                 null);
 

@@ -65,6 +65,7 @@ public class ApiClient(
 
     public async Task<(T response, string? xFapiInteractionId)> SendExpectingJsonResponseAsync<T>(
         HttpRequestMessage request,
+        string? requestContentForLog,
         TppReportingRequestInfo? tppReportingRequestInfo,
         JsonSerializerSettings? jsonSerializerSettings)
         where T : class
@@ -72,7 +73,7 @@ public class ApiClient(
         ArgumentNullException.ThrowIfNull(request);
 
         (int statusCode, string? responseBody, string? xFapiInteractionId) =
-            await SendInnerAsync(request, tppReportingRequestInfo);
+            await SendInnerAsync(request, requestContentForLog, tppReportingRequestInfo);
 
         // Check body not null
         if (responseBody is null)
@@ -107,12 +108,13 @@ public class ApiClient(
 
     public async Task SendExpectingNoResponseAsync(
         HttpRequestMessage request,
+        string? requestContentForLog,
         TppReportingRequestInfo? tppReportingRequestInfo)
     {
         ArgumentNullException.ThrowIfNull(request);
 
         (int statusCode, string? responseBody, string? xFapiInteractionId) =
-            await SendInnerAsync(request, tppReportingRequestInfo);
+            await SendInnerAsync(request, requestContentForLog, tppReportingRequestInfo);
 
         // Check body null
         if (!string.IsNullOrEmpty(responseBody))
@@ -123,12 +125,13 @@ public class ApiClient(
 
     public async Task<string> SendExpectingStringResponseAsync(
         HttpRequestMessage request,
+        string? requestContentForLog,
         TppReportingRequestInfo? tppReportingRequestInfo)
     {
         ArgumentNullException.ThrowIfNull(request);
 
         (int statusCode, string? responseBody, string? xFapiInteractionId) =
-            await SendInnerAsync(request, tppReportingRequestInfo);
+            await SendInnerAsync(request, requestContentForLog, tppReportingRequestInfo);
 
         // Check body not null
         if (string.IsNullOrEmpty(responseBody))
@@ -200,6 +203,7 @@ public class ApiClient(
 
     private async Task<(int statusCode, string? responseBody, string? xFapiInteractionId)> SendInnerAsync(
         HttpRequestMessage request,
+        string? requestContentForLog,
         TppReportingRequestInfo? tppReportingRequestInfo)
     {
         ArgumentNullException.ThrowIfNull(request);
@@ -208,7 +212,6 @@ public class ApiClient(
         // Since logging requires request and response body, done at this level rather than in wrapping  DelegatingHandler as previously intended.
         _httpRequestLogger.LogRequestStart(request);
         HttpResponseMessage? response = null;
-        string? requestBody = null;
         string? responseBody = null;
         var stopWatch = new Stopwatch();
         stopWatch.Start();
@@ -222,14 +225,13 @@ public class ApiClient(
             stopWatch.Stop();
 
             // Get request and response bodies
-            requestBody = await GetStringRequestBodyAsync(request); // don't read before making request
             responseBody = await response.Content.ReadAsStringAsync();
 
             // Log request
             _httpRequestLogger.LogRequestStop(
                 new HttpRequestLoggerAdditionalData
                 {
-                    RequestBody = requestBody,
+                    RequestBody = requestContentForLog,
                     ResponseBody = responseBody
                 },
                 request,
@@ -262,7 +264,7 @@ public class ApiClient(
             _httpRequestLogger.LogRequestFailed(
                 new HttpRequestLoggerAdditionalData
                 {
-                    RequestBody = requestBody,
+                    RequestBody = requestContentForLog,
                     ResponseBody = responseBody
                 },
                 request,

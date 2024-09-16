@@ -38,7 +38,6 @@ public class BankRegistrationDeleteRequestProcessor : IDeleteRequestProcessor
             .SetMethod(HttpMethod.Delete)
             .SetUri(uri)
             .SetHeaders(headers)
-            .Create()
             .SendExpectingNoResponseAsync(tppReportingRequestInfo, apiClient);
     }
 }

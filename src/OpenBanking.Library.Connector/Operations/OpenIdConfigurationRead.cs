@@ -60,7 +60,6 @@ public class OpenIdConfigurationRead : IOpenIdConfigurationRead
         (OpenIdConfiguration openIdConfiguration, string? xFapiInteractionId) = await new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
             .SetUri(openIdConfigurationUrl)
-            .Create()
             .SendExpectingJsonResponseAsync<OpenIdConfiguration>(_apiClient, tppReportingRequestInfo);
 
         // Update OpenID Provider Configuration based on overrides

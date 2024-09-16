@@ -93,7 +93,6 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
             .SetUri(uri)
             .SetHeaders(headers)
             .SetJsonContent(request, requestJsonSerializerSettings)
-            .Create()
             .SendExpectingJsonResponseAsync<TResponse>(
                 apiClient,
                 tppReportingRequestInfo,

@@ -79,7 +79,6 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
             .SetUri(uri)
             .SetHeaders(headers)
             .SetTextContent(content, contentType)
-            .Create()
             .SendExpectingJsonResponseAsync<TResponse>(
                 apiClient,
                 tppReportingRequestInfo,

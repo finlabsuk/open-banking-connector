@@ -44,7 +44,6 @@ public class ApiDeleteRequestProcessor : IDeleteRequestProcessor
             .SetMethod(HttpMethod.Delete)
             .SetUri(uri)
             .SetHeaders(headers)
-            .Create()
             .SendExpectingNoResponseAsync(tppReportingRequestInfo, apiClient);
     }
 }

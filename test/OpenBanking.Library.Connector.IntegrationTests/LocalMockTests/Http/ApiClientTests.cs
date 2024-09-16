@@ -21,7 +21,7 @@ public class ApiClientTests
             .SetMethod(HttpMethod.Get)
             .SetUri(url);
 
-        HttpRequestMessage req = b.Create();
+        HttpRequestMessage req = b.CreateHttpRequestMessage();
 
         using (var http = new HttpClient())
         {
@@ -43,7 +43,7 @@ public class ApiClientTests
             .SetMethod(HttpMethod.Get)
             .SetUri(url);
 
-        HttpRequestMessage req = b.Create();
+        HttpRequestMessage req = b.CreateHttpRequestMessage();
 
         using (var http = new HttpClient())
         {
@@ -64,7 +64,7 @@ public class ApiClientTests
         HttpRequestMessage req = new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
             .SetUri(url)
-            .Create();
+            .CreateHttpRequestMessage();
 
         using var http = new HttpClient();
         Func<Task> a = async () =>

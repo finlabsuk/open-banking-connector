@@ -4,23 +4,21 @@
 
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http;
 
 public class HttpRequestBuilder
 {
-    public HttpRequestBuilder()
-    {
-        HttpRequestMessage = new HttpRequestMessage();
-        HttpRequestMessage.Headers.UserAgent.ParseAdd("OpenBankingConnector");
-    }
-
-    protected HttpRequestMessage HttpRequestMessage { get; }
+    protected HttpRequestInfo RequestInfo { get; } = new();
 
     public HttpRequestBuilder SetUri(Uri value)
     {
-        HttpRequestMessage.RequestUri = value.ArgNotNull(nameof(value));
+        RequestInfo.RequestUri = value.ArgNotNull(nameof(value));
         return this;
     }
 
@@ -28,22 +26,13 @@ public class HttpRequestBuilder
 
     public HttpRequestBuilder SetMethod(HttpMethod method)
     {
-        HttpRequestMessage.Method = method.ArgNotNull(nameof(method));
+        RequestInfo.Method = method.ArgNotNull(nameof(method));
         return this;
     }
 
     public HttpRequestBuilder SetHeaders(IEnumerable<HttpHeader> values)
     {
-        IList<HttpHeader> infoHeaders = values.ArgNotNull(nameof(values)).ToList();
-        if (infoHeaders.Count > 0)
-        {
-            IEnumerable<IGrouping<string, HttpHeader>> headers = infoHeaders.GroupBy(h => h.Name);
-            foreach (IGrouping<string, HttpHeader> headerGroup in headers)
-            {
-                IEnumerable<string> values1 = headerGroup.Select(h => h.Value);
-                HttpRequestMessage.Headers.Add(headerGroup.Key, values1);
-            }
-        }
+        RequestInfo.Headers = values.ArgNotNull(nameof(values)).ToList();
         return this;
     }
 
@@ -51,38 +40,95 @@ public class HttpRequestBuilder
         TRequest request,
         JsonSerializerSettings? requestJsonSerializerSettings)
     {
-        JsonSerializerSettings jsonSerializerSettings =
-            requestJsonSerializerSettings ?? new JsonSerializerSettings();
-        jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-        string content = JsonConvert.SerializeObject(
-            request,
-            jsonSerializerSettings);
-        HttpRequestMessage.Content = new StringContent(
-            content,
-            Encoding.UTF8,
-            new MediaTypeWithQualityHeaderValue("application/json"));
+        RequestInfo.GetContent = () =>
+        {
+            JsonSerializerSettings jsonSerializerSettings =
+                requestJsonSerializerSettings ?? new JsonSerializerSettings();
+            jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            string content = JsonConvert.SerializeObject(
+                request,
+                jsonSerializerSettings);
+            var httpContent = new StringContent(
+                content,
+                Encoding.UTF8,
+                new MediaTypeWithQualityHeaderValue("application/json"));
+            using JsonDocument document = JsonDocument.Parse(content);
+            string contentForLog = JsonSerializer.Serialize(
+                document,
+                new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                });
+            return (httpContent, contentForLog);
+        };
         return this;
     }
 
     public HttpRequestBuilder SetTextContent(string content, string contentType)
     {
-        if (!string.IsNullOrWhiteSpace(content))
+        if (string.IsNullOrWhiteSpace(content))
         {
-            HttpRequestMessage.Content = new StringContent(
-                content,
-                Encoding.UTF8,
-                new MediaTypeWithQualityHeaderValue(contentType));
+            throw new InvalidOperationException("Text content not specified.");
         }
+        RequestInfo.GetContent = () => (new StringContent(
+            content,
+            Encoding.UTF8,
+            new MediaTypeWithQualityHeaderValue(contentType)), content);
         return this;
     }
 
-    public HttpRequestMessage Create()
+    public async Task<(T response, string? xFapiInteractionId)> SendExpectingJsonResponseAsync<T>(
+        IApiClient client,
+        TppReportingRequestInfo? tppReportingRequestInfo,
+        JsonSerializerSettings? jsonSerializerSettings = null)
+        where T : class
     {
-        if (!HttpRequestMessage.Headers.Accept.Any())
-        {
-            HttpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        }
+        client.ArgNotNull(nameof(client));
 
-        return HttpRequestMessage;
+        (HttpRequestMessage Message, string? RequestContentForLog) requestData = RequestInfo.CreateRequestMessage();
+        using HttpRequestMessage message = requestData.Message;
+
+        if (!message.Headers.Accept.Any())
+        {
+            message.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        }
+        return await client.SendExpectingJsonResponseAsync<T>(
+            message,
+            requestData.RequestContentForLog,
+            tppReportingRequestInfo,
+            jsonSerializerSettings);
+    }
+
+    public async Task<string> SendExpectingStringResponseAsync(
+        string acceptHeader,
+        IApiClient client,
+        TppReportingRequestInfo? tppReportingRequestInfo)
+
+    {
+        client.ArgNotNull(nameof(client));
+        (HttpRequestMessage Message, string? RequestContentForLog) requestData = RequestInfo.CreateRequestMessage();
+        using HttpRequestMessage message = requestData.Message;
+        message.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(acceptHeader));
+        return await client.SendExpectingStringResponseAsync(
+            message,
+            requestData.RequestContentForLog,
+            tppReportingRequestInfo);
+    }
+
+    public HttpRequestMessage CreateHttpRequestMessage() => RequestInfo.CreateRequestMessage().Message;
+
+    public async Task SendExpectingNoResponseAsync(
+        TppReportingRequestInfo? tppReportingRequestInfo,
+        IApiClient client)
+    {
+        client.ArgNotNull(nameof(client));
+        (HttpRequestMessage Message, string? RequestContentForLog) requestData = RequestInfo.CreateRequestMessage();
+        using HttpRequestMessage message = requestData.Message;
+        if (!message.Headers.Accept.Any())
+        {
+            message.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        }
+        await client.SendExpectingNoResponseAsync(message, requestData.RequestContentForLog, tppReportingRequestInfo);
     }
 }

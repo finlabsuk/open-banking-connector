@@ -11,13 +11,18 @@ public interface IApiClient
 {
     Task<(T response, string? xFapiInteractionId)> SendExpectingJsonResponseAsync<T>(
         HttpRequestMessage request,
+        string? requestContentForLog,
         TppReportingRequestInfo? tppReportingRequestInfo,
         JsonSerializerSettings? jsonSerializerSettings)
         where T : class;
 
-    Task SendExpectingNoResponseAsync(HttpRequestMessage request, TppReportingRequestInfo? tppReportingRequestInfo);
+    Task SendExpectingNoResponseAsync(
+        HttpRequestMessage request,
+        string? requestContentForLog,
+        TppReportingRequestInfo? tppReportingRequestInfo);
 
     Task<string> SendExpectingStringResponseAsync(
         HttpRequestMessage request,
+        string? requestContentForLog,
         TppReportingRequestInfo? tppReportingRequestInfo);
 }

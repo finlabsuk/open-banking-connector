@@ -19,21 +19,11 @@ public class HttpRequestInfoExtensionsTests
         HttpRequestMessage result = new HttpRequestBuilder()
             .SetUri(new Uri("http://tests"))
             .SetTextContent("abcdef", contentType)
-            .Create();
+            .CreateHttpRequestMessage();
 
         MediaTypeHeaderValue? resultContentTypes =
             result.Content?.Headers.ContentType;
 
         resultContentTypes?.MediaType.Should().Be(contentType);
-    }
-
-    [Fact]
-    public void Create_EmptyContentTypesProduceDefaults()
-    {
-        HttpRequestMessage result = new HttpRequestBuilder()
-            .SetUri(new Uri("http://tests"))
-            .Create();
-
-        result.Headers.Accept.Should().HaveCount(1);
     }
 }

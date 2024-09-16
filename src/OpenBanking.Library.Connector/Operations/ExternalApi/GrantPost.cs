@@ -594,10 +594,9 @@ internal class GrantPost : IGrantPost
     {
         var uri = new Uri(jwksUrl);
 
-        HttpRequestMessage message = new HttpRequestBuilder()
+        HttpRequestBuilder message = new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
-            .SetUri(uri)
-            .Create();
+            .SetUri(uri);
 
         TppReportingRequestInfo? tppReportingRequestInfo = bankProfileForTppReportingMetrics is not null
             ? new TppReportingRequestInfo

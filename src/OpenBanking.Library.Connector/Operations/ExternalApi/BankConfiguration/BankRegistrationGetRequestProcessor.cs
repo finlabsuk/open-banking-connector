@@ -40,7 +40,6 @@ internal class BankRegistrationGetRequestProcessor : IGetRequestProcessor
             .SetMethod(HttpMethod.Get)
             .SetUri(uri)
             .SetHeaders(headers)
-            .Create()
             .SendExpectingJsonResponseAsync<TResponse>(
                 apiClient,
                 tppReportingRequestInfo,

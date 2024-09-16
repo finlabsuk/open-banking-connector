@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http;
 
 public class TestHttpRequestBuilder : HttpRequestBuilder
 {
-    public HttpRequestMessage GetHttpRequestMessage() => HttpRequestMessage;
+    public HttpRequestInfo GetRequestInfo() => RequestInfo;
 }
 
 public class HttpRequestBuilderTests
@@ -21,7 +21,7 @@ public class HttpRequestBuilderTests
     {
         var b = (TestHttpRequestBuilder) new TestHttpRequestBuilder().SetUri(value);
 
-        return b.GetHttpRequestMessage().RequestUri == value;
+        return b.GetRequestInfo().RequestUri == value;
     }
 
     [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(HttpMethodArbitrary) })]
@@ -29,7 +29,7 @@ public class HttpRequestBuilderTests
     {
         var b = (TestHttpRequestBuilder) new TestHttpRequestBuilder().SetMethod(value);
 
-        return b.GetHttpRequestMessage().Method == value;
+        return b.GetRequestInfo().Method == value;
     }
 
     [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = [typeof(HeaderValueArbitrary)])]
@@ -41,11 +41,6 @@ public class HttpRequestBuilderTests
 
         var b = (TestHttpRequestBuilder) new TestHttpRequestBuilder().SetHeaders(headers);
 
-        if (!b.GetHttpRequestMessage().Headers.TryGetValues(headerName, out IEnumerable<string>? foundHeaders))
-        {
-            foundHeaders = [];
-        }
-
-        return foundHeaders.SequenceEqual(values);
+        return b.GetRequestInfo().Headers.SequenceEqual(headers);
     }
 }

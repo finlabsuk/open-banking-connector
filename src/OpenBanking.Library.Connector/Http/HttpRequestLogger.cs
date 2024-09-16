@@ -3,9 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using Microsoft.Extensions.Http.Logging;
-using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http;
 
@@ -45,8 +46,6 @@ public class HttpRequestLogger(IInstrumentationClient instrumentationClient) : I
         HttpRequestLoggerAdditionalData? additionalData,
         TimeSpan elapsed)
     {
-        string jsonFormatted;
-
         // Generate HTTP request info trace
         StringBuilder requestTraceSb = new StringBuilder()
             .AppendLine("#### HTTP REQUEST")
@@ -56,26 +55,7 @@ public class HttpRequestLogger(IInstrumentationClient instrumentationClient) : I
 
         // Log request body
         string? requestBody = additionalData?.RequestBody;
-        if (string.IsNullOrEmpty(requestBody))
-        {
-            requestTraceSb.AppendLine("<No Body>");
-        }
-        else
-        {
-            try
-            {
-                dynamic parsedJson =
-                    JsonConvert.DeserializeObject(requestBody) ??
-                    throw new NullReferenceException();
-                jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
-            }
-            catch
-            {
-                jsonFormatted = requestBody;
-            }
-
-            requestTraceSb.AppendLine(jsonFormatted);
-        }
+        requestTraceSb.AppendLine(string.IsNullOrEmpty(requestBody) ? "<No Body>" : requestBody);
 
         // Log response
         requestTraceSb.AppendLine("######## RESPONSE");
@@ -96,14 +76,28 @@ public class HttpRequestLogger(IInstrumentationClient instrumentationClient) : I
             }
             else
             {
-                try
+                string jsonFormatted;
+                string? mediaType = response.Content.Headers.ContentType?.MediaType;
+                if (mediaType == "application/json" ||
+                    mediaType == "application/jwk+json")
                 {
-                    dynamic parsedJson =
-                        JsonConvert.DeserializeObject(responseBody) ??
-                        throw new NullReferenceException();
-                    jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
+                    try
+                    {
+                        using JsonDocument document = JsonDocument.Parse(responseBody);
+                        jsonFormatted = JsonSerializer.Serialize(
+                            document,
+                            new JsonSerializerOptions
+                            {
+                                WriteIndented = true,
+                                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                            });
+                    }
+                    catch
+                    {
+                        jsonFormatted = responseBody;
+                    }
                 }
-                catch
+                else
                 {
                     jsonFormatted = responseBody;
                 }
