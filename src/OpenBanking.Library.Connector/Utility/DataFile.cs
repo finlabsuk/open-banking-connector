@@ -2,7 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Text.Json;
 using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Utility;
 
@@ -10,14 +12,14 @@ public static class DataFile
 {
     public static async Task<TData> ReadFile<TData>(
         string readFile,
-        JsonSerializerSettings? jsonSerializerSettings)
+        JsonSerializerOptions? jsonSerializerOptions)
     {
         string fileText = await File.ReadAllTextAsync(readFile);
         TData apiResponse =
-            JsonConvert.DeserializeObject<TData>(
+            JsonSerializer.Deserialize<TData>(
                 fileText,
-                jsonSerializerSettings) ??
-            throw new Exception("Can't de-serialise supplied bank API response");
+                jsonSerializerOptions) ??
+            throw new Exception("Can't de-serialise data read from file.");
         return apiResponse;
     }
 

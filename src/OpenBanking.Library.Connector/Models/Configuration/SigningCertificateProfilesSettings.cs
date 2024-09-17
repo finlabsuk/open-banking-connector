@@ -2,14 +2,10 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 
 /// <summary>
-///     Open Banking Signing Certificate Profile provided to Open Banking Connector as part of
-///     <see cref="SigningCertificateProfilesSettings" />.
+///     Open Banking Signing Certificate Profile provided to Open Banking Connector.
 ///     This class captures a signing certificate and associated data.
 /// </summary>
 public class SigningCertificateProfile
@@ -36,45 +32,4 @@ public class SigningCertificateProfile
     ///     Example: "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
     /// </summary>
     public string Certificate { get; set; } = string.Empty;
-}
-
-public class SigningCertificateProfilesSettings : Dictionary<string, SigningCertificateProfile>,
-    ISettings<SigningCertificateProfilesSettings>
-{
-    public string SettingsGroupName => "OpenBankingConnector:SigningCertificateProfiles";
-
-    /// <summary>
-    ///     Placeholder. Validation is performed only on individual <see cref="TransportCertificateProfile" /> entries
-    ///     that are to be used by Open Banking Connector. This validation is performed in the constructor
-    ///     of <see cref="ProcessedSoftwareStatementProfileStore" />
-    /// </summary>
-    /// <returns></returns>
-    public SigningCertificateProfilesSettings Validate()
-    {
-        foreach ((string key, SigningCertificateProfile value) in this)
-        {
-            if (string.IsNullOrEmpty(value.AssociatedKeyId))
-            {
-                throw new ArgumentException(
-                    "Configuration or key secrets error: " +
-                    $"No non-empty AssociatedKeyId provided for SigningCertificateProfile {key}.");
-            }
-
-            if (string.IsNullOrEmpty(value.AssociatedKey))
-            {
-                throw new ArgumentException(
-                    "Configuration or key secrets error: " +
-                    $"No non-empty AssociatedKey provided for SigningCertificateProfile {key}.");
-            }
-
-            if (string.IsNullOrEmpty(value.Certificate))
-            {
-                throw new ArgumentException(
-                    "Configuration or key secrets error: " +
-                    $"No non-empty Certificate provided for SigningCertificateProfile {key}.");
-            }
-        }
-
-        return this;
-    }
 }

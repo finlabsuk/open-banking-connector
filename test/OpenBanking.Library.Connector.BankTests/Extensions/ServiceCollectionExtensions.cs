@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,11 +18,6 @@ public static class ServiceCollectionExtensions
         // Add settings groups
         services
             .AddSettingsGroup<BankTestSettings>();
-
-        // Set up software statement store
-        services
-            .AddSingleton<IProcessedSoftwareStatementProfileStore,
-                ProcessedSoftwareStatementProfileStore>();
 
         return services;
     }

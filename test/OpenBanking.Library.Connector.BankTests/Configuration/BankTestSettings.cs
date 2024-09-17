@@ -214,20 +214,19 @@ public class TestGroup
 }
 
 /// <summary>
-///     Path to data folder used for logging, "API overrides", and bank user information.
-///     This must be set to a valid
-///     file path for the current OS platform.
-///     This path should not be in the public repo to ensure this data is not committed there.
+///     Path to folder. This must be set to a valid
+///     directory path for the current OS platform.
+///     This path should not be in the public repo to ensure data is not committed there.
 /// </summary>
-public class DataDirectory
+public class OsSpecificDirectory
 {
-    // Path to data folder when current OS is macOS
+    // Path to folder when current OS is macOS
     public string MacOs { get; set; } = "";
 
-    // Path to data folder when current OS is Windows
+    // Path to folder when current OS is Windows
     public string Windows { get; set; } = "";
 
-    // Path to data folder when current OS is Linux
+    // Path to folder when current OS is Linux
     public string Linux { get; set; } = "";
 }
 
@@ -267,7 +266,7 @@ public class BankTestSettings : ISettings<BankTestSettings>
     /// <summary>
     ///     Path to data folder used for logging, "API overrides", and bank user information.
     /// </summary>
-    public DataDirectory DataDirectory { get; set; } = new();
+    public OsSpecificDirectory DataDirectory { get; set; } = new();
 
     /// <summary>
     ///     Log external API requests/responses. Off by default.

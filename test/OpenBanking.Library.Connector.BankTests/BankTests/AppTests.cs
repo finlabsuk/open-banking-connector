@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Text.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
@@ -19,11 +20,11 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
+using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using FluentAssertions;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
 using ObSealCertificateRequest =
@@ -227,14 +228,6 @@ public class AppTests
             }
             : null;
 
-        // Get software statement profile
-        var processedSoftwareStatementProfileStore =
-            testServiceProvider.GetRequiredService<IProcessedSoftwareStatementProfileStore>();
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-            await processedSoftwareStatementProfileStore.GetAsync(
-                testData1.SoftwareStatementProfileId,
-                testData1.SoftwareStatementAndCertificateProfileOverride);
-
         // Get application memory cache
         var memoryCache = appServiceProvider.GetRequiredService<IMemoryCache>();
 
@@ -253,6 +246,11 @@ public class AppTests
                 testName,
                 ".json");
         }
+
+        // Get secrets directory
+        var userSecretsId = "aa921213-9461-4f9e-8fec-153624ec67ad"; // from .csproj file
+        string secretsPath = PathHelper.GetSecretsPathFromSecretsId(userSecretsId);
+        string secretsDirectory = Path.GetDirectoryName(secretsPath) ?? throw new InvalidOperationException();
 
         // Create consent auth if in use
         ConsentAuth? consentAuth;
@@ -288,10 +286,26 @@ public class AppTests
         var modifiedBy = "Automated bank tests";
 
         // Create and read software statement (incl. certificates)
+        string softwareStatementEnvFile = Path.Combine(
+            secretsDirectory,
+            "Requests",
+            "SoftwareStatement",
+            "http-client.private.env.json");
+        var softwareStatementEnvs = await DataFile.ReadFile<SoftwareStatementEnvFile>(
+            softwareStatementEnvFile,
+            new JsonSerializerOptions());
+        if (!softwareStatementEnvs.TryGetValue(
+                testData1.SoftwareStatementProfileId,
+                out SoftwareStatementEnv? softwareStatementEnv))
+        {
+            throw new InvalidOperationException(
+                $"Software statement with ID {testData1.SoftwareStatementProfileId} specified but not found.");
+        }
         (ObWacCertificateResponse obWacCertificateResponse, ObSealCertificateResponse obSealCertificateResponse,
             SoftwareStatementResponse softwareStatementResponse) = await SoftwareStatementCreate(
-            processedSoftwareStatementProfile,
+            softwareStatementEnv,
             modifiedBy,
+            testNameUnique,
             managementApiClient);
         Guid obWacCertificateId = obWacCertificateResponse.Id;
         Guid obSealCertificateId = obSealCertificateResponse.Id;
@@ -341,10 +355,11 @@ public class AppTests
             bankRegistrationCreateResponse.DefaultResponseModeOverride ?? bankProfile.DefaultResponseMode;
 
         // Run account access consent subtests
-        string redirectUri = processedSoftwareStatementProfile.GetRedirectUri(
+        string redirectUri = GetRedirectUri(
             defaultResponseMode,
             bankRegistrationCreateResponse.DefaultFragmentRedirectUri,
-            bankRegistrationCreateResponse.DefaultQueryRedirectUri);
+            bankRegistrationCreateResponse.DefaultQueryRedirectUri,
+            softwareStatementResponse);
         string authUrlLeftPart =
             new Uri(redirectUri)
                 .GetLeftPart(UriPartial.Authority);
@@ -429,6 +444,23 @@ public class AppTests
             managementApiClient);
     }
 
+    private string GetRedirectUri(
+        OAuth2ResponseMode responseMode,
+        string? registrationFragmentRedirectUrl,
+        string? registrationQueryRedirectUrl,
+        SoftwareStatementResponse softwareStatementResponse) =>
+        responseMode switch
+        {
+            OAuth2ResponseMode.Query =>
+                registrationQueryRedirectUrl ??
+                softwareStatementResponse.DefaultQueryRedirectUrl,
+            OAuth2ResponseMode.Fragment =>
+                registrationFragmentRedirectUrl ??
+                softwareStatementResponse.DefaultFragmentRedirectUrl,
+            //OAuth2ResponseMode.FormPost => expr,
+            _ => throw new ArgumentOutOfRangeException(nameof(responseMode), responseMode, null)
+        };
+
     private async
         Task<(BaseResponse obWacCertificateDeleteResponse, BaseResponse obSealCertificateDeleteResponse, BaseResponse
             softwareStatementDeleteResponse)> SoftwareStatementDelete(
@@ -452,22 +484,18 @@ public class AppTests
     private async
         Task<(ObWacCertificateResponse obWacCertificateResponse, ObSealCertificateResponse obSealCertificateResponse,
             SoftwareStatementResponse softwareStatementResponse)> SoftwareStatementCreate(
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+            SoftwareStatementEnv softwareStatementEnv,
+            string reference,
             string createdBy,
             ManagementApiClient managementApiClient)
     {
         // Create OBWAC certificate
-        string obWacReference = processedSoftwareStatementProfile.TransportCertificateId;
         var obWacRequest = new ObWacCertificateRequest
         {
-            Reference = obWacReference,
+            Reference = reference,
             CreatedBy = createdBy,
-            AssociatedKey = new SecretDescription
-            {
-                Name =
-                    $"OpenBankingConnector:TransportCertificateProfiles:{obWacReference}:AssociatedKey"
-            },
-            Certificate = processedSoftwareStatementProfile.TransportCertificate
+            AssociatedKey = new SecretDescription { Name = softwareStatementEnv.ObWacAssociatedKeyName },
+            Certificate = softwareStatementEnv.ObWacCertificate
         };
         ObWacCertificateResponse obWacCertificateResponse =
             await managementApiClient.ObWacCertificateCreate(obWacRequest);
@@ -476,18 +504,13 @@ public class AppTests
         _ = await managementApiClient.ObWacCertificateRead(obWacCertificateResponse.Id);
 
         // Create OBSeal certificate
-        string obSealReference = processedSoftwareStatementProfile.SigningCertificateId;
         var obSealRequest = new ObSealCertificateRequest
         {
-            Reference = obSealReference,
+            Reference = reference,
             CreatedBy = createdBy,
-            AssociatedKeyId = processedSoftwareStatementProfile.OBSealKey.KeyId,
-            AssociatedKey = new SecretDescription
-            {
-                Name =
-                    $"OpenBankingConnector:SigningCertificateProfiles:{obSealReference}:AssociatedKey"
-            },
-            Certificate = processedSoftwareStatementProfile.SigningCertificate
+            AssociatedKeyId = softwareStatementEnv.ObSealAssociatedKeyId,
+            AssociatedKey = new SecretDescription { Name = softwareStatementEnv.ObSealAssociatedKeyName },
+            Certificate = softwareStatementEnv.ObSealCertificate
         };
         ObSealCertificateResponse obSealCertificateResponse =
             await managementApiClient.ObSealCertificateCreate(obSealRequest);
@@ -496,18 +519,17 @@ public class AppTests
         _ = await managementApiClient.ObSealCertificateRead(obSealCertificateResponse.Id);
 
         // Create software statement
-        string sReference = processedSoftwareStatementProfile.Id;
         var softwareStatementRequest = new SoftwareStatement
         {
-            Reference = sReference,
+            Reference = reference,
             CreatedBy = createdBy,
-            OrganisationId = processedSoftwareStatementProfile.OrganisationId,
-            SoftwareId = processedSoftwareStatementProfile.SoftwareId,
-            SandboxEnvironment = processedSoftwareStatementProfile.SandboxEnvironment,
+            OrganisationId = softwareStatementEnv.OrganisationId,
+            SoftwareId = softwareStatementEnv.SoftwareId,
+            SandboxEnvironment = softwareStatementEnv.SandboxEnvironment,
             DefaultObWacCertificateId = obWacCertificateResponse.Id,
             DefaultObSealCertificateId = obSealCertificateResponse.Id,
-            DefaultQueryRedirectUrl = processedSoftwareStatementProfile.DefaultQueryRedirectUrl,
-            DefaultFragmentRedirectUrl = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl
+            DefaultQueryRedirectUrl = softwareStatementEnv.DefaultQueryRedirectUrl,
+            DefaultFragmentRedirectUrl = softwareStatementEnv.DefaultFragmentRedirectUrl
         };
         SoftwareStatementResponse softwareStatementResponse =
             await managementApiClient.SoftwareStatementCreate(softwareStatementRequest);

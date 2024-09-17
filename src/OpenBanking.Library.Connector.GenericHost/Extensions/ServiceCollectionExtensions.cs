@@ -33,9 +33,6 @@ public static class ServiceCollectionExtensions
         services
             .AddSettingsGroup<DatabaseSettings>()
             .AddSettingsGroup<BankProfilesSettings>()
-            .AddSettingsGroup<SoftwareStatementProfilesSettings>()
-            .AddSettingsGroup<TransportCertificateProfilesSettings>()
-            .AddSettingsGroup<SigningCertificateProfilesSettings>()
             .AddSettingsGroup<KeysSettings>()
             .AddSettingsGroup<HttpClientSettings>();
 

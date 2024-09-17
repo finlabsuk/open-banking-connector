@@ -4,7 +4,6 @@
 
 using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 
@@ -15,7 +14,7 @@ public static class Helpers
 {
     /// <summary>
     ///     Key name based on settings class, dictionary key (ID) and value property name.
-    ///     (This is really designed for use with <see cref="SoftwareStatementProfilesSettings" />.)
+    ///     (This is really designed for use with SoftwareStatementProfilesSettings.)
     /// </summary>
     /// <param name="id"></param>
     /// <param name="propertyName"></param>

@@ -7,7 +7,6 @@ using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Running;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
 using PaymentInitiationModelsV3p1p4 =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p4.Pisp.Models;
@@ -38,8 +37,6 @@ public class EntityMappingApplication
     private PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiation _dataInitiation = null!;
     private PaymentInitiationModelsPublic.OBWriteDomesticConsent4 _domesticConsent = null!;
     private PaymentInitiationModelsPublic.OBRisk1 _risk = null!;
-    private SoftwareStatementProfile _softwareStatement = null!;
-    private TransportCertificateProfile _transportCertificateProfile = null!;
 
 
     [GlobalSetup]
@@ -50,8 +47,6 @@ public class EntityMappingApplication
         _dataInitiation = CreateDataInitiation();
         _risk = CreateRisk();
         _domesticConsent = CreateDomesticConsent();
-        _softwareStatement = CreateSoftwareStatement();
-        _transportCertificateProfile = CreateObCertificateProfile();
         _client = CreateClient();
     }
 
@@ -195,16 +190,5 @@ public class EntityMappingApplication
     {
         BankProfile = BankProfileEnum.Obie_Model2023,
         SoftwareStatementId = Guid.NewGuid()
-    };
-
-    private SoftwareStatementProfile CreateSoftwareStatement() => new()
-    {
-        DefaultFragmentRedirectUrl = "https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com"
-    };
-
-    private TransportCertificateProfile CreateObCertificateProfile() => new()
-    {
-        AssociatedKey = "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n",
-        Certificate = "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
     };
 }

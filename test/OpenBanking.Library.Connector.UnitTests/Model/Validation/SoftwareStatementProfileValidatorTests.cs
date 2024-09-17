@@ -4,6 +4,8 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration.Validators;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
 using FluentValidation.Results;
 using FsCheck;
@@ -18,10 +20,18 @@ public class SoftwareStatementProfileValidatorTests
     {
         Func<bool> rule = () =>
         {
-            var profile = new SoftwareStatementProfile { DefaultFragmentRedirectUrl = "http://test.com" };
+            var profile = new SoftwareStatement
+            {
+                DefaultFragmentRedirectUrl = "http://test.com",
+                OrganisationId = "org",
+                SoftwareId = "software",
+                DefaultObWacCertificateId = Guid.NewGuid(),
+                DefaultObSealCertificateId = Guid.NewGuid(),
+                DefaultQueryRedirectUrl = "http://test.com"
+            };
 
             List<ValidationFailure> results =
-                new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
+                new SoftwareStatementValidator().Validate(profile).Errors.ToList();
 
             return results.Count == 0;
         };
@@ -159,10 +169,18 @@ public class SoftwareStatementProfileValidatorTests
     {
         Func<bool> rule = () =>
         {
-            var profile = new SoftwareStatementProfile { DefaultFragmentRedirectUrl = value };
+            var profile = new SoftwareStatement
+            {
+                DefaultFragmentRedirectUrl = value,
+                OrganisationId = "org",
+                SoftwareId = "software",
+                DefaultObWacCertificateId = Guid.NewGuid(),
+                DefaultObSealCertificateId = Guid.NewGuid(),
+                DefaultQueryRedirectUrl = "http://test.com"
+            };
 
             List<ValidationFailure> results =
-                new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
+                new SoftwareStatementValidator().Validate(profile).Errors.ToList();
 
             return results.Count == 1;
         };
