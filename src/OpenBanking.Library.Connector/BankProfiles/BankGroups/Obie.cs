@@ -9,7 +9,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
 public enum ObieBank
 {
-    Modelo,
     Model2023
 }
 
@@ -18,11 +17,7 @@ public class Obie : BankGroupBase<ObieBank, ObieRegistrationGroup>
     public Obie(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
 
     protected override ConcurrentDictionary<BankProfileEnum, ObieBank> BankProfileToBank { get; } =
-        new()
-        {
-            [BankProfileEnum.Obie_Modelo] = ObieBank.Modelo,
-            [BankProfileEnum.Obie_Model2023] = ObieBank.Model2023
-        };
+        new() { [BankProfileEnum.Obie_Model2023] = ObieBank.Model2023 };
 
     public override ObieRegistrationGroup GetRegistrationGroup(
         ObieBank bank,

@@ -8,7 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
@@ -25,65 +24,32 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
 
     public override BankProfile GetBankProfile(
         ObieBank bank,
-        IInstrumentationClient instrumentationClient)
-    {
-        return new BankProfile(
+        IInstrumentationClient instrumentationClient) =>
+        new(
             _bankGroup.GetBankProfile(bank),
-            bank switch
-            {
-                ObieBank.Modelo =>
-                    "https://ob19-auth1-ui.o3bank.co.uk", //from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+Ozone+Model+Banks+Using+Postman+on+Directory+Sandbox#3.1-Dynamic-Client-Registration-(TPP)
-                ObieBank.Model2023 =>
-                    "https://auth1.obie.uk.ozoneapi.io", // from https://github.com/OpenBankingUK/OBL-ModelBank-Integration
-                _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
-            },
+            "https://auth1.obie.uk.ozoneapi.io", // from https://github.com/OpenBankingUK/OBL-ModelBank-Integration,
             "0015800001041RHAAY", // from https://github.com/OpenBankingUK/OBL-ModelBank-Integration
             new AccountAndTransactionApi
             {
-                BaseUrl = bank switch
-                {
-                    ObieBank.Modelo =>
-                        "https://ob19-rs1.o3bank.co.uk:4501/open-banking/v3.1/aisp", // from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+the+Model+Bank+provided+by+OBIE#Accounts-End-points
-                    ObieBank.Model2023 =>
-                        "https://rs1.obie.uk.ozoneapi.io/open-banking/v3.1/aisp", // from https://github.com/OpenBankingUK/OBL-ModelBank-Integration
-                    _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
-                }
+                BaseUrl =
+                    "https://rs1.obie.uk.ozoneapi.io/open-banking/v3.1/aisp" // from https://github.com/OpenBankingUK/OBL-ModelBank-Integration
             },
             GetPaymentInitiationApi(bank),
             GetVariableRecurringPaymentsApi(bank),
             false,
             instrumentationClient)
         {
-            CustomBehaviour = bank is ObieBank.Modelo
-                ? new CustomBehaviourClass
-                {
-                    BankRegistrationPost = new BankRegistrationPostCustomBehaviour
-                    {
-                        TransportCertificateSubjectDnOrgIdEncoding = SubjectDnOrgIdEncoding.DottedDecimalAttributeType,
-                        ClientIdIssuedAtClaimResponseJsonConverter =
-                            DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
-                    },
-                    DomesticPaymentConsentAuthCodeGrantPost = new AuthCodeGrantPostCustomBehaviour
-                    {
-                        ExpectedResponseRefreshTokenMayBeAbsent = true
-                    }
-                }
-                : new CustomBehaviourClass
-                {
-                    BankRegistrationPost = new BankRegistrationPostCustomBehaviour
-                    {
-                        ClientIdIssuedAtClaimResponseJsonConverter =
-                            DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
-                    }
-                },
-            BankConfigurationApiSettings = new BankConfigurationApiSettings
+            CustomBehaviour = new CustomBehaviourClass
             {
-                UseRegistrationDeleteEndpoint = true,
-                TestTemporaryBankRegistration = bank is ObieBank.Modelo
+                BankRegistrationPost = new BankRegistrationPostCustomBehaviour
+                {
+                    ClientIdIssuedAtClaimResponseJsonConverter =
+                        DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
+                }
             },
+            BankConfigurationApiSettings = new BankConfigurationApiSettings { UseRegistrationDeleteEndpoint = true },
             AspspBrandId = 10000 // sandbox
         };
-    }
 
     private static PaymentInitiationApi GetPaymentInitiationApi(ObieBank bank) =>
         new() { BaseUrl = GetPaymentInitiationBaseUrl(bank) };
@@ -91,15 +57,6 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
     private static VariableRecurringPaymentsApi GetVariableRecurringPaymentsApi(ObieBank bank) =>
         new() { BaseUrl = GetPaymentInitiationBaseUrl(bank) };
 
-    private static string GetPaymentInitiationBaseUrl(ObieBank bank)
-    {
-        return bank switch
-        {
-            ObieBank.Modelo =>
-                "https://ob19-rs1.o3bank.co.uk:4501/open-banking/v3.1/pisp", //from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+Ozone+Model+Banks+Using+Postman+on+Directory+Sandbox#3.1-Dynamic-Client-Registration-(TPP)
-            ObieBank.Model2023 =>
-                "https://rs1.obie.uk.ozoneapi.io/open-banking/v3.1/pisp", // from https://github.com/OpenBankingUK/OBL-ModelBank-Integration
-            _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
-        };
-    }
+    private static string GetPaymentInitiationBaseUrl(ObieBank bank) =>
+        "https://rs1.obie.uk.ozoneapi.io/open-banking/v3.1/pisp"; // from https://github.com/OpenBankingUK/OBL-ModelBank-Integration;
 }

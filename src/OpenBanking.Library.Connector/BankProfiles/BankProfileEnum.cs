@@ -48,9 +48,6 @@ public enum BankProfileEnum
     [EnumMember(Value = "Danske_Sandbox")]
     Danske_Sandbox,
 
-    [EnumMember(Value = "Obie_Modelo")]
-    Obie_Modelo,
-
     [EnumMember(Value = "Obie_Model2023")]
     Obie_Model2023,
 

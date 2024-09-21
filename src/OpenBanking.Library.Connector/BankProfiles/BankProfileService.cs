@@ -197,7 +197,6 @@ public class BankProfileService : IBankProfileService
             BankProfileEnum.NatWest_UlsterBankNiClearSpend => BankGroupEnum.NatWest,
             BankProfileEnum.NatWest_Mettle => BankGroupEnum.NatWest,
             BankProfileEnum.NatWest_Coutts => BankGroupEnum.NatWest,
-            BankProfileEnum.Obie_Modelo => BankGroupEnum.Obie,
             BankProfileEnum.Obie_Model2023 => BankGroupEnum.Obie,
             BankProfileEnum.Revolut_Revolut => BankGroupEnum.Revolut,
             BankProfileEnum.Santander_Santander => BankGroupEnum.Santander,
