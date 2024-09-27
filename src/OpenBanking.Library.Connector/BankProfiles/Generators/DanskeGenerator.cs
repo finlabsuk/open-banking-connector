@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
@@ -63,6 +64,15 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
                     ExpectedResponseRefreshTokenMayBeAbsent = true,
                     IdTokenProcessingCustomBehaviour =
                         new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
+                },
+                DomesticPaymentConsent =
+                    new DomesticPaymentConsentCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticPayment = new DomesticPaymentCustomBehaviour
+                {
+                    PreferMisspeltContractPresentIndicator = true,
+                    ResponseDataDebtorSchemeNameMayBeMissingOrWrong = true,
+                    ResponseDataDebtorIdentificationMayBeMissingOrWrong = true,
+                    ResponseDataRefundMayBeMissingOrWrong = true
                 }
             },
             AspspBrandId = 10007 // sandbox

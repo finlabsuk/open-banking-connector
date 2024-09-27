@@ -136,7 +136,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             CustomBehaviour = new CustomBehaviourClass
             {
                 AccountAccessConsentPost =
-                    new ReadWritePostCustomBehaviour { ResponseLinksMayOmitId = true },
+                    new ReadWritePostCustomBehaviour { PostResponseLinksMayOmitId = true },
                 AccountAccessConsentAuthGet = bank is BarclaysBank.Sandbox
                     ? new ConsentAuthGetCustomBehaviour
                     {
@@ -161,36 +161,37 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                     },
                 DomesticVrpConsentRefreshTokenGrantPost =
                     new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
-                DomesticPaymentConsentGet =
-                    new DomesticPaymentConsentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
-                DomesticPaymentConsentPost =
-                    new DomesticPaymentConsentPostCustomBehaviour
+                DomesticPaymentConsent =
+                    new DomesticPaymentConsentCustomBehaviour
                     {
-                        ResponseLinksMayOmitId = true,
+                        PostResponseLinksMayOmitId = true,
                         PreferMisspeltContractPresentIndicator = true
                     },
-                DomesticPaymentGet =
-                    new DomesticPaymentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
-                DomesticPaymentPost =
-                    new DomesticPaymentPostCustomBehaviour
+                DomesticPayment =
+                    new DomesticPaymentCustomBehaviour
                     {
-                        ResponseLinksMayOmitId = true,
+                        PostResponseLinksMayOmitId = true,
+                        PreferMisspeltContractPresentIndicator = true,
+                        ResponseDataDebtorSchemeNameMayBeMissingOrWrong = true
+                    },
+                DomesticVrpConsent =
+                    new DomesticVrpConsentCustomBehaviour
+                    {
+                        PostResponseLinksMayOmitId = true,
                         PreferMisspeltContractPresentIndicator = true
                     },
-                DomesticVrpConsentGet =
-                    new DomesticVrpConsentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
-                DomesticVrpConsentPost =
-                    new DomesticVrpConsentPostCustomBehaviour
-                    {
-                        ResponseLinksMayOmitId = true,
-                        PreferMisspeltContractPresentIndicator = true
-                    },
-                DomesticVrpGet = new DomesticVrpGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
-                DomesticVrpPost = new DomesticVrpPostCustomBehaviour
+                DomesticVrp = new DomesticVrpCustomBehaviour
                 {
-                    ResponseLinksMayOmitId = true,
-                    PreferMisspeltContractPresentIndicator = true,
-                    OmitVrpType = true
+                    PostResponseLinksMayOmitId = true,
+                    PreferMisspeltContractPresentIndicator = true
+                }
+            },
+            VariableRecurringPaymentsApiSettings = new VariableRecurringPaymentsApiSettings
+            {
+                DomesticVrpExternalApiRequestAdjustments = request =>
+                {
+                    request.Data.VRPType = null;
+                    return request;
                 }
             },
             AspspBrandId = bank is BarclaysBank.Sandbox

@@ -125,8 +125,8 @@ internal class
             string bankFinancialId = bankProfile.FinancialId;
             ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
                 bankProfile.CustomBehaviour?.ClientCredentialsGrantPost;
-            DomesticPaymentConsentPostCustomBehaviour? readWritePostCustomBehaviour =
-                bankProfile.CustomBehaviour?.DomesticPaymentConsentPost;
+            DomesticPaymentConsentCustomBehaviour? readWritePostCustomBehaviour =
+                bankProfile.CustomBehaviour?.DomesticPaymentConsent;
 
             // Get IApiClient
             IApiClient apiClient =
@@ -162,9 +162,11 @@ internal class
             PaymentInitiationModelsPublic.OBWriteDomesticConsent4 externalApiRequest = request.ExternalApiRequest ??
                 throw new InvalidOperationException(
                     "ExternalApiRequest specified as null so not possible to create external API request.");
+            externalApiRequest = bankProfile.PaymentInitiationApiSettings
+                .DomesticPaymentConsentExternalApiRequestAdjustments(externalApiRequest);
             bool preferMisspeltContractPresentIndicator =
                 readWritePostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
-            request.ExternalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
+            externalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
             var tppReportingRequestInfo = new TppReportingRequestInfo
             {
                 EndpointDescription =
@@ -323,8 +325,8 @@ internal class
             PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
             string bankFinancialId = bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
-            DomesticPaymentConsentGetCustomBehaviour? readWriteGetCustomBehaviour =
-                customBehaviour?.DomesticPaymentConsentGet;
+            DomesticPaymentConsentCustomBehaviour? readWriteGetCustomBehaviour =
+                customBehaviour?.DomesticPaymentConsent;
 
             // Get IApiClient
             IApiClient apiClient =
@@ -460,8 +462,8 @@ internal class
         string bankFinancialId = bankProfile.FinancialId;
         string issuerUrl = bankProfile.IssuerUrl;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
-        DomesticPaymentConsentGetCustomBehaviour? readWriteGetCustomBehaviour =
-            bankProfile.CustomBehaviour?.DomesticPaymentConsentGetFundsConfirmation;
+        DomesticPaymentConsentCustomBehaviour? readWriteGetCustomBehaviour =
+            bankProfile.CustomBehaviour?.DomesticPaymentConsent;
         RefreshTokenGrantPostCustomBehaviour? domesticPaymentConsentRefreshTokenGrantPostCustomBehaviour =
             bankProfile.CustomBehaviour?.DomesticPaymentConsentRefreshTokenGrantPost;
         JwksGetCustomBehaviour? jwksGetCustomBehaviour = bankProfile.CustomBehaviour?.JwksGet;

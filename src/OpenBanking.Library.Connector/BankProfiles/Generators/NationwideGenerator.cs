@@ -61,15 +61,13 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                         new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
                 },
                 AccountAccessConsentPost =
-                    new ReadWritePostCustomBehaviour { ResponseLinksMayOmitId = true },
+                    new ReadWritePostCustomBehaviour { PostResponseLinksMayOmitId = true },
                 DomesticPaymentConsentAuthCodeGrantPost =
                     new AuthCodeGrantPostCustomBehaviour { ExpectedResponseRefreshTokenMayBeAbsent = true },
-                DomesticPaymentConsentGet =
-                    new DomesticPaymentConsentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
-                DomesticPaymentConsentPost =
-                    new DomesticPaymentConsentPostCustomBehaviour
+                DomesticPaymentConsent =
+                    new DomesticPaymentConsentCustomBehaviour
                     {
-                        ResponseLinksMayOmitId = true,
+                        PostResponseLinksMayOmitId = true,
                         PreferMisspeltContractPresentIndicator = true
                     },
                 DomesticPaymentConsentRefreshTokenGrantPost = new RefreshTokenGrantPostCustomBehaviour
@@ -77,20 +75,17 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                     IdTokenProcessingCustomBehaviour =
                         new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
                 },
-                DomesticPaymentGet =
-                    new DomesticPaymentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
-                DomesticPaymentPost =
-                    new DomesticPaymentPostCustomBehaviour
+                DomesticPayment =
+                    new DomesticPaymentCustomBehaviour
                     {
-                        ResponseLinksMayOmitId = true,
-                        PreferMisspeltContractPresentIndicator = true
+                        PostResponseLinksMayOmitId = true,
+                        PreferMisspeltContractPresentIndicator = true,
+                        ResponseDataDebtorMayBeMissingOrWrong = true
                     },
-                DomesticVrpConsentGet =
-                    new DomesticVrpConsentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
-                DomesticVrpConsentPost =
-                    new DomesticVrpConsentPostCustomBehaviour
+                DomesticVrpConsent =
+                    new DomesticVrpConsentCustomBehaviour
                     {
-                        ResponseLinksMayOmitId = true,
+                        PostResponseLinksMayOmitId = true,
                         PreferMisspeltContractPresentIndicator = true
                     },
                 DomesticVrpConsentRefreshTokenGrantPost = new RefreshTokenGrantPostCustomBehaviour
@@ -98,15 +93,11 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                     IdTokenProcessingCustomBehaviour =
                         new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
                 },
-                DomesticVrpGet = new DomesticVrpGetCustomBehaviour
+                DomesticVrp = new DomesticVrpCustomBehaviour
                 {
-                    ResponseLinksMayHaveIncorrectUrlBeforeQuery = true,
-                    PreferMisspeltContractPresentIndicator = true
-                },
-                DomesticVrpPost = new DomesticVrpPostCustomBehaviour
-                {
-                    ResponseLinksMayOmitId = true,
-                    PreferMisspeltContractPresentIndicator = true
+                    PostResponseLinksMayOmitId = true,
+                    PreferMisspeltContractPresentIndicator = true,
+                    ResponseLinksMayHaveIncorrectUrlBeforeQuery = true
                 }
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings

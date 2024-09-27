@@ -4,7 +4,11 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
 
-public class DomesticPaymentConsentPostCustomBehaviour : ReadWritePostCustomBehaviour
+public class DomesticPaymentConsentCustomBehaviour : ReadWritePostCustomBehaviour
 {
     public bool? PreferMisspeltContractPresentIndicator { get; set; }
+
+    public bool? ResponseRiskContractPresentIndicatorMayBeMissingOrWrong { get; set; }
+
+    public bool? ResponseDataFundsAvailableResultFundsAvailableMayBeWrong { get; set; }
 }

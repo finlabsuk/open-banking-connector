@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -84,17 +85,13 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
                 AccountAccessConsentRefreshTokenGrantPost = refreshTokenGrantPostCustomBehaviour,
                 DomesticPaymentConsentRefreshTokenGrantPost = refreshTokenGrantPostCustomBehaviour,
                 DomesticVrpConsentRefreshTokenGrantPost = refreshTokenGrantPostCustomBehaviour,
-                DomesticVrpPost = new DomesticVrpPostCustomBehaviour
+                DomesticPayment =
+                    new DomesticPaymentCustomBehaviour { ResponseDataStatusMayBeWrong = bank is MonzoBank.Sandbox },
+                DomesticVrp = new DomesticVrpCustomBehaviour
                 {
                     RefundResponseJsonConverter =
                         DomesticVrpRefundConverterOptions.ContainsNestedAccountProperty
-                },
-                DomesticVrpGet =
-                    new DomesticVrpGetCustomBehaviour
-                    {
-                        RefundResponseJsonConverter =
-                            DomesticVrpRefundConverterOptions.ContainsNestedAccountProperty
-                    }
+                }
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {

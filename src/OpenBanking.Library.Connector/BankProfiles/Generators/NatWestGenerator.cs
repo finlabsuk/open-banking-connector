@@ -103,8 +103,6 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     NatWestBank.Mettle => TokenEndpointAuthMethodSupportedValues.TlsClientAuth,
                     _ => TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt
                 },
-                TestTemporaryBankRegistration =
-                    bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox,
                 IdTokenSubClaimType =
                     bank is NatWestBank.Coutts ? IdTokenSubClaimType.EndUserId : IdTokenSubClaimType.ConsentId
             },
@@ -214,20 +212,42 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 },
                 DomesticVrpConsentRefreshTokenGrantPost =
                     new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
-                DomesticPaymentConsentGet =
-                    new DomesticPaymentConsentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
-                DomesticPaymentConsentPost =
-                    new DomesticPaymentConsentPostCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
-                DomesticPaymentGet =
-                    new DomesticPaymentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
-                DomesticPaymentPost =
-                    new DomesticPaymentPostCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
-                DomesticVrpConsentGet =
-                    new DomesticVrpConsentGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
-                DomesticVrpConsentPost =
-                    new DomesticVrpConsentPostCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
-                DomesticVrpGet = new DomesticVrpGetCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
-                DomesticVrpPost = new DomesticVrpPostCustomBehaviour { PreferMisspeltContractPresentIndicator = true }
+                DomesticPaymentConsent =
+                    new DomesticPaymentConsentCustomBehaviour
+                    {
+                        PreferMisspeltContractPresentIndicator = true,
+                        ResponseDataFundsAvailableResultFundsAvailableMayBeWrong =
+                            bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox,
+                        ResponseLinksMayAddSlash = bank is NatWestBank.Coutts,
+                        ResponseRiskContractPresentIndicatorMayBeMissingOrWrong = bank is NatWestBank.Coutts
+                    },
+                DomesticPayment =
+                    new DomesticPaymentCustomBehaviour
+                    {
+                        PreferMisspeltContractPresentIndicator = true,
+                        ResponseDataStatusMayBeWrong =
+                            bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox,
+                        ResponseDataDebtorSchemeNameMayBeMissingOrWrong =
+                            bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox,
+                        ResponseDataDebtorIdentificationMayBeMissingOrWrong =
+                            bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox,
+                        ResponseLinksMayAddSlash = bank is NatWestBank.Coutts
+                    },
+                DomesticVrpConsent =
+                    new DomesticVrpConsentCustomBehaviour
+                    {
+                        PreferMisspeltContractPresentIndicator = true,
+                        ResponseRiskContractPresentIndicatorMayBeMissingOrWrong =
+                            bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox,
+                        ResponseDataFundsAvailableResultFundsAvailableMayBeWrong =
+                            bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
+                    },
+                DomesticVrp = new DomesticVrpCustomBehaviour
+                {
+                    PreferMisspeltContractPresentIndicator = true,
+                    ResponseDataStatusMayBeWrong =
+                        bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
+                }
             },
             VariableRecurringPaymentsApiSettings =
                 new VariableRecurringPaymentsApiSettings { UseDomesticVrpGetPaymentDetailsEndpoint = true },
@@ -279,8 +299,22 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
             null)
     };
 
-    private VariableRecurringPaymentsApi GetVariableRecurringPaymentsApi(NatWestBank bank) =>
-        new() { BaseUrl = GetPaymentsBaseUrl(bank) };
+    private VariableRecurringPaymentsApi? GetVariableRecurringPaymentsApi(NatWestBank bank)
+    {
+        if (bank is NatWestBank.Coutts)
+        {
+            return null;
+        }
+        if (bank is NatWestBank.Mettle)
+        {
+            return new VariableRecurringPaymentsApi
+            {
+                BaseUrl =
+                    "https://api.openbanking.prd-mettle.co.uk/open-banking/v3.1/pisp" // from https://www.bankofapis.com/products/variable-recurring-payments/vrp/documentation/mettle/3.1.10
+            };
+        }
+        return new VariableRecurringPaymentsApi { BaseUrl = GetPaymentsBaseUrl(bank) };
+    }
 
     private string GetPaymentsBaseUrl(NatWestBank bank)
     {

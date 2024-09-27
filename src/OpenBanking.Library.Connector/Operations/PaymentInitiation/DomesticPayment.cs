@@ -93,8 +93,8 @@ internal class DomesticPayment :
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
         string bankFinancialId = bankProfile.FinancialId;
-        DomesticPaymentGetCustomBehaviour? domesticPaymentGetCustomBehaviour =
-            bankProfile.CustomBehaviour?.DomesticPaymentGetPaymentDetails;
+        DomesticPaymentCustomBehaviour? domesticPaymentGetCustomBehaviour =
+            bankProfile.CustomBehaviour?.DomesticPayment;
         ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
             bankProfile.CustomBehaviour?.ClientCredentialsGrantPost;
 
@@ -114,7 +114,7 @@ internal class DomesticPayment :
             (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
 
         // Get client credentials grant access token
-        string scope = domesticPaymentGetCustomBehaviour?.Scope ?? "payments";
+        var scope = "payments";
         string ccGrantAccessToken =
             await _clientAccessTokenGet.GetAccessToken(
                 scope,
@@ -231,7 +231,7 @@ internal class DomesticPayment :
         {
             throw new ArgumentException(
                 $"ExternalApiRequest contains consent ID that differs from {externalApiConsentId} " +
-                "inferred from specified DomesticPaymentConsentId.");
+                "inferred from specified DomesticPaymentConsent ID.");
         }
 
         // Get bank profile
@@ -243,8 +243,8 @@ internal class DomesticPayment :
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
         ConsentAuthGetCustomBehaviour? domesticPaymentConsentAuthGetCustomBehaviour = bankProfile.CustomBehaviour
             ?.DomesticPaymentConsentAuthGet;
-        DomesticPaymentPostCustomBehaviour? readWritePostCustomBehaviour =
-            bankProfile.CustomBehaviour?.DomesticPaymentPost;
+        DomesticPaymentCustomBehaviour? readWritePostCustomBehaviour =
+            bankProfile.CustomBehaviour?.DomesticPayment;
         RefreshTokenGrantPostCustomBehaviour? domesticPaymentConsentRefreshTokenGrantPostCustomBehaviour =
             bankProfile.CustomBehaviour?.DomesticPaymentConsentRefreshTokenGrantPost;
         JwksGetCustomBehaviour? jwksGetCustomBehaviour = bankProfile.CustomBehaviour?.JwksGet;
@@ -293,19 +293,12 @@ internal class DomesticPayment :
                 softwareStatement,
                 obSealKey);
         var externalApiUrl = new Uri(paymentInitiationApi.BaseUrl + RelativePathBeforeId);
-        if (string.IsNullOrEmpty(request.ExternalApiRequest.Data.ConsentId))
-        {
-            request.ExternalApiRequest.Data.ConsentId = externalApiConsentId;
-        }
-        else if (request.ExternalApiRequest.Data.ConsentId != externalApiConsentId)
-        {
-            throw new ArgumentException(
-                $"ExternalApiRequest contains consent ID that differs from {externalApiConsentId} " +
-                "inferred from specified DomesticPaymentConsent.");
-        }
+        PaymentInitiationModelsPublic.OBWriteDomestic2 externalApiRequest = request.ExternalApiRequest;
+        externalApiRequest = bankProfile.PaymentInitiationApiSettings
+            .DomesticPaymentExternalApiRequestAdjustments(externalApiRequest);
         bool preferMisspeltContractPresentIndicator =
             readWritePostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
-        request.ExternalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
+        externalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
         var tppReportingRequestInfo = new TppReportingRequestInfo
         {
             EndpointDescription =
@@ -319,7 +312,7 @@ internal class DomesticPayment :
             await apiRequests.PostAsync(
                 externalApiUrl,
                 createParams.ExtraHeaders,
-                request.ExternalApiRequest,
+                externalApiRequest,
                 tppReportingRequestInfo,
                 requestJsonSerializerSettings,
                 responseJsonSerializerSettings,
@@ -393,8 +386,8 @@ internal class DomesticPayment :
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
         string bankFinancialId = bankProfile.FinancialId;
-        DomesticPaymentGetCustomBehaviour? domesticPaymentGetCustomBehaviour =
-            bankProfile.CustomBehaviour?.DomesticPaymentGet;
+        DomesticPaymentCustomBehaviour? domesticPaymentGetCustomBehaviour =
+            bankProfile.CustomBehaviour?.DomesticPayment;
         ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
             bankProfile.CustomBehaviour?.ClientCredentialsGrantPost;
 
@@ -408,7 +401,7 @@ internal class DomesticPayment :
             (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
 
         // Get client credentials grant access token
-        string scope = domesticPaymentGetCustomBehaviour?.Scope ?? "payments";
+        var scope = "payments";
         string ccGrantAccessToken =
             await _clientAccessTokenGet.GetAccessToken(
                 scope,

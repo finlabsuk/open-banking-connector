@@ -34,7 +34,7 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
         {
             CustomBehaviour = new CustomBehaviourClass
             {
-                AccountAccessConsentPost = new ReadWritePostCustomBehaviour { ResponseLinksMayOmitId = true },
+                AccountAccessConsentPost = new ReadWritePostCustomBehaviour { PostResponseLinksMayOmitId = true },
                 OpenIdConfigurationGet = new OpenIdConfigurationGetCustomBehaviour
                 {
                     Url =

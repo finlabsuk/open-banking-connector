@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
@@ -45,7 +46,10 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
                 {
                     ClientIdIssuedAtClaimResponseJsonConverter =
                         DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
-                }
+                },
+                DomesticVrpConsent =
+                    new DomesticVrpConsentCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticVrp = new DomesticVrpCustomBehaviour { PreferMisspeltContractPresentIndicator = true }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings { UseRegistrationDeleteEndpoint = true },
             AspspBrandId = 10000 // sandbox

@@ -141,8 +141,8 @@ internal class
         JwksGetCustomBehaviour? jwksGetCustomBehaviour = bankProfile.CustomBehaviour?.JwksGet;
         ConsentAuthGetCustomBehaviour? domesticVrpConsentAuthGetCustomBehaviour = bankProfile.CustomBehaviour
             ?.DomesticVrpConsentAuthGet;
-        DomesticVrpConsentPostCustomBehaviour? domesticVrpConsentPostFundsConfirmationCustomBehaviour =
-            bankProfile.CustomBehaviour?.DomesticVrpConsentPostFundsConfirmation;
+        DomesticVrpConsentCustomBehaviour? domesticVrpConsentPostFundsConfirmationCustomBehaviour =
+            bankProfile.CustomBehaviour?.DomesticVrpConsent;
 
         // Get IApiClient
         IApiClient apiClient = bankRegistration.UseSimulatedBank
@@ -256,8 +256,8 @@ internal class
             string bankFinancialId = bankProfile.FinancialId;
             ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
                 bankProfile.CustomBehaviour?.ClientCredentialsGrantPost;
-            DomesticVrpConsentPostCustomBehaviour? domesticVrpConsentPostCustomBehaviour =
-                bankProfile.CustomBehaviour?.DomesticVrpConsentPost;
+            DomesticVrpConsentCustomBehaviour? domesticVrpConsentPostCustomBehaviour =
+                bankProfile.CustomBehaviour?.DomesticVrpConsent;
 
             // Get IApiClient
             IApiClient apiClient = bankRegistration.UseSimulatedBank
@@ -295,14 +295,11 @@ internal class
                 request.ExternalApiRequest ??
                 throw new InvalidOperationException(
                     "ExternalApiRequest specified as null so not possible to create external API request.");
-            bool omitPsuInteractionTypes = domesticVrpConsentPostCustomBehaviour?.OmitPsuInteractionTypes ?? false;
-            if (omitPsuInteractionTypes)
-            {
-                request.ExternalApiRequest.Data.ControlParameters.PSUInteractionTypes = null;
-            }
+            externalApiRequest = bankProfile.VariableRecurringPaymentsApiSettings
+                .DomesticVrpConsentExternalApiRequestAdjustments(externalApiRequest);
             bool preferMisspeltContractPresentIndicator =
                 domesticVrpConsentPostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
-            request.ExternalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
+            externalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
             var tppReportingRequestInfo = new TppReportingRequestInfo
             {
                 EndpointDescription =
@@ -511,8 +508,8 @@ internal class
             externalApiResponse.Risk.AdjustAfterReceiveFromBank();
 
             // Transform links 
-            DomesticVrpConsentGetCustomBehaviour? readWriteGetCustomBehaviour =
-                customBehaviour?.DomesticVrpConsentGet;
+            DomesticVrpConsentCustomBehaviour? readWriteGetCustomBehaviour =
+                customBehaviour?.DomesticVrpConsent;
             string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
             Uri expectedLinkUrlWithoutQuery = externalApiUrl;
             var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(

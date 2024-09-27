@@ -5,7 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
@@ -48,14 +48,31 @@ public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistration
                         "https://openbanking.santander.co.uk/sanuk/external/open-banking/openid-connect-provider/v1/.well-known/openid-configuration" // from https://developer.santander.co.uk/sanuk/external/faq-page#t4n553
                 },
                 AccountAccessConsentPost =
-                    new ReadWritePostCustomBehaviour { ResponseLinksMayOmitId = true },
-                DomesticVrpPost = new DomesticVrpPostCustomBehaviour { OmitPsuInteractionType = true },
-                DomesticVrpConsentPost = new DomesticVrpConsentPostCustomBehaviour { OmitPsuInteractionTypes = true }
+                    new ReadWritePostCustomBehaviour { PostResponseLinksMayOmitId = true },
+                DomesticPayment =
+                    new DomesticPaymentCustomBehaviour
+                    {
+                        ResponseDataDebtorSchemeNameMayBeMissingOrWrong = true,
+                        ResponseDataDebtorIdentificationMayBeMissingOrWrong = true
+                    }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {
                 UseRegistrationEndpoint = false,
                 IdTokenSubClaimType = IdTokenSubClaimType.EndUserId
+            },
+            VariableRecurringPaymentsApiSettings = new VariableRecurringPaymentsApiSettings
+            {
+                DomesticVrpConsentExternalApiRequestAdjustments = request =>
+                {
+                    request.Data.ControlParameters.PSUInteractionTypes = null;
+                    return request;
+                },
+                DomesticVrpExternalApiRequestAdjustments = request =>
+                {
+                    request.Data.PSUInteractionType = null;
+                    return request;
+                }
             },
             AspspBrandId = 15
         };

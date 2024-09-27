@@ -134,7 +134,7 @@ internal class LinksUrlOperations
         IList<Uri> expectedLinkUrls = GetMethodExpectedLinkUrls(
             expectedLinkUrl,
             readWritePostCustomBehaviour);
-        bool responseLinksMayOmitId = readWritePostCustomBehaviour?.ResponseLinksMayOmitId ?? false;
+        bool responseLinksMayOmitId = readWritePostCustomBehaviour?.PostResponseLinksMayOmitId ?? false;
         if (responseLinksMayOmitId)
         {
             expectedLinkUrls.Add(externalApiUrl);

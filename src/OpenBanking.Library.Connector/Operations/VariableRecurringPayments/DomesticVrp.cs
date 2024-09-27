@@ -107,7 +107,7 @@ internal class DomesticVrp :
         {
             throw new ArgumentException(
                 $"ExternalApiRequest contains consent ID that differs from {externalApiConsentId} " +
-                "inferred from specified DomesticVrpConsentId.");
+                "inferred from specified DomesticVrpConsent ID.");
         }
 
         // Get bank profile
@@ -120,7 +120,7 @@ internal class DomesticVrp :
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
         ConsentAuthGetCustomBehaviour? domesticVrpConsentAuthGetCustomBehaviour = bankProfile.CustomBehaviour
             ?.DomesticVrpConsentAuthGet;
-        DomesticVrpPostCustomBehaviour? domesticVrpPostCustomBehaviour = bankProfile.CustomBehaviour?.DomesticVrpPost;
+        DomesticVrpCustomBehaviour? domesticVrpPostCustomBehaviour = bankProfile.CustomBehaviour?.DomesticVrp;
         RefreshTokenGrantPostCustomBehaviour? domesticVrpConsentRefreshTokenGrantPostCustomBehaviour =
             bankProfile.CustomBehaviour?.DomesticVrpConsentRefreshTokenGrantPost;
         JwksGetCustomBehaviour? jwksGetCustomBehaviour = bankProfile.CustomBehaviour?.JwksGet;
@@ -183,29 +183,12 @@ internal class DomesticVrp :
                 softwareStatement,
                 obSealKey);
         var externalApiUrl = new Uri(variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId);
-        if (string.IsNullOrEmpty(request.ExternalApiRequest.Data.ConsentId))
-        {
-            request.ExternalApiRequest.Data.ConsentId = externalApiConsentId;
-        }
-        else if (request.ExternalApiRequest.Data.ConsentId != externalApiConsentId)
-        {
-            throw new ArgumentException(
-                $"ExternalApiRequest contains consent ID that differs from {externalApiConsentId} " +
-                "inferred from specified DomesticVrpConsent.");
-        }
-        bool omitVrpType = domesticVrpPostCustomBehaviour?.OmitVrpType ?? false;
-        if (omitVrpType)
-        {
-            request.ExternalApiRequest.Data.VRPType = null;
-        }
-        bool omitPsuInteractionType = domesticVrpPostCustomBehaviour?.OmitPsuInteractionType ?? false;
-        if (omitPsuInteractionType)
-        {
-            request.ExternalApiRequest.Data.PSUInteractionType = null;
-        }
+        VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest externalApiRequest = request.ExternalApiRequest;
+        externalApiRequest = bankProfile.VariableRecurringPaymentsApiSettings
+            .DomesticVrpExternalApiRequestAdjustments(externalApiRequest);
         bool preferMisspeltContractPresentIndicator =
             domesticVrpPostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
-        request.ExternalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
+        externalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
         var tppReportingRequestInfo = new TppReportingRequestInfo
         {
             EndpointDescription =
@@ -219,7 +202,7 @@ internal class DomesticVrp :
             await apiRequests.PostAsync(
                 externalApiUrl,
                 createParams.ExtraHeaders,
-                request.ExternalApiRequest,
+                externalApiRequest,
                 tppReportingRequestInfo,
                 requestJsonSerializerSettings,
                 responseJsonSerializerSettings,
@@ -291,8 +274,8 @@ internal class DomesticVrp :
         VariableRecurringPaymentsApi variableRecurringPaymentsApi =
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
         string bankFinancialId = bankProfile.FinancialId;
-        DomesticVrpGetCustomBehaviour? domesticVrpGetCustomBehaviour =
-            bankProfile.CustomBehaviour?.DomesticVrpGet;
+        DomesticVrpCustomBehaviour? domesticVrpGetCustomBehaviour =
+            bankProfile.CustomBehaviour?.DomesticVrp;
         ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
             bankProfile.CustomBehaviour?.ClientCredentialsGrantPost;
 
@@ -306,7 +289,7 @@ internal class DomesticVrp :
             (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
 
         // Get client credentials grant access token
-        string scope = domesticVrpGetCustomBehaviour?.Scope ?? "payments";
+        var scope = "payments";
         string ccGrantAccessToken =
             await _clientAccessTokenGet.GetAccessToken(
                 scope,
@@ -423,8 +406,8 @@ internal class DomesticVrp :
         VariableRecurringPaymentsApi variableRecurringPaymentsApi =
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
         string bankFinancialId = bankProfile.FinancialId;
-        DomesticVrpGetCustomBehaviour? domesticVrpGetCustomBehaviour =
-            bankProfile.CustomBehaviour?.DomesticVrpGetPaymentDetails;
+        DomesticVrpCustomBehaviour? domesticVrpGetCustomBehaviour =
+            bankProfile.CustomBehaviour?.DomesticVrp;
         ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
             bankProfile.CustomBehaviour?.ClientCredentialsGrantPost;
 
@@ -444,7 +427,7 @@ internal class DomesticVrp :
             (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
 
         // Get client credentials grant access token
-        string scope = domesticVrpGetCustomBehaviour?.Scope ?? "payments";
+        var scope = "payments";
         string ccGrantAccessToken =
             await _clientAccessTokenGet.GetAccessToken(
                 scope,
