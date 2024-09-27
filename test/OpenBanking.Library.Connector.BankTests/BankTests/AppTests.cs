@@ -109,6 +109,9 @@ public class AppTests
             // Get external API AccountAccessConsent ID
             string? accountAccessConsentExternalApiId = bankRegistrationEnv.ExternalApiAccountAccessConsentId;
 
+            // Get payments info
+            string? testCreditorAccount = bankRegistrationEnv.TestCreditorAccount;
+
             // Get consent auth data (for sandboxes)
             string? authUiInputUserName = bankRegistrationEnv.SandboxAuthUserName;
             string? authUiInputPassword = bankRegistrationEnv.SandboxAuthPassword;
@@ -138,7 +141,8 @@ public class AppTests
                         AuthUiExtraWord3 = authUiExtraWord3,
                         TestAccountAccessConsent = testAccountAccessConsent,
                         TestDomesticPaymentConsent = testDomesticPaymentConsent,
-                        TestDomesticVrpConsent = testDomesticVrpConsent
+                        TestDomesticVrpConsent = testDomesticVrpConsent,
+                        TestCreditorAccount = testCreditorAccount
                     }
                 ];
             }
@@ -350,71 +354,93 @@ public class AppTests
             }
         }
 
-        // Run domestic payment consent subtests
-        if (testData2.TestDomesticPaymentConsent)
+        if (testData2.TestDomesticPaymentConsent ||
+            testData2.TestDomesticVrpConsent)
         {
-            if (!registrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
+            // Read payments .env file
+            string paymentsEnvFileName = Path.Combine(
+                AppConfiguration.RequestsDirectory,
+                "Payments",
+                "http-client.private.env.json");
+            var paymentsEnvFile = await DataFile.ReadFile<PaymentsEnvFile>(
+                paymentsEnvFileName,
+                new JsonSerializerOptions());
+            string creditorAccount =
+                testData2.TestCreditorAccount ??
+                throw new InvalidOperationException("Creditor account not specified.");
+
+            // Run domestic payment consent subtests
+            if (testData2.TestDomesticPaymentConsent)
             {
-                throw new InvalidOperationException(
-                    "Cannot test PaymentInitiation API due to missing registration scope.");
+                if (!registrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
+                {
+                    throw new InvalidOperationException(
+                        "Cannot test PaymentInitiation API due to missing registration scope.");
+                }
+
+                if (bankProfile.PaymentInitiationApi is null)
+                {
+                    throw new InvalidOperationException(
+                        "Cannot test PaymentInitiation API as no API specified in bank profile.");
+                }
+
+                foreach (DomesticPaymentSubtestEnum subTest in
+                         DomesticPaymentConsentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
+                {
+                    await domesticPaymentConsentSubtest.RunTest(
+                        subTest,
+                        bankProfile,
+                        bankRegistrationId,
+                        defaultResponseMode,
+                        paymentsEnvFile,
+                        creditorAccount,
+                        testNameUnique,
+                        modifiedBy,
+                        testDataProcessorFluentRequestLogging
+                            .AppendToPath("pisp")
+                            .AppendToPath($"{subTest.ToString()}"),
+                        consentAuth,
+                        authUrlLeftPart,
+                        bankUser);
+                }
             }
 
-            if (bankProfile.PaymentInitiationApi is null)
+            // Run domestic VRP consent subtests
+            if (testData2.TestDomesticVrpConsent)
             {
-                throw new InvalidOperationException(
-                    "Cannot test PaymentInitiation API as no API specified in bank profile.");
-            }
+                if (!registrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
+                {
+                    throw new InvalidOperationException(
+                        "Cannot test VariableRecurringPayments API due to missing registration scope.");
+                }
 
-            foreach (DomesticPaymentSubtestEnum subTest in
-                     DomesticPaymentConsentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
-            {
-                await domesticPaymentConsentSubtest.RunTest(
-                    subTest,
-                    bankProfile,
-                    bankRegistrationId,
-                    defaultResponseMode,
-                    testNameUnique,
-                    modifiedBy,
-                    testDataProcessorFluentRequestLogging
-                        .AppendToPath("pisp")
-                        .AppendToPath($"{subTest.ToString()}"),
-                    consentAuth,
-                    authUrlLeftPart,
-                    bankUser);
-            }
-        }
+                if (bankProfile.VariableRecurringPaymentsApi is null)
+                {
+                    throw new InvalidOperationException(
+                        "Cannot test VariableRecurringPayments API as no API specified in bank profile.");
+                }
 
-        // Run domestic VRP consent subtests
-        if (testData2.TestDomesticVrpConsent)
-        {
-            if (!registrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
-            {
-                throw new InvalidOperationException(
-                    "Cannot test VariableRecurringPayments API due to missing registration scope.");
-            }
-
-            if (bankProfile.VariableRecurringPaymentsApi is null)
-            {
-                throw new InvalidOperationException(
-                    "Cannot test VariableRecurringPayments API as no API specified in bank profile.");
-            }
-
-            foreach (DomesticVrpSubtestEnum subTest in
-                     DomesticVrpConsentSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
-            {
-                await domesticVrpConsentSubtest.RunTest(
-                    subTest,
-                    bankProfile,
-                    bankRegistrationId,
-                    defaultResponseMode,
-                    testNameUnique,
-                    modifiedBy,
-                    testDataProcessorFluentRequestLogging
-                        .AppendToPath("vrp")
-                        .AppendToPath($"{subTest.ToString()}"),
-                    consentAuth,
-                    authUrlLeftPart,
-                    bankUser);
+                foreach (DomesticVrpSubtestEnum subTest in
+                         DomesticVrpConsentSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
+                {
+                    await domesticVrpConsentSubtest.RunTest(
+                        subTest,
+                        bankProfile,
+                        bankRegistrationId,
+                        defaultResponseMode,
+                        paymentsEnvFile,
+                        creditorAccount,
+                        testNameUnique,
+                        modifiedBy,
+                        testDataProcessorFluentRequestLogging
+                            .AppendToPath("vrp")
+                            .AppendToPath($"{subTest.ToString()}"),
+                        consentAuth,
+                        authUrlLeftPart,
+                        bankUser,
+                        appServiceProvider,
+                        memoryCache);
+                    }
             }
         }
 

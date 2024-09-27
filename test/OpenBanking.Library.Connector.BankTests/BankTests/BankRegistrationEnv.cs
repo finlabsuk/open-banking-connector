@@ -44,6 +44,9 @@ public class BankRegistrationEnv
     [JsonPropertyName("externalApiAccountAccessConsentId")]
     public string? ExternalApiAccountAccessConsentId { get; init; }
 
+    [JsonPropertyName("testCreditorAccount")]
+    public string? TestCreditorAccount { get; init; }
+
     [JsonPropertyName("sandboxAuthUserName")]
     public string? SandboxAuthUserName { get; init; }
 

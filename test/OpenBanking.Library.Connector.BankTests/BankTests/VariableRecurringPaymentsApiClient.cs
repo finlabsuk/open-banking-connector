@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
@@ -39,7 +40,8 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
     }
 
     public async Task<DomesticVrpConsentCreateResponse> DomesticVrpConsentCreate(
-        DomesticVrpConsentRequest request)
+        DomesticVrpConsentRequest request,
+        DomesticVrpConsentCustomBehaviour? customBehaviour)
     {
         // Create object
         var uriPath = "/vrp/domestic-vrp-consents";
@@ -57,13 +59,24 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
         else
         {
             response.ExternalApiResponse.Should().NotBeNull();
+            response.ExternalApiResponse!.Risk.PaymentContextCode.Should()
+                .Be(request.ExternalApiRequest!.Risk.PaymentContextCode);
+
+            bool responseRiskContractPresentIndicatorMayBeMissingOrWrong =
+                customBehaviour?.ResponseRiskContractPresentIndicatorMayBeMissingOrWrong ?? false;
+            if (!responseRiskContractPresentIndicatorMayBeMissingOrWrong)
+            {
+                response.ExternalApiResponse!.Risk.ContractPresentIndicator.Should()
+                    .Be(request.ExternalApiRequest!.Risk.ContractPresentIndicator);
+            }
         }
 
         return response;
     }
 
     public async Task<DomesticVrpConsentFundsConfirmationResponse> DomesticVrpConsentCreateFundsConfirmation(
-        VrpConsentFundsConfirmationCreateParams createParams)
+        VrpConsentFundsConfirmationCreateParams createParams,
+        DomesticVrpConsentCustomBehaviour? customBehaviour)
     {
         // Create object
         var uriPath = $"/vrp/domestic-vrp-consents/{createParams.ConsentId}/funds-confirmation";
@@ -77,6 +90,14 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
         response.Warnings.Should().BeNull();
         response.ExternalApiResponse.Should().NotBeNull();
 
+        // Check funds available
+        bool responseDataFundsAvailableResultFundsAvailableMayBeWrong =
+            customBehaviour?.ResponseDataFundsAvailableResultFundsAvailableMayBeWrong ?? false;
+        if (!responseDataFundsAvailableResultFundsAvailableMayBeWrong)
+        {
+            response.ExternalApiResponse.Data.FundsAvailableResult.FundsAvailable.Should()
+                .Be(VariableRecurringPaymentsModelsPublic.OBPAFundsAvailableResult1FundsAvailable.Available);
+        }
         return response;
     }
 
@@ -129,7 +150,9 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
         return response;
     }
 
-    public async Task<DomesticVrpResponse> DomesticVrpRead(ConsentExternalEntityReadParams readParams)
+    public async Task<DomesticVrpResponse> DomesticVrpRead(
+        ConsentExternalEntityReadParams readParams,
+        DomesticVrpCustomBehaviour? customBehaviour)
     {
         // Read object
         var uriPath = $"/vrp/domestic-vrps/{readParams.ExternalApiId}";
@@ -145,6 +168,63 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
         // Checks
         response.Warnings.Should().BeNull();
         response.ExternalApiResponse.Should().NotBeNull();
+
+        // Check status
+        bool responseDataStatusMayBeWrong = customBehaviour?.ResponseDataStatusMayBeWrong ?? false;
+        if (!responseDataStatusMayBeWrong)
+        {
+            response.ExternalApiResponse.Data.Status.Should()
+                .BeOneOf(
+                    VariableRecurringPaymentsModelsPublic.Data4Status.AcceptedCreditSettlementCompleted,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.AcceptedSettlementCompleted,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.AcceptedWithoutPosting,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.AcceptedSettlementInProcess);
+        }
+
+        // Check refund account
+        bool responseDataRefundMayBeMissingOrWrong = customBehaviour?.ResponseDataRefundMayBeMissingOrWrong ?? false;
+        if (!responseDataRefundMayBeMissingOrWrong)
+        {
+            response.ExternalApiResponse.Data.Refund.Should().NotBeNull();
+
+            bool responseDataRefundSchemeNameMayBeWrong =
+                customBehaviour?.ResponseDataRefundSchemeNameMayBeWrong ?? false;
+            if (!responseDataRefundSchemeNameMayBeWrong)
+            {
+                response.ExternalApiResponse.Data.Refund!.SchemeName.Should()
+                    .Be("UK.OBIE.SortCodeAccountNumber");
+            }
+
+            bool responseDataRefundIdentificationMayBeWrong =
+                customBehaviour?.ResponseDataRefundIdentificationMayBeWrong ?? false;
+            if (!responseDataRefundIdentificationMayBeWrong)
+            {
+                response.ExternalApiResponse.Data.Refund!.Identification.Should().HaveLength(14);
+            }
+        }
+
+        // Check debtor account
+        bool responseDataDebtorAccountMayBeMissingOrWrong =
+            customBehaviour?.ResponseDataDebtorAccountMayBeMissingOrWrong ?? false;
+        if (!responseDataDebtorAccountMayBeMissingOrWrong)
+        {
+            response.ExternalApiResponse.Data.DebtorAccount.Should().NotBeNull();
+
+            bool responseDataDebtorAccountSchemeNameMayBeWrong =
+                customBehaviour?.ResponseDataDebtorAccountSchemeNameMayBeWrong ?? false;
+            if (!responseDataDebtorAccountSchemeNameMayBeWrong)
+            {
+                response.ExternalApiResponse.Data.DebtorAccount!.SchemeName.Should()
+                    .Be("UK.OBIE.SortCodeAccountNumber");
+            }
+
+            bool responseDataDebtorAccountIdentificationMayBeWrong =
+                customBehaviour?.ResponseDataDebtorAccountIdentificationMayBeWrong ?? false;
+            if (!responseDataDebtorAccountIdentificationMayBeWrong)
+            {
+                response.ExternalApiResponse.Data.DebtorAccount!.Identification.Should().HaveLength(14);
+            }
+        }
 
         return response;
     }
@@ -172,7 +252,8 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
 
     public async Task<DomesticVrpResponse> DomesticVrpCreate(
         DomesticVrpRequest request,
-        ConsentExternalCreateParams createParams)
+        ConsentExternalCreateParams createParams,
+        DomesticVrpCustomBehaviour? customBehaviour)
     {
         // Create object
         var uriPath = "/vrp/domestic-vrps";
@@ -184,6 +265,51 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
         // Checks
         response.Warnings.Should().BeNull();
         response.ExternalApiResponse.Should().NotBeNull();
+
+        // Check refund account
+        bool responseDataRefundMayBeMissingOrWrong = customBehaviour?.ResponseDataRefundMayBeMissingOrWrong ?? false;
+        if (!responseDataRefundMayBeMissingOrWrong)
+        {
+            response.ExternalApiResponse.Data.Refund.Should().NotBeNull();
+
+            bool responseDataRefundSchemeNameMayBeWrong =
+                customBehaviour?.ResponseDataRefundSchemeNameMayBeWrong ?? false;
+            if (!responseDataRefundSchemeNameMayBeWrong)
+            {
+                response.ExternalApiResponse.Data.Refund!.SchemeName.Should()
+                    .Be("UK.OBIE.SortCodeAccountNumber");
+            }
+
+            bool responseDataRefundIdentificationMayBeWrong =
+                customBehaviour?.ResponseDataRefundIdentificationMayBeWrong ?? false;
+            if (!responseDataRefundIdentificationMayBeWrong)
+            {
+                response.ExternalApiResponse.Data.Refund!.Identification.Should().HaveLength(14);
+            }
+        }
+
+        // Check debtor account
+        bool responseDataDebtorAccountMayBeMissingOrWrong =
+            customBehaviour?.ResponseDataDebtorAccountMayBeMissingOrWrong ?? false;
+        if (!responseDataDebtorAccountMayBeMissingOrWrong)
+        {
+            response.ExternalApiResponse.Data.DebtorAccount.Should().NotBeNull();
+
+            bool responseDataDebtorAccountSchemeNameMayBeWrong =
+                customBehaviour?.ResponseDataDebtorAccountSchemeNameMayBeWrong ?? false;
+            if (!responseDataDebtorAccountSchemeNameMayBeWrong)
+            {
+                response.ExternalApiResponse.Data.DebtorAccount!.SchemeName.Should()
+                    .Be("UK.OBIE.SortCodeAccountNumber");
+            }
+
+            bool responseDataDebtorAccountIdentificationMayBeWrong =
+                customBehaviour?.ResponseDataDebtorAccountIdentificationMayBeWrong ?? false;
+            if (!responseDataDebtorAccountIdentificationMayBeWrong)
+            {
+                response.ExternalApiResponse.Data.DebtorAccount!.Identification.Should().HaveLength(14);
+            }
+        }
 
         return response;
     }

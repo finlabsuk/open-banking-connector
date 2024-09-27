@@ -43,6 +43,8 @@ public class BankTestData2
 
     public required bool TestDomesticVrpConsent { get; set; }
 
+    public string? TestCreditorAccount { get; init; }
+
     public override string ToString()
     {
         string? extraBankProfileInfo = null;

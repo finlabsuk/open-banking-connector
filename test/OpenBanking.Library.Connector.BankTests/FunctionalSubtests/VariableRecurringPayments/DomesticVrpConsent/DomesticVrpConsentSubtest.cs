@@ -3,19 +3,26 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
+using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Web;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using DomesticVrpConsentAuthContext =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.
+    DomesticVrpConsentAuthContext;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.
     DomesticVrpConsent;
@@ -32,54 +39,38 @@ public class DomesticVrpConsentSubtest(
         BankProfile bankProfile,
         Guid bankRegistrationId,
         OAuth2ResponseMode defaultResponseMode,
+        PaymentsEnvFile paymentsEnvFile,
+        string creditorAccount,
         string testNameUnique,
         string modifiedBy,
         FilePathBuilder vrpFluentRequestLogging,
         ConsentAuth consentAuth,
         string authUrlLeftPart,
-        BankUser? bankUser)
+        BankUser? bankUser,
+        IServiceProvider appServiceProvider,
+        IMemoryCache memoryCache)
     {
-        bool subtestSkipped = subtestEnum switch
-        {
-            DomesticVrpSubtestEnum.SweepingVrp => false,
-            _ => throw new ArgumentException(
-                $"{nameof(subtestEnum)} is not valid {nameof(DomesticVrpSubtestEnum)} or needs to be added to this switch statement.")
-        };
-        if (subtestSkipped)
-        {
-            return;
-        }
-
         var testDomesticVrpConsentAuth = true;
 
         // Create DomesticVrpConsent
-        var domesticVrpTemplateRequest = new DomesticVrpTemplateRequest
+        if (!paymentsEnvFile.TryGetValue(
+                creditorAccount,
+                out PaymentsEnv? paymentsEnv))
         {
-            Type = DomesticVrpSubtestHelper.GetDomesticVrpConsentTemplateType(subtestEnum),
-            Parameters = new DomesticVrpTemplateParameters
-            {
-                InstructionIdentification = "placeholder", // logging placeholder
-                EndToEndIdentification = "placeholder", // logging placeholder
-                IncludeCreditorInInitiation = true,
-                IncludeDebtorInInitiation = false,
-                ValidFromDateTime = default, // logging placeholder
-                ValidToDateTime = default // logging placeholder
-            }
-        };
-        DateTimeOffset currentTime = DateTimeOffset.UtcNow;
-        DateTimeOffset controlParametersValidFromDateTime = currentTime;
-        DateTimeOffset controlParametersValidToDateTime = currentTime.AddYears(3);
+            throw new InvalidOperationException($"Creditor account {creditorAccount} specified but not found.");
+        }
+
         DomesticVrpConsentRequest domesticVrpConsentRequest = await GetDomesticVrpConsentRequest(
-            bankProfile,
             bankRegistrationId,
             testNameUnique,
             modifiedBy,
             vrpFluentRequestLogging,
-            domesticVrpTemplateRequest,
-            controlParametersValidFromDateTime,
-            controlParametersValidToDateTime);
+            paymentsEnv,
+            bankProfile.VariableRecurringPaymentsApiSettings);
         DomesticVrpConsentCreateResponse domesticVrpConsentCreateResponse =
-            await variableRecurringPaymentsApiClient.DomesticVrpConsentCreate(domesticVrpConsentRequest);
+            await variableRecurringPaymentsApiClient.DomesticVrpConsentCreate(
+                domesticVrpConsentRequest,
+                bankProfile.CustomBehaviour?.DomesticVrpConsent);
         Guid domesticVrpConsentId = domesticVrpConsentCreateResponse.Id;
 
         // Read DomesticVrpConsent
@@ -161,12 +152,14 @@ public class DomesticVrpConsentSubtest(
                 ConsentVariety.DomesticVrpConsent);
 
             // Create DomesticVrp FundsConfirmation
+            double amountDouble = Random.Shared.Next(10, 300) / 100.0;
+            var amount = amountDouble.ToString("F2");
             DomesticVrpConsentFundsConfirmationRequest domesticVrpConsentFundsConfirmationRequest =
                 await GetDomesticVrpConsentFundsConfirmationRequest(
-                    bankProfile,
                     modifiedBy,
                     vrpFluentRequestLogging,
-                    domesticVrpTemplateRequest);
+                    amount,
+                    bankProfile.VariableRecurringPaymentsApiSettings);
             DomesticVrpConsentFundsConfirmationResponse domesticPaymentConsentResp4 =
                 await variableRecurringPaymentsApiClient.DomesticVrpConsentCreateFundsConfirmation(
                     new VrpConsentFundsConfirmationCreateParams
@@ -175,19 +168,21 @@ public class DomesticVrpConsentSubtest(
                         ExtraHeaders = null,
                         ConsentId = domesticVrpConsentId,
                         Request = domesticVrpConsentFundsConfirmationRequest
-                    });
+                    },
+                    bankProfile.CustomBehaviour?.DomesticVrpConsent);
 
             // Create DomesticVrp
-            var instructionInstructionIdentification = Guid.NewGuid().ToString("N");
-            var instructionEndToEndIdentification = Guid.NewGuid().ToString("N");
+            var instructionIdentification = Guid.NewGuid().ToString("N");
+            string endToEndIdentification = Guid.NewGuid().ToString("N")[..31];
             DomesticVrpRequest domesticVrpRequest = await GetDomesticVrpRequest(
-                bankProfile,
+                domesticVrpConsentId,
                 modifiedBy,
                 vrpFluentRequestLogging,
-                domesticVrpTemplateRequest,
-                domesticVrpConsentId,
-                instructionInstructionIdentification,
-                instructionEndToEndIdentification);
+                instructionIdentification,
+                endToEndIdentification,
+                amount,
+                paymentsEnv,
+                bankProfile.VariableRecurringPaymentsApiSettings);
             DomesticVrpResponse domesticVrpResp =
                 await variableRecurringPaymentsApiClient.DomesticVrpCreate(
                     domesticVrpRequest,
@@ -195,8 +190,12 @@ public class DomesticVrpConsentSubtest(
                     {
                         ExtraHeaders = null,
                         PublicRequestUrlWithoutQuery = null
-                    });
+                    },
+                    bankProfile.CustomBehaviour?.DomesticVrp);
             string domesticVrpExternalId = domesticVrpResp.ExternalApiResponse.Data.DomesticVRPId;
+
+            // Allow time for payment to be processed
+            await Task.Delay(TimeSpan.FromSeconds(3));
 
             // Read DomesticVrp
             DomesticVrpResponse domesticVrpResp2 =
@@ -208,7 +207,8 @@ public class DomesticVrpConsentSubtest(
                         ExtraHeaders = null,
                         PublicRequestUrlWithoutQuery = null,
                         ExternalApiId = domesticVrpExternalId
-                    });
+                    },
+                    bankProfile.CustomBehaviour?.DomesticVrp);
 
             // Read DomesticVrp PaymentDetails
             if (bankProfile.VariableRecurringPaymentsApiSettings.UseDomesticVrpGetPaymentDetailsEndpoint)
@@ -224,11 +224,79 @@ public class DomesticVrpConsentSubtest(
                             ExternalApiId = domesticVrpExternalId
                         });
             }
+
+            // If refresh token known available, delete access token to check refresh token grant
+            bool refreshTokenMayBeAbsent = bankProfile.CustomBehaviour
+                ?.DomesticVrpConsentAuthCodeGrantPost
+                ?.ExpectedResponseRefreshTokenMayBeAbsent ?? false;
+            if (!refreshTokenMayBeAbsent)
+            {
+                {
+                    // Get new application services scope
+                    using IServiceScopeContainer serviceScopeContainer =
+                        new ServiceScopeFromDependencyInjection(appServiceProvider);
+
+                    // Get consent
+                    IDbService dbService = serviceScopeContainer.DbService;
+                    IDbEntityMethods<Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent>
+                        consentEntityMethods =
+                            dbService
+                                .GetDbEntityMethodsClass<
+                                    Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent>();
+                    Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent consent =
+                        consentEntityMethods
+                            .DbSet
+                            .Include(o => o.DomesticVrpConsentAccessTokensNavigation)
+                            .Include(o => o.DomesticVrpConsentRefreshTokensNavigation)
+                            .AsSplitQuery()
+                            .SingleOrDefault(x => x.Id == domesticVrpConsentId) ??
+                        throw new KeyNotFoundException();
+
+                    // Ensure refresh token available
+                    DomesticVrpConsentRefreshToken unused =
+                        consent
+                            .DomesticVrpConsentRefreshTokensNavigation
+                            .SingleOrDefault(x => !x.IsDeleted) ??
+                        throw new Exception("Refresh token not found.");
+
+                    // If available, delete cached access token (to force use of refresh token)
+                    memoryCache.Remove(consent.GetCacheKey());
+
+                    // If available, delete stored access token (to force use of refresh token) 
+                    DomesticVrpConsentAccessToken? storedAccessToken =
+                        consent
+                            .DomesticVrpConsentAccessTokensNavigation.SingleOrDefault(x => !x.IsDeleted);
+                    if (storedAccessToken is not null)
+                    {
+                        storedAccessToken.UpdateIsDeleted(true, DateTimeOffset.UtcNow, modifiedBy);
+                        await dbService.GetDbSaveChangesMethodClass().SaveChangesAsync();
+                    }
+                }
+
+                // Create DomesticVrp FundsConfirmation
+                double amountDouble2 = Random.Shared.Next(10, 300) / 100.0;
+                var amount2 = amountDouble2.ToString("F2");
+                DomesticVrpConsentFundsConfirmationRequest domesticVrpConsentFundsConfirmationRequest2 =
+                    await GetDomesticVrpConsentFundsConfirmationRequest(
+                        modifiedBy,
+                        vrpFluentRequestLogging,
+                        amount2,
+                        bankProfile.VariableRecurringPaymentsApiSettings);
+                await variableRecurringPaymentsApiClient.DomesticVrpConsentCreateFundsConfirmation(
+                    new VrpConsentFundsConfirmationCreateParams
+                    {
+                        PublicRequestUrlWithoutQuery = null,
+                        ExtraHeaders = null,
+                        ConsentId = domesticVrpConsentId,
+                        Request = domesticVrpConsentFundsConfirmationRequest2
+                    },
+                    bankProfile.CustomBehaviour?.DomesticVrpConsent);
+            }
         }
 
         // Delete DomesticVrpConsent
         var excludeExternalApiOperation = false;
-        BaseResponse domesticVrpConsentResp3 = await variableRecurringPaymentsApiClient.DomesticVrpConsentDelete(
+        BaseResponse _ = await variableRecurringPaymentsApiClient.DomesticVrpConsentDelete(
             new ConsentDeleteParams
             {
                 Id = domesticVrpConsentId,
@@ -239,81 +307,221 @@ public class DomesticVrpConsentSubtest(
     }
 
     private static async Task<DomesticVrpConsentFundsConfirmationRequest> GetDomesticVrpConsentFundsConfirmationRequest(
-        BankProfile bankProfile,
         string modifiedBy,
         FilePathBuilder vrpFluentRequestLogging,
-        DomesticVrpTemplateRequest domesticVrpTemplateRequest)
+        string amount,
+        VariableRecurringPaymentsApiSettings variableRecurringPaymentsApiSettings)
     {
+        var externalApiRequest =
+            new VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationRequest
+            {
+                Data = new VariableRecurringPaymentsModelsPublic.Data6
+                {
+                    ConsentId = "",
+                    Reference = "Integration test",
+                    InstructedAmount = new VariableRecurringPaymentsModelsPublic.OBActiveOrHistoricCurrencyAndAmount
+                    {
+                        Amount = "placeholder", // logging placeholder
+                        Currency = "GBP"
+                    }
+                }
+            };
         var domesticVrpConsentFundsConfirmationRequest = new DomesticVrpConsentFundsConfirmationRequest
         {
             ExternalApiRequest =
-                DomesticVrpConsentPublicMethods.ResolveExternalApiFundsConfirmationRequest(
-                    null,
-                    domesticVrpTemplateRequest,
-                    string.Empty, // logging placeholder
-                    bankProfile) // Resolve for fuller logging
+                variableRecurringPaymentsApiSettings
+                    .DomesticVrpConsentExternalApiFundsConfirmationRequestAdjustments(
+                        externalApiRequest), // customise external API request using bank profile
+            ModifiedBy = "placeholder" // logging placeholder
         };
+
         await vrpFluentRequestLogging
             .AppendToPath("domesticVrpConsent")
             .AppendToPath("fundsConfirmation")
             .AppendToPath("postRequest")
             .WriteFile(domesticVrpConsentFundsConfirmationRequest);
 
-        domesticVrpConsentFundsConfirmationRequest.ModifiedBy = modifiedBy;
+        domesticVrpConsentFundsConfirmationRequest.ModifiedBy = modifiedBy; // replace logging placeholder
+        domesticVrpConsentFundsConfirmationRequest.ExternalApiRequest.Data.InstructedAmount.Amount =
+            amount; // replace logging placeholder
 
         return domesticVrpConsentFundsConfirmationRequest;
     }
 
     private static async Task<DomesticVrpRequest> GetDomesticVrpRequest(
-        BankProfile bankProfile,
+        Guid domesticVrpConsentId,
         string modifiedBy,
         FilePathBuilder vrpFluentRequestLogging,
-        DomesticVrpTemplateRequest domesticVrpTemplateRequest,
-        Guid domesticVrpConsentId,
-        string instructionInstructionIdentification,
-        string instructionEndToEndIdentification)
+        string instructionIdentification,
+        string endToEndIdentification,
+        string amount,
+        PaymentsEnv paymentsEnv,
+        VariableRecurringPaymentsApiSettings variableRecurringPaymentsApiSettings)
     {
+        var externalApiRequest = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest
+        {
+            Data = new VariableRecurringPaymentsModelsPublic.Data3
+            {
+                ConsentId = "",
+                PSUAuthenticationMethod = "UK.OBIE.SCANotRequired",
+                PSUInteractionType = VariableRecurringPaymentsModelsPublic.OBVRPInteractionTypes.OffSession,
+                VRPType = "UK.OBIE.VRPType.Sweeping",
+                Initiation = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInitiation
+                {
+                    CreditorAccount = new VariableRecurringPaymentsModelsPublic.OBCashAccountCreditor3
+                    {
+                        SchemeName = "placeholder", // logging placeholder
+                        Identification = "placeholder", // logging placeholder
+                        Name = "placeholder" // logging placeholder
+                    },
+                    RemittanceInformation =
+                        new VariableRecurringPaymentsModelsPublic.RemittanceInformation
+                        {
+                            Reference = "Integration test"
+                        }
+                },
+                Instruction = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInstruction
+                {
+                    InstructionIdentification = "placeholder", // logging placeholder
+                    EndToEndIdentification = "placeholder", // logging placeholder
+                    RemittanceInformation =
+                        new VariableRecurringPaymentsModelsPublic.OBVRPRemittanceInformation
+                        {
+                            Reference = "Integration test"
+                        },
+                    InstructedAmount = new VariableRecurringPaymentsModelsPublic.OBActiveOrHistoricCurrencyAndAmount
+                    {
+                        Amount = "placeholder", // logging placeholder
+                        Currency = "GBP"
+                    },
+                    CreditorAccount = new VariableRecurringPaymentsModelsPublic.OBCashAccountCreditor3
+                    {
+                        SchemeName = "placeholder", // logging placeholder
+                        Identification = "placeholder", // logging placeholder
+                        Name = "placeholder" // logging placeholder
+                    }
+                }
+            },
+            Risk = new VariableRecurringPaymentsModelsPublic.OBRisk1
+            {
+                PaymentContextCode =
+                    VariableRecurringPaymentsModelsPublic.OBRisk1PaymentContextCode.TransferToSelf,
+                ContractPresentIndicator = true
+            }
+        };
         var domesticVrpRequest = new DomesticVrpRequest
         {
             DomesticVrpConsentId = default, // logging placeholder
-            ExternalApiRequest = DomesticVrpPublicMethods.ResolveExternalApiRequest(
-                null,
-                domesticVrpTemplateRequest,
-                string.Empty, // logging placeholder
-                bankProfile) // resolve for fuller logging
+            ExternalApiRequest =
+                variableRecurringPaymentsApiSettings
+                    .DomesticVrpExternalApiRequestAdjustments(
+                        externalApiRequest), // customise external API request using bank profile
+            ModifiedBy = "placeholder" // logging placeholder
         };
         await vrpFluentRequestLogging
             .AppendToPath("domesticVrp")
             .AppendToPath("postRequest")
             .WriteFile(domesticVrpRequest);
 
+        domesticVrpRequest.DomesticVrpConsentId = domesticVrpConsentId; // replace logging placeholder
+        domesticVrpRequest.ModifiedBy = modifiedBy; // replace logging placeholder
+
+        domesticVrpRequest.ExternalApiRequest.Data.Initiation.CreditorAccount!.SchemeName =
+            paymentsEnv.AccountSchemeName; // replace logging placeholder
+        domesticVrpRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Identification =
+            paymentsEnv.AccountId; // replace logging placeholder
+        domesticVrpRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
+            paymentsEnv.AccountName; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.InstructionIdentification =
-            instructionInstructionIdentification; // replace logging placeholder
+            instructionIdentification; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.EndToEndIdentification =
-            instructionEndToEndIdentification; // replace logging placeholder
-        domesticVrpRequest.DomesticVrpConsentId = domesticVrpConsentId;
-        domesticVrpRequest.ModifiedBy = modifiedBy;
+            endToEndIdentification; // replace logging placeholder
+        domesticVrpRequest.ExternalApiRequest.Data.Instruction.InstructedAmount.Amount =
+            amount; // replace logging placeholder
+        domesticVrpRequest.ExternalApiRequest.Data.Instruction.CreditorAccount.SchemeName =
+            paymentsEnv.AccountSchemeName; // replace logging placeholder
+        domesticVrpRequest.ExternalApiRequest.Data.Instruction.CreditorAccount.Identification =
+            paymentsEnv.AccountId; // replace logging placeholder
+        domesticVrpRequest.ExternalApiRequest.Data.Instruction.CreditorAccount.Name =
+            paymentsEnv.AccountName; // replace logging placeholder
+
 
         return domesticVrpRequest;
     }
 
     private static async Task<DomesticVrpConsentRequest> GetDomesticVrpConsentRequest(
-        BankProfile bankProfile,
         Guid bankRegistrationId,
         string testNameUnique,
         string modifiedBy,
         FilePathBuilder vrpFluentRequestLogging,
-        DomesticVrpTemplateRequest domesticVrpTemplateRequest,
-        DateTimeOffset controlParametersValidFromDateTime,
-        DateTimeOffset controlParametersValidToDateTime)
+        PaymentsEnv paymentsEnv,
+        VariableRecurringPaymentsApiSettings variableRecurringPaymentsApiSettings)
     {
+        var externalApiRequest =
+            new VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest
+            {
+                Data = new VariableRecurringPaymentsModelsPublic.Data2
+                {
+                    ReadRefundAccount = VariableRecurringPaymentsModelsPublic.Data2ReadRefundAccount.Yes,
+                    ControlParameters =
+                        new VariableRecurringPaymentsModelsPublic.OBDomesticVRPControlParameters
+                        {
+                            MaximumIndividualAmount =
+                                new VariableRecurringPaymentsModelsPublic.OBActiveOrHistoricCurrencyAndAmount
+                                {
+                                    Amount = "5.00",
+                                    Currency = "GBP"
+                                },
+                            PeriodicLimits =
+                            [
+                                new VariableRecurringPaymentsModelsPublic.PeriodicLimits
+                                {
+                                    PeriodType = VariableRecurringPaymentsModelsPublic.PeriodicLimitsPeriodType.Month,
+                                    PeriodAlignment =
+                                        VariableRecurringPaymentsModelsPublic.PeriodicLimitsPeriodAlignment.Consent,
+                                    Amount = "50.00",
+                                    Currency = "GBP"
+                                }
+                            ],
+                            VRPType = ["UK.OBIE.VRPType.Sweeping"],
+                            PSUAuthenticationMethods = ["UK.OBIE.SCANotRequired"],
+                            PSUInteractionTypes =
+                            [
+                                VariableRecurringPaymentsModelsPublic.OBVRPInteractionTypes.OffSession
+                            ]
+                        },
+                    Initiation = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInitiation
+                    {
+                        CreditorAccount = new VariableRecurringPaymentsModelsPublic.OBCashAccountCreditor3
+                        {
+                            SchemeName = "placeholder", // logging placeholder
+                            Identification = "placeholder", // logging placeholder
+                            Name = "placeholder" // logging placeholder
+                        },
+                        RemittanceInformation =
+                            new VariableRecurringPaymentsModelsPublic.RemittanceInformation
+                            {
+                                Reference = "Integration test"
+                            }
+                    }
+                },
+                Risk = new VariableRecurringPaymentsModelsPublic.OBRisk1
+                {
+                    PaymentContextCode =
+                        VariableRecurringPaymentsModelsPublic.OBRisk1PaymentContextCode.TransferToSelf,
+                    ContractPresentIndicator = true
+                }
+            };
+
         var domesticVrpConsentRequest = new DomesticVrpConsentRequest
         {
             BankRegistrationId = default, // logging placeholder
-            ExternalApiRequest = DomesticVrpConsentPublicMethods.ResolveExternalApiRequest(
-                null,
-                domesticVrpTemplateRequest,
-                bankProfile) // Resolve for fuller logging
+            ExternalApiRequest =
+                variableRecurringPaymentsApiSettings
+                    .DomesticVrpConsentExternalApiRequestAdjustments(
+                        externalApiRequest), // customise external API request using bank profile
+            Reference = "placeholder", // logging placeholder
+            CreatedBy = "placeholder" // logging placeholder
         };
 
         await vrpFluentRequestLogging
@@ -321,13 +529,15 @@ public class DomesticVrpConsentSubtest(
             .AppendToPath("postRequest")
             .WriteFile(domesticVrpConsentRequest);
 
-        domesticVrpConsentRequest.ExternalApiRequest.Data.ControlParameters.ValidFromDateTime =
-            controlParametersValidFromDateTime; // replace logging placeholder
-        domesticVrpConsentRequest.ExternalApiRequest.Data.ControlParameters.ValidToDateTime =
-            controlParametersValidToDateTime; // replace logging placeholder
         domesticVrpConsentRequest.BankRegistrationId = bankRegistrationId; // replace logging placeholder
-        domesticVrpConsentRequest.Reference = testNameUnique;
-        domesticVrpConsentRequest.CreatedBy = modifiedBy;
+        domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount!.SchemeName =
+            paymentsEnv.AccountSchemeName; // replace logging placeholder
+        domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Identification =
+            paymentsEnv.AccountId; // replace logging placeholder
+        domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
+            paymentsEnv.AccountName; // replace logging placeholder
+        domesticVrpConsentRequest.Reference = testNameUnique; // replace logging placeholder
+        domesticVrpConsentRequest.CreatedBy = modifiedBy; // replace logging placeholder
 
         return domesticVrpConsentRequest;
     }

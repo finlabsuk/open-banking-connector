@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.VariableRecurringPayments;
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.
     DomesticVrpConsent;
 
@@ -12,7 +10,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 /// </summary>
 public enum DomesticVrpSubtestEnum
 {
-    SweepingVrp
+    SweepingVrpPayment
 }
 
 public static class DomesticVrpSubtestHelper
@@ -24,13 +22,4 @@ public static class DomesticVrpSubtestHelper
     }
 
     public static ISet<DomesticVrpSubtestEnum> AllDomesticVrpSubtests { get; }
-
-    public static DomesticVrpTemplateType GetDomesticVrpConsentTemplateType(DomesticVrpSubtestEnum subtestEnum) =>
-        subtestEnum switch
-        {
-            DomesticVrpSubtestEnum.SweepingVrp =>
-                DomesticVrpTemplateType.SweepingVrp,
-            _ => throw new ArgumentException(
-                $"{nameof(subtestEnum)} is not valid {nameof(DomesticVrpSubtestEnum)} or needs to be added to this switch statement.")
-        };
 }

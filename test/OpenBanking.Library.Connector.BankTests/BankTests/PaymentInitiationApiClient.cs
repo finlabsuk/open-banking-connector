@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -39,7 +40,8 @@ public class PaymentInitiationApiClient(WebAppClient client)
     }
 
     public async Task<DomesticPaymentConsentFundsConfirmationResponse> DomesticPaymentConsentReadFundsConfirmation(
-        ConsentBaseReadParams readParams)
+        ConsentBaseReadParams readParams,
+        DomesticPaymentConsentCustomBehaviour? customBehaviour)
     {
         // Read object
         var uriPath = $"/pisp/domestic-payment-consents/{readParams.Id}/funds-confirmation";
@@ -51,12 +53,23 @@ public class PaymentInitiationApiClient(WebAppClient client)
         // Checks
         response.Warnings.Should().BeNull();
         response.ExternalApiResponse.Should().NotBeNull();
+        response.ExternalApiResponse.Data.FundsAvailableResult.Should().NotBeNull();
+
+        // Check funds available
+        bool responseDataFundsAvailableResultFundsAvailableMayBeWrong =
+            customBehaviour?.ResponseDataFundsAvailableResultFundsAvailableMayBeWrong ?? false;
+        if (!responseDataFundsAvailableResultFundsAvailableMayBeWrong)
+        {
+            response.ExternalApiResponse.Data.FundsAvailableResult!.FundsAvailable.Should()
+                .Be(true);
+        }
 
         return response;
     }
 
     public async Task<DomesticPaymentConsentCreateResponse> DomesticPaymentConsentCreate(
-        DomesticPaymentConsentRequest request)
+        DomesticPaymentConsentRequest request,
+        DomesticPaymentConsentCustomBehaviour? customBehaviour)
     {
         // Create object
         var uriPath = "/pisp/domestic-payment-consents";
@@ -74,6 +87,15 @@ public class PaymentInitiationApiClient(WebAppClient client)
         else
         {
             response.ExternalApiResponse.Should().NotBeNull();
+            response.ExternalApiResponse!.Risk.PaymentContextCode.Should()
+                .Be(request.ExternalApiRequest!.Risk.PaymentContextCode);
+            bool responseRiskContractPresentIndicatorMayBeMissingOrWrong =
+                customBehaviour?.ResponseRiskContractPresentIndicatorMayBeMissingOrWrong ?? false;
+            if (!responseRiskContractPresentIndicatorMayBeMissingOrWrong)
+            {
+                response.ExternalApiResponse!.Risk.ContractPresentIndicator.Should()
+                    .Be(request.ExternalApiRequest!.Risk.ContractPresentIndicator);
+            }
         }
 
         return response;
@@ -126,7 +148,9 @@ public class PaymentInitiationApiClient(WebAppClient client)
         return response;
     }
 
-    public async Task<DomesticPaymentResponse> DomesticPaymentRead(ConsentExternalEntityReadParams readParams)
+    public async Task<DomesticPaymentResponse> DomesticPaymentRead(
+        ConsentExternalEntityReadParams readParams,
+        DomesticPaymentCustomBehaviour? customBehaviour)
     {
         // Read object
         var uriPath = $"/pisp/domestic-payments/{readParams.ExternalApiId}";
@@ -142,6 +166,61 @@ public class PaymentInitiationApiClient(WebAppClient client)
         // Checks
         response.Warnings.Should().BeNull();
         response.ExternalApiResponse.Should().NotBeNull();
+
+        // Check status
+        bool responseDataStatusMayBeWrong = customBehaviour?.ResponseDataStatusMayBeWrong ?? false;
+        if (!responseDataStatusMayBeWrong)
+        {
+            response.ExternalApiResponse.Data.Status.Should()
+                .BeOneOf(
+                    PaymentInitiationModelsPublic.Data4Status.AcceptedCreditSettlementCompleted,
+                    PaymentInitiationModelsPublic.Data4Status.AcceptedSettlementCompleted,
+                    PaymentInitiationModelsPublic.Data4Status.AcceptedWithoutPosting,
+                    PaymentInitiationModelsPublic.Data4Status.AcceptedSettlementInProcess);
+        }
+
+        // Check refund account
+        bool responseDataRefundMayBeMissingOrWrong = customBehaviour?.ResponseDataRefundMayBeMissingOrWrong ?? false;
+        if (!responseDataRefundMayBeMissingOrWrong)
+        {
+            response.ExternalApiResponse.Data.Refund.Should().NotBeNull();
+
+            bool responseDataRefundAccountSchemeNameMayBeMissingOrWrong =
+                customBehaviour?.ResponseDataRefundAccountSchemeNameMayBeMissingOrWrong ?? false;
+            if (!responseDataRefundAccountSchemeNameMayBeMissingOrWrong)
+            {
+                response.ExternalApiResponse.Data.Refund!.Account.SchemeName.Should()
+                    .Be("UK.OBIE.SortCodeAccountNumber");
+            }
+
+            bool responseDataRefundAccountIdentificationMayBeMissingOrWrong =
+                customBehaviour?.ResponseDataRefundAccountIdentificationMayBeMissingOrWrong ?? false;
+            if (!responseDataRefundAccountIdentificationMayBeMissingOrWrong)
+            {
+                response.ExternalApiResponse.Data.Refund!.Account.Identification.Should().HaveLength(14);
+            }
+        }
+
+        // Check debtor account
+        bool responseDataDebtorMayBeMissingOrWrong = customBehaviour?.ResponseDataDebtorMayBeMissingOrWrong ?? false;
+        if (!responseDataDebtorMayBeMissingOrWrong)
+        {
+            response.ExternalApiResponse.Data.Debtor.Should().NotBeNull();
+
+            bool responseDataDebtorSchemeNameMayBeMissingOrWrong =
+                customBehaviour?.ResponseDataDebtorSchemeNameMayBeMissingOrWrong ?? false;
+            if (!responseDataDebtorSchemeNameMayBeMissingOrWrong)
+            {
+                response.ExternalApiResponse.Data.Debtor!.SchemeName.Should().Be("UK.OBIE.SortCodeAccountNumber");
+            }
+
+            bool responseDataDebtorIdentificationMayBeMissingOrWrong =
+                customBehaviour?.ResponseDataDebtorIdentificationMayBeMissingOrWrong ?? false;
+            if (!responseDataDebtorIdentificationMayBeMissingOrWrong)
+            {
+                response.ExternalApiResponse.Data.Debtor!.Identification.Should().HaveLength(14);
+            }
+        }
 
         return response;
     }
@@ -169,7 +248,8 @@ public class PaymentInitiationApiClient(WebAppClient client)
 
     public async Task<DomesticPaymentResponse> DomesticPaymentCreate(
         DomesticPaymentRequest request,
-        ConsentExternalCreateParams createParams)
+        ConsentExternalCreateParams createParams,
+        DomesticPaymentCustomBehaviour? customBehaviour)
     {
         // Create object
         var uriPath = "/pisp/domestic-payments";
@@ -181,6 +261,49 @@ public class PaymentInitiationApiClient(WebAppClient client)
         // Checks
         response.Warnings.Should().BeNull();
         response.ExternalApiResponse.Should().NotBeNull();
+
+        // Check refund account
+        bool responseDataRefundMayBeMissingOrWrong = customBehaviour?.ResponseDataRefundMayBeMissingOrWrong ?? false;
+        if (!responseDataRefundMayBeMissingOrWrong)
+        {
+            response.ExternalApiResponse.Data.Refund.Should().NotBeNull();
+
+            bool responseDataRefundAccountSchemeNameMayBeMissingOrWrong =
+                customBehaviour?.ResponseDataRefundAccountSchemeNameMayBeMissingOrWrong ?? false;
+            if (!responseDataRefundAccountSchemeNameMayBeMissingOrWrong)
+            {
+                response.ExternalApiResponse.Data.Refund!.Account.SchemeName.Should()
+                    .Be("UK.OBIE.SortCodeAccountNumber");
+            }
+
+            bool responseDataRefundAccountIdentificationMayBeMissingOrWrong =
+                customBehaviour?.ResponseDataRefundAccountIdentificationMayBeMissingOrWrong ?? false;
+            if (!responseDataRefundAccountIdentificationMayBeMissingOrWrong)
+            {
+                response.ExternalApiResponse.Data.Refund!.Account.Identification.Should().HaveLength(14);
+            }
+        }
+
+        // Check debtor account
+        bool responseDataDebtorMayBeMissingOrWrong = customBehaviour?.ResponseDataDebtorMayBeMissingOrWrong ?? false;
+        if (!responseDataDebtorMayBeMissingOrWrong)
+        {
+            response.ExternalApiResponse.Data.Debtor.Should().NotBeNull();
+
+            bool responseDataDebtorSchemeNameMayBeMissingOrWrong =
+                customBehaviour?.ResponseDataDebtorSchemeNameMayBeMissingOrWrong ?? false;
+            if (!responseDataDebtorSchemeNameMayBeMissingOrWrong)
+            {
+                response.ExternalApiResponse.Data.Debtor!.SchemeName.Should().Be("UK.OBIE.SortCodeAccountNumber");
+            }
+
+            bool responseDataDebtorIdentificationMayBeMissingOrWrong =
+                customBehaviour?.ResponseDataDebtorIdentificationMayBeMissingOrWrong ?? false;
+            if (!responseDataDebtorIdentificationMayBeMissingOrWrong)
+            {
+                response.ExternalApiResponse.Data.Debtor!.Identification.Should().HaveLength(14);
+            }
+        }
 
         return response;
     }
