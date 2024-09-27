@@ -67,7 +67,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
-                AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
+                AccountAccessConsentTemplateExternalApiRequestAdjustments = externalApiRequest =>
                 {
                     var elementsToRemove =
                         new List<AccountAndTransactionModelsPublic.Permissions>

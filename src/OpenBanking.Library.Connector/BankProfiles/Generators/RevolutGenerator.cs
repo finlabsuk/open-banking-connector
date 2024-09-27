@@ -66,7 +66,7 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
             BankConfigurationApiSettings = new BankConfigurationApiSettings { UseRegistrationDeleteEndpoint = true },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
-                AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
+                AccountAccessConsentTemplateExternalApiRequestAdjustments = externalApiRequest =>
                 {
                     var elementsToRemove =
                         new List<AccountAndTransactionModelsPublic.Permissions>

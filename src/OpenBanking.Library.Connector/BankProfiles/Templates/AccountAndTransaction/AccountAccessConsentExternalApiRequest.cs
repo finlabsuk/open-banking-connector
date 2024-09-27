@@ -9,8 +9,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.A
 public static class AccountAccessTemplates
 {
     public static AccountAndTransactionModelsPublic.OBReadConsent1 AccountAccessConsentExternalApiRequest(
-        AccountAccessConsentTemplateType accountAccessConsentTemplateType) =>
-        accountAccessConsentTemplateType switch
+        AccountAccessConsentTemplateType accountAccessConsentTemplateType,
+        AccountAndTransactionApiSettings accountAndTransactionApiSettings)
+    {
+        AccountAndTransactionModelsPublic.OBReadConsent1 externalApiRequest = accountAccessConsentTemplateType switch
         {
             AccountAccessConsentTemplateType.MaximumPermissions => new AccountAndTransactionModelsPublic.OBReadConsent1
             {
@@ -52,4 +54,11 @@ public static class AccountAccessTemplates
                 accountAccessConsentTemplateType,
                 null)
         };
+
+        // Customise external API request using bank profile
+        externalApiRequest = accountAndTransactionApiSettings
+            .AccountAccessConsentTemplateExternalApiRequestAdjustments(externalApiRequest);
+
+        return externalApiRequest;
+    }
 }

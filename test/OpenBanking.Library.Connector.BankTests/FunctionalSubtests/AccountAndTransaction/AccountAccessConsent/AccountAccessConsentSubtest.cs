@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
@@ -16,7 +17,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTran
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Web;
 using Microsoft.EntityFrameworkCore;
@@ -439,11 +439,13 @@ public class AccountAccessConsentSubtest(
                 }
             };
 
-        accountAccessConsentRequest.ExternalApiRequest =
-            AccountAccessConsentPublicMethods.ResolveExternalApiRequest(
-                accountAccessConsentRequest.ExternalApiRequest,
-                accountAccessConsentRequest.TemplateRequest,
-                bankProfile); // Resolve for fuller logging
+        // Resolve external API request
+        accountAccessConsentRequest.ExternalApiRequest
+            ??= AccountAccessTemplates.AccountAccessConsentExternalApiRequest(
+                accountAccessConsentRequest.TemplateRequest?.Type ??
+                throw new InvalidOperationException(
+                    "Both ExternalApiRequest and TemplateRequest specified as null so not possible to create external API request."),
+                bankProfile.AccountAndTransactionApiSettings);
         DateTimeOffset?
             expDateTime =
                 accountAccessConsentRequest.ExternalApiRequest!.Data

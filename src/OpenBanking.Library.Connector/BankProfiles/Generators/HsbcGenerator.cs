@@ -93,7 +93,7 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
             BankConfigurationApiSettings = new BankConfigurationApiSettings { UseRegistrationGetEndpoint = true },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
-                AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
+                AccountAccessConsentTemplateExternalApiRequestAdjustments = externalApiRequest =>
                 {
                     var elementsToRemove =
                         new List<AccountAndTransactionModelsPublic.Permissions>

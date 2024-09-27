@@ -96,7 +96,7 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
-                AccountAccessConsentExternalApiRequestAdjustments = bank is MonzoBank.Sandbox
+                AccountAccessConsentTemplateExternalApiRequestAdjustments = bank is MonzoBank.Sandbox
                     ? externalApiRequest =>
                     {
                         externalApiRequest.Data.SupplementaryData =

@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -149,10 +150,12 @@ internal class
                     ccGrantAccessToken);
             var externalApiUrl = new Uri(accountAndTransactionApi.BaseUrl + RelativePathBeforeId);
             AccountAndTransactionModelsPublic.OBReadConsent1 externalApiRequest =
-                AccountAccessConsentPublicMethods.ResolveExternalApiRequest(
-                    request.ExternalApiRequest,
-                    request.TemplateRequest,
-                    bankProfile);
+                request.ExternalApiRequest ??
+                AccountAccessTemplates.AccountAccessConsentExternalApiRequest(
+                    request.TemplateRequest?.Type ??
+                    throw new InvalidOperationException(
+                        "Both ExternalApiRequest and TemplateRequest specified as null so not possible to create external API request."),
+                    bankProfile.AccountAndTransactionApiSettings);
             var tppReportingRequestInfo = new TppReportingRequestInfo
             {
                 EndpointDescription =

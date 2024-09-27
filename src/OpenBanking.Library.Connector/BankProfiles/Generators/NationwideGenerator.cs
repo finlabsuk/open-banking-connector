@@ -103,7 +103,7 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
-                AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
+                AccountAccessConsentTemplateExternalApiRequestAdjustments = externalApiRequest =>
                 {
                     var elementsToRemove = new List<AccountAndTransactionModelsPublic.Permissions>
                     {

@@ -96,7 +96,7 @@ public class CooperativeGenerator : BankProfileGeneratorBase<CooperativeBank>
             UseOpenIdConnect = false,
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
-                AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
+                AccountAccessConsentTemplateExternalApiRequestAdjustments = externalApiRequest =>
                 {
                     var elementsToRemove =
                         new List<AccountAndTransactionModelsPublic.Permissions>

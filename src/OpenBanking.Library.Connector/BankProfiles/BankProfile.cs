@@ -131,7 +131,7 @@ public class AccountAndTransactionApiSettings
     public bool UseReauth { get; init; } = true;
 
     public AccountAccessConsentExternalApiRequestAdjustments
-        AccountAccessConsentExternalApiRequestAdjustments { get; set; } = x => x;
+        AccountAccessConsentTemplateExternalApiRequestAdjustments { get; set; } = x => x;
 }
 
 public class PaymentInitiationApiSettings

@@ -109,7 +109,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
-                AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
+                AccountAccessConsentTemplateExternalApiRequestAdjustments = externalApiRequest =>
                 {
                     var elementsToRemove =
                         new List<AccountAndTransactionModelsPublic.Permissions>
