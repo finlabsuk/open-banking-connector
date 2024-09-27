@@ -26,6 +26,9 @@ public enum RegistrationScopeEnum
     [EnumMember(Value = "PaymentInitiation")]
     PaymentInitiation = 2,
 
+    [EnumMember(Value = "AccountAndTransactionPlusPaymentInitiation")]
+    AccountAndTransactionPlusPaymentInitiation = 3,
+
     [EnumMember(Value = "FundsConfirmation")]
     FundsConfirmation = 4,
 
@@ -48,6 +51,7 @@ public static class RegistrationScopeExtensions
             // RegistrationScope.None: invalid
             RegistrationScopeEnum.AccountAndTransaction => "AT",
             RegistrationScopeEnum.PaymentInitiation => "PI",
+            RegistrationScopeEnum.AccountAndTransactionPlusPaymentInitiation => "AI+PI",
             RegistrationScopeEnum.FundsConfirmation => "FC",
             RegistrationScopeEnum.All => "All",
             _ => throw new ArgumentOutOfRangeException(nameof(registrationScope), registrationScope, null)

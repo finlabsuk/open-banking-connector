@@ -108,8 +108,6 @@ public class BankConfigurationApiSettings
         }
     }
 
-    public bool TestTemporaryBankRegistration { get; set; }
-
     public bool UseRegistrationAccessToken { get; set; }
 
     public TokenEndpointAuthMethodSupportedValues TokenEndpointAuthMethod { get; set; } =
@@ -155,8 +153,6 @@ public class VariableRecurringPaymentsApiSettings
 
     public DomesticVrpExternalApiRequestAdjustments
         DomesticVrpExternalApiRequestAdjustments { get; set; } = x => x;
-
-    public bool UseReauth { get; init; } = false;
 
     public bool UseDomesticVrpGetPaymentDetailsEndpoint { get; init; } = false;
 }
