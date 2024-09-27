@@ -31,6 +31,7 @@ public class DomesticPaymentConsentSubtest(
         BankProfile bankProfile,
         Guid bankRegistrationId,
         OAuth2ResponseMode defaultResponseMode,
+        bool testAuth,
         PaymentsEnvFile paymentsEnvFile,
         string creditorAccount,
         string testNameUnique,
@@ -40,8 +41,6 @@ public class DomesticPaymentConsentSubtest(
         string authUrlLeftPart,
         BankUser? bankUser)
     {
-        var testDomesticPaymentConsentAuth = true;
-
         // Create DomesticPaymentConsent
         var instructionIdentification = Guid.NewGuid().ToString("N");
         string endToEndIdentification = Guid.NewGuid().ToString("N")[..31];
@@ -83,8 +82,8 @@ public class DomesticPaymentConsentSubtest(
                     ExcludeExternalApiOperation = false
                 });
 
-        // Consent authorisation
-        if (testDomesticPaymentConsentAuth)
+        // Perform testing which requires auth
+        if (testAuth)
         {
             // Create redirect observer which will "catch" redirect
             async Task<AuthContextUpdateAuthResultResponse> ProcessRedirectFcn(TestingAuthResult result)

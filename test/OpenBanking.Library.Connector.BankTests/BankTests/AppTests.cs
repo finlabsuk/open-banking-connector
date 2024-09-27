@@ -40,16 +40,56 @@ public class AppTests
     private static BankTestingFixture _classLevelWebApplicationFactory = null!;
 
     public static IEnumerable<object[]>
-        TestedUnskippedBanksById() =>
-        TestedBanksById(false, true);
+        GetDynamicClientRegistrationTestCases() =>
+        GetTestCases(TestType.DynamicClientRegistration);
 
     [DataTestMethod]
-    [DynamicData(nameof(TestedUnskippedBanksById), DynamicDataSourceType.Method)]
-    public async Task GenericHostAppTests(
+    [DynamicData(nameof(GetDynamicClientRegistrationTestCases), DynamicDataSourceType.Method)]
+    [DoNotParallelize]
+    public async Task DynamicClientRegistration(
         BankTestData1 testGroup, // name chosen to customise label in test runner
         BankTestData2 bankProfile) // name chosen to customise label in test runner
     {
-        await TestAllInner(testGroup, bankProfile, true);
+        await TestAllInner(testGroup, bankProfile);
+    }
+
+    public static IEnumerable<object[]>
+        GetAccountAccessConsentTestCases() =>
+        GetTestCases(TestType.AccountAccessConsent);
+
+    [DataTestMethod]
+    [DynamicData(nameof(GetAccountAccessConsentTestCases), DynamicDataSourceType.Method)]
+    public async Task AccountAccessConsent(
+        BankTestData1 testGroup, // name chosen to customise label in test runner
+        BankTestData2 bankProfile) // name chosen to customise label in test runner
+    {
+        await TestAllInner(testGroup, bankProfile);
+    }
+
+    public static IEnumerable<object[]>
+        GetDomesticPaymentConsentTestCases() =>
+        GetTestCases(TestType.DomesticPaymentConsent);
+
+    [DataTestMethod]
+    [DynamicData(nameof(GetDomesticPaymentConsentTestCases), DynamicDataSourceType.Method)]
+    public async Task DomesticPaymentConsent(
+        BankTestData1 testGroup, // name chosen to customise label in test runner
+        BankTestData2 bankProfile) // name chosen to customise label in test runner
+    {
+        await TestAllInner(testGroup, bankProfile);
+    }
+
+    public static IEnumerable<object[]>
+        GetDomesticVrpConsentTestCases() =>
+        GetTestCases(TestType.DomesticVrpConsent);
+
+    [DataTestMethod]
+    [DynamicData(nameof(GetDomesticVrpConsentTestCases), DynamicDataSourceType.Method)]
+    public async Task DomesticVrpConsent(
+        BankTestData1 testGroup, // name chosen to customise label in test runner
+        BankTestData2 bankProfile) // name chosen to customise label in test runner
+    {
+        await TestAllInner(testGroup, bankProfile);
     }
 
     [ClassInitialize]
@@ -70,9 +110,7 @@ public class AppTests
         _classLevelWebApplicationFactory.Dispose();
     }
 
-    public static IEnumerable<object[]> TestedBanksById(
-        bool skippedNotUnskipped,
-        bool genericAppNotPlainAppTest)
+    public static IEnumerable<object[]> GetTestCases(TestType testType)
     {
         // Read bank registrations list
         string bankRegistrationEnvFile = Path.Combine(
@@ -86,14 +124,16 @@ public class AppTests
         // Loop through test groups
         foreach (BankRegistrationEnv bankRegistrationEnv in bankRegistrationEnvs.Values)
         {
-            // Exit if no tests configured
-            bool testAccountAccessConsent = bankRegistrationEnv.TestAccountAccessConsent;
-            bool testDomesticPaymentConsent = bankRegistrationEnv.TestDomesticPaymentConsent;
-            bool testDomesticVrpConsent = bankRegistrationEnv.TestDomesticVrpConsent;
+            bool testConsent = testType switch
+            {
+                TestType.DynamicClientRegistration => bankRegistrationEnv.TestDynamicClientRegistration,
+                TestType.AccountAccessConsent => bankRegistrationEnv.TestAccountAccessConsent,
+                TestType.DomesticPaymentConsent => bankRegistrationEnv.TestDomesticPaymentConsent,
+                TestType.DomesticVrpConsent => bankRegistrationEnv.TestDomesticVrpConsent,
+                _ => throw new ArgumentOutOfRangeException(nameof(testType), testType, null)
+            };
 
-            if (!testAccountAccessConsent &&
-                !testDomesticPaymentConsent &&
-                !testDomesticVrpConsent)
+            if (!testConsent)
             {
                 continue;
             }
@@ -106,11 +146,34 @@ public class AppTests
             string? bankRegistrationRegistrationAccessTokenName =
                 bankRegistrationEnv.ExternalApiBankRegistrationRegistrationAccessTokenName;
 
-            // Get external API AccountAccessConsent ID
-            string? accountAccessConsentExternalApiId = bankRegistrationEnv.ExternalApiAccountAccessConsentId;
-
-            // Get payments info
-            string? testCreditorAccount = bankRegistrationEnv.TestCreditorAccount;
+            // Get info specific to test type
+            bool testAuth;
+            string? accountAccessConsentExternalApiId = null;
+            string? testCreditorAccount = null;
+            switch (testType)
+            {
+                case TestType.AccountAccessConsent:
+                    accountAccessConsentExternalApiId = bankRegistrationEnv.ExternalApiAccountAccessConsentId;
+                    testAuth = bankRegistrationEnv.TestAccountAccessConsentAuth;
+                    break;
+                case TestType.DomesticPaymentConsent:
+                    testCreditorAccount =
+                        bankRegistrationEnv.TestCreditorAccountDomesticPaymentConsent ??
+                        throw new InvalidOperationException(
+                            "No TestCreditorAccountDomesticPaymentConsent specified for domestic payment consent test.");
+                    testAuth = bankRegistrationEnv.TestDomesticPaymentConsentAuth;
+                    break;
+                case TestType.DomesticVrpConsent:
+                    testCreditorAccount =
+                        bankRegistrationEnv.TestCreditorAccountDomesticVrpConsent ??
+                        throw new InvalidOperationException(
+                            "No TestCreditorAccountDomesticVrpConsent specified for domestic VRP consent test.");
+                    testAuth = bankRegistrationEnv.TestDomesticVrpConsentAuth;
+                    break;
+                default:
+                    testAuth = false;
+                    break;
+            }
 
             // Get consent auth data (for sandboxes)
             string? authUiInputUserName = bankRegistrationEnv.SandboxAuthUserName;
@@ -119,37 +182,33 @@ public class AppTests
             string? authUiExtraWord2 = bankRegistrationEnv.SandboxAuthExtraWord2;
             string? authUiExtraWord3 = bankRegistrationEnv.SandboxAuthExtraWord3;
 
-            // Add test case to theory data if skip status matches that of theory data
-            if (!skippedNotUnskipped)
-            {
-                yield return
-                [
-                    new BankTestData1 { SoftwareStatementProfileId = softwareStatement }, new BankTestData2
-                    {
-                        BankProfileEnum = bankProfile,
-                        BankRegistrationExternalApiId = bankRegistrationExternalApiId,
-                        BankRegistrationExternalApiSecretName = bankRegistrationExternalApiSecretName,
-                        BankRegistrationRegistrationAccessTokenName =
-                            bankRegistrationRegistrationAccessTokenName,
-                        AccountAccessConsentExternalApiId = accountAccessConsentExternalApiId,
-                        AccountAccessConsentAuthContextNonce = null,
-                        RegistrationScope = registrationScope,
-                        AuthUiInputUserName = authUiInputUserName,
-                        AuthUiInputPassword = authUiInputPassword,
-                        AuthUiExtraWord1 = authUiExtraWord1,
-                        AuthUiExtraWord2 = authUiExtraWord2,
-                        AuthUiExtraWord3 = authUiExtraWord3,
-                        TestAccountAccessConsent = testAccountAccessConsent,
-                        TestDomesticPaymentConsent = testDomesticPaymentConsent,
-                        TestDomesticVrpConsent = testDomesticVrpConsent,
-                        TestCreditorAccount = testCreditorAccount
-                    }
-                ];
-            }
+            // Add test case
+            yield return
+            [
+                new BankTestData1 { SoftwareStatementProfileId = softwareStatement }, new BankTestData2
+                {
+                    BankProfileEnum = bankProfile,
+                    BankRegistrationExternalApiId = bankRegistrationExternalApiId,
+                    BankRegistrationExternalApiSecretName = bankRegistrationExternalApiSecretName,
+                    BankRegistrationRegistrationAccessTokenName =
+                        bankRegistrationRegistrationAccessTokenName,
+                    AccountAccessConsentExternalApiId = accountAccessConsentExternalApiId,
+                    AccountAccessConsentAuthContextNonce = null,
+                    RegistrationScope = registrationScope,
+                    AuthUiInputUserName = authUiInputUserName,
+                    AuthUiInputPassword = authUiInputPassword,
+                    AuthUiExtraWord1 = authUiExtraWord1,
+                    AuthUiExtraWord2 = authUiExtraWord2,
+                    AuthUiExtraWord3 = authUiExtraWord3,
+                    TestType = testType,
+                    TestAuth = testAuth,
+                    TestCreditorAccount = testCreditorAccount
+                }
+            ];
         }
     }
 
-    private async Task TestAllInner(BankTestData1 testData1, BankTestData2 testData2, bool genericNotPlainAppTest)
+    private async Task TestAllInner(BankTestData1 testData1, BankTestData2 testData2)
     {
         Console.WriteLine("AppTest Start");
         BankTestingFixture testLevelWebApplicationFactory = _classLevelWebApplicationFactory;
@@ -201,7 +260,7 @@ public class AppTests
         var memoryCache = appServiceProvider.GetRequiredService<IMemoryCache>();
 
         // Create test data writers
-        string topLevelFolderName = genericNotPlainAppTest ? "genericAppTests" : "plainAppTests";
+        var topLevelFolderName = "genericAppTests";
         var testDataProcessorFluentRequestLogging = new FilePathBuilder(
             Path.Combine(bankTestSettings.GetDataDirectoryForCurrentOs(), $"{topLevelFolderName}/fluent"),
             testName,
@@ -261,18 +320,17 @@ public class AppTests
         Guid obSealCertificateId = obSealCertificateResponse.Id;
         Guid softwareStatementId = softwareStatementResponse.Id;
 
-        // CREATE and READ bank configuration objects
-        // Create bankRegistration or use existing
-        RegistrationScopeEnum registrationScope = testData2.RegistrationScope;
-        BankRegistration bankRegistrationRequest = await BankRegistrationGetRequest(
-            bankProfile,
-            softwareStatementId,
-            registrationScope,
-            testDataProcessorFluentRequestLogging,
-            testNameUnique,
-            modifiedBy);
+        // Create BankRegistrationRequest
+        var bankRegistrationRequest = new BankRegistration
+        {
+            BankProfile = bankProfile.BankProfileEnum,
+            SoftwareStatementId = softwareStatementId,
+            RegistrationScope = testData2.RegistrationScope,
+            Reference = testNameUnique,
+            CreatedBy = modifiedBy
+        };
 
-        if (bankProfile.BankConfigurationApiSettings.TestTemporaryBankRegistration)
+        if (testData2.TestType is TestType.DynamicClientRegistration)
         {
             // Create fresh BankRegistration
             BankRegistrationResponse bankRegistrationResponseTmp =
@@ -283,6 +341,8 @@ public class AppTests
 
             // Delete BankRegistration (includes external API delete as appropriate)
             await BankRegistrationDelete(bankRegistrationResponseTmp.Id, false, managementApiClient);
+
+            return;
         }
 
         // Create BankRegistration using existing external API registration
@@ -318,9 +378,9 @@ public class AppTests
                 .GetLeftPart(UriPartial.Authority);
 
         // Run account access consent subtests
-        if (testData2.TestAccountAccessConsent)
+        if (testData2.TestType is TestType.AccountAccessConsent)
         {
-            if (!registrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction))
+            if (!testData2.RegistrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction))
             {
                 throw new InvalidOperationException(
                     "Cannot test AccountAndTransaction API due to missing registration scope.");
@@ -341,6 +401,7 @@ public class AppTests
                     testData2,
                     bankRegistrationId,
                     defaultResponseMode,
+                    testData2.TestAuth,
                     testNameUnique,
                     modifiedBy,
                     testDataProcessorFluentRequestLogging
@@ -354,8 +415,7 @@ public class AppTests
             }
         }
 
-        if (testData2.TestDomesticPaymentConsent ||
-            testData2.TestDomesticVrpConsent)
+        if (testData2.TestType is TestType.DomesticPaymentConsent or TestType.DomesticVrpConsent)
         {
             // Read payments .env file
             string paymentsEnvFileName = Path.Combine(
@@ -367,12 +427,12 @@ public class AppTests
                 new JsonSerializerOptions());
             string creditorAccount =
                 testData2.TestCreditorAccount ??
-                throw new InvalidOperationException("Creditor account not specified.");
+                throw new InvalidOperationException("No test creditor account specified for test.");
 
             // Run domestic payment consent subtests
-            if (testData2.TestDomesticPaymentConsent)
+            if (testData2.TestType is TestType.DomesticPaymentConsent)
             {
-                if (!registrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
+                if (!testData2.RegistrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
                 {
                     throw new InvalidOperationException(
                         "Cannot test PaymentInitiation API due to missing registration scope.");
@@ -392,6 +452,7 @@ public class AppTests
                         bankProfile,
                         bankRegistrationId,
                         defaultResponseMode,
+                        testData2.TestAuth,
                         paymentsEnvFile,
                         creditorAccount,
                         testNameUnique,
@@ -406,9 +467,9 @@ public class AppTests
             }
 
             // Run domestic VRP consent subtests
-            if (testData2.TestDomesticVrpConsent)
+            if (testData2.TestType is TestType.DomesticVrpConsent)
             {
-                if (!registrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
+                if (!testData2.RegistrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
                 {
                     throw new InvalidOperationException(
                         "Cannot test VariableRecurringPayments API due to missing registration scope.");
@@ -428,6 +489,7 @@ public class AppTests
                         bankProfile,
                         bankRegistrationId,
                         defaultResponseMode,
+                        testData2.TestAuth,
                         paymentsEnvFile,
                         creditorAccount,
                         testNameUnique,
@@ -623,30 +685,5 @@ public class AppTests
             });
 
         return baseResponse;
-    }
-
-    private static async Task<BankRegistration> BankRegistrationGetRequest(
-        BankProfile bankProfile,
-        Guid softwareStatementId,
-        RegistrationScopeEnum registrationScope,
-        FilePathBuilder testDataProcessorFluentRequestLogging,
-        string testNameUnique,
-        string modifiedBy)
-    {
-        var registrationRequest = new BankRegistration
-        {
-            BankProfile = bankProfile.BankProfileEnum,
-            SoftwareStatementId = default, // substitute logging placeholder
-            RegistrationScope = registrationScope
-        };
-        await testDataProcessorFluentRequestLogging
-            .AppendToPath("manage")
-            .AppendToPath("bankRegistration")
-            .AppendToPath("postRequest")
-            .WriteFile(registrationRequest);
-        registrationRequest.SoftwareStatementId = softwareStatementId;
-        registrationRequest.Reference = testNameUnique;
-        registrationRequest.CreatedBy = modifiedBy;
-        return registrationRequest;
     }
 }

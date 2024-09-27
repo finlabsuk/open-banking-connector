@@ -13,9 +13,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 /// </summary>
 public class BankTestData2
 {
-    public required BankProfileEnum BankProfileEnum { get; set; }
+    public required BankProfileEnum BankProfileEnum { get; init; }
 
-    public string? BankRegistrationExternalApiId { get; set; }
+    public required string BankRegistrationExternalApiId { get; init; }
 
     public string? BankRegistrationExternalApiSecretName { get; set; }
 
@@ -37,44 +37,23 @@ public class BankTestData2
 
     public string? AuthUiExtraWord3 { get; set; }
 
-    public required bool TestAccountAccessConsent { get; set; }
+    public required TestType TestType { get; init; }
 
-    public required bool TestDomesticPaymentConsent { get; set; }
-
-    public required bool TestDomesticVrpConsent { get; set; }
+    public required bool TestAuth { get; init; }
 
     public string? TestCreditorAccount { get; init; }
 
     public override string ToString()
     {
         string? extraBankProfileInfo = null;
-        if (BankRegistrationExternalApiId is not null ||
-            AccountAccessConsentExternalApiId is not null)
+        if (TestType is TestType.AccountAccessConsent or TestType.DomesticPaymentConsent or TestType.DomesticVrpConsent)
         {
-            var elements = new List<string>();
-
-            if (TestAccountAccessConsent)
+            if (!TestAuth)
             {
-                if (AccountAccessConsentExternalApiId is null)
-                {
-                    elements.Add("AISP (no auth)");
-                }
-                else
-                {
-                    elements.Add("AISP");
-                }
+                var elements = new List<string>();
+                elements.Add("no auth");
+                extraBankProfileInfo = "(" + string.Join(", ", elements) + ")";
             }
-
-            if (TestDomesticPaymentConsent)
-            {
-                elements.Add("PISP");
-            }
-            if (TestDomesticVrpConsent)
-            {
-                elements.Add("VRP");
-            }
-
-            extraBankProfileInfo = "(" + string.Join(", ", elements) + ")";
         }
 
         string label = $" {BankProfileEnum}" + (extraBankProfileInfo is null

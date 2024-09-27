@@ -39,6 +39,7 @@ public class DomesticVrpConsentSubtest(
         BankProfile bankProfile,
         Guid bankRegistrationId,
         OAuth2ResponseMode defaultResponseMode,
+        bool testAuth,
         PaymentsEnvFile paymentsEnvFile,
         string creditorAccount,
         string testNameUnique,
@@ -50,8 +51,6 @@ public class DomesticVrpConsentSubtest(
         IServiceProvider appServiceProvider,
         IMemoryCache memoryCache)
     {
-        var testDomesticVrpConsentAuth = true;
-
         // Create DomesticVrpConsent
         if (!paymentsEnvFile.TryGetValue(
                 creditorAccount,
@@ -85,8 +84,8 @@ public class DomesticVrpConsentSubtest(
                     ExcludeExternalApiOperation = false
                 });
 
-        // Consent authorisation
-        if (testDomesticVrpConsentAuth)
+        // Perform testing which requires auth
+        if (testAuth)
         {
             // Create redirect observer which will "catch" redirect
             async Task<AuthContextUpdateAuthResultResponse> ProcessRedirectFcn(TestingAuthResult result)
@@ -295,14 +294,13 @@ public class DomesticVrpConsentSubtest(
         }
 
         // Delete DomesticVrpConsent
-        var excludeExternalApiOperation = false;
         BaseResponse _ = await variableRecurringPaymentsApiClient.DomesticVrpConsentDelete(
             new ConsentDeleteParams
             {
                 Id = domesticVrpConsentId,
                 ModifiedBy = null,
                 ExtraHeaders = null,
-                ExcludeExternalApiOperation = excludeExternalApiOperation
+                ExcludeExternalApiOperation = false
             });
     }
 

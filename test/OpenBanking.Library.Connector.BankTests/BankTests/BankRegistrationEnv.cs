@@ -32,20 +32,35 @@ public class BankRegistrationEnv
     [JsonPropertyName("externalApiBankRegistrationRegistrationAccessTokenName")]
     public string? ExternalApiBankRegistrationRegistrationAccessTokenName { get; init; }
 
+    [JsonPropertyName("testDynamicClientRegistration")]
+    public bool TestDynamicClientRegistration { get; init; }
+
     [JsonPropertyName("testAccountAccessConsent")]
     public required bool TestAccountAccessConsent { get; init; }
+
+    [JsonPropertyName("testAccountAccessConsentAuth")]
+    public required bool TestAccountAccessConsentAuth { get; init; }
 
     [JsonPropertyName("testDomesticPaymentConsent")]
     public required bool TestDomesticPaymentConsent { get; init; }
 
+    [JsonPropertyName("testDomesticPaymentConsentAuth")]
+    public required bool TestDomesticPaymentConsentAuth { get; init; }
+
     [JsonPropertyName("testDomesticVrpConsent")]
     public required bool TestDomesticVrpConsent { get; init; }
+
+    [JsonPropertyName("testDomesticVrpConsentAuth")]
+    public required bool TestDomesticVrpConsentAuth { get; init; }
 
     [JsonPropertyName("externalApiAccountAccessConsentId")]
     public string? ExternalApiAccountAccessConsentId { get; init; }
 
-    [JsonPropertyName("testCreditorAccount")]
-    public string? TestCreditorAccount { get; init; }
+    [JsonPropertyName("testCreditorAccountDomesticPaymentConsent")]
+    public string? TestCreditorAccountDomesticPaymentConsent { get; init; }
+
+    [JsonPropertyName("testCreditorAccountDomesticVrpConsent")]
+    public string? TestCreditorAccountDomesticVrpConsent { get; init; }
 
     [JsonPropertyName("sandboxAuthUserName")]
     public string? SandboxAuthUserName { get; init; }

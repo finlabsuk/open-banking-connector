@@ -2,9 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
@@ -83,136 +81,6 @@ public class ConsentAuthoriserOptions
     public EmailOptions Email { get; set; } = new();
 }
 
-public class AuthUiInputData
-{
-    public string UserName { get; set; } = string.Empty;
-
-    public string Password { get; set; } = string.Empty;
-
-    public string ExtraWord1 { get; set; } = string.Empty;
-
-    public string ExtraWord2 { get; set; } = string.Empty;
-
-    public string ExtraWord3 { get; set; } = string.Empty;
-}
-
-public class AuthData
-{
-    public bool DisableAuth { get; set; } = false;
-
-    public AuthUiInputData? UiInput { get; set; }
-}
-
-/// <summary>
-///     Test case group specified by parameters and bank filtering rules
-/// </summary>
-public class TestGroup
-{
-    /// <summary>
-    ///     Software statement profile ID to use for this group of test cases
-    /// </summary>
-    public string SoftwareStatementProfileId { get; set; } = null!;
-
-    /// <summary>
-    ///     Bank registration scope to sue for this group of test cases
-    /// </summary>
-    public RegistrationScopeEnum RegistrationScope { get; set; }
-
-    /// <summary>
-    ///     Banks to test using GenericHostAppTest.
-    ///     List of banks where each bank is specified via its <see cref="BankProfileEnum" /> as a string.
-    /// </summary>
-    public List<BankProfileEnum> GenericHostAppTests { get; set; } =
-        new();
-
-    /// <summary>
-    ///     Banks to test using PlainAppTest.
-    ///     List of banks where each bank is specified via its <see cref="BankProfileEnum" /> as a string.
-    /// </summary>
-    public List<BankProfileEnum> PlainAppTests { get; set; } =
-        new();
-
-    /// <summary>
-    ///     Bank-specific overrides for software statement and certificate profiles.
-    ///     Dictionary whose keys are bankProfileEnums and values are override strings.
-    /// </summary>
-    public Dictionary<BankProfileEnum, string>
-        SoftwareStatementAndCertificateProfileOverrides { get; set; } =
-        new();
-
-    /// <summary>
-    ///     Existing external (bank) API BankRegistration objects (IDs in this property) to specify when using POST to create a
-    ///     new
-    ///     BankRegistration
-    ///     object.
-    ///     Dictionary whose keys are bankProfileEnums and values are strings.
-    /// </summary>
-    public Dictionary<BankProfileEnum, string>
-        BankRegistrationExternalApiIds { get; set; } =
-        new();
-
-    /// <summary>
-    ///     Existing external (bank) API BankRegistration objects (secrets in this property) to specify when using POST to
-    ///     create a new
-    ///     BankRegistration
-    ///     object. Secrets only used where corresponding ID specified.
-    ///     Dictionary whose keys are bankProfileEnums and values are strings.
-    /// </summary>
-    public Dictionary<BankProfileEnum, string>
-        BankRegistrationExternalApiSecrets { get; set; } =
-        new();
-
-    /// <summary>
-    ///     Existing external (bank) API BankRegistration objects (registration access tokens in this property) to specify when
-    ///     using POST to create a new
-    ///     BankRegistration
-    ///     object. Registration access tokens only used where corresponding ID specified.
-    ///     Dictionary whose keys are bankProfileEnums and values are strings.
-    /// </summary>
-    public Dictionary<BankProfileEnum, string>
-        BankRegistrationRegistrationAccessTokens { get; set; } =
-        new();
-
-    /// <summary>
-    ///     Existing external (bank) API AccountAccessConsent objects (IDs in this property) to specify when using POST to
-    ///     create a new
-    ///     AccountAccessConsent object.
-    ///     Dictionary whose keys are bankProfileEnums and values are strings.
-    /// </summary>
-    public Dictionary<BankProfileEnum, string>
-        AccountAccessConsentExternalApiIds { get; set; } =
-        new();
-
-    /// <summary>
-    ///     Existing external (bank) API AccountAccessConsent  (refresh tokens in this property)s to specify when using POST to
-    ///     create a new
-    ///     AccountAccessConsent object.
-    ///     Dictionary whose keys are bankProfileEnums and values are strings.
-    /// </summary>
-    public Dictionary<BankProfileEnum, string>
-        AccountAccessConsentRefreshTokens { get; set; } =
-        new();
-
-    /// <summary>
-    ///     Existing external (bank) API AccountAccessConsent (auth context nonce values in this property)s to specify when
-    ///     using POST to
-    ///     create a new
-    ///     AccountAccessConsent object.
-    ///     Dictionary whose keys are bankProfileEnums and values are strings.
-    /// </summary>
-    public Dictionary<BankProfileEnum, string>
-        AccountAccessConsentAuthContextNonces { get; set; } =
-        new();
-
-    public Dictionary<BankProfileEnum, bool>
-        TestDomesticPaymentConsent { get; set; } =
-        new();
-
-    public Dictionary<BankProfileEnum, bool>
-        TestDomesticVrpConsent { get; set; } =
-        new();
-}
-
 /// <summary>
 ///     Path to folder. This must be set to a valid
 ///     directory path for the current OS platform.
@@ -249,19 +117,7 @@ public class ExecutablePath
 
 public class BankTestSettings : ISettings<BankTestSettings>
 {
-    /// <summary>
-    ///     Named groups of bank tests.
-    /// </summary>
-    public Dictionary<string, TestGroup> TestGroups { get; set; } = new();
-
     public ConsentAuthoriserOptions Auth { get; set; } = new();
-
-    /// <summary>
-    ///     Consent auth data to use in consent auth automation (used for sandboxes).
-    ///     Dictionary whose keys are bankProfileEnums and values are strings.
-    /// </summary>
-    public Dictionary<BankProfileEnum, AuthData>
-        AuthData { get; set; } = new();
 
     /// <summary>
     ///     Path to data folder used for logging, "API overrides", and bank user information.
