@@ -35,7 +35,7 @@ public class DomesticVrpConsentSubtest(
         string testNameUnique,
         string modifiedBy,
         FilePathBuilder vrpFluentRequestLogging,
-        ConsentAuth? consentAuth,
+        ConsentAuth consentAuth,
         string authUrlLeftPart,
         BankUser? bankUser)
     {
@@ -49,6 +49,8 @@ public class DomesticVrpConsentSubtest(
         {
             return;
         }
+
+        var testDomesticVrpConsentAuth = true;
 
         // Create DomesticVrpConsent
         var domesticVrpTemplateRequest = new DomesticVrpTemplateRequest
@@ -93,7 +95,7 @@ public class DomesticVrpConsentSubtest(
                 });
 
         // Consent authorisation
-        if (consentAuth is not null)
+        if (testDomesticVrpConsentAuth)
         {
             // Create redirect observer which will "catch" redirect
             async Task<AuthContextUpdateAuthResultResponse> ProcessRedirectFcn(TestingAuthResult result)

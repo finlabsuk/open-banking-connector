@@ -36,7 +36,7 @@ public class DomesticPaymentConsentSubtest(
         string testNameUnique,
         string modifiedBy,
         FilePathBuilder pispFluentRequestLogging,
-        ConsentAuth? consentAuth,
+        ConsentAuth consentAuth,
         string authUrlLeftPart,
         BankUser? bankUser)
     {
@@ -52,6 +52,8 @@ public class DomesticPaymentConsentSubtest(
         {
             return;
         }
+
+        var testDomesticPaymentConsentAuth = true;
 
         // Create DomesticPaymentConsent
         var initiationInstructionIdentification = Guid.NewGuid().ToString("N");
@@ -92,7 +94,7 @@ public class DomesticPaymentConsentSubtest(
                 });
 
         // Consent authorisation
-        if (consentAuth is not null)
+        if (testDomesticPaymentConsentAuth)
         {
             // Create redirect observer which will "catch" redirect
             async Task<AuthContextUpdateAuthResultResponse> ProcessRedirectFcn(TestingAuthResult result)

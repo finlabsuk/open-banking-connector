@@ -17,9 +17,9 @@ public class BankTestData2
 
     public string? BankRegistrationExternalApiId { get; set; }
 
-    public string? BankRegistrationExternalApiSecret { get; set; }
+    public string? BankRegistrationExternalApiSecretName { get; set; }
 
-    public string? BankRegistrationRegistrationAccessToken { get; set; }
+    public string? BankRegistrationRegistrationAccessTokenName { get; set; }
 
     public string? AccountAccessConsentExternalApiId { get; set; }
 
@@ -37,7 +37,7 @@ public class BankTestData2
 
     public string? AuthUiExtraWord3 { get; set; }
 
-    public bool? AuthDisable { get; set; }
+    public required bool TestAccountAccessConsent { get; set; }
 
     public required bool TestDomesticPaymentConsent { get; set; }
 
@@ -51,11 +51,9 @@ public class BankTestData2
         {
             var elements = new List<string>();
 
-            bool supportsAisp = RegistrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction);
-            if (supportsAisp)
+            if (TestAccountAccessConsent)
             {
-                if (AccountAccessConsentExternalApiId is null ||
-                    AuthDisable is true)
+                if (AccountAccessConsentExternalApiId is null)
                 {
                     elements.Add("AISP (no auth)");
                 }

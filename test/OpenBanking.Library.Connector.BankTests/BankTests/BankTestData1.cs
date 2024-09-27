@@ -10,18 +10,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 /// </summary>
 public class BankTestData1
 {
-    public required string TestGroupName { get; set; }
-
     public required string SoftwareStatementProfileId { get; set; }
-
-    public string? SoftwareStatementAndCertificateProfileOverride { get; set; }
 
     public override string ToString()
     {
-        string label = $"{TestGroupName}" + (SoftwareStatementAndCertificateProfileOverride is null
-            ? string.Empty
-            : $" ({SoftwareStatementAndCertificateProfileOverride})");
-        const int labelLength = 20;
+        string label =
+            char.ToUpper(SoftwareStatementProfileId[0]) + SoftwareStatementProfileId[1..];
+        const int labelLength = 11;
         return label
             .PadRight(labelLength)
             .Substring(0, labelLength);

@@ -24,7 +24,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using FluentAssertions;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
 using ObSealCertificateRequest =
@@ -75,107 +74,73 @@ public class AppTests
         bool skippedNotUnskipped,
         bool genericAppNotPlainAppTest)
     {
-        // Get bank test settings
-        var bankTestSettings = AppConfiguration.GetSettings<BankTestSettings>();
-        //var env = AppConfiguration.EnvironmentName;
+        // Read bank registrations list
+        string bankRegistrationEnvFile = Path.Combine(
+            AppConfiguration.RequestsDirectory,
+            "BankRegistration",
+            "http-client.private.env.json");
+        BankRegistrationEnvFile bankRegistrationEnvs = DataFile.ReadFile<BankRegistrationEnvFile>(
+            bankRegistrationEnvFile,
+            new JsonSerializerOptions()).GetAwaiter().GetResult();
 
         // Loop through test groups
-        foreach ((string groupName, TestGroup testGroup) in bankTestSettings.TestGroups)
+        foreach (BankRegistrationEnv bankRegistrationEnv in bankRegistrationEnvs.Values)
         {
-            List<BankProfileEnum> testedBanks = genericAppNotPlainAppTest
-                ? testGroup.GenericHostAppTests
-                : testGroup.PlainAppTests;
+            // Exit if no tests configured
+            bool testAccountAccessConsent = bankRegistrationEnv.TestAccountAccessConsent;
+            bool testDomesticPaymentConsent = bankRegistrationEnv.TestDomesticPaymentConsent;
+            bool testDomesticVrpConsent = bankRegistrationEnv.TestDomesticVrpConsent;
 
-            // Loop through tested banks
-            foreach (BankProfileEnum bankProfileEnum in testedBanks)
+            if (!testAccountAccessConsent &&
+                !testDomesticPaymentConsent &&
+                !testDomesticVrpConsent)
             {
-                // Get override for software statement and certificate profiles
-                testGroup
-                    .SoftwareStatementAndCertificateProfileOverrides
-                    .TryGetValue(bankProfileEnum, out string? overrideCase);
+                continue;
+            }
 
-                // Get external API BankRegistration ID
-                testGroup
-                    .BankRegistrationExternalApiIds
-                    .TryGetValue(bankProfileEnum, out string? bankRegistrationExternalApiId);
+            string softwareStatement = bankRegistrationEnv.SoftwareStatement;
+            RegistrationScopeEnum registrationScope = bankRegistrationEnv.RegistrationScope;
+            BankProfileEnum bankProfile = bankRegistrationEnv.BankProfile;
+            string bankRegistrationExternalApiId = bankRegistrationEnv.ExternalApiBankRegistrationId;
+            string? bankRegistrationExternalApiSecretName = bankRegistrationEnv.ExternalApiClientSecretName;
+            string? bankRegistrationRegistrationAccessTokenName =
+                bankRegistrationEnv.ExternalApiBankRegistrationRegistrationAccessTokenName;
 
-                // Get external API BankRegistration secret
-                testGroup
-                    .BankRegistrationExternalApiSecrets
-                    .TryGetValue(bankProfileEnum, out string? bankRegistrationExternalApiSecret);
+            // Get external API AccountAccessConsent ID
+            string? accountAccessConsentExternalApiId = bankRegistrationEnv.ExternalApiAccountAccessConsentId;
 
-                // Get external API BankRegistration registration access token
-                testGroup
-                    .BankRegistrationRegistrationAccessTokens
-                    .TryGetValue(bankProfileEnum, out string? bankRegistrationRegistrationAccessToken);
+            // Get consent auth data (for sandboxes)
+            string? authUiInputUserName = bankRegistrationEnv.SandboxAuthUserName;
+            string? authUiInputPassword = bankRegistrationEnv.SandboxAuthPassword;
+            string? authUiExtraWord1 = bankRegistrationEnv.SandboxAuthExtraWord1;
+            string? authUiExtraWord2 = bankRegistrationEnv.SandboxAuthExtraWord2;
+            string? authUiExtraWord3 = bankRegistrationEnv.SandboxAuthExtraWord3;
 
-                // Get external API AccountAccessConsent ID
-                testGroup
-                    .AccountAccessConsentExternalApiIds
-                    .TryGetValue(bankProfileEnum, out string? accountAccessConsentExternalApiId);
-
-                // Get external API AccountAccessConsent refresh token
-                testGroup
-                    .AccountAccessConsentRefreshTokens
-                    .TryGetValue(bankProfileEnum, out string? accountAccessConsentRefreshToken);
-
-                // Get external API AccountAccessConsent refresh token
-                testGroup
-                    .AccountAccessConsentAuthContextNonces
-                    .TryGetValue(bankProfileEnum, out string? accountAccessConsentAuthContextNonce);
-
-                // Get consent auth data (for sandboxes)
-                bankTestSettings
-                    .AuthData
-                    .TryGetValue(bankProfileEnum, out AuthData? authData);
-
-                testGroup
-                    .TestDomesticPaymentConsent
-                    .TryGetValue(bankProfileEnum, out bool testDomesticPaymentConsent);
-
-                testGroup
-                    .TestDomesticVrpConsent
-                    .TryGetValue(bankProfileEnum, out bool testDomesticVrpConsent);
-
-                bool? authDisable = authData?.DisableAuth;
-                string? authUiInputUserName = authData?.UiInput?.UserName; // can only be null when UiInput null
-                string? authUiInputPassword = authData?.UiInput?.Password; // can only be null when UiInput null
-                string? authUiExtraWord1 = authData?.UiInput?.ExtraWord1;
-                string? authUiExtraWord2 = authData?.UiInput?.ExtraWord2;
-                string? authUiExtraWord3 = authData?.UiInput?.ExtraWord3;
-
-                // Add test case to theory data if skip status matches that of theory data
-                if (!skippedNotUnskipped)
-                {
-                    yield return
-                    [
-                        new BankTestData1
-                        {
-                            TestGroupName = groupName,
-                            SoftwareStatementProfileId = testGroup.SoftwareStatementProfileId,
-                            SoftwareStatementAndCertificateProfileOverride = overrideCase
-                        },
-                        new BankTestData2
-                        {
-                            BankProfileEnum = bankProfileEnum,
-                            BankRegistrationExternalApiId = bankRegistrationExternalApiId,
-                            BankRegistrationExternalApiSecret = bankRegistrationExternalApiSecret,
-                            BankRegistrationRegistrationAccessToken =
-                                bankRegistrationRegistrationAccessToken,
-                            AccountAccessConsentExternalApiId = accountAccessConsentExternalApiId,
-                            AccountAccessConsentAuthContextNonce = accountAccessConsentAuthContextNonce,
-                            RegistrationScope = testGroup.RegistrationScope,
-                            AuthDisable = authDisable,
-                            AuthUiInputUserName = authUiInputUserName,
-                            AuthUiInputPassword = authUiInputPassword,
-                            AuthUiExtraWord1 = authUiExtraWord1,
-                            AuthUiExtraWord2 = authUiExtraWord2,
-                            AuthUiExtraWord3 = authUiExtraWord3,
-                            TestDomesticPaymentConsent = testDomesticPaymentConsent,
-                            TestDomesticVrpConsent = testDomesticVrpConsent
-                        }
-                    ];
-                }
+            // Add test case to theory data if skip status matches that of theory data
+            if (!skippedNotUnskipped)
+            {
+                yield return
+                [
+                    new BankTestData1 { SoftwareStatementProfileId = softwareStatement }, new BankTestData2
+                    {
+                        BankProfileEnum = bankProfile,
+                        BankRegistrationExternalApiId = bankRegistrationExternalApiId,
+                        BankRegistrationExternalApiSecretName = bankRegistrationExternalApiSecretName,
+                        BankRegistrationRegistrationAccessTokenName =
+                            bankRegistrationRegistrationAccessTokenName,
+                        AccountAccessConsentExternalApiId = accountAccessConsentExternalApiId,
+                        AccountAccessConsentAuthContextNonce = null,
+                        RegistrationScope = registrationScope,
+                        AuthUiInputUserName = authUiInputUserName,
+                        AuthUiInputPassword = authUiInputPassword,
+                        AuthUiExtraWord1 = authUiExtraWord1,
+                        AuthUiExtraWord2 = authUiExtraWord2,
+                        AuthUiExtraWord3 = authUiExtraWord3,
+                        TestAccountAccessConsent = testAccountAccessConsent,
+                        TestDomesticPaymentConsent = testDomesticPaymentConsent,
+                        TestDomesticVrpConsent = testDomesticVrpConsent
+                    }
+                ];
             }
         }
     }
@@ -221,10 +186,10 @@ public class AppTests
             ? new BankUser
             {
                 UserNameOrNumber = testData2.AuthUiInputUserName,
-                Password = testData2.AuthUiInputPassword!, // not null when AuthUiInputUserName not null
-                ExtraWord1 = testData2.AuthUiExtraWord1!,
-                ExtraWord2 = testData2.AuthUiExtraWord2!,
-                ExtraWord3 = testData2.AuthUiExtraWord3!
+                Password = testData2.AuthUiInputPassword ?? string.Empty,
+                ExtraWord1 = testData2.AuthUiExtraWord1 ?? string.Empty,
+                ExtraWord2 = testData2.AuthUiExtraWord2 ?? string.Empty,
+                ExtraWord3 = testData2.AuthUiExtraWord3 ?? string.Empty
             }
             : null;
 
@@ -247,48 +212,29 @@ public class AppTests
                 ".json");
         }
 
-        // Get secrets directory
-        var userSecretsId = "aa921213-9461-4f9e-8fec-153624ec67ad"; // from .csproj file
-        string secretsPath = PathHelper.GetSecretsPathFromSecretsId(userSecretsId);
-        string secretsDirectory = Path.GetDirectoryName(secretsPath) ?? throw new InvalidOperationException();
-
-        // Create consent auth if in use
-        ConsentAuth? consentAuth;
-        bool useConsentAuth = genericNotPlainAppTest;
-        if (useConsentAuth)
+        // Create consent auth
+        PlaywrightLaunchOptions launchOptions =
+            bankTestSettings.Auth.PlaywrightLaunch;
+        if (launchOptions is null)
         {
-            PlaywrightLaunchOptions launchOptions =
-                bankTestSettings.Auth.PlaywrightLaunch;
-
-            if (launchOptions is null)
-            {
-                throw new ArgumentNullException($"{nameof(launchOptions)}");
-            }
-
-            var browserTypeLaunchOptions = new BrowserTypeLaunchOptions
-            {
-                Args = launchOptions.ProcessedArgs,
-                ExecutablePath = launchOptions.ProcessedExecutablePath,
-                Headless = launchOptions.Headless,
-                SlowMo = launchOptions.ProcessedSlowMo,
-                Timeout = launchOptions.TimeOut
-            };
-
-            EmailOptions emailOptions = bankTestSettings.Auth.Email;
-
-            consentAuth = new ConsentAuth(browserTypeLaunchOptions, emailOptions, bankProfileDefinitions);
+            throw new ArgumentNullException($"{nameof(launchOptions)}");
         }
-        else
+        var browserTypeLaunchOptions = new BrowserTypeLaunchOptions
         {
-            consentAuth = null;
-        }
+            Args = launchOptions.ProcessedArgs,
+            ExecutablePath = launchOptions.ProcessedExecutablePath,
+            Headless = launchOptions.Headless,
+            SlowMo = launchOptions.ProcessedSlowMo,
+            Timeout = launchOptions.TimeOut
+        };
+        EmailOptions emailOptions = bankTestSettings.Auth.Email;
+        var consentAuth = new ConsentAuth(browserTypeLaunchOptions, emailOptions, bankProfileDefinitions);
 
         var modifiedBy = "Automated bank tests";
 
         // Create and read software statement (incl. certificates)
         string softwareStatementEnvFile = Path.Combine(
-            secretsDirectory,
-            "Requests",
+            AppConfiguration.RequestsDirectory,
             "SoftwareStatement",
             "http-client.private.env.json");
         var softwareStatementEnvs = await DataFile.ReadFile<SoftwareStatementEnvFile>(
@@ -339,12 +285,16 @@ public class AppTests
         bankRegistrationRequest.ExternalApiId =
             testData2.BankRegistrationExternalApiId ??
             throw new InvalidOperationException("No external API BankRegistration ID provided.");
-        if (testData2.BankRegistrationExternalApiSecret is not null)
+        if (testData2.BankRegistrationExternalApiSecretName is not null)
         {
             bankRegistrationRequest.ExternalApiSecretFromSecrets =
-                new SecretDescription { Name = testData2.BankRegistrationExternalApiSecret };
+                new SecretDescription { Name = testData2.BankRegistrationExternalApiSecretName };
         }
-        bankRegistrationRequest.RegistrationAccessToken = testData2.BankRegistrationRegistrationAccessToken;
+        if (testData2.BankRegistrationRegistrationAccessTokenName is not null)
+        {
+            bankRegistrationRequest.RegistrationAccessTokenFromSecrets =
+                new SecretDescription { Name = testData2.BankRegistrationRegistrationAccessTokenName };
+        }
         BankRegistrationResponse bankRegistrationCreateResponse =
             await BankRegistrationCreate(
                 bankRegistrationRequest,
@@ -354,7 +304,6 @@ public class AppTests
         OAuth2ResponseMode defaultResponseMode =
             bankRegistrationCreateResponse.DefaultResponseModeOverride ?? bankProfile.DefaultResponseMode;
 
-        // Run account access consent subtests
         string redirectUri = GetRedirectUri(
             defaultResponseMode,
             bankRegistrationCreateResponse.DefaultFragmentRedirectUri,
@@ -363,8 +312,22 @@ public class AppTests
         string authUrlLeftPart =
             new Uri(redirectUri)
                 .GetLeftPart(UriPartial.Authority);
-        if (registrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction))
+
+        // Run account access consent subtests
+        if (testData2.TestAccountAccessConsent)
         {
+            if (!registrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction))
+            {
+                throw new InvalidOperationException(
+                    "Cannot test AccountAndTransaction API due to missing registration scope.");
+            }
+
+            if (bankProfile.AccountAndTransactionApi is null)
+            {
+                throw new InvalidOperationException(
+                    "Cannot test AccountAndTransaction API as no API specified in bank profile.");
+            }
+
             foreach (AccountAccessConsentSubtestEnum subTest in
                      AccountAccessConsentSubtest.AccountAccessConsentSubtestsSupported(bankProfile))
             {
@@ -387,50 +350,71 @@ public class AppTests
             }
         }
 
-        if (registrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
+        // Run domestic payment consent subtests
+        if (testData2.TestDomesticPaymentConsent)
         {
-            // Run domestic payment consent subtests
-            if (testData2.TestDomesticPaymentConsent)
+            if (!registrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
             {
-                foreach (DomesticPaymentSubtestEnum subTest in
-                         DomesticPaymentConsentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
-                {
-                    await domesticPaymentConsentSubtest.RunTest(
-                        subTest,
-                        bankProfile,
-                        bankRegistrationId,
-                        defaultResponseMode,
-                        testNameUnique,
-                        modifiedBy,
-                        testDataProcessorFluentRequestLogging
-                            .AppendToPath("pisp")
-                            .AppendToPath($"{subTest.ToString()}"),
-                        consentAuth,
-                        authUrlLeftPart,
-                        bankUser);
-                }
+                throw new InvalidOperationException(
+                    "Cannot test PaymentInitiation API due to missing registration scope.");
             }
 
-            // Run domestic VRP consent subtests
-            if (testData2.TestDomesticVrpConsent)
+            if (bankProfile.PaymentInitiationApi is null)
             {
-                foreach (DomesticVrpSubtestEnum subTest in
-                         DomesticVrpConsentSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
-                {
-                    await domesticVrpConsentSubtest.RunTest(
-                        subTest,
-                        bankProfile,
-                        bankRegistrationId,
-                        defaultResponseMode,
-                        testNameUnique,
-                        modifiedBy,
-                        testDataProcessorFluentRequestLogging
-                            .AppendToPath("vrp")
-                            .AppendToPath($"{subTest.ToString()}"),
-                        consentAuth,
-                        authUrlLeftPart,
-                        bankUser);
-                }
+                throw new InvalidOperationException(
+                    "Cannot test PaymentInitiation API as no API specified in bank profile.");
+            }
+
+            foreach (DomesticPaymentSubtestEnum subTest in
+                     DomesticPaymentConsentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
+            {
+                await domesticPaymentConsentSubtest.RunTest(
+                    subTest,
+                    bankProfile,
+                    bankRegistrationId,
+                    defaultResponseMode,
+                    testNameUnique,
+                    modifiedBy,
+                    testDataProcessorFluentRequestLogging
+                        .AppendToPath("pisp")
+                        .AppendToPath($"{subTest.ToString()}"),
+                    consentAuth,
+                    authUrlLeftPart,
+                    bankUser);
+            }
+        }
+
+        // Run domestic VRP consent subtests
+        if (testData2.TestDomesticVrpConsent)
+        {
+            if (!registrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
+            {
+                throw new InvalidOperationException(
+                    "Cannot test VariableRecurringPayments API due to missing registration scope.");
+            }
+
+            if (bankProfile.VariableRecurringPaymentsApi is null)
+            {
+                throw new InvalidOperationException(
+                    "Cannot test VariableRecurringPayments API as no API specified in bank profile.");
+            }
+
+            foreach (DomesticVrpSubtestEnum subTest in
+                     DomesticVrpConsentSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
+            {
+                await domesticVrpConsentSubtest.RunTest(
+                    subTest,
+                    bankProfile,
+                    bankRegistrationId,
+                    defaultResponseMode,
+                    testNameUnique,
+                    modifiedBy,
+                    testDataProcessorFluentRequestLogging
+                        .AppendToPath("vrp")
+                        .AppendToPath($"{subTest.ToString()}"),
+                    consentAuth,
+                    authUrlLeftPart,
+                    bankUser);
             }
         }
 

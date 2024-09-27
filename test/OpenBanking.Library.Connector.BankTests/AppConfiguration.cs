@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests;
 
@@ -33,7 +34,19 @@ public static class AppConfiguration
                 });
 
         Configuration = builder.Configuration;
+
+        // Get requests directory
+        var userSecretsId = "aa921213-9461-4f9e-8fec-153624ec67ad"; // from .csproj file
+        string secretsPath = PathHelper.GetSecretsPathFromSecretsId(userSecretsId);
+        string secretsDirectory = Path.GetDirectoryName(secretsPath) ?? throw new InvalidOperationException();
+        RequestsDirectory = Path.Combine(secretsDirectory, "Requests");
+        if (!Directory.Exists(RequestsDirectory))
+        {
+            throw new DirectoryNotFoundException("Cannot find Requests directory.");
+        }
     }
+
+    public static string RequestsDirectory { get; }
 
     public static IConfiguration Configuration { get; }
 
