@@ -28,4 +28,25 @@ public class OBTypesTests
 
         result.Should().BeEquivalentTo(obCurrencyExchange5);
     }
+
+    [Fact]
+    public void ConvertOBTransactionCashBalance()
+    {
+        var obTransactionCashBalance = new AccountAndTransactionModelsPublic.OBTransactionCashBalance
+        {
+            CreditDebitIndicator = AccountAndTransactionModelsPublic.OBCreditDebitCode_2.Credit,
+            Type = AccountAndTransactionModelsPublic.OBBalanceType1Code.InterimBooked,
+            Amount = null
+        };
+
+        string jsonString = JsonConvert.SerializeObject(
+            obTransactionCashBalance,
+            Formatting.Indented,
+            new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+
+        var result =
+            JsonConvert.DeserializeObject<AccountAndTransactionModelsPublic.OBTransactionCashBalance>(jsonString);
+
+        result.Should().BeEquivalentTo(obTransactionCashBalance);
+    }
 }

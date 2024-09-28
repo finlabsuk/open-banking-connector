@@ -2745,9 +2745,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// <summary>
         /// Amount of money of the cash balance after a transaction entry is applied to the account..
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        public Amount Amount { get; set; } = new Amount();
+        [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Amount? Amount { get; set; } = default!;
 
     }
 
