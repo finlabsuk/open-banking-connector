@@ -79,7 +79,9 @@ internal class ConsentAccessTokenGet
         // Check nonce available
         string nonce =
             consent.AuthContextNonce ??
-            throw new InvalidOperationException("No nonce is available for Consent.");
+            throw new InvalidOperationException(
+                "No nonce is available for consent. " +
+                "The most likely cause is that the consent has not been successfully authorised.");
 
         async Task<string> GetAccessTokenAsync(ICacheEntry cacheEntry)
         {
