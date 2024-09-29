@@ -32,8 +32,7 @@ public class DomesticPaymentConsentSubtest(
         Guid bankRegistrationId,
         OAuth2ResponseMode defaultResponseMode,
         bool testAuth,
-        PaymentsEnvFile paymentsEnvFile,
-        string creditorAccount,
+        PaymentsEnv paymentsEnv,
         string testNameUnique,
         string modifiedBy,
         FilePathBuilder pispFluentRequestLogging,
@@ -47,12 +46,6 @@ public class DomesticPaymentConsentSubtest(
         double amountDouble = Random.Shared.Next(10, 300) / 100.0;
         var amount = amountDouble.ToString("F2");
 
-        if (!paymentsEnvFile.TryGetValue(
-                creditorAccount,
-                out PaymentsEnv? paymentsEnv))
-        {
-            throw new InvalidOperationException($"Creditor account {creditorAccount} specified but not found.");
-        }
 
         DomesticPaymentConsentRequest domesticPaymentConsentRequest = await GetDomesticPaymentConsentRequest(
             bankRegistrationId,
@@ -254,7 +247,10 @@ public class DomesticPaymentConsentSubtest(
                         Name = "placeholder" // logging placeholder
                     },
                     RemittanceInformation =
-                        new PaymentInitiationModelsPublic.RemittanceInformation { Reference = "Integration test" }
+                        new PaymentInitiationModelsPublic.RemittanceInformation
+                        {
+                            Reference = "placeholder" // logging placeholder 
+                        }
                 }
             },
             Risk = new PaymentInitiationModelsPublic.OBRisk1
@@ -289,6 +285,8 @@ public class DomesticPaymentConsentSubtest(
             paymentsEnv.AccountId; // replace logging placeholder
         domesticPaymentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
             paymentsEnv.AccountName; // replace logging placeholder
+        domesticPaymentRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Reference =
+            "DP " + paymentsEnv.ShortName; // replace logging placeholder
         domesticPaymentRequest.ModifiedBy = modifiedBy;
 
         return domesticPaymentRequest;
@@ -326,7 +324,10 @@ public class DomesticPaymentConsentSubtest(
                         Name = "placeholder" // logging placeholder
                     },
                     RemittanceInformation =
-                        new PaymentInitiationModelsPublic.RemittanceInformation2 { Reference = "Integration test" }
+                        new PaymentInitiationModelsPublic.RemittanceInformation2
+                        {
+                            Reference = "placeholder" // logging placeholder 
+                        }
                 }
             },
             Risk = new PaymentInitiationModelsPublic.OBRisk1
@@ -364,6 +365,8 @@ public class DomesticPaymentConsentSubtest(
             paymentsEnv.AccountId; // replace logging placeholder
         domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
             paymentsEnv.AccountName; // replace logging placeholder
+        domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Reference =
+            "DP " + paymentsEnv.ShortName; // replace logging placeholder
         domesticPaymentConsentRequest.Reference = testNameUnique; // replace logging placeholder
         domesticPaymentConsentRequest.CreatedBy = modifiedBy; // replace logging placeholder
 

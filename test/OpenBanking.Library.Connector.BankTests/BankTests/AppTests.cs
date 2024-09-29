@@ -409,6 +409,16 @@ public class AppTests
             string creditorAccount =
                 testData.TestCreditorAccount ??
                 throw new InvalidOperationException("No test creditor account specified for test.");
+            if (!paymentsEnvFile.TryGetValue(
+                    creditorAccount,
+                    out PaymentsEnv? paymentsEnv))
+            {
+                throw new InvalidOperationException($"Creditor account {creditorAccount} specified but not found.");
+            }
+            if (paymentsEnv.ShortName.Length > 15)
+            {
+                throw new InvalidOperationException("Short name too long.");
+            }
 
             // Run domestic payment consent subtests
             if (testData.TestType is TestType.DomesticPaymentConsent)
@@ -434,8 +444,7 @@ public class AppTests
                         bankRegistrationId,
                         defaultResponseMode,
                         testData.TestAuth,
-                        paymentsEnvFile,
-                        creditorAccount,
+                        paymentsEnv,
                         testNameUnique,
                         modifiedBy,
                         testDataProcessorFluentRequestLogging
@@ -471,8 +480,7 @@ public class AppTests
                         bankRegistrationId,
                         defaultResponseMode,
                         testData.TestAuth,
-                        paymentsEnvFile,
-                        creditorAccount,
+                        paymentsEnv,
                         testNameUnique,
                         modifiedBy,
                         testDataProcessorFluentRequestLogging

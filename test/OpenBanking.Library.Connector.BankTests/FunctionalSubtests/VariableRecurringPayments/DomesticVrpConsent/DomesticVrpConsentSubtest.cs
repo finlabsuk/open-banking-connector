@@ -40,8 +40,7 @@ public class DomesticVrpConsentSubtest(
         Guid bankRegistrationId,
         OAuth2ResponseMode defaultResponseMode,
         bool testAuth,
-        PaymentsEnvFile paymentsEnvFile,
-        string creditorAccount,
+        PaymentsEnv paymentsEnv,
         string testNameUnique,
         string modifiedBy,
         FilePathBuilder vrpFluentRequestLogging,
@@ -52,13 +51,6 @@ public class DomesticVrpConsentSubtest(
         IMemoryCache memoryCache)
     {
         // Create DomesticVrpConsent
-        if (!paymentsEnvFile.TryGetValue(
-                creditorAccount,
-                out PaymentsEnv? paymentsEnv))
-        {
-            throw new InvalidOperationException($"Creditor account {creditorAccount} specified but not found.");
-        }
-
         DomesticVrpConsentRequest domesticVrpConsentRequest = await GetDomesticVrpConsentRequest(
             bankRegistrationId,
             testNameUnique,
@@ -158,6 +150,7 @@ public class DomesticVrpConsentSubtest(
                     modifiedBy,
                     vrpFluentRequestLogging,
                     amount,
+                    paymentsEnv,
                     bankProfile.VariableRecurringPaymentsApiSettings);
             DomesticVrpConsentFundsConfirmationResponse domesticPaymentConsentResp4 =
                 await variableRecurringPaymentsApiClient.DomesticVrpConsentCreateFundsConfirmation(
@@ -280,6 +273,7 @@ public class DomesticVrpConsentSubtest(
                         modifiedBy,
                         vrpFluentRequestLogging,
                         amount2,
+                        paymentsEnv,
                         bankProfile.VariableRecurringPaymentsApiSettings);
                 await variableRecurringPaymentsApiClient.DomesticVrpConsentCreateFundsConfirmation(
                     new VrpConsentFundsConfirmationCreateParams
@@ -308,6 +302,7 @@ public class DomesticVrpConsentSubtest(
         string modifiedBy,
         FilePathBuilder vrpFluentRequestLogging,
         string amount,
+        PaymentsEnv paymentsEnv,
         VariableRecurringPaymentsApiSettings variableRecurringPaymentsApiSettings)
     {
         var externalApiRequest =
@@ -316,7 +311,7 @@ public class DomesticVrpConsentSubtest(
                 Data = new VariableRecurringPaymentsModelsPublic.Data6
                 {
                     ConsentId = "",
-                    Reference = "Integration test",
+                    Reference = "placeholder", // logging placeholder
                     InstructedAmount = new VariableRecurringPaymentsModelsPublic.OBActiveOrHistoricCurrencyAndAmount
                     {
                         Amount = "placeholder", // logging placeholder
@@ -339,9 +334,11 @@ public class DomesticVrpConsentSubtest(
             .AppendToPath("postRequest")
             .WriteFile(domesticVrpConsentFundsConfirmationRequest);
 
-        domesticVrpConsentFundsConfirmationRequest.ModifiedBy = modifiedBy; // replace logging placeholder
         domesticVrpConsentFundsConfirmationRequest.ExternalApiRequest.Data.InstructedAmount.Amount =
             amount; // replace logging placeholder
+        domesticVrpConsentFundsConfirmationRequest.ExternalApiRequest.Data.Reference =
+            "DV " + paymentsEnv.ShortName; // replace logging placeholder
+        domesticVrpConsentFundsConfirmationRequest.ModifiedBy = modifiedBy; // replace logging placeholder
 
         return domesticVrpConsentFundsConfirmationRequest;
     }
@@ -375,7 +372,7 @@ public class DomesticVrpConsentSubtest(
                     RemittanceInformation =
                         new VariableRecurringPaymentsModelsPublic.RemittanceInformation
                         {
-                            Reference = "Integration test"
+                            Reference = "placeholder" // logging placeholder 
                         }
                 },
                 Instruction = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInstruction
@@ -385,7 +382,7 @@ public class DomesticVrpConsentSubtest(
                     RemittanceInformation =
                         new VariableRecurringPaymentsModelsPublic.OBVRPRemittanceInformation
                         {
-                            Reference = "Integration test"
+                            Reference = "placeholder" // logging placeholder 
                         },
                     InstructedAmount = new VariableRecurringPaymentsModelsPublic.OBActiveOrHistoricCurrencyAndAmount
                     {
@@ -430,10 +427,14 @@ public class DomesticVrpConsentSubtest(
             paymentsEnv.AccountId; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
             paymentsEnv.AccountName; // replace logging placeholder
+        domesticVrpRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Reference =
+            "DV " + paymentsEnv.ShortName; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.InstructionIdentification =
             instructionIdentification; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.EndToEndIdentification =
             endToEndIdentification; // replace logging placeholder
+        domesticVrpRequest.ExternalApiRequest.Data.Instruction.RemittanceInformation!.Reference =
+            "DV " + paymentsEnv.ShortName; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.InstructedAmount.Amount =
             amount; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.CreditorAccount.SchemeName =
@@ -499,7 +500,7 @@ public class DomesticVrpConsentSubtest(
                         RemittanceInformation =
                             new VariableRecurringPaymentsModelsPublic.RemittanceInformation
                             {
-                                Reference = "Integration test"
+                                Reference = "placeholder" // logging placeholder 
                             }
                     }
                 },
@@ -534,6 +535,9 @@ public class DomesticVrpConsentSubtest(
             paymentsEnv.AccountId; // replace logging placeholder
         domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
             paymentsEnv.AccountName; // replace logging placeholder
+        domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Reference =
+            "DV " + paymentsEnv.ShortName; // replace logging placeholder
+
         domesticVrpConsentRequest.Reference = testNameUnique; // replace logging placeholder
         domesticVrpConsentRequest.CreatedBy = modifiedBy; // replace logging placeholder
 
