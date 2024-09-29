@@ -46,12 +46,7 @@ public class AppTests
     [DataTestMethod]
     [DynamicData(nameof(GetDynamicClientRegistrationTestCases), DynamicDataSourceType.Method)]
     [DoNotParallelize]
-    public async Task DynamicClientRegistration(
-        BankTestData1 testGroup, // name chosen to customise label in test runner
-        BankTestData2 bankProfile) // name chosen to customise label in test runner
-    {
-        await TestAllInner(testGroup, bankProfile);
-    }
+    public async Task DynamicClientRegistration(BankTestData bankTestData) => await TestAllInner(bankTestData);
 
     public static IEnumerable<object[]>
         GetAccountAccessConsentTestCases() =>
@@ -59,12 +54,7 @@ public class AppTests
 
     [DataTestMethod]
     [DynamicData(nameof(GetAccountAccessConsentTestCases), DynamicDataSourceType.Method)]
-    public async Task AccountAccessConsent(
-        BankTestData1 testGroup, // name chosen to customise label in test runner
-        BankTestData2 bankProfile) // name chosen to customise label in test runner
-    {
-        await TestAllInner(testGroup, bankProfile);
-    }
+    public async Task AccountAccessConsent(BankTestData bankTestData) => await TestAllInner(bankTestData);
 
     public static IEnumerable<object[]>
         GetDomesticPaymentConsentTestCases() =>
@@ -72,12 +62,7 @@ public class AppTests
 
     [DataTestMethod]
     [DynamicData(nameof(GetDomesticPaymentConsentTestCases), DynamicDataSourceType.Method)]
-    public async Task DomesticPaymentConsent(
-        BankTestData1 testGroup, // name chosen to customise label in test runner
-        BankTestData2 bankProfile) // name chosen to customise label in test runner
-    {
-        await TestAllInner(testGroup, bankProfile);
-    }
+    public async Task DomesticPaymentConsent(BankTestData bankTestData) => await TestAllInner(bankTestData);
 
     public static IEnumerable<object[]>
         GetDomesticVrpConsentTestCases() =>
@@ -85,12 +70,7 @@ public class AppTests
 
     [DataTestMethod]
     [DynamicData(nameof(GetDomesticVrpConsentTestCases), DynamicDataSourceType.Method)]
-    public async Task DomesticVrpConsent(
-        BankTestData1 testGroup, // name chosen to customise label in test runner
-        BankTestData2 bankProfile) // name chosen to customise label in test runner
-    {
-        await TestAllInner(testGroup, bankProfile);
-    }
+    public async Task DomesticVrpConsent(BankTestData bankTestData) => await TestAllInner(bankTestData);
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext context)
@@ -185,8 +165,9 @@ public class AppTests
             // Add test case
             yield return
             [
-                new BankTestData1 { SoftwareStatementProfileId = softwareStatement }, new BankTestData2
+                new BankTestData
                 {
+                    SoftwareStatementProfileId = softwareStatement,
                     BankProfileEnum = bankProfile,
                     BankRegistrationExternalApiId = bankRegistrationExternalApiId,
                     BankRegistrationExternalApiSecretName = bankRegistrationExternalApiSecretName,
@@ -208,7 +189,7 @@ public class AppTests
         }
     }
 
-    private async Task TestAllInner(BankTestData1 testData1, BankTestData2 testData2)
+    private async Task TestAllInner(BankTestData testData)
     {
         Console.WriteLine("AppTest Start");
         BankTestingFixture testLevelWebApplicationFactory = _classLevelWebApplicationFactory;
@@ -228,7 +209,7 @@ public class AppTests
 
         // Set test name
         var testName =
-            $"{testData2.BankProfileEnum}_{testData1.SoftwareStatementProfileId}_{testData2.RegistrationScope.AbbreviatedName()}";
+            $"{testData.BankProfileEnum}_{testData.SoftwareStatementProfileId}_{testData.RegistrationScope.AbbreviatedName()}";
         var testNameUnique = $"{testName}_{Guid.NewGuid()}";
 
         // Get bank test settings
@@ -242,17 +223,17 @@ public class AppTests
         var bankProfileDefinitions =
             testServiceProvider.GetRequiredService<IBankProfileService>();
         BankProfile bankProfile =
-            bankProfileDefinitions.GetBankProfile(testData2.BankProfileEnum);
+            bankProfileDefinitions.GetBankProfile(testData.BankProfileEnum);
 
         // Get bank user
-        BankUser? bankUser = testData2.AuthUiInputUserName is not null
+        BankUser? bankUser = testData.AuthUiInputUserName is not null
             ? new BankUser
             {
-                UserNameOrNumber = testData2.AuthUiInputUserName,
-                Password = testData2.AuthUiInputPassword ?? string.Empty,
-                ExtraWord1 = testData2.AuthUiExtraWord1 ?? string.Empty,
-                ExtraWord2 = testData2.AuthUiExtraWord2 ?? string.Empty,
-                ExtraWord3 = testData2.AuthUiExtraWord3 ?? string.Empty
+                UserNameOrNumber = testData.AuthUiInputUserName,
+                Password = testData.AuthUiInputPassword ?? string.Empty,
+                ExtraWord1 = testData.AuthUiExtraWord1 ?? string.Empty,
+                ExtraWord2 = testData.AuthUiExtraWord2 ?? string.Empty,
+                ExtraWord3 = testData.AuthUiExtraWord3 ?? string.Empty
             }
             : null;
 
@@ -304,11 +285,11 @@ public class AppTests
             softwareStatementEnvFile,
             new JsonSerializerOptions());
         if (!softwareStatementEnvs.TryGetValue(
-                testData1.SoftwareStatementProfileId,
+                testData.SoftwareStatementProfileId,
                 out SoftwareStatementEnv? softwareStatementEnv))
         {
             throw new InvalidOperationException(
-                $"Software statement with ID {testData1.SoftwareStatementProfileId} specified but not found.");
+                $"Software statement with ID {testData.SoftwareStatementProfileId} specified but not found.");
         }
         (ObWacCertificateResponse obWacCertificateResponse, ObSealCertificateResponse obSealCertificateResponse,
             SoftwareStatementResponse softwareStatementResponse) = await SoftwareStatementCreate(
@@ -325,12 +306,12 @@ public class AppTests
         {
             BankProfile = bankProfile.BankProfileEnum,
             SoftwareStatementId = softwareStatementId,
-            RegistrationScope = testData2.RegistrationScope,
+            RegistrationScope = testData.RegistrationScope,
             Reference = testNameUnique,
             CreatedBy = modifiedBy
         };
 
-        if (testData2.TestType is TestType.DynamicClientRegistration)
+        if (testData.TestType is TestType.DynamicClientRegistration)
         {
             // Create fresh BankRegistration
             BankRegistrationResponse bankRegistrationResponseTmp =
@@ -347,17 +328,17 @@ public class AppTests
 
         // Create BankRegistration using existing external API registration
         bankRegistrationRequest.ExternalApiId =
-            testData2.BankRegistrationExternalApiId ??
+            testData.BankRegistrationExternalApiId ??
             throw new InvalidOperationException("No external API BankRegistration ID provided.");
-        if (testData2.BankRegistrationExternalApiSecretName is not null)
+        if (testData.BankRegistrationExternalApiSecretName is not null)
         {
             bankRegistrationRequest.ExternalApiSecretFromSecrets =
-                new SecretDescription { Name = testData2.BankRegistrationExternalApiSecretName };
+                new SecretDescription { Name = testData.BankRegistrationExternalApiSecretName };
         }
-        if (testData2.BankRegistrationRegistrationAccessTokenName is not null)
+        if (testData.BankRegistrationRegistrationAccessTokenName is not null)
         {
             bankRegistrationRequest.RegistrationAccessTokenFromSecrets =
-                new SecretDescription { Name = testData2.BankRegistrationRegistrationAccessTokenName };
+                new SecretDescription { Name = testData.BankRegistrationRegistrationAccessTokenName };
         }
         BankRegistrationResponse bankRegistrationCreateResponse =
             await BankRegistrationCreate(
@@ -378,9 +359,9 @@ public class AppTests
                 .GetLeftPart(UriPartial.Authority);
 
         // Run account access consent subtests
-        if (testData2.TestType is TestType.AccountAccessConsent)
+        if (testData.TestType is TestType.AccountAccessConsent)
         {
-            if (!testData2.RegistrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction))
+            if (!testData.RegistrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction))
             {
                 throw new InvalidOperationException(
                     "Cannot test AccountAndTransaction API due to missing registration scope.");
@@ -398,10 +379,10 @@ public class AppTests
                 await accountAccessConsentSubtest.RunTest(
                     subTest,
                     bankProfile,
-                    testData2,
+                    testData,
                     bankRegistrationId,
                     defaultResponseMode,
-                    testData2.TestAuth,
+                    testData.TestAuth,
                     testNameUnique,
                     modifiedBy,
                     testDataProcessorFluentRequestLogging
@@ -415,7 +396,7 @@ public class AppTests
             }
         }
 
-        if (testData2.TestType is TestType.DomesticPaymentConsent or TestType.DomesticVrpConsent)
+        if (testData.TestType is TestType.DomesticPaymentConsent or TestType.DomesticVrpConsent)
         {
             // Read payments .env file
             string paymentsEnvFileName = Path.Combine(
@@ -426,13 +407,13 @@ public class AppTests
                 paymentsEnvFileName,
                 new JsonSerializerOptions());
             string creditorAccount =
-                testData2.TestCreditorAccount ??
+                testData.TestCreditorAccount ??
                 throw new InvalidOperationException("No test creditor account specified for test.");
 
             // Run domestic payment consent subtests
-            if (testData2.TestType is TestType.DomesticPaymentConsent)
+            if (testData.TestType is TestType.DomesticPaymentConsent)
             {
-                if (!testData2.RegistrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
+                if (!testData.RegistrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
                 {
                     throw new InvalidOperationException(
                         "Cannot test PaymentInitiation API due to missing registration scope.");
@@ -452,7 +433,7 @@ public class AppTests
                         bankProfile,
                         bankRegistrationId,
                         defaultResponseMode,
-                        testData2.TestAuth,
+                        testData.TestAuth,
                         paymentsEnvFile,
                         creditorAccount,
                         testNameUnique,
@@ -467,9 +448,9 @@ public class AppTests
             }
 
             // Run domestic VRP consent subtests
-            if (testData2.TestType is TestType.DomesticVrpConsent)
+            if (testData.TestType is TestType.DomesticVrpConsent)
             {
-                if (!testData2.RegistrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
+                if (!testData.RegistrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
                 {
                     throw new InvalidOperationException(
                         "Cannot test VariableRecurringPayments API due to missing registration scope.");
@@ -489,7 +470,7 @@ public class AppTests
                         bankProfile,
                         bankRegistrationId,
                         defaultResponseMode,
-                        testData2.TestAuth,
+                        testData.TestAuth,
                         paymentsEnvFile,
                         creditorAccount,
                         testNameUnique,
@@ -502,7 +483,7 @@ public class AppTests
                         bankUser,
                         appServiceProvider,
                         memoryCache);
-                    }
+                }
             }
         }
 

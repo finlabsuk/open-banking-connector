@@ -40,7 +40,7 @@ public class AccountAccessConsentSubtest(
     public async Task RunTest(
         AccountAccessConsentSubtestEnum subtestEnum,
         BankProfile bankProfile,
-        BankTestData2 testData2,
+        BankTestData testData,
         Guid bankRegistrationId,
         OAuth2ResponseMode defaultResponseMode,
         bool testAuth,
@@ -98,7 +98,7 @@ public class AccountAccessConsentSubtest(
         if (testAuth)
         {
             Guid accountAccessConsentId;
-            string? accountAccessConsentExternalApiId = testData2.AccountAccessConsentExternalApiId;
+            string? accountAccessConsentExternalApiId = testData.AccountAccessConsentExternalApiId;
             if (useReauth)
             {
                 // Create AccountAccessConsent using existing external API consent
@@ -109,12 +109,12 @@ public class AccountAccessConsentSubtest(
                             accountAccessConsentExternalApiId ??
                             throw new InvalidOperationException(
                                 "No AccountAccessConsent external API ID provided for use in re-auth."),
-                        AuthContext = testData2.AccountAccessConsentAuthContextNonce is null
+                        AuthContext = testData.AccountAccessConsentAuthContextNonce is null
                             ? null
                             : new AuthContextRequest
                             {
                                 State = "",
-                                Nonce = testData2.AccountAccessConsentAuthContextNonce ?? "",
+                                Nonce = testData.AccountAccessConsentAuthContextNonce ?? "",
                                 ModifiedBy = modifiedBy
                             }
                     };
