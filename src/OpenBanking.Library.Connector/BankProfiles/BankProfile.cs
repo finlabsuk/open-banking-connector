@@ -134,6 +134,8 @@ public class AccountAndTransactionApiSettings
 
 public class PaymentInitiationApiSettings
 {
+    public string? FinancialId { get; init; }
+
     public DomesticPaymentConsentExternalApiRequestAdjustments
         DomesticPaymentConsentExternalApiRequestAdjustments { get; set; } = x => x;
 
@@ -145,6 +147,8 @@ public class PaymentInitiationApiSettings
 
 public class VariableRecurringPaymentsApiSettings
 {
+    public string? FinancialId { get; init; }
+
     public DomesticVrpConsentExternalApiRequestAdjustments
         DomesticVrpConsentExternalApiRequestAdjustments { get; set; } = x => x;
 

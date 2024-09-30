@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "12.0.0"
+    "version": "12.2.3"
   },
   "paths": {
     "/manage/bank-registrations": {
@@ -572,9 +572,28 @@
           "Barclays_Business",
           "Barclays_Corporate",
           "Barclays_BarclaycardCommercialPayments",
+          "Cooperative_Cooperative",
+          "Cooperative_CooperativeSandbox",
+          "Cooperative_Smile",
           "Danske_Sandbox",
-          "Obie_Modelo",
-          "Obie_Model2023",
+          "Hsbc_FirstDirect",
+          "Hsbc_Sandbox",
+          "Hsbc_UkBusiness",
+          "Hsbc_UkKinetic",
+          "Hsbc_UkPersonal",
+          "Hsbc_HsbcNetUk",
+          "Lloyds_Sandbox",
+          "Lloyds_LloydsPersonal",
+          "Lloyds_LloydsBusiness",
+          "Lloyds_LloydsCommerical",
+          "Lloyds_HalifaxPersonal",
+          "Lloyds_BankOfScotlandPersonal",
+          "Lloyds_BankOfScotlandBusiness",
+          "Lloyds_BankOfScotlandCommerical",
+          "Lloyds_MbnaPersonal",
+          "Monzo_Monzo",
+          "Monzo_Sandbox",
+          "Nationwide_Nationwide",
           "NatWest_NatWestSandbox",
           "NatWest_NatWest",
           "NatWest_NatWestBankline",
@@ -591,28 +610,9 @@
           "NatWest_UlsterBankNiClearSpend",
           "NatWest_Mettle",
           "NatWest_Coutts",
-          "VrpHackathon",
-          "Santander_Santander",
-          "NewDayAmazon",
-          "Nationwide_Nationwide",
-          "Lloyds_Sandbox",
-          "Lloyds_LloydsPersonal",
-          "Lloyds_LloydsBusiness",
-          "Lloyds_LloydsCommerical",
-          "Lloyds_HalifaxPersonal",
-          "Lloyds_BankOfScotlandPersonal",
-          "Lloyds_BankOfScotlandBusiness",
-          "Lloyds_BankOfScotlandCommerical",
-          "Lloyds_MbnaPersonal",
-          "Hsbc_FirstDirect",
-          "Hsbc_Sandbox",
-          "Hsbc_UkBusiness",
-          "Hsbc_UkKinetic",
-          "Hsbc_UkPersonal",
-          "Hsbc_HsbcNetUk",
-          "Monzo_Monzo",
-          "Monzo_Sandbox",
+          "Obie_Model2023",
           "Revolut_Revolut",
+          "Santander_Santander",
           "Starling_Starling"
         ],
         "type": "string",
@@ -664,10 +664,16 @@
             "description": "External (bank) API secret. Present to allow use of legacy token auth method \"client_secret_basic\" in sandboxes\r\netc. Only relevant/used when FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.BankRegistration.ExternalApiId is non-null.",
             "nullable": true
           },
+          "ExternalApiSecretFromSecrets": {
+            "$ref": "#/components/schemas/SecretDescription"
+          },
           "RegistrationAccessToken": {
             "type": "string",
             "description": "External (bank) API registration access token. Sometimes used to support registration adjustments etc. Only\r\nrelevant/used when FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.BankRegistration.ExternalApiId is non-null.",
             "nullable": true
+          },
+          "RegistrationAccessTokenFromSecrets": {
+            "$ref": "#/components/schemas/SecretDescription"
           },
           "UseSimulatedBank": {
             "type": "boolean",
@@ -1192,6 +1198,7 @@
           "None",
           "AccountAndTransaction",
           "PaymentInitiation",
+          "AccountAndTransactionPlusPaymentInitiation",
           "FundsConfirmation",
           "All"
         ],
@@ -1395,6 +1402,7 @@
       "TokenEndpointAuthMethodSupportedValues": {
         "enum": [
           "ClientSecretBasic",
+          "ClientSecretPost",
           "PrivateKeyJwt",
           "TlsClientAuth"
         ],

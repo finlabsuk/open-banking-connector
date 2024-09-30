@@ -133,7 +133,8 @@ internal class
         VariableRecurringPaymentsApi variableRecurringPaymentsApi =
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
         bool supportsSca = bankProfile.SupportsSca;
-        string bankFinancialId = bankProfile.FinancialId;
+        string bankFinancialId =
+            bankProfile.VariableRecurringPaymentsApiSettings.FinancialId ?? bankProfile.FinancialId;
         string issuerUrl = bankProfile.IssuerUrl;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
         RefreshTokenGrantPostCustomBehaviour? domesticVrpConsentRefreshTokenGrantPostCustomBehaviour =
@@ -253,7 +254,8 @@ internal class
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             VariableRecurringPaymentsApi variableRecurringPaymentsApi =
                 bankProfile.GetRequiredVariableRecurringPaymentsApi();
-            string bankFinancialId = bankProfile.FinancialId;
+            string bankFinancialId =
+                bankProfile.VariableRecurringPaymentsApiSettings.FinancialId ?? bankProfile.FinancialId;
             ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
                 bankProfile.CustomBehaviour?.ClientCredentialsGrantPost;
             DomesticVrpConsentCustomBehaviour? domesticVrpConsentPostCustomBehaviour =
@@ -452,7 +454,8 @@ internal class
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             VariableRecurringPaymentsApi variableRecurringPaymentsApi =
                 bankProfile.GetRequiredVariableRecurringPaymentsApi();
-            string bankFinancialId = bankProfile.FinancialId;
+            string bankFinancialId =
+                bankProfile.VariableRecurringPaymentsApiSettings.FinancialId ?? bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
             // Get IApiClient

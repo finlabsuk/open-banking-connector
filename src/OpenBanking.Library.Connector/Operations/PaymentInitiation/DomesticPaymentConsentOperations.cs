@@ -122,7 +122,7 @@ internal class
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
-            string bankFinancialId = bankProfile.FinancialId;
+            string bankFinancialId = bankProfile.PaymentInitiationApiSettings.FinancialId ?? bankProfile.FinancialId;
             ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
                 bankProfile.CustomBehaviour?.ClientCredentialsGrantPost;
             DomesticPaymentConsentCustomBehaviour? readWritePostCustomBehaviour =
@@ -323,7 +323,7 @@ internal class
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
-            string bankFinancialId = bankProfile.FinancialId;
+            string bankFinancialId = bankProfile.PaymentInitiationApiSettings.FinancialId ?? bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
             DomesticPaymentConsentCustomBehaviour? readWriteGetCustomBehaviour =
                 customBehaviour?.DomesticPaymentConsent;
@@ -459,7 +459,7 @@ internal class
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
         bool supportsSca = bankProfile.SupportsSca;
-        string bankFinancialId = bankProfile.FinancialId;
+        string bankFinancialId = bankProfile.PaymentInitiationApiSettings.FinancialId ?? bankProfile.FinancialId;
         string issuerUrl = bankProfile.IssuerUrl;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
         DomesticPaymentConsentCustomBehaviour? readWriteGetCustomBehaviour =

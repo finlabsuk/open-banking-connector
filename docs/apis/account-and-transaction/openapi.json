@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "12.0.0"
+    "version": "12.2.3"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -1450,6 +1450,10 @@
         "type": "string"
       },
       "AccountsResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
@@ -1464,8 +1468,7 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -1660,6 +1663,10 @@
         "description": "Set of elements used to define the balance details."
       },
       "BalancesResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
@@ -1674,8 +1681,7 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -1956,6 +1962,10 @@
         "description": "Account to or from which a cash entry is made."
       },
       "DirectDebitsResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
@@ -1970,8 +1980,7 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -2169,6 +2178,10 @@
         "additionalProperties": false
       },
       "MonzoPotsResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
@@ -2183,8 +2196,7 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -2654,7 +2666,6 @@
       },
       "OBCurrencyExchange5": {
         "required": [
-          "ExchangeRate",
           "SourceCurrency"
         ],
         "type": "object",
@@ -2679,7 +2690,8 @@
           "ExchangeRate": {
             "type": "number",
             "description": "Factor used to convert an amount from one currency into another. This reflects the price at which one currency was bought with another currency.\r\n\r\nUsage: ExchangeRate expresses the ratio between UnitCurrency and QuotedCurrency (ExchangeRate = UnitCurrency/QuotedCurrency).",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "ContractIdentification": {
             "maxLength": 35,
@@ -3305,9 +3317,6 @@
         "description": "Provides further details on an entry in the report."
       },
       "OBTransactionCardInstrument1": {
-        "required": [
-          "CardSchemeName"
-        ],
         "type": "object",
         "properties": {
           "CardSchemeName": {
@@ -3355,7 +3364,6 @@
       },
       "OBTransactionCashBalance": {
         "required": [
-          "Amount",
           "CreditDebitIndicator",
           "Type"
         ],
@@ -3383,6 +3391,10 @@
         "description": "Specifies the Mutability of the Transaction record."
       },
       "Parties2Response": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
@@ -3397,14 +3409,17 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false,
         "description": "Response to Parties read requests"
       },
       "PartiesResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
@@ -3419,8 +3434,7 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -3519,6 +3533,10 @@
         "additionalProperties": false
       },
       "StandingOrdersResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
@@ -3533,8 +3551,7 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -3559,6 +3576,10 @@
         "additionalProperties": { }
       },
       "TransactionsResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
@@ -3573,8 +3594,7 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false,

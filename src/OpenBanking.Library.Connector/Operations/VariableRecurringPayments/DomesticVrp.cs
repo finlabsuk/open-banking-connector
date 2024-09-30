@@ -116,7 +116,8 @@ internal class DomesticVrp :
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
-        string bankFinancialId = bankProfile.FinancialId;
+        string bankFinancialId =
+            bankProfile.VariableRecurringPaymentsApiSettings.FinancialId ?? bankProfile.FinancialId;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
         ConsentAuthGetCustomBehaviour? domesticVrpConsentAuthGetCustomBehaviour = bankProfile.CustomBehaviour
             ?.DomesticVrpConsentAuthGet;
@@ -273,7 +274,8 @@ internal class DomesticVrp :
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         VariableRecurringPaymentsApi variableRecurringPaymentsApi =
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
-        string bankFinancialId = bankProfile.FinancialId;
+        string bankFinancialId =
+            bankProfile.VariableRecurringPaymentsApiSettings.FinancialId ?? bankProfile.FinancialId;
         DomesticVrpCustomBehaviour? domesticVrpGetCustomBehaviour =
             bankProfile.CustomBehaviour?.DomesticVrp;
         ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
@@ -405,7 +407,8 @@ internal class DomesticVrp :
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         VariableRecurringPaymentsApi variableRecurringPaymentsApi =
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
-        string bankFinancialId = bankProfile.FinancialId;
+        string bankFinancialId =
+            bankProfile.VariableRecurringPaymentsApiSettings.FinancialId ?? bankProfile.FinancialId;
         DomesticVrpCustomBehaviour? domesticVrpGetCustomBehaviour =
             bankProfile.CustomBehaviour?.DomesticVrp;
         ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =

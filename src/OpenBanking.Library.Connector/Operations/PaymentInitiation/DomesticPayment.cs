@@ -92,7 +92,7 @@ internal class DomesticPayment :
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
-        string bankFinancialId = bankProfile.FinancialId;
+        string bankFinancialId = bankProfile.PaymentInitiationApiSettings.FinancialId ?? bankProfile.FinancialId;
         DomesticPaymentCustomBehaviour? domesticPaymentGetCustomBehaviour =
             bankProfile.CustomBehaviour?.DomesticPayment;
         ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
@@ -239,7 +239,7 @@ internal class DomesticPayment :
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
-        string bankFinancialId = bankProfile.FinancialId;
+        string bankFinancialId = bankProfile.PaymentInitiationApiSettings.FinancialId ?? bankProfile.FinancialId;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
         ConsentAuthGetCustomBehaviour? domesticPaymentConsentAuthGetCustomBehaviour = bankProfile.CustomBehaviour
             ?.DomesticPaymentConsentAuthGet;
@@ -385,7 +385,7 @@ internal class DomesticPayment :
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
-        string bankFinancialId = bankProfile.FinancialId;
+        string bankFinancialId = bankProfile.PaymentInitiationApiSettings.FinancialId ?? bankProfile.FinancialId;
         DomesticPaymentCustomBehaviour? domesticPaymentGetCustomBehaviour =
             bankProfile.CustomBehaviour?.DomesticPayment;
         ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =

@@ -3,7 +3,7 @@
   "info": {
     "title": "Auth Contexts API",
     "description": "Auth Contexts API for Open Banking Connector Web App",
-    "version": "12.0.0"
+    "version": "12.2.3"
   },
   "paths": {
     "/auth/redirect-delegate": {
@@ -17,19 +17,20 @@
             "application/x-www-form-urlencoded": {
               "schema": {
                 "required": [
-                  "code",
-                  "id_token",
                   "state"
                 ],
                 "type": "object",
                 "properties": {
-                  "id_token": {
+                  "state": {
                     "type": "string"
                   },
                   "code": {
                     "type": "string"
                   },
-                  "state": {
+                  "id_token": {
+                    "type": "string"
+                  },
+                  "error": {
                     "type": "string"
                   },
                   "response_mode": {
@@ -47,13 +48,16 @@
                 }
               },
               "encoding": {
-                "id_token": {
+                "state": {
                   "style": "form"
                 },
                 "code": {
                   "style": "form"
                 },
-                "state": {
+                "id_token": {
+                  "style": "form"
+                },
+                "error": {
                   "style": "form"
                 },
                 "response_mode": {

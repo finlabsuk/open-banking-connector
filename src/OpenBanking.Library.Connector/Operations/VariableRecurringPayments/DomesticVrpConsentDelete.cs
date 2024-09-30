@@ -82,7 +82,8 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
                 _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             VariableRecurringPaymentsApi variableRecurringPaymentsApi =
                 bankProfile.GetRequiredVariableRecurringPaymentsApi();
-            string bankFinancialId = bankProfile.FinancialId;
+            string bankFinancialId =
+                bankProfile.VariableRecurringPaymentsApiSettings.FinancialId ?? bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
             // Get IApiClient

@@ -240,6 +240,10 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                     return externalApiRequest;
                 }
             },
+            PaymentInitiationApiSettings =
+                new PaymentInitiationApiSettings { FinancialId = GetFinancialId(LloydsBank.LloydsPersonal) },
+            VariableRecurringPaymentsApiSettings =
+                new VariableRecurringPaymentsApiSettings { FinancialId = GetFinancialId(LloydsBank.LloydsPersonal) },
             AspspBrandId = bank switch
             {
                 LloydsBank.Sandbox => 10004, // sandbox
