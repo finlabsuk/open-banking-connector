@@ -21,10 +21,8 @@ public enum MonzoRegistrationGroup
     Production_Pisp
 }
 
-public class Monzo : BankGroupBase<MonzoBank, MonzoRegistrationGroup>
+public class Monzo() : BankGroupBase<MonzoBank, MonzoRegistrationGroup>(BankGroup.Monzo)
 {
-    public Monzo(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
-
     protected override ConcurrentDictionary<BankProfileEnum, MonzoBank> BankProfileToBank { get; } =
         new()
         {

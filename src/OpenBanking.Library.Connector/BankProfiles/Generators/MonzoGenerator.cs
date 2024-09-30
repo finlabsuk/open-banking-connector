@@ -21,8 +21,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
 {
     public MonzoGenerator(
-        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
-        IBankGroup<MonzoBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
+        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider) : base(
+        bankProfilesSettingsProvider,
+        BankGroup.Monzo) { }
 
     public override BankProfile GetBankProfile(
         MonzoBank bank,
@@ -49,7 +50,7 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
             ["AccountID"] = "acc_0000A4C4o66FCYJoERQhHN"
         };
         return new BankProfile(
-            _bankGroup.GetBankProfile(bank),
+            _bankGroupData.GetBankProfile(bank),
             bank switch
             {
                 MonzoBank.Monzo =>

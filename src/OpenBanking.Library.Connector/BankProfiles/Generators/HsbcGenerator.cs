@@ -22,8 +22,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
 {
     public HsbcGenerator(
-        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
-        IBankGroup<HsbcBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
+        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider) : base(
+        bankProfilesSettingsProvider,
+        BankGroup.Hsbc) { }
 
     public override BankProfile GetBankProfile(
         HsbcBank bank,
@@ -51,7 +52,7 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
             _ => throw new ArgumentOutOfRangeException()
         };
         return new BankProfile(
-            _bankGroup.GetBankProfile(bank),
+            _bankGroupData.GetBankProfile(bank),
             issuerUrl,
             GetFinancialId(bank),
             GetAccountAndTransactionApi(bank),

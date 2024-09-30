@@ -20,10 +20,8 @@ public enum CooperativeRegistrationGroup
     Production
 }
 
-public class Cooperative : BankGroupBase<CooperativeBank, CooperativeRegistrationGroup>
+public class Cooperative() : BankGroupBase<CooperativeBank, CooperativeRegistrationGroup>(BankGroup.Cooperative)
 {
-    public Cooperative(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
-
     protected override ConcurrentDictionary<BankProfileEnum, CooperativeBank> BankProfileToBank { get; } =
         new()
         {

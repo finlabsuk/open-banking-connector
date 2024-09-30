@@ -31,7 +31,7 @@ internal class BankRegistrationEntity :
         string? registrationAccessToken,
         OAuth2ResponseMode? defaultResponseModeOverride,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
-        BankGroupEnum bankGroup,
+        BankGroup bankGroup,
         Guid? softwareStatementId,
         string softwareStatementProfileId,
         string? softwareStatementProfileOverride,
@@ -103,7 +103,7 @@ internal class BankRegistrationEntity :
     /// <summary>
     ///     Bank group
     /// </summary>
-    public BankGroupEnum BankGroup { get; set; }
+    public BankGroup BankGroup { get; set; }
 
     [ForeignKey(nameof(SoftwareStatementId))]
     public SoftwareStatementEntity? SoftwareStatementNavigation { get; private set; }

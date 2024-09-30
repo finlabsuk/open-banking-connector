@@ -12,10 +12,8 @@ public enum DanskeBank
     Sandbox
 }
 
-public class Danske : BankGroupBase<DanskeBank, DanskeRegistrationGroup>
+public class Danske() : BankGroupBase<DanskeBank, DanskeRegistrationGroup>(BankGroup.Danske)
 {
-    public Danske(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
-
     protected override ConcurrentDictionary<BankProfileEnum, DanskeBank> BankProfileToBank { get; } =
         new() { [BankProfileEnum.Danske_Sandbox] = DanskeBank.Sandbox };
 

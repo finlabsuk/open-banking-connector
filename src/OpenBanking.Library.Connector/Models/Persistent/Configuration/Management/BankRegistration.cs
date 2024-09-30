@@ -62,7 +62,7 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistrationEntity>
             .HasConversion(new EnumToStringConverter<TokenEndpointAuthMethodSupportedValues>())
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.BankGroup)
-            .HasConversion(new EnumToStringConverter<BankGroupEnum>());
+            .HasConversion(new EnumToStringConverter<BankGroup>());
         builder.Property(e => e.UseSimulatedBank)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.BankProfile)

@@ -8,7 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 
-public class BankProfilesSettings : Dictionary<BankGroupEnum, Dictionary<string, BankProfileHiddenProperties>>,
+public class BankProfilesSettings : Dictionary<BankGroup, Dictionary<string, BankProfileHiddenProperties>>,
     ISettings<BankProfilesSettings>
 {
     public string SettingsGroupName => "OpenBankingConnector:BankProfiles";

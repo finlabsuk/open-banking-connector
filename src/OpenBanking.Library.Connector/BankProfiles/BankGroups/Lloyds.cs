@@ -26,10 +26,8 @@ public enum LloydsRegistrationGroup
     Production
 }
 
-public class Lloyds : BankGroupBase<LloydsBank, LloydsRegistrationGroup>
+public class Lloyds() : BankGroupBase<LloydsBank, LloydsRegistrationGroup>(BankGroup.Lloyds)
 {
-    public Lloyds(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
-
     protected override ConcurrentDictionary<BankProfileEnum, LloydsBank> BankProfileToBank { get; } =
         new()
         {

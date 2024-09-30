@@ -12,10 +12,8 @@ public enum NationwideBank
     Nationwide
 }
 
-public class Nationwide : BankGroupBase<NationwideBank, NationwideRegistrationGroup>
+public class Nationwide() : BankGroupBase<NationwideBank, NationwideRegistrationGroup>(BankGroup.Nationwide)
 {
-    public Nationwide(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
-
     protected override ConcurrentDictionary<BankProfileEnum, NationwideBank> BankProfileToBank { get; } =
         new() { [BankProfileEnum.Nationwide_Nationwide] = NationwideBank.Nationwide };
 

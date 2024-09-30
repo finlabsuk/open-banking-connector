@@ -16,14 +16,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 public class CooperativeGenerator : BankProfileGeneratorBase<CooperativeBank>
 {
     public CooperativeGenerator(
-        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
-        IBankGroup<CooperativeBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
+        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider) : base(
+        bankProfilesSettingsProvider,
+        BankGroup.Cooperative) { }
 
     public override BankProfile GetBankProfile(
         CooperativeBank bank,
         IInstrumentationClient instrumentationClient) =>
         new(
-            _bankGroup.GetBankProfile(bank),
+            _bankGroupData.GetBankProfile(bank),
             GetIssuer(bank),
             GetFinancialId(bank),
             GetAccountAndTransactionApi(bank),

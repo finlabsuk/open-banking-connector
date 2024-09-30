@@ -7,20 +7,21 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
-public abstract class BankGroupBase<TBank, TRegistrationGroup> : IBankGroup<TBank, TRegistrationGroup>
+public abstract class BankGroupBase<TBank, TRegistrationGroup>
+    : IBankGroupData<TBank, TRegistrationGroup>
     where TBank : struct, Enum
     where TRegistrationGroup : struct, Enum
 {
-    protected BankGroupBase(BankGroupEnum bankGroupEnum)
+    protected BankGroupBase(BankGroup bankGroup)
     {
-        BankGroupEnum = bankGroupEnum;
+        BankGroup = bankGroup;
     }
 
     protected abstract ConcurrentDictionary<BankProfileEnum, TBank> BankProfileToBank { get; }
 
     public abstract TRegistrationGroup GetRegistrationGroup(TBank bank, RegistrationScopeEnum registrationScopeEnum);
 
-    public BankGroupEnum BankGroupEnum { get; }
+    public BankGroup BankGroup { get; }
 
     /// <summary>
     ///     Convert bank profile enum to bank enum.

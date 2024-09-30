@@ -6,17 +6,17 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
-public interface IBankGroup { }
+public interface IBankGroupData { }
 
-public interface IBankGroup<TBank> : IBankGroup
+public interface IBankGroupData<TBank> : IBankGroupData
     where TBank : struct, Enum
 {
-    BankGroupEnum BankGroupEnum { get; }
+    BankGroup BankGroup { get; }
     TBank GetBank(BankProfileEnum bankProfile);
     BankProfileEnum GetBankProfile(TBank bank);
 }
 
-public interface IBankGroup<TBank, TRegistrationGroup> : IBankGroup<TBank>
+public interface IBankGroupData<TBank, out TRegistrationGroup> : IBankGroupData<TBank>
     where TRegistrationGroup : struct, Enum
     where TBank : struct, Enum
 {

@@ -12,10 +12,8 @@ public enum SantanderBank
     Santander
 }
 
-public class Santander : BankGroupBase<SantanderBank, SantanderRegistrationGroup>
+public class Santander() : BankGroupBase<SantanderBank, SantanderRegistrationGroup>(BankGroup.Santander)
 {
-    public Santander(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
-
     protected override ConcurrentDictionary<BankProfileEnum, SantanderBank> BankProfileToBank { get; } =
         new() { [BankProfileEnum.Santander_Santander] = SantanderBank.Santander };
 

@@ -9,7 +9,7 @@ using Newtonsoft.Json.Converters;
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
 [JsonConverter(typeof(StringEnumConverter))]
-public enum BankGroupEnum
+public enum BankGroup
 {
     [EnumMember(Value = "Barclays")]
     Barclays,

@@ -12,10 +12,8 @@ public enum RevolutBank
     Revolut
 }
 
-public class Revolut : BankGroupBase<RevolutBank, RevolutRegistrationGroup>
+public class Revolut() : BankGroupBase<RevolutBank, RevolutRegistrationGroup>(BankGroup.Revolut)
 {
-    public Revolut(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
-
     protected override ConcurrentDictionary<BankProfileEnum, RevolutBank> BankProfileToBank { get; } =
         new() { [BankProfileEnum.Revolut_Revolut] = RevolutBank.Revolut };
 

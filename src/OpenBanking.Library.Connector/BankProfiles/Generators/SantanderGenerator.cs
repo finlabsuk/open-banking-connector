@@ -19,14 +19,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistrationGroup>
 {
     public SantanderGenerator(
-        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
-        IBankGroup<SantanderRegistrationGroup> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
+        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider) : base(
+        bankProfilesSettingsProvider,
+        BankGroup.Santander) { }
 
     public override BankProfile GetBankProfile(
         SantanderRegistrationGroup bank,
         IInstrumentationClient instrumentationClient) =>
         new(
-            _bankGroup.GetBankProfile(bank),
+            _bankGroupData.GetBankProfile(bank),
             "https://openbanking.santander.co.uk/sanuk/external/open-banking/openid-connect-provider/v1/", // from https://developer.santander.co.uk/sanuk/external/faq-page#t4n553
             GetFinancialId(bank),
             GetAccountAndTransactionApi(bank),

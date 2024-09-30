@@ -12,10 +12,8 @@ public enum ObieBank
     Model2023
 }
 
-public class Obie : BankGroupBase<ObieBank, ObieRegistrationGroup>
+public class Obie() : BankGroupBase<ObieBank, ObieRegistrationGroup>(BankGroup.Obie)
 {
-    public Obie(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
-
     protected override ConcurrentDictionary<BankProfileEnum, ObieBank> BankProfileToBank { get; } =
         new() { [BankProfileEnum.Obie_Model2023] = ObieBank.Model2023 };
 

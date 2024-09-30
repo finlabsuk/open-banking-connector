@@ -16,14 +16,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
 {
     public RevolutGenerator(
-        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
-        IBankGroup<RevolutBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
+        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider) : base(
+        bankProfilesSettingsProvider,
+        BankGroup.Revolut) { }
 
     public override BankProfile GetBankProfile(
         RevolutBank bank,
         IInstrumentationClient instrumentationClient) =>
         new(
-            _bankGroup.GetBankProfile(bank),
+            _bankGroupData.GetBankProfile(bank),
             "https://oba.revolut.com", // from https://developer.revolut.com/docs/guides/build-banking-apps/register-your-application-using-dcr/open-id-configuration-urls
             "001580000103UAvAAM", // from https://developer.revolut.com/docs/guides/build-banking-apps/tutorials/get-account-and-transaction-information
             GetAccountAndTransactionApi(bank),

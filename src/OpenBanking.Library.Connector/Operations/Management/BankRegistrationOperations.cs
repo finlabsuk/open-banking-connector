@@ -104,7 +104,6 @@ internal class
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(request.BankProfile);
-        BankGroupEnum bankGroup = BankProfileService.GetBankGroupEnum(bankProfile.BankProfileEnum);
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
         string bankFinancialId = bankProfile.FinancialId;
@@ -259,23 +258,24 @@ internal class
             openIdConfiguration.TokenEndpointAuthMethodsSupported);
 
         // Get re-usable existing bank registration if possible
-        Func<string?, string?, string?, BankProfile, BankGroupEnum, Guid, TokenEndpointAuthMethodSupportedValues,
+        BankGroup bankGroup = bankProfile.BankProfileEnum.GetBankGroup();
+        Func<string?, string?, string?, BankProfile, BankGroup, Guid, TokenEndpointAuthMethodSupportedValues,
             RegistrationScopeEnum, IBankProfileService, (BankRegistrationEntity? existingRegistration,
             IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> getExistingRegistration = bankGroup switch
         {
-            BankGroupEnum.Barclays => GetExistingRegistration<BarclaysBank, BarclaysRegistrationGroup>,
-            BankGroupEnum.Cooperative => GetExistingRegistration<CooperativeBank, CooperativeRegistrationGroup>,
-            BankGroupEnum.Danske => GetExistingRegistration<DanskeBank, DanskeRegistrationGroup>,
-            BankGroupEnum.Hsbc => GetExistingRegistration<HsbcBank, HsbcRegistrationGroup>,
-            BankGroupEnum.Lloyds => GetExistingRegistration<LloydsBank, LloydsRegistrationGroup>,
-            BankGroupEnum.Monzo => GetExistingRegistration<MonzoBank, MonzoRegistrationGroup>,
-            BankGroupEnum.Nationwide =>
+            BankGroup.Barclays => GetExistingRegistration<BarclaysBank, BarclaysRegistrationGroup>,
+            BankGroup.Cooperative => GetExistingRegistration<CooperativeBank, CooperativeRegistrationGroup>,
+            BankGroup.Danske => GetExistingRegistration<DanskeBank, DanskeRegistrationGroup>,
+            BankGroup.Hsbc => GetExistingRegistration<HsbcBank, HsbcRegistrationGroup>,
+            BankGroup.Lloyds => GetExistingRegistration<LloydsBank, LloydsRegistrationGroup>,
+            BankGroup.Monzo => GetExistingRegistration<MonzoBank, MonzoRegistrationGroup>,
+            BankGroup.Nationwide =>
                 GetExistingRegistration<NationwideBank, NationwideRegistrationGroup>,
-            BankGroupEnum.NatWest => GetExistingRegistration<NatWestBank, NatWestRegistrationGroup>,
-            BankGroupEnum.Obie => GetExistingRegistration<ObieBank, ObieRegistrationGroup>,
-            BankGroupEnum.Revolut => GetExistingRegistration<RevolutBank, RevolutRegistrationGroup>,
-            BankGroupEnum.Santander => GetExistingRegistration<SantanderBank, SantanderRegistrationGroup>,
-            BankGroupEnum.Starling => GetExistingRegistration<StarlingBank, StarlingRegistrationGroup>,
+            BankGroup.NatWest => GetExistingRegistration<NatWestBank, NatWestRegistrationGroup>,
+            BankGroup.Obie => GetExistingRegistration<ObieBank, ObieRegistrationGroup>,
+            BankGroup.Revolut => GetExistingRegistration<RevolutBank, RevolutRegistrationGroup>,
+            BankGroup.Santander => GetExistingRegistration<SantanderBank, SantanderRegistrationGroup>,
+            BankGroup.Starling => GetExistingRegistration<StarlingBank, StarlingRegistrationGroup>,
             _ => throw new ArgumentOutOfRangeException()
         };
         (BankRegistrationEntity? existingGroupRegistration,
@@ -631,7 +631,7 @@ internal class
             string? requestExternalApiSecret,
             string? requestRegistrationAccessToken,
             BankProfile bankProfile,
-            BankGroupEnum bankGroupEnum,
+            BankGroup bankGroupEnum,
             Guid softwareStatementId,
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
             RegistrationScopeEnum registrationScope,
@@ -643,8 +643,8 @@ internal class
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        IBankGroup<TBank, TRegistrationGroup> bankGroup =
-            bankProfileService.GetBankGroup<TBank, TRegistrationGroup>(bankGroupEnum);
+        IBankGroupData<TBank, TRegistrationGroup> bankGroup =
+            bankGroupEnum.GetBankGroupData<TBank, TRegistrationGroup>();
         TBank bank = bankGroup.GetBank(bankProfile.BankProfileEnum);
         TRegistrationGroup registrationGroup = bankGroup.GetRegistrationGroup(bank, registrationScope);
         var registrationGroupString = registrationGroup.ToString()!;

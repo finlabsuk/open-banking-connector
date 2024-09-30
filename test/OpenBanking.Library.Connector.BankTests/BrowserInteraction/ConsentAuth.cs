@@ -86,17 +86,16 @@ public class ConsentAuth
 
     private IBankUiMethods GetBankGroupUiMethods(BankProfileEnum bankProfileEnum)
     {
-        return BankProfileService.GetBankGroupEnum(bankProfileEnum) switch
+        return bankProfileEnum.GetBankGroup() switch
         {
-            BankGroupEnum.Barclays => new BarclaysUiMethods(_bankProfileService.GetBank<BarclaysBank>(bankProfileEnum)),
-            BankGroupEnum.Cooperative => new CooperativeUiMethods(
-                _bankProfileService.GetBank<CooperativeBank>(bankProfileEnum)),
-            BankGroupEnum.Danske => new DanskeUiMethods(_bankProfileService.GetBank<DanskeBank>(bankProfileEnum)),
-            BankGroupEnum.Hsbc => new HsbcUiMethods(_bankProfileService.GetBank<HsbcBank>(bankProfileEnum)),
-            BankGroupEnum.Lloyds => new LloydsUiMethods(_bankProfileService.GetBank<LloydsBank>(bankProfileEnum)),
-            BankGroupEnum.Obie => new ObieUiMethods(_bankProfileService.GetBank<ObieBank>(bankProfileEnum)),
-            BankGroupEnum.Monzo => new MonzoUiMethods(_bankProfileService.GetBank<MonzoBank>(bankProfileEnum)),
-            BankGroupEnum.NatWest => new NatWestUiMethods(_bankProfileService.GetBank<NatWestBank>(bankProfileEnum)),
+            BankGroup.Barclays => new BarclaysUiMethods(bankProfileEnum),
+            BankGroup.Cooperative => new CooperativeUiMethods(bankProfileEnum),
+            BankGroup.Danske => new DanskeUiMethods(bankProfileEnum),
+            BankGroup.Hsbc => new HsbcUiMethods(bankProfileEnum),
+            BankGroup.Lloyds => new LloydsUiMethods(bankProfileEnum),
+            BankGroup.Obie => new ObieUiMethods(bankProfileEnum),
+            BankGroup.Monzo => new MonzoUiMethods(bankProfileEnum),
+            BankGroup.NatWest => new NatWestUiMethods(bankProfileEnum),
             _ => throw new ArgumentOutOfRangeException()
         };
     }

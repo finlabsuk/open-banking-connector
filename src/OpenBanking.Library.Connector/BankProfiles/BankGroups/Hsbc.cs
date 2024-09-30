@@ -17,10 +17,8 @@ public enum HsbcBank
     HsbcNetUk
 }
 
-public class Hsbc : BankGroupBase<HsbcBank, HsbcRegistrationGroup>
+public class Hsbc() : BankGroupBase<HsbcBank, HsbcRegistrationGroup>(BankGroup.Hsbc)
 {
-    public Hsbc(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
-
     protected override ConcurrentDictionary<BankProfileEnum, HsbcBank> BankProfileToBank { get; } =
         new()
         {

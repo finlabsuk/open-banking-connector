@@ -48,8 +48,59 @@ public enum BankProfileEnum
     [EnumMember(Value = "Danske_Sandbox")]
     Danske_Sandbox,
 
-    [EnumMember(Value = "Obie_Model2023")]
-    Obie_Model2023,
+    [EnumMember(Value = "Hsbc_FirstDirect")]
+    Hsbc_FirstDirect,
+
+    [EnumMember(Value = "Hsbc_Sandbox")]
+    Hsbc_Sandbox,
+
+    [EnumMember(Value = "Hsbc_UkBusiness")]
+    Hsbc_UkBusiness,
+
+    [EnumMember(Value = "Hsbc_UkKinetic")]
+    Hsbc_UkKinetic,
+
+    [EnumMember(Value = "Hsbc_UkPersonal")]
+    Hsbc_UkPersonal,
+
+    [EnumMember(Value = "Hsbc_HsbcNetUk")]
+    Hsbc_HsbcNetUk,
+
+    [EnumMember(Value = "Lloyds_Sandbox")]
+    Lloyds_Sandbox,
+
+    [EnumMember(Value = "Lloyds_LloydsPersonal")]
+    Lloyds_LloydsPersonal,
+
+    [EnumMember(Value = "Lloyds_LloydsBusiness")]
+    Lloyds_LloydsBusiness,
+
+    [EnumMember(Value = "Lloyds_LloydsCommerical")]
+    Lloyds_LloydsCommerical,
+
+    [EnumMember(Value = "Lloyds_HalifaxPersonal")]
+    Lloyds_HalifaxPersonal,
+
+    [EnumMember(Value = "Lloyds_BankOfScotlandPersonal")]
+    Lloyds_BankOfScotlandPersonal,
+
+    [EnumMember(Value = "Lloyds_BankOfScotlandBusiness")]
+    Lloyds_BankOfScotlandBusiness,
+
+    [EnumMember(Value = "Lloyds_BankOfScotlandCommerical")]
+    Lloyds_BankOfScotlandCommerical,
+
+    [EnumMember(Value = "Lloyds_MbnaPersonal")]
+    Lloyds_MbnaPersonal,
+
+    [EnumMember(Value = "Monzo_Monzo")]
+    Monzo_Monzo,
+
+    [EnumMember(Value = "Monzo_Sandbox")]
+    Monzo_Sandbox,
+
+    [EnumMember(Value = "Nationwide_Nationwide")]
+    Nationwide_Nationwide,
 
     [EnumMember(Value = "NatWest_NatWestSandbox")]
     NatWest_NatWestSandbox,
@@ -99,72 +150,14 @@ public enum BankProfileEnum
     [EnumMember(Value = "NatWest_Coutts")]
     NatWest_Coutts,
 
-    [EnumMember(Value = "VrpHackathon")]
-    VrpHackathon,
-
-    [EnumMember(Value = "Santander_Santander")]
-    Santander_Santander,
-
-    [EnumMember(Value = "NewDayAmazon")]
-    NewDayAmazon,
-
-    [EnumMember(Value = "Nationwide_Nationwide")]
-    Nationwide_Nationwide,
-
-    [EnumMember(Value = "Lloyds_Sandbox")]
-    Lloyds_Sandbox,
-
-    [EnumMember(Value = "Lloyds_LloydsPersonal")]
-    Lloyds_LloydsPersonal,
-
-    [EnumMember(Value = "Lloyds_LloydsBusiness")]
-    Lloyds_LloydsBusiness,
-
-    [EnumMember(Value = "Lloyds_LloydsCommerical")]
-    Lloyds_LloydsCommerical,
-
-    [EnumMember(Value = "Lloyds_HalifaxPersonal")]
-    Lloyds_HalifaxPersonal,
-
-    [EnumMember(Value = "Lloyds_BankOfScotlandPersonal")]
-    Lloyds_BankOfScotlandPersonal,
-
-    [EnumMember(Value = "Lloyds_BankOfScotlandBusiness")]
-    Lloyds_BankOfScotlandBusiness,
-
-    [EnumMember(Value = "Lloyds_BankOfScotlandCommerical")]
-    Lloyds_BankOfScotlandCommerical,
-
-    [EnumMember(Value = "Lloyds_MbnaPersonal")]
-    Lloyds_MbnaPersonal,
-
-    [EnumMember(Value = "Hsbc_FirstDirect")]
-    Hsbc_FirstDirect,
-
-    [EnumMember(Value = "Hsbc_Sandbox")]
-    Hsbc_Sandbox,
-
-    [EnumMember(Value = "Hsbc_UkBusiness")]
-    Hsbc_UkBusiness,
-
-    [EnumMember(Value = "Hsbc_UkKinetic")]
-    Hsbc_UkKinetic,
-
-    [EnumMember(Value = "Hsbc_UkPersonal")]
-    Hsbc_UkPersonal,
-
-    [EnumMember(Value = "Hsbc_HsbcNetUk")]
-    Hsbc_HsbcNetUk,
-
-
-    [EnumMember(Value = "Monzo_Monzo")]
-    Monzo_Monzo,
-
-    [EnumMember(Value = "Monzo_Sandbox")]
-    Monzo_Sandbox,
+    [EnumMember(Value = "Obie_Model2023")]
+    Obie_Model2023,
 
     [EnumMember(Value = "Revolut_Revolut")]
     Revolut_Revolut,
+
+    [EnumMember(Value = "Santander_Santander")]
+    Santander_Santander,
 
     [EnumMember(Value = "Starling_Starling")]
     Starling_Starling

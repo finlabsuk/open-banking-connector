@@ -12,10 +12,8 @@ public enum StarlingBank
     Starling
 }
 
-public class Starling : BankGroupBase<StarlingBank, StarlingRegistrationGroup>
+public class Starling() : BankGroupBase<StarlingBank, StarlingRegistrationGroup>(BankGroup.Starling)
 {
-    public Starling(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
-
     protected override ConcurrentDictionary<BankProfileEnum, StarlingBank> BankProfileToBank { get; } =
         new() { [BankProfileEnum.Starling_Starling] = StarlingBank.Starling };
 

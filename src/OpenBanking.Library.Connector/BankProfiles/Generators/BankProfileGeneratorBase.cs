@@ -17,22 +17,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 public abstract class BankProfileGeneratorBase<TBank> : IBankProfileGenerator<TBank>
     where TBank : struct, Enum
 {
-    protected readonly IBankGroup<TBank> _bankGroup;
+    protected readonly IBankGroupData<TBank> _bankGroupData;
     private readonly ConcurrentDictionary<TBank, BankProfileHiddenProperties> _bankProfileHiddenPropertiesDictionary;
 
     public BankProfileGeneratorBase(
         ISettingsProvider<BankProfilesSettings>
             bankProfilesSettingsProvider,
-        IBankGroup<TBank> bankGroup)
+        BankGroup bankGroup)
     {
-        _bankGroup = bankGroup;
+        _bankGroupData = bankGroup.GetBankGroupData<TBank>();
         _bankProfileHiddenPropertiesDictionary = new ConcurrentDictionary<TBank, BankProfileHiddenProperties>();
 
         // Extract hidden properties and populate dictionary
         Dictionary<string, BankProfileHiddenProperties> bankGroupDict =
             bankProfilesSettingsProvider
                 .GetSettings()
-                .TryGetValue(_bankGroup.BankGroupEnum, out Dictionary<string, BankProfileHiddenProperties>? value)
+                .TryGetValue(_bankGroupData.BankGroup, out Dictionary<string, BankProfileHiddenProperties>? value)
                 ? value
                 : new Dictionary<string, BankProfileHiddenProperties>();
 
@@ -44,7 +44,7 @@ public abstract class BankProfileGeneratorBase<TBank> : IBankProfileGenerator<TB
             {
                 throw new ArgumentException(
                     "Configuration or key secrets error: " +
-                    $"Invalid bank {bank} used with bank group {_bankGroup.BankGroupEnum} in bank profiles settings.");
+                    $"Invalid bank {bank} used with bank group {_bankGroupData.BankGroup} in bank profiles settings.");
             }
         }
 
@@ -199,7 +199,7 @@ public abstract class BankProfileGeneratorBase<TBank> : IBankProfileGenerator<TB
 
     private string GetHiddenPropertyExceptionMessage(TBank bank, string propertyName) =>
         "Configuration or key secrets error: " +
-        $"Bank profile {_bankGroup.GetBankProfile(bank)} (bank: {bank}, bank group: {_bankGroup.BankGroupEnum}) " +
+        $"Bank profile {_bankGroupData.GetBankProfile(bank)} (bank: {bank}, bank group: {_bankGroupData.BankGroup}) " +
         $"requires hidden property {propertyName} to be specified.";
 
     protected PaymentInitiationApiVersion GetPaymentInitiationApiVersion(TBank bank) =>

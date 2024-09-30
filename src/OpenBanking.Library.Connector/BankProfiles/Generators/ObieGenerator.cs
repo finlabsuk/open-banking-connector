@@ -20,14 +20,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
 {
     public ObieGenerator(
-        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
-        IBankGroup<ObieBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
+        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider) : base(
+        bankProfilesSettingsProvider,
+        BankGroup.Obie) { }
 
     public override BankProfile GetBankProfile(
         ObieBank bank,
         IInstrumentationClient instrumentationClient) =>
         new(
-            _bankGroup.GetBankProfile(bank),
+            _bankGroupData.GetBankProfile(bank),
             "https://auth1.obie.uk.ozoneapi.io", // from https://github.com/OpenBankingUK/OBL-ModelBank-Integration,
             "0015800001041RHAAY", // from https://github.com/OpenBankingUK/OBL-ModelBank-Integration
             new AccountAndTransactionApi

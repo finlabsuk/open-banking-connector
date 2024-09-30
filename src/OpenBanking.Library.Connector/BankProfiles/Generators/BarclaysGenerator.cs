@@ -22,15 +22,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
 {
     public BarclaysGenerator(
-        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
-        IBankGroup<BarclaysBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
+        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider) : base(
+        bankProfilesSettingsProvider,
+        BankGroup.Barclays) { }
 
     public override BankProfile GetBankProfile(
         BarclaysBank bank,
         IInstrumentationClient instrumentationClient)
     {
         return new BankProfile(
-            _bankGroup.GetBankProfile(bank),
+            _bankGroupData.GetBankProfile(bank),
             bank switch
             {
                 BarclaysBank

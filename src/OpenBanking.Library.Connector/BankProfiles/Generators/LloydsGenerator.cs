@@ -28,15 +28,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
 {
     public LloydsGenerator(
-        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
-        IBankGroup<LloydsBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
+        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider) : base(
+        bankProfilesSettingsProvider,
+        BankGroup.Lloyds) { }
 
     public override BankProfile GetBankProfile(
         LloydsBank bank,
         IInstrumentationClient instrumentationClient)
     {
         return new BankProfile(
-            _bankGroup.GetBankProfile(bank),
+            _bankGroupData.GetBankProfile(bank),
             bank switch
             {
                 LloydsBank.Sandbox => GetIssuerUrl(LloydsBank.Sandbox),

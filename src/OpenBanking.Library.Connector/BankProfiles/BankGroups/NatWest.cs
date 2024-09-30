@@ -38,10 +38,8 @@ public enum NatWestRegistrationGroup
     CouttsProduction
 }
 
-public class NatWest : BankGroupBase<NatWestBank, NatWestRegistrationGroup>
+public class NatWest() : BankGroupBase<NatWestBank, NatWestRegistrationGroup>(BankGroup.NatWest)
 {
-    public NatWest(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
-
     protected override ConcurrentDictionary<BankProfileEnum, NatWestBank> BankProfileToBank { get; } =
         new()
         {

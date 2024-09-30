@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using Microsoft.Playwright;
@@ -12,9 +13,10 @@ public class ObieUiMethods : IBankUiMethods
 {
     private readonly ObieBank _obieBank;
 
-    public ObieUiMethods(ObieBank obieBank)
+    public ObieUiMethods(BankProfileEnum bankProfileEnum)
     {
-        _obieBank = obieBank;
+        _obieBank = BankGroup.Obie.GetBankGroupData<ObieBank>()
+            .GetBank(bankProfileEnum);
     }
 
     public async Task PerformConsentAuthUiInteractions(

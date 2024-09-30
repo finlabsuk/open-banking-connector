@@ -24,15 +24,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
 {
     public NatWestGenerator(
-        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
-        IBankGroup<NatWestBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
+        ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider) : base(
+        bankProfilesSettingsProvider,
+        BankGroup.NatWest) { }
 
     public override BankProfile GetBankProfile(
         NatWestBank bank,
         IInstrumentationClient instrumentationClient)
     {
         return new BankProfile(
-            _bankGroup.GetBankProfile(bank),
+            _bankGroupData.GetBankProfile(bank),
             bank switch
             {
                 NatWestBank.NatWestSandbox => GetIssuerUrl(bank),

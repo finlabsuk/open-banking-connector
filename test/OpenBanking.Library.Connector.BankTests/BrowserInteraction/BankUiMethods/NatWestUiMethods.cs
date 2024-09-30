@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using Microsoft.Playwright;
@@ -12,9 +13,10 @@ public class NatWestUiMethods : IBankUiMethods
 {
     private readonly NatWestBank _natWestBank;
 
-    public NatWestUiMethods(NatWestBank natWestBank)
+    public NatWestUiMethods(BankProfileEnum bankProfileEnum)
     {
-        _natWestBank = natWestBank;
+        _natWestBank = BankGroup.NatWest.GetBankGroupData<NatWestBank>()
+            .GetBank(bankProfileEnum);
     }
 
     public async Task PerformConsentAuthUiInteractions(

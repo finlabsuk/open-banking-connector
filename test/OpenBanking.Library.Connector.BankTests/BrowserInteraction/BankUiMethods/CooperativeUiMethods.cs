@@ -2,20 +2,29 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using Microsoft.Playwright;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.BankUiMethods;
 
-public class CooperativeUiMethods(CooperativeBank cooperativeBank) : IBankUiMethods
+public class CooperativeUiMethods : IBankUiMethods
 {
+    private readonly CooperativeBank _cooperativeBank;
+
+    public CooperativeUiMethods(BankProfileEnum bankProfileEnum)
+    {
+        _cooperativeBank = BankGroup.Cooperative.GetBankGroupData<CooperativeBank>()
+            .GetBank(bankProfileEnum);
+    }
+
     public async Task PerformConsentAuthUiInteractions(
         ConsentVariety consentVariety,
         IPage page,
         BankUser bankUser)
     {
-        if (cooperativeBank is CooperativeBank.CooperativeSandbox)
+        if (_cooperativeBank is CooperativeBank.CooperativeSandbox)
         {
             await page.GetByTestId("userName").FillAsync(bankUser.UserNameOrNumber);
             await page.GetByTestId("submit-button").ClickAsync();

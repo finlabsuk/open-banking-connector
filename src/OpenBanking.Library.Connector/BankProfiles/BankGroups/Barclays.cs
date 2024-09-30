@@ -24,10 +24,8 @@ public enum BarclaysRegistrationGroup
     Production
 }
 
-public class Barclays : BankGroupBase<BarclaysBank, BarclaysRegistrationGroup>
+public class Barclays() : BankGroupBase<BarclaysBank, BarclaysRegistrationGroup>(BankGroup.Barclays)
 {
-    public Barclays(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
-
     protected override ConcurrentDictionary<BankProfileEnum, BarclaysBank> BankProfileToBank { get; } =
         new()
         {
