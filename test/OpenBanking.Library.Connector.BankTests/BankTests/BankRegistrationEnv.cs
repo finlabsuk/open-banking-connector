@@ -35,6 +35,9 @@ public class BankRegistrationEnv
     [JsonPropertyName("testDynamicClientRegistration")]
     public bool TestDynamicClientRegistration { get; init; }
 
+    [JsonPropertyName("testAllRegistrationGroup")]
+    public required bool TestAllRegistrationGroup { get; init; }
+
     [JsonPropertyName("testAccountAccessConsent")]
     public required bool TestAccountAccessConsent { get; init; }
 

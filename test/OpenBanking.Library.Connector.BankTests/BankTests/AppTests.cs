@@ -4,6 +4,7 @@
 
 using System.Text.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.AccountAndTransaction.
@@ -120,38 +121,38 @@ public class AppTests
 
             string softwareStatement = bankRegistrationEnv.SoftwareStatement;
             RegistrationScopeEnum registrationScope = bankRegistrationEnv.RegistrationScope;
-            BankProfileEnum bankProfile = bankRegistrationEnv.BankProfile;
+            BankProfileEnum bankProfileFromEnv = bankRegistrationEnv.BankProfile;
             string bankRegistrationExternalApiId = bankRegistrationEnv.ExternalApiBankRegistrationId;
             string? bankRegistrationExternalApiSecretName = bankRegistrationEnv.ExternalApiClientSecretName;
             string? bankRegistrationRegistrationAccessTokenName =
                 bankRegistrationEnv.ExternalApiBankRegistrationRegistrationAccessTokenName;
 
             // Get info specific to test type
-            bool testAuth;
+            bool testAuthFromEnv;
             string? accountAccessConsentExternalApiId = null;
             string? testCreditorAccount = null;
             switch (testType)
             {
                 case TestType.AccountAccessConsent:
                     accountAccessConsentExternalApiId = bankRegistrationEnv.ExternalApiAccountAccessConsentId;
-                    testAuth = bankRegistrationEnv.TestAccountAccessConsentAuth;
+                    testAuthFromEnv = bankRegistrationEnv.TestAccountAccessConsentAuth;
                     break;
                 case TestType.DomesticPaymentConsent:
                     testCreditorAccount =
                         bankRegistrationEnv.TestCreditorAccountDomesticPaymentConsent ??
                         throw new InvalidOperationException(
                             "No TestCreditorAccountDomesticPaymentConsent specified for domestic payment consent test.");
-                    testAuth = bankRegistrationEnv.TestDomesticPaymentConsentAuth;
+                    testAuthFromEnv = bankRegistrationEnv.TestDomesticPaymentConsentAuth;
                     break;
                 case TestType.DomesticVrpConsent:
                     testCreditorAccount =
                         bankRegistrationEnv.TestCreditorAccountDomesticVrpConsent ??
                         throw new InvalidOperationException(
                             "No TestCreditorAccountDomesticVrpConsent specified for domestic VRP consent test.");
-                    testAuth = bankRegistrationEnv.TestDomesticVrpConsentAuth;
+                    testAuthFromEnv = bankRegistrationEnv.TestDomesticVrpConsentAuth;
                     break;
                 default:
-                    testAuth = false;
+                    testAuthFromEnv = false;
                     break;
             }
 
@@ -163,29 +164,120 @@ public class AppTests
             string? authUiExtraWord3 = bankRegistrationEnv.SandboxAuthExtraWord3;
 
             // Add test case
-            yield return
-            [
-                new BankTestData
+            IEnumerable<BankProfileEnum> bankProfiles;
+            if (bankRegistrationEnv.TestAllRegistrationGroup)
+            {
+                BankGroup bankGroup = bankProfileFromEnv.GetBankGroup();
+                bankProfiles = bankGroup switch
                 {
-                    SoftwareStatementProfileId = softwareStatement,
-                    BankProfileEnum = bankProfile,
-                    BankRegistrationExternalApiId = bankRegistrationExternalApiId,
-                    BankRegistrationExternalApiSecretName = bankRegistrationExternalApiSecretName,
-                    BankRegistrationRegistrationAccessTokenName =
-                        bankRegistrationRegistrationAccessTokenName,
-                    AccountAccessConsentExternalApiId = accountAccessConsentExternalApiId,
-                    AccountAccessConsentAuthContextNonce = null,
-                    RegistrationScope = registrationScope,
-                    AuthUiInputUserName = authUiInputUserName,
-                    AuthUiInputPassword = authUiInputPassword,
-                    AuthUiExtraWord1 = authUiExtraWord1,
-                    AuthUiExtraWord2 = authUiExtraWord2,
-                    AuthUiExtraWord3 = authUiExtraWord3,
-                    TestType = testType,
-                    TestAuth = testAuth,
-                    TestCreditorAccount = testCreditorAccount
+                    BankGroup.Barclays => GetAllInRegistrationGroup<BarclaysBank, BarclaysRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
+                    BankGroup.Cooperative => GetAllInRegistrationGroup<CooperativeBank, CooperativeRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
+                    BankGroup.Danske => GetAllInRegistrationGroup<DanskeBank, DanskeRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
+                    BankGroup.Hsbc => GetAllInRegistrationGroup<HsbcBank, HsbcRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
+                    BankGroup.Lloyds => GetAllInRegistrationGroup<LloydsBank, LloydsRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
+                    BankGroup.Monzo => GetAllInRegistrationGroup<MonzoBank, MonzoRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
+                    BankGroup.Nationwide => GetAllInRegistrationGroup<NationwideBank, NationwideRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
+                    BankGroup.NatWest => GetAllInRegistrationGroup<NatWestBank, NatWestRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
+                    BankGroup.Obie => GetAllInRegistrationGroup<ObieBank, ObieRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
+                    BankGroup.Revolut => GetAllInRegistrationGroup<RevolutBank, RevolutRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
+                    BankGroup.Santander => GetAllInRegistrationGroup<SantanderBank, SantanderRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
+                    BankGroup.Starling => GetAllInRegistrationGroup<StarlingBank, StarlingRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+            }
+            else
+            {
+                bankProfiles = [bankProfileFromEnv];
+            }
+
+            foreach (BankProfileEnum bankProfile in bankProfiles)
+            {
+                var testAuth = false;
+                if (bankProfile == bankProfileFromEnv)
+                {
+                    testAuth = testAuthFromEnv;
                 }
-            ];
+
+                yield return
+                [
+                    new BankTestData
+                    {
+                        SoftwareStatementProfileId = softwareStatement,
+                        BankProfileEnum = bankProfile,
+                        BankRegistrationExternalApiId = bankRegistrationExternalApiId,
+                        BankRegistrationExternalApiSecretName = bankRegistrationExternalApiSecretName,
+                        BankRegistrationRegistrationAccessTokenName =
+                            bankRegistrationRegistrationAccessTokenName,
+                        AccountAccessConsentExternalApiId = accountAccessConsentExternalApiId,
+                        AccountAccessConsentAuthContextNonce = null,
+                        RegistrationScope = registrationScope,
+                        AuthUiInputUserName = authUiInputUserName,
+                        AuthUiInputPassword = authUiInputPassword,
+                        AuthUiExtraWord1 = authUiExtraWord1,
+                        AuthUiExtraWord2 = authUiExtraWord2,
+                        AuthUiExtraWord3 = authUiExtraWord3,
+                        TestType = testType,
+                        TestAuth = testAuth,
+                        TestCreditorAccount = testCreditorAccount
+                    }
+                ];
+            }
+        }
+
+        static IEnumerable<BankProfileEnum> GetAllInRegistrationGroup<TBank, TRegistrationGroup>(
+            BankProfileEnum bankProfile,
+            RegistrationScopeEnum registrationScope,
+            BankGroup bankGroup)
+            where TBank : struct, Enum
+            where TRegistrationGroup : struct, Enum
+        {
+            IBankGroupData<TBank, TRegistrationGroup> bankGroupData =
+                bankGroup.GetBankGroupData<TBank, TRegistrationGroup>();
+            TBank bank = bankGroupData.GetBank(bankProfile);
+            TRegistrationGroup registrationGroup = bankGroupData.GetRegistrationGroup(bank, registrationScope);
+            IEnumerable<BankProfileEnum> bankProfiles =
+                Enum.GetValues<TBank>()
+                    .Where(
+                        x =>
+                            registrationGroup.Equals(bankGroupData.GetRegistrationGroup(x, registrationScope)))
+                    .Select(x => bankGroupData.GetBankProfile(x));
+            return bankProfiles;
         }
     }
 
