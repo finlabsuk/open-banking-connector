@@ -40,6 +40,7 @@ public class DomesticVrpConsentSubtest(
         Guid bankRegistrationId,
         OAuth2ResponseMode defaultResponseMode,
         bool testAuth,
+        string referenceName,
         PaymentsEnv paymentsEnv,
         string testNameUnique,
         string modifiedBy,
@@ -56,6 +57,7 @@ public class DomesticVrpConsentSubtest(
             testNameUnique,
             modifiedBy,
             vrpFluentRequestLogging,
+            referenceName,
             paymentsEnv,
             bankProfile.VariableRecurringPaymentsApiSettings);
         DomesticVrpConsentCreateResponse domesticVrpConsentCreateResponse =
@@ -150,7 +152,7 @@ public class DomesticVrpConsentSubtest(
                     modifiedBy,
                     vrpFluentRequestLogging,
                     amount,
-                    paymentsEnv,
+                    referenceName,
                     bankProfile.VariableRecurringPaymentsApiSettings);
             DomesticVrpConsentFundsConfirmationResponse domesticPaymentConsentResp4 =
                 await variableRecurringPaymentsApiClient.DomesticVrpConsentCreateFundsConfirmation(
@@ -173,6 +175,7 @@ public class DomesticVrpConsentSubtest(
                 instructionIdentification,
                 endToEndIdentification,
                 amount,
+                referenceName,
                 paymentsEnv,
                 bankProfile.VariableRecurringPaymentsApiSettings);
             DomesticVrpResponse domesticVrpResp =
@@ -273,7 +276,7 @@ public class DomesticVrpConsentSubtest(
                         modifiedBy,
                         vrpFluentRequestLogging,
                         amount2,
-                        paymentsEnv,
+                        referenceName,
                         bankProfile.VariableRecurringPaymentsApiSettings);
                 await variableRecurringPaymentsApiClient.DomesticVrpConsentCreateFundsConfirmation(
                     new VrpConsentFundsConfirmationCreateParams
@@ -302,7 +305,7 @@ public class DomesticVrpConsentSubtest(
         string modifiedBy,
         FilePathBuilder vrpFluentRequestLogging,
         string amount,
-        PaymentsEnv paymentsEnv,
+        string referenceName,
         VariableRecurringPaymentsApiSettings variableRecurringPaymentsApiSettings)
     {
         var externalApiRequest =
@@ -337,7 +340,7 @@ public class DomesticVrpConsentSubtest(
         domesticVrpConsentFundsConfirmationRequest.ExternalApiRequest.Data.InstructedAmount.Amount =
             amount; // replace logging placeholder
         domesticVrpConsentFundsConfirmationRequest.ExternalApiRequest.Data.Reference =
-            "DV " + paymentsEnv.ShortName; // replace logging placeholder
+            "DV " + referenceName; // replace logging placeholder
         domesticVrpConsentFundsConfirmationRequest.ModifiedBy = modifiedBy; // replace logging placeholder
 
         return domesticVrpConsentFundsConfirmationRequest;
@@ -350,6 +353,7 @@ public class DomesticVrpConsentSubtest(
         string instructionIdentification,
         string endToEndIdentification,
         string amount,
+        string referenceName,
         PaymentsEnv paymentsEnv,
         VariableRecurringPaymentsApiSettings variableRecurringPaymentsApiSettings)
     {
@@ -422,27 +426,27 @@ public class DomesticVrpConsentSubtest(
         domesticVrpRequest.ModifiedBy = modifiedBy; // replace logging placeholder
 
         domesticVrpRequest.ExternalApiRequest.Data.Initiation.CreditorAccount!.SchemeName =
-            paymentsEnv.AccountSchemeName; // replace logging placeholder
+            paymentsEnv.BankAccountSchemeName; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Identification =
-            paymentsEnv.AccountId; // replace logging placeholder
+            paymentsEnv.BankAccountId; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
-            paymentsEnv.AccountName; // replace logging placeholder
+            paymentsEnv.BankAccountName; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Reference =
-            "DV " + paymentsEnv.ShortName; // replace logging placeholder
+            "DV " + referenceName; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.InstructionIdentification =
             instructionIdentification; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.EndToEndIdentification =
             endToEndIdentification; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.RemittanceInformation!.Reference =
-            "DV " + paymentsEnv.ShortName; // replace logging placeholder
+            "DV " + referenceName; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.InstructedAmount.Amount =
             amount; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.CreditorAccount.SchemeName =
-            paymentsEnv.AccountSchemeName; // replace logging placeholder
+            paymentsEnv.BankAccountSchemeName; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.CreditorAccount.Identification =
-            paymentsEnv.AccountId; // replace logging placeholder
+            paymentsEnv.BankAccountId; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.CreditorAccount.Name =
-            paymentsEnv.AccountName; // replace logging placeholder
+            paymentsEnv.BankAccountName; // replace logging placeholder
 
 
         return domesticVrpRequest;
@@ -453,6 +457,7 @@ public class DomesticVrpConsentSubtest(
         string testNameUnique,
         string modifiedBy,
         FilePathBuilder vrpFluentRequestLogging,
+        string referenceName,
         PaymentsEnv paymentsEnv,
         VariableRecurringPaymentsApiSettings variableRecurringPaymentsApiSettings)
     {
@@ -530,13 +535,13 @@ public class DomesticVrpConsentSubtest(
 
         domesticVrpConsentRequest.BankRegistrationId = bankRegistrationId; // replace logging placeholder
         domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount!.SchemeName =
-            paymentsEnv.AccountSchemeName; // replace logging placeholder
+            paymentsEnv.BankAccountSchemeName; // replace logging placeholder
         domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Identification =
-            paymentsEnv.AccountId; // replace logging placeholder
+            paymentsEnv.BankAccountId; // replace logging placeholder
         domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
-            paymentsEnv.AccountName; // replace logging placeholder
+            paymentsEnv.BankAccountName; // replace logging placeholder
         domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Reference =
-            "DV " + paymentsEnv.ShortName; // replace logging placeholder
+            "DV " + referenceName; // replace logging placeholder
 
         domesticVrpConsentRequest.Reference = testNameUnique; // replace logging placeholder
         domesticVrpConsentRequest.CreatedBy = modifiedBy; // replace logging placeholder

@@ -119,6 +119,11 @@ public class AppTests
                 continue;
             }
 
+            string referenceName = bankRegistrationEnv.ReferenceName;
+            if (referenceName.Length > 15)
+            {
+                throw new InvalidOperationException("ReferenceName too long.");
+            }
             string softwareStatement = bankRegistrationEnv.SoftwareStatement;
             RegistrationScopeEnum registrationScope = bankRegistrationEnv.RegistrationScope;
             BankProfileEnum bankProfileFromEnv = bankRegistrationEnv.BankProfile;
@@ -238,8 +243,9 @@ public class AppTests
                 [
                     new BankTestData
                     {
-                        SoftwareStatementProfileId = softwareStatement,
-                        BankProfileEnum = bankProfile,
+                        ReferenceName = referenceName,
+                        SoftwareStatement = softwareStatement,
+                        BankProfile = bankProfile,
                         BankRegistrationExternalApiId = bankRegistrationExternalApiId,
                         BankRegistrationExternalApiSecretName = bankRegistrationExternalApiSecretName,
                         BankRegistrationRegistrationAccessTokenName =
@@ -301,7 +307,7 @@ public class AppTests
 
         // Set test name
         var testName =
-            $"{testData.BankProfileEnum}_{testData.SoftwareStatementProfileId}_{testData.RegistrationScope.AbbreviatedName()}";
+            $"{testData.BankProfile}_{testData.SoftwareStatement}_{testData.RegistrationScope.AbbreviatedName()}";
         var testNameUnique = $"{testName}_{Guid.NewGuid()}";
 
         // Get bank test settings
@@ -315,7 +321,7 @@ public class AppTests
         var bankProfileDefinitions =
             testServiceProvider.GetRequiredService<IBankProfileService>();
         BankProfile bankProfile =
-            bankProfileDefinitions.GetBankProfile(testData.BankProfileEnum);
+            bankProfileDefinitions.GetBankProfile(testData.BankProfile);
 
         // Get bank user
         BankUser? bankUser = testData.AuthUiInputUserName is not null
@@ -377,11 +383,11 @@ public class AppTests
             softwareStatementEnvFile,
             new JsonSerializerOptions());
         if (!softwareStatementEnvs.TryGetValue(
-                testData.SoftwareStatementProfileId,
+                testData.SoftwareStatement,
                 out SoftwareStatementEnv? softwareStatementEnv))
         {
             throw new InvalidOperationException(
-                $"Software statement with ID {testData.SoftwareStatementProfileId} specified but not found.");
+                $"Software statement {testData.SoftwareStatement} specified but not found.");
         }
         (ObWacCertificateResponse obWacCertificateResponse, ObSealCertificateResponse obSealCertificateResponse,
             SoftwareStatementResponse softwareStatementResponse) = await SoftwareStatementCreate(
@@ -507,10 +513,6 @@ public class AppTests
             {
                 throw new InvalidOperationException($"Creditor account {creditorAccount} specified but not found.");
             }
-            if (paymentsEnv.ShortName.Length > 15)
-            {
-                throw new InvalidOperationException("Short name too long.");
-            }
 
             // Run domestic payment consent subtests
             if (testData.TestType is TestType.DomesticPaymentConsent)
@@ -536,6 +538,7 @@ public class AppTests
                         bankRegistrationId,
                         defaultResponseMode,
                         testData.TestAuth,
+                        testData.ReferenceName,
                         paymentsEnv,
                         testNameUnique,
                         modifiedBy,
@@ -572,6 +575,7 @@ public class AppTests
                         bankRegistrationId,
                         defaultResponseMode,
                         testData.TestAuth,
+                        testData.ReferenceName,
                         paymentsEnv,
                         testNameUnique,
                         modifiedBy,

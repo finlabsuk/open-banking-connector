@@ -13,9 +13,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 /// </summary>
 public class BankTestData
 {
-    public required string SoftwareStatementProfileId { get; init; }
+    public required string ReferenceName { get; init; }
 
-    public required BankProfileEnum BankProfileEnum { get; init; }
+    public required string SoftwareStatement { get; init; }
+
+    public required RegistrationScopeEnum RegistrationScope { get; init; }
+
+    public required BankProfileEnum BankProfile { get; init; }
 
     public required string BankRegistrationExternalApiId { get; init; }
 
@@ -27,7 +31,11 @@ public class BankTestData
 
     public required string? AccountAccessConsentAuthContextNonce { get; init; }
 
-    public required RegistrationScopeEnum RegistrationScope { get; init; }
+    public required TestType TestType { get; init; }
+
+    public required bool TestAuth { get; init; }
+
+    public required string? TestCreditorAccount { get; init; }
 
     public required string? AuthUiInputUserName { get; init; }
 
@@ -39,17 +47,11 @@ public class BankTestData
 
     public required string? AuthUiExtraWord3 { get; init; }
 
-    public required TestType TestType { get; init; }
-
-    public required bool TestAuth { get; init; }
-
-    public required string? TestCreditorAccount { get; init; }
-
     public override string ToString()
     {
         // Create software statement label
         string label1 =
-            char.ToUpper(SoftwareStatementProfileId[0]) + SoftwareStatementProfileId[1..];
+            char.ToUpper(SoftwareStatement[0]) + SoftwareStatement[1..];
         const int label1Length = 11;
         label1 = label1
             .PadRight(label1Length)
@@ -64,7 +66,7 @@ public class BankTestData
                 label2 += "[l] ";
             }
         }
-        label2 += $"{BankProfileEnum}";
+        label2 += $"{BankProfile}";
         const int label2Length = 36;
         label2 = label2
             .PadRight(label2Length)

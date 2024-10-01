@@ -10,15 +10,15 @@ public class PaymentsEnvFile : Dictionary<string, PaymentsEnv>;
 
 public class PaymentsEnv
 {
-    [JsonPropertyName("shortName")]
-    public required string ShortName { get; init; }
-
-    [JsonPropertyName("accountSchemeName")]
-    public required string AccountSchemeName { get; init; }
-
-    [JsonPropertyName("accountId")]
-    public required string AccountId { get; init; }
-
     [JsonPropertyName("accountName")]
     public required string AccountName { get; init; }
+
+    [JsonPropertyName("bankAccountSchemeName")]
+    public required string BankAccountSchemeName { get; init; }
+
+    [JsonPropertyName("bankAccountId")]
+    public required string BankAccountId { get; init; }
+
+    [JsonPropertyName("bankAccountName")]
+    public required string BankAccountName { get; init; }
 }

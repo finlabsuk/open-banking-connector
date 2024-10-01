@@ -32,6 +32,7 @@ public class DomesticPaymentConsentSubtest(
         Guid bankRegistrationId,
         OAuth2ResponseMode defaultResponseMode,
         bool testAuth,
+        string referenceName,
         PaymentsEnv paymentsEnv,
         string testNameUnique,
         string modifiedBy,
@@ -45,8 +46,6 @@ public class DomesticPaymentConsentSubtest(
         string endToEndIdentification = Guid.NewGuid().ToString("N")[..31];
         double amountDouble = Random.Shared.Next(10, 300) / 100.0;
         var amount = amountDouble.ToString("F2");
-
-
         DomesticPaymentConsentRequest domesticPaymentConsentRequest = await GetDomesticPaymentConsentRequest(
             bankRegistrationId,
             testNameUnique,
@@ -55,6 +54,7 @@ public class DomesticPaymentConsentSubtest(
             instructionIdentification,
             endToEndIdentification,
             amount,
+            referenceName,
             paymentsEnv,
             bankProfile.PaymentInitiationApiSettings);
         DomesticPaymentConsentCreateResponse domesticPaymentConsentCreateResponse =
@@ -161,6 +161,7 @@ public class DomesticPaymentConsentSubtest(
                 instructionIdentification,
                 endToEndIdentification,
                 amount,
+                referenceName,
                 paymentsEnv,
                 bankProfile.PaymentInitiationApiSettings);
             DomesticPaymentResponse domesticPaymentResp =
@@ -222,6 +223,7 @@ public class DomesticPaymentConsentSubtest(
         string instructionIdentification,
         string endToEndIdentification,
         string amount,
+        string referenceName,
         PaymentsEnv paymentsEnv,
         PaymentInitiationApiSettings paymentInitiationApiSettings)
     {
@@ -280,13 +282,13 @@ public class DomesticPaymentConsentSubtest(
         domesticPaymentRequest.ExternalApiRequest.Data.Initiation.InstructedAmount.Amount =
             amount; // replace logging placeholder
         domesticPaymentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.SchemeName =
-            paymentsEnv.AccountSchemeName; // replace logging placeholder
+            paymentsEnv.BankAccountSchemeName; // replace logging placeholder
         domesticPaymentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Identification =
-            paymentsEnv.AccountId; // replace logging placeholder
+            paymentsEnv.BankAccountId; // replace logging placeholder
         domesticPaymentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
-            paymentsEnv.AccountName; // replace logging placeholder
+            paymentsEnv.BankAccountName; // replace logging placeholder
         domesticPaymentRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Reference =
-            "DP " + paymentsEnv.ShortName; // replace logging placeholder
+            "DP " + referenceName; // replace logging placeholder
         domesticPaymentRequest.ModifiedBy = modifiedBy;
 
         return domesticPaymentRequest;
@@ -300,6 +302,7 @@ public class DomesticPaymentConsentSubtest(
         string instructionIdentification,
         string endToEndIdentification,
         string amount,
+        string referenceName,
         PaymentsEnv paymentsEnv,
         PaymentInitiationApiSettings paymentInitiationApiSettings)
     {
@@ -360,13 +363,13 @@ public class DomesticPaymentConsentSubtest(
         domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.InstructedAmount.Amount =
             amount; // replace logging placeholder
         domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.SchemeName =
-            paymentsEnv.AccountSchemeName; // replace logging placeholder
+            paymentsEnv.BankAccountSchemeName; // replace logging placeholder
         domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Identification =
-            paymentsEnv.AccountId; // replace logging placeholder
+            paymentsEnv.BankAccountId; // replace logging placeholder
         domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
-            paymentsEnv.AccountName; // replace logging placeholder
+            paymentsEnv.BankAccountName; // replace logging placeholder
         domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Reference =
-            "DP " + paymentsEnv.ShortName; // replace logging placeholder
+            "DP " + referenceName; // replace logging placeholder
         domesticPaymentConsentRequest.Reference = testNameUnique; // replace logging placeholder
         domesticPaymentConsentRequest.CreatedBy = modifiedBy; // replace logging placeholder
 
