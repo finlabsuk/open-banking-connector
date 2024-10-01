@@ -2984,10 +2984,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// <summary>
         /// Type of authorisation flow requested.
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("AuthorisationType", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [Newtonsoft.Json.JsonProperty("AuthorisationType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public Authorisation2AuthorisationType AuthorisationType { get; set; } = default!;
+        public Authorisation2AuthorisationType? AuthorisationType { get; set; } = default!;
 
         /// <summary>
         /// Date and time at which the requested authorisation flow must be completed.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
