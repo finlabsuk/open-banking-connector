@@ -23,11 +23,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Amazon.Extensions.Configuration.SystemsManager" Version="6.2.1"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0"/>
+        <PackageReference Include="Amazon.Extensions.Configuration.SystemsManager" Version="6.2.2"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1"/>
         <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="8.0.0"/>
     </ItemGroup>
 
