@@ -306,14 +306,6 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
         {
             return null;
         }
-        if (bank is NatWestBank.Mettle)
-        {
-            return new VariableRecurringPaymentsApi
-            {
-                BaseUrl =
-                    "https://api.openbanking.prd-mettle.co.uk/open-banking/v3.1/pisp" // from https://www.bankofapis.com/products/variable-recurring-payments/vrp/documentation/mettle/3.1.10
-            };
-        }
         return new VariableRecurringPaymentsApi { BaseUrl = GetPaymentsBaseUrl(bank) };
     }
 
