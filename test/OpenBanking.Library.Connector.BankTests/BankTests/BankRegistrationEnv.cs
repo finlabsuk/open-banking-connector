@@ -12,9 +12,6 @@ public class BankRegistrationEnvFile : Dictionary<string, BankRegistrationEnv>;
 
 public class BankRegistrationEnv
 {
-    [JsonPropertyName("bankRegistrationName")]
-    public required string BankRegistrationName { get; init; }
-
     [JsonPropertyName("referenceName")]
     public required string ReferenceName { get; init; }
 
@@ -35,8 +32,8 @@ public class BankRegistrationEnv
     [JsonPropertyName("externalApiClientSecretName")]
     public string? ExternalApiClientSecretName { get; init; }
 
-    [JsonPropertyName("externalApiBankRegistrationRegistrationAccessTokenName")]
-    public string? ExternalApiBankRegistrationRegistrationAccessTokenName { get; init; }
+    [JsonPropertyName("externalApiRegistrationAccessTokenName")]
+    public string? ExternalApiRegistrationAccessTokenName { get; init; }
 
     [JsonPropertyName("externalApiAccountAccessConsentId")]
     public string? ExternalApiAccountAccessConsentId { get; init; }

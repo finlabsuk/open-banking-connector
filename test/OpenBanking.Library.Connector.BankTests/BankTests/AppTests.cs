@@ -130,7 +130,7 @@ public class AppTests
             string bankRegistrationExternalApiId = bankRegistrationEnv.ExternalApiBankRegistrationId;
             string? bankRegistrationExternalApiSecretName = bankRegistrationEnv.ExternalApiClientSecretName;
             string? bankRegistrationRegistrationAccessTokenName =
-                bankRegistrationEnv.ExternalApiBankRegistrationRegistrationAccessTokenName;
+                bankRegistrationEnv.ExternalApiRegistrationAccessTokenName;
 
             // Get info specific to test type
             bool testAuthFromEnv;
@@ -306,8 +306,9 @@ public class AppTests
             new DomesticVrpConsentSubtest(new VariableRecurringPaymentsApiClient(webAppClient), authContextsApiClient);
 
         // Set test name
-        var testName =
-            $"{testData.BankProfile}_{testData.SoftwareStatement}_{testData.RegistrationScope.AbbreviatedName()}";
+        string testName =
+            $"{testData.BankProfile}_{testData.SoftwareStatement}_" +
+            $"{testData.RegistrationScope.AbbreviatedName()}_{testData.TestType}";
         var testNameUnique = $"{testName}_{Guid.NewGuid()}";
 
         // Get bank test settings
@@ -382,13 +383,10 @@ public class AppTests
         var softwareStatementEnvs = await DataFile.ReadFile<SoftwareStatementEnvFile>(
             softwareStatementEnvFile,
             new JsonSerializerOptions());
-        if (!softwareStatementEnvs.TryGetValue(
-                testData.SoftwareStatement,
-                out SoftwareStatementEnv? softwareStatementEnv))
-        {
+        SoftwareStatementEnv softwareStatementEnv =
+            softwareStatementEnvs.Values.FirstOrDefault(x => x.SoftwareStatementName == testData.SoftwareStatement) ??
             throw new InvalidOperationException(
                 $"Software statement {testData.SoftwareStatement} specified but not found.");
-        }
         (ObWacCertificateResponse obWacCertificateResponse, ObSealCertificateResponse obSealCertificateResponse,
             SoftwareStatementResponse softwareStatementResponse) = await SoftwareStatementCreate(
             softwareStatementEnv,
