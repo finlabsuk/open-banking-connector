@@ -49,10 +49,10 @@ public static class RegistrationScopeExtensions
         return registrationScope switch
         {
             // RegistrationScope.None: invalid
-            RegistrationScopeEnum.AccountAndTransaction => "AT",
-            RegistrationScopeEnum.PaymentInitiation => "PI",
-            RegistrationScopeEnum.AccountAndTransactionPlusPaymentInitiation => "AI+PI",
-            RegistrationScopeEnum.FundsConfirmation => "FC",
+            RegistrationScopeEnum.AccountAndTransaction => "Aisp",
+            RegistrationScopeEnum.PaymentInitiation => "Pisp",
+            RegistrationScopeEnum.AccountAndTransactionPlusPaymentInitiation => "Aisp+Pisp",
+            RegistrationScopeEnum.FundsConfirmation => "Fc",
             RegistrationScopeEnum.All => "All",
             _ => throw new ArgumentOutOfRangeException(nameof(registrationScope), registrationScope, null)
         };
