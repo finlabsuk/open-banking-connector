@@ -188,10 +188,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                         ResponseDataRefundAccountIdentificationMayBeMissingOrWrong = bank is LloydsBank.Sandbox
                     },
                 DomesticVrp =
-                    new DomesticVrpCustomBehaviour
-                    {
-                        ResponseLinksMayHaveIncorrectUrlBeforeQuery = true
-                    },
+                    new DomesticVrpCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true },
                 DomesticVrpConsent = new DomesticVrpConsentCustomBehaviour
                 {
                     ResponseLinksAllowReplace = bank switch
