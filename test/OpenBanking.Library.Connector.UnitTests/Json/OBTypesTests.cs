@@ -49,4 +49,24 @@ public class OBTypesTests
 
         result.Should().BeEquivalentTo(obTransactionCashBalance);
     }
+
+    [Fact]
+    public void ConvertOBAccount6()
+    {
+        var initialValue = new AccountAndTransactionModelsPublic.OBAccount6
+        {
+            AccountId = "1234",
+            AccountSubType = AccountAndTransactionModelsPublic.OBExternalAccountSubType1Code.Wallet
+        };
+
+        string jsonString = JsonConvert.SerializeObject(
+            initialValue,
+            Formatting.Indented,
+            new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+
+        var result =
+            JsonConvert.DeserializeObject<AccountAndTransactionModelsPublic.OBAccount6>(jsonString);
+
+        result.Should().BeEquivalentTo(initialValue);
+    }
 }

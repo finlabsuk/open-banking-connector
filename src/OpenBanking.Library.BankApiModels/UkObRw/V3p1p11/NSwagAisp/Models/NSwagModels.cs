@@ -1358,6 +1358,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [System.Runtime.Serialization.EnumMember(Value = @"Savings")]
         Savings = 7,
 
+        [System.Runtime.Serialization.EnumMember(Value = @"Wallet")]
+        Wallet = 8,
     }
 
     /// <summary>
