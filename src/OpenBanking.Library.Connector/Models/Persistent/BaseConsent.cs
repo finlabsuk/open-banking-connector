@@ -160,6 +160,12 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
     /// </summary>
     public string ExternalApiId { get; }
 
+    /// <summary>
+    ///     Returns true when it is known that auth was previously performed successfully.
+    /// </summary>
+    /// <returns></returns>
+    public bool AuthPreviouslySucceessfullyPerformed() => AuthContextState is not null;
+
     public void UpdateAccessToken(
         string? accessTokenValue,
         int accessTokenExpiresIn,

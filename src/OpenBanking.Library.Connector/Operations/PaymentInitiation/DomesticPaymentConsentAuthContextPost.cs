@@ -92,6 +92,14 @@ internal class
 
         string scope = customBehaviour?.DomesticPaymentConsentAuthGet?.Scope ?? "payments";
 
+        // Detect re-auth case
+        bool authPreviouslySuccessfullyPerformed = domesticPaymentConsent.AuthPreviouslySucceessfullyPerformed();
+        bool reAuthNotInitialAuth = authPreviouslySuccessfullyPerformed;
+        if (reAuthNotInitialAuth)
+        {
+            throw new InvalidOperationException("Re-auth is not supported for domestic payment consents.");
+        }
+
         (string authUrl, string state, string nonce, string? codeVerifier, string sessionId) = CreateAuthUrl.Create(
             domesticPaymentConsent.ExternalApiId,
             obSealKey,
@@ -104,6 +112,7 @@ internal class
             redirectUri,
             scope,
             responseType,
+            reAuthNotInitialAuth,
             _instrumentationClient);
 
         // Create persisted entity

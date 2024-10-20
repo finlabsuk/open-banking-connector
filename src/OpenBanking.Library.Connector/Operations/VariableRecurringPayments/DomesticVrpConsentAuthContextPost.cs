@@ -93,6 +93,10 @@ internal class
 
         string scope = customBehaviour?.DomesticVrpConsentAuthGet?.Scope ?? "payments";
 
+        // Detect re-auth case
+        bool authPreviouslySuccessfullyPerformed = domesticVrpConsent.AuthPreviouslySucceessfullyPerformed();
+        bool reAuthNotInitialAuth = authPreviouslySuccessfullyPerformed;
+
         (string authUrl, string state, string nonce, string? codeVerifier, string sessionId) = CreateAuthUrl.Create(
             domesticVrpConsent.ExternalApiId,
             obSealKey,
@@ -105,6 +109,7 @@ internal class
             redirectUri,
             scope,
             responseType,
+            reAuthNotInitialAuth,
             _instrumentationClient);
 
         // Create persisted entity

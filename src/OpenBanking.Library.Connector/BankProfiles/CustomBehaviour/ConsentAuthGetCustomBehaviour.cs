@@ -6,6 +6,8 @@ using System.Collections.Concurrent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 
+public delegate ConcurrentDictionary<string, string> GetExtraParameters(bool reAuthNotInitialAuth);
+
 public class ConsentAuthGetCustomBehaviour
 {
     // Set prefix for consent ID claim(s)
@@ -18,7 +20,13 @@ public class ConsentAuthGetCustomBehaviour
 
     public string? Scope { get; init; }
 
-    public ConcurrentDictionary<string, string>? ExtraParameters { get; init; }
+    public GetExtraParameters? GetExtraParameters { get; init; }
+
+    /// <summary>
+    ///     Use consent to check for re-auth case (may be necessary if Open Bnaking Connector
+    ///     does not know about previous successful auth)
+    /// </summary>
+    public bool? DetectReAuthCaseViaConsentStatus { get; init; }
 
     public string? ExtraConsentParameterName { get; init; }
 

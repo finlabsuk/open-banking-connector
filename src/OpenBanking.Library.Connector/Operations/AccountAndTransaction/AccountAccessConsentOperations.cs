@@ -83,9 +83,9 @@ internal class
                 instrumentationClient);
     }
 
-    private string ClientCredentialsGrantScope => "accounts";
+    public static string ClientCredentialsGrantScope => "accounts";
 
-    private string RelativePathBeforeId => "/account-access-consents";
+    public static string RelativePathBeforeId => "/account-access-consents";
 
     public async Task<(AccountAccessConsentCreateResponse response, IList<IFluentResponseInfoOrWarningMessage>
             nonErrorMessages)>
@@ -147,7 +147,8 @@ internal class
                 ApiRequests(
                     accountAndTransactionApi.ApiVersion,
                     bankFinancialId,
-                    ccGrantAccessToken);
+                    ccGrantAccessToken,
+                    _instrumentationClient);
             var externalApiUrl = new Uri(accountAndTransactionApi.BaseUrl + RelativePathBeforeId);
             AccountAndTransactionModelsPublic.OBReadConsent1 externalApiRequest =
                 request.ExternalApiRequest ??
@@ -342,7 +343,8 @@ internal class
                 ApiRequests(
                     accountAndTransactionApi.ApiVersion,
                     bankFinancialId,
-                    ccGrantAccessToken);
+                    ccGrantAccessToken,
+                    _instrumentationClient);
             var externalApiUrl = new Uri(
                 accountAndTransactionApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}");
             var tppReportingRequestInfo = new TppReportingRequestInfo
@@ -429,11 +431,12 @@ internal class
         return (response, nonErrorMessages);
     }
 
-    private IApiRequests<AccountAndTransactionModelsPublic.OBReadConsent1,
+    public static IApiRequests<AccountAndTransactionModelsPublic.OBReadConsent1,
         AccountAndTransactionModelsPublic.OBReadConsentResponse1> ApiRequests(
         AccountAndTransactionApiVersion accountAndTransactionApiVersion,
         string bankFinancialId,
-        string accessToken) =>
+        string accessToken,
+        IInstrumentationClient instrumentationClient) =>
         accountAndTransactionApiVersion switch
         {
             AccountAndTransactionApiVersion.Version3p1p7 => new ApiRequests<
@@ -446,7 +449,7 @@ internal class
                     AccountAndTransactionModelsV3p1p7.OBReadConsent1>(
                     bankFinancialId,
                     accessToken,
-                    _instrumentationClient)),
+                    instrumentationClient)),
             AccountAndTransactionApiVersion.VersionPublic => new ApiRequests<
                 AccountAndTransactionModelsPublic.OBReadConsent1,
                 AccountAndTransactionModelsPublic.OBReadConsentResponse1,
@@ -457,7 +460,7 @@ internal class
                     AccountAndTransactionModelsPublic.OBReadConsent1>(
                     bankFinancialId,
                     accessToken,
-                    _instrumentationClient)),
+                    instrumentationClient)),
             _ => throw new ArgumentOutOfRangeException(
                 $"AISP API version {accountAndTransactionApiVersion} not supported.")
         };

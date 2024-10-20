@@ -65,16 +65,25 @@ public class CooperativeGenerator : BankProfileGeneratorBase<CooperativeBank>
                     {
                         UsePkce = true,
                         Scope = "accounts+offline",
-                        ExtraParameters = new ConcurrentDictionary<string, string>
+                        GetExtraParameters = reAuthNotInitialAuth =>
                         {
-                            ["login_hint"] = bank switch
+                            var concurrentDictionary = new ConcurrentDictionary<string, string>
                             {
-                                CooperativeBank.Cooperative => "coop",
-                                CooperativeBank.CooperativeSandbox => "coop",
-                                CooperativeBank.Smile => "smile",
-                                _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+                                ["login_hint"] = bank switch
+                                {
+                                    CooperativeBank.Cooperative => "coop",
+                                    CooperativeBank.CooperativeSandbox => "coop",
+                                    CooperativeBank.Smile => "smile",
+                                    _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+                                }
+                            };
+                            if (reAuthNotInitialAuth)
+                            {
+                                concurrentDictionary["stepUp"] = "require";
                             }
+                            return concurrentDictionary;
                         },
+                        DetectReAuthCaseViaConsentStatus = true,
                         ExtraConsentParameterName = "display",
                         DoNotUseUrlPathEncoding = true,
                         SingleBase64EncodedParameterName = "data"
@@ -120,7 +129,7 @@ public class CooperativeGenerator : BankProfileGeneratorBase<CooperativeBank>
 
                     return externalApiRequest;
                 },
-                UseReauth = false
+                UseReauth = bank is not CooperativeBank.CooperativeSandbox
             },
             AspspBrandId = 0
         };

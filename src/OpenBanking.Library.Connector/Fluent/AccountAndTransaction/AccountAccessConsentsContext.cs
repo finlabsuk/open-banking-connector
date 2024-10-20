@@ -85,13 +85,7 @@ internal class AccountAccessConsentsConsentContext :
                 sharedContext.ObSealCertificateMethods,
                 sharedContext.ObWacCertificateMethods,
                 clientAccessTokenGet);
-    }
-
-    public ILocalEntityContext<AccountAccessConsentAuthContextRequest,
-        IAccountAccessConsentAuthContextPublicQuery,
-        AccountAccessConsentAuthContextCreateResponse,
-        AccountAccessConsentAuthContextReadResponse> AuthContexts =>
-        new LocalEntityContext<AccountAccessConsentAuthContextPersisted,
+        AuthContexts = new LocalEntityContext<AccountAccessConsentAuthContextPersisted,
             AccountAccessConsentAuthContextRequest,
             IAccountAccessConsentAuthContextPublicQuery,
             AccountAccessConsentAuthContextCreateResponse,
@@ -101,10 +95,23 @@ internal class AccountAccessConsentsConsentContext :
                 _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAuthContextPersisted>(),
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
-                _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                 _sharedContext.Instrumentation,
                 _sharedContext.BankProfileService,
-                _sharedContext.ObSealCertificateMethods));
+                _sharedContext.ObWacCertificateMethods,
+                _sharedContext.ObSealCertificateMethods,
+                clientAccessTokenGet,
+                new AccountAccessConsentCommon(
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>(),
+                    _sharedContext.Instrumentation),
+                _sharedContext.ApiVariantMapper));
+    }
+
+    public ILocalEntityContext<AccountAccessConsentAuthContextRequest,
+        IAccountAccessConsentAuthContextPublicQuery,
+        AccountAccessConsentAuthContextCreateResponse,
+        AccountAccessConsentAuthContextReadResponse> AuthContexts { get; }
 
     public IObjectRead<AccountAccessConsentCreateResponse, ConsentReadParams> ReadObject { get; }
 

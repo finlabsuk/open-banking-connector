@@ -59,6 +59,7 @@ public static class CreateAuthUrl
         string redirectUrl,
         string scopeString,
         OAuth2ResponseType responseType,
+        bool reAuthNotInitialAuth,
         IInstrumentationClient instrumentationClient)
     {
         const int lengthInBytes = 24;
@@ -126,9 +127,10 @@ public static class CreateAuthUrl
             keyValuePairs.Add("code_challenge", codeChallenge);
         }
 
-        if (customBehaviourConsentAuthGet?.ExtraParameters is not null)
+        if (customBehaviourConsentAuthGet?.GetExtraParameters is not null)
         {
-            foreach ((string key, string value) in customBehaviourConsentAuthGet.ExtraParameters)
+            foreach ((string key, string value) in customBehaviourConsentAuthGet.GetExtraParameters(
+                         reAuthNotInitialAuth))
             {
                 keyValuePairs.Add(key, value);
             }

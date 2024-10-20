@@ -334,7 +334,23 @@ internal class AuthContextUpdate :
         // Valid ID token means nonce has been validated so we delete auth context to ensure nonce can only be used once
         authContext.UpdateIsDeleted(true, modified, modifiedBy);
 
-        // Wrap remaining processing in try block to ensure DB changes persisted
+        // Update consent as auth has been successful (i.e. inputs validated)
+        consent.UpdateAuthContext(
+            authContext.State,
+            nonce,
+            authContext.CodeVerifier,
+            modified,
+            modifiedBy);
+
+        // Delete old cached/stored access token if exists
+        _memoryCache.Remove(consent.GetCacheKey());
+        storedAccessToken?.UpdateIsDeleted(true, modified, modifiedBy);
+
+        // Delete old stored refresh token if exists
+        storedRefreshToken?.UpdateIsDeleted(true, modified, modifiedBy);
+
+        // Get new tokens (wrapped in try block to ensure DB changes relating to
+        // successful auth persist even if token retrieval fails)
         try
         {
             // Get client secret if required
@@ -354,7 +370,7 @@ internal class AuthContextUpdate :
                         _encryptionKeyInfo.GetEncryptionKey(externalApiSecretEntity.KeyId));
             }
 
-            // Obtain token for consent
+            // Make request to token endpoint
             JsonSerializerSettings? jsonSerializerSettings = null;
             (AuthCodeGrantPostCustomBehaviour? consentAuthCodeGrantPostCustomBehaviour, bool expectRefreshToken,
                     string defaultScope) =
@@ -399,28 +415,10 @@ internal class AuthContextUpdate :
                     customBehaviour?.JwksGet,
                     apiClient);
 
-            // Update consent with state, nonce
-            consent.UpdateAuthContext(
-                authContext.State,
-                nonce,
-                authContext.CodeVerifier,
-                modified,
-                modifiedBy);
-
-            // Delete old cached/stored access token if exists
-            _memoryCache.Remove(consent.GetCacheKey());
-            storedAccessToken?.UpdateIsDeleted(true, modified, modifiedBy);
-
-            // Delete old stored refresh token if exists
-            storedRefreshToken?.UpdateIsDeleted(true, modified, modifiedBy);
-
-            // Create cache entry
+            // Cache new access token
             MemoryCacheEntryOptions cacheEntryOptions =
                 new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(
-                        _grantPost.GetTokenAdjustedDuration(
-                            //11,
-                            tokenEndpointResponse.ExpiresIn));
+                    .SetAbsoluteExpiration(_grantPost.GetTokenAdjustedDuration(tokenEndpointResponse.ExpiresIn));
             _memoryCache.Set(
                 consent.GetCacheKey(),
                 tokenEndpointResponse.AccessToken,
@@ -473,19 +471,18 @@ internal class AuthContextUpdate :
                     modifiedBy,
                     currentKeyId);
             }
-
-            // Create response (may involve additional processing based on entity)
-            var response =
-                new AuthContextUpdateAuthResultResponse(
-                    consent.GetConsentType(),
-                    consentId,
-                    null);
-
-            return (response, nonErrorMessages);
         }
         finally
         {
             await _dbSaveChangesMethod.SaveChangesAsync();
         }
+
+        // Create response (may involve additional processing based on entity)
+        var response =
+            new AuthContextUpdateAuthResultResponse(
+                consent.GetConsentType(),
+                consentId,
+                null);
+        return (response, nonErrorMessages);
     }
 }
