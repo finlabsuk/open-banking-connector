@@ -1,4 +1,4 @@
-# Run Docker image
+# Run Docker container
 
 Open Banking Connector Docker images (including the latest) are available [here](https://github.com/finlabsuk/open-banking-connector/pkgs/container/open-banking-connector-web-app). The Docker images are produced from the Dockerfile in the source code repo. Git tags are used so you can see the exact source code used to create each Docker image.
 

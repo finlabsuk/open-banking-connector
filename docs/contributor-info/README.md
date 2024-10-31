@@ -6,3 +6,4 @@ about contributing to this project.
 See the following sections for contributor guidance on:
 
 - [documentation](./documentation/README.md)
+- [developer setup](./developer-setup/README.md)

@@ -13,7 +13,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management
 public class ObWacCertificate : EntityBase, ISupportsValidation
 {
     /// <summary>
-    ///     Associated key (PKCS #8) as "stringified" PEM file with escaped newline characters ("\n") and "PRIVATE KEY" label.
+    ///     OB WAC (transport) key (PKCS #8) as "stringified" PEM file with escaped newline characters ("\n") and "PRIVATE KEY"
+    ///     label.
     ///     Example: "-----BEGIN PRIVATE KEY-----\nABC\n-----END PRIVATE KEY-----\n"
     /// </summary>
     [JsonProperty(Required = Required.Always)]

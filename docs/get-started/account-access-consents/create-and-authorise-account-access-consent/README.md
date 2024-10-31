@@ -4,7 +4,7 @@ To access end-user account data, you must first create and authorise an account 
 
 For demonstration purposes, here we will use manual browser end-user auth (i.e. cut and paste auth URL into browser) which is suitable for sandboxes such as the OBIE Modelo model bank.
 
-Supporting end-user auth with real banks requires creating a suitable app - please see [here](../../guide/README.md#open-banking-connector-supports-end-user-auth-in-your-app) for more info.
+Supporting end-user auth with real banks requires creating a suitable app - please see [here](../../../guide/README.md#open-banking-connector-supports-end-user-auth-in-your-app) for more info.
 
 ## Create an account access consent
 

@@ -1,3 +1,3 @@
 # OpenAPI spec    
 
-!!swagger openapi.json!!
+!!swagger openapi-manage.json!!

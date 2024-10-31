@@ -13,9 +13,3 @@ We here provide guidance for
 
 - [updating documentation](./update-documentation.md) in the `./docs` folder
 - [deploying documentation](./deploy-documentation.md) from the `./docs` folder to the [docs website](https://docs.openbankingconnector.io/).  
-
-
-
-
-
-

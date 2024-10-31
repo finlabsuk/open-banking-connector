@@ -7,7 +7,7 @@
         <UserSecretsId>aa921213-9461-4f9e-8fec-153624ec67ad</UserSecretsId>
         <AssemblyName>FinnovationLabs.OpenBanking.WebApp.Connector</AssemblyName>
         <RootNamespace>FinnovationLabs.OpenBanking.WebApp.Connector</RootNamespace>
-        <Version>12.3.1</Version>
+        <Version>12.3.2</Version>
         <Copyright>Finnovation Labs Limited and Contributors</Copyright>
         <Company>Finnovation Labs Limited</Company>
         <IsPackable>false</IsPackable>

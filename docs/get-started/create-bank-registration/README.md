@@ -4,9 +4,9 @@ To access Open Banking APIs provided by a bank, you need to create a bank regist
 
 To do this, first identify the *bank profile* for the bank you wish to connect to. Bank profiles are listed in the [bank integrations table](../../bank-integrations.md).
 
-Each bank registration requires the ID of a [software statement profile](../../configuration/software-statement-profiles-settings.md) (includes an *SSA* which identifies the third-party provider (TPP) to the bank) which has been set up in configuration.
+Each bank registration requires the ID of a previously-added [software statement](../add-software-statement-and-certificates/README.md).
 
-You can then use the bank profile and software statement profile ID to create a new bank registration.
+You can then use the bank profile and software statement ID to create a new bank registration.
 
 Upon creation, Open Banking Connector will provide you with an ID for the bank registration which you can then use to create consents.
 

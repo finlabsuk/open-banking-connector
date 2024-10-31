@@ -1,14 +1,17 @@
 # Confirm funds and make a payment
 
-Before making a payment, we may optionally perform a confirmation of funds (CoF) check.
+Before making a payment, you may optionally perform a confirmation of funds (CoF) check.
 
-We can then make the payment.
+You can then make the payment.
 
-After making a payment, we can check the status of a payment by "reading" the payment.
+After making a payment, you can check the payment status by "reading" the payment.
 
 ## Confirm funds
 
-We can confirm availability of end-user funds for a given payment amount by "creating" a domestic VRP funds confirmation. This request will be passed to the bank and the bank will respond indicating if funds are available. You can do this using the example request below.
+You can confirm availability of end-user funds for a given payment amount by "creating" a domestic VRP consent funds
+confirmation. This request will be passed to the bank and the bank will respond indicating if funds are available. You
+can do this using the example request below which is made to the [`POST /vrp/domestic-vrp-consents/{{domestic VRP consent ID}}/funds-confirmation`](../../../apis/variable-recurring-payments/openapi.md)
+endpoint.
 
 Note that `"{{reference text}}"` should match that used when creating the domestic VRP consent.
 
@@ -34,12 +37,14 @@ Content-Type: application/json
 }
 ```
 
-Upon creation, Open Banking Connector will provide you with a response including *ExternalApiResponse.Data.FundsAvailableResult.FundsAvailable* which will equal `"Available"` if funds are available.
+Upon creation, Open Banking Connector will provide you with a response including
+*ExternalApiResponse.Data.FundsAvailableResult.FundsAvailable* which will equal `"Available"` if funds are available.
 
 ## Make a payment
 
-We can make a payment by "creating" a domestic VRP. You can do this using the example request below. It is important that the "Initiation" and "Risk" sections match those of the corresponding consent.
-
+You can make a payment by "creating" a domestic VRP. You can do this using the example request below which is made to
+the [`POST /vrp/domestic-vrps`](../../../apis/variable-recurring-payments/openapi.md)
+endpoint. It is important that the "Initiation" and "Risk" sections match those of the corresponding consent.
 
 ```http
 # Create domestic VRP
@@ -94,11 +99,16 @@ Content-Type: application/json
 }
 ```
 
-Upon creation, Open Banking Connector will provide you with a response including *ExternalApiResponse.Data.DomesticVRPId* which is the external API (bank) ID of the domestic VRP.
+Upon creation, Open Banking Connector will provide you with a response including
+*ExternalApiResponse.Data.DomesticVRPId* which is the external API (bank) ID of the domestic VRP.
 
 ## Check payment status by reading payment
 
-The status of a payment usually changes with time from a pending/unsettled status to a settled or rejected status. You can check the status of a payment by "reading" the domestic VRP. You can do this using the example request below.
+The status of a payment usually changes with time from a pending/unsettled status to a settled or rejected status. You
+can check the status of a payment by "reading" the domestic VRP. You can do this using the example request below which
+is made to the [
+`GET /vrp/domestic-vrps/{{domestic VRP external API ID}}`](../../../apis/variable-recurring-payments/openapi.md)
+endpoint.
 
 ```http
 # Read domestic VRP
@@ -109,4 +119,5 @@ GET http://{{host}}/vrp/domestic-vrps/{{domestic VRP external API ID}}
 x-obc-domestic-vrp-consent-id: {{domestic VRP consent ID}}
 ```
 
-Upon reading, Open Banking Connector will provide you with a response including *ExternalApiResponse.Data.Status* which is the status of the domestic VRP (payment).
+Upon reading, Open Banking Connector will provide you with a response including *ExternalApiResponse.Data.Status* which
+is the status of the domestic VRP (payment).

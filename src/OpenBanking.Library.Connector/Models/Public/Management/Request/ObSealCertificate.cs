@@ -19,8 +19,8 @@ public class ObSealCertificate : EntityBase, ISupportsValidation
     public required string AssociatedKeyId { get; init; }
 
     /// <summary>
-    ///     Associated key (PKCS #8) provided as PEM file text (with "PRIVATE KEY" label).
-    ///     Newlines in PEM file text should be replaced by "\n".
+    ///     OB Seal (signing) key (PKCS #8) as "stringified" PEM file with escaped newline characters ("\n") and "PRIVATE KEY"
+    ///     label.
     ///     Example: "-----BEGIN PRIVATE KEY-----\nABC\n-----END PRIVATE KEY-----\n"
     /// </summary>
     [JsonProperty(Required = Required.Always)]

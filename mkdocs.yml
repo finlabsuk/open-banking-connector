@@ -7,6 +7,7 @@ theme:
     - navigation.instant
     - navigation.tracking
     - navigation.tabs
+    - navigation.sections
     - navigation.indexes
     - toc.follow
     - search.suggest
@@ -17,8 +18,8 @@ markdown_extensions:
   - attr_list
   - md_in_html
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji 
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji 
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - footnotes
 plugins:
   - search:
@@ -29,37 +30,41 @@ plugins:
   - render_swagger
 extra_css:
   - stylesheets/style.css
-copyright: Copyright &copy; 2023 Finnovation Labs Limited and contributors
+copyright: Copyright &copy; 2024 Finnovation Labs Limited and contributors
 nav:
   - Overview: README.md
   - Guide:
     - guide/README.md
   - Get started:
     - get-started/README.md
-    - Set up configuration and secrets: get-started\set-up-configuration-and-secrets\README.md
-    - Run Docker image: get-started\run-docker-image\README.md
+    - Set up basic configuration: get-started\set-up-basic-configuration\README.md
+    - Run Docker container: get-started\run-docker-container\README.md
+    - Add software statement and certificates: get-started/add-software-statement-and-certificates/README.md
     - Create bank registration: get-started\create-bank-registration\README.md
-    - Account information:
-      - Create and authorise an account access consent: get-started\account-information\create-and-authorise-account-access-consent\README.md
-      - Get account data: get-started\account-information\get-account-data\README.md
-    - Sweeping VRPs:
-      - Create and authorise a domestic VRP consent for sweeping: get-started\sweeping-vrps\create-and-authorise-domestic-vrp-consent\README.md
-      - Check funds and make payment: get-started\sweeping-vrps\confirm-funds-and-make-payment\README.md
+    - Account access consents:
+      - get-started/account-access-consents/README.md
+      - Create and authorise an account access consent: get-started/account-access-consents/create-and-authorise-account-access-consent/README.md
+      - Get account data: get-started\account-access-consents\get-account-data\README.md
+    - Domestic payment consents:
+      - get-started/domestic-payment-consents/README.md
+      - Create and authorise a domestic VRP consent: get-started\domestic-payment-consents\create-and-authorise-domestic-payment-consent\README.md
+      - Check funds and make payment: get-started\domestic-payment-consents\confirm-funds-and-make-payment\README.md
+    - Domestic VRP consents:
+      - get-started/domestic-vrp-consents/README.md
+      - Create and authorise a domestic VRP consent: get-started\domestic-vrp-consents\create-and-authorise-domestic-vrp-consent\README.md
+      - Check funds and make payment: get-started\domestic-vrp-consents\confirm-funds-and-make-payment\README.md
   - Bank Integrations: bank-integrations.md
   - Configuration:
     - configuration/README.md
     - Database settings: configuration/database-settings.md
-    - Software statement profiles settings: configuration/software-statement-profiles-settings.md
-    - Transport certificate profiles settings: configuration/transport-certificate-profiles-settings.md
-    - Signing certificate profiles settings: configuration/signing-certificate-profiles-settings.md
-    - Encryption keys settings: configuration/encryption-keys-settings.md
+    - Encryption keys settings: configuration/encryption-key-settings.md
     - Configuration sources settings: configuration/configuration-sources-settings.md
     - Open Telemetry settings: configuration/open-telemetry-settings.md
   - APIs:
     - apis/README.md
-    - Bank Configuration API:
-      - apis/bank-configuration/README.md
-      - OpenAPI spec: apis/bank-configuration/openapi.md
+    - Management API:
+      - apis/management/README.md
+      - OpenAPI spec: apis/management/openapi.md
     - Account and Transaction API:
       - apis/account-and-transaction/README.md
       - OpenAPI spec: apis/account-and-transaction/openapi.md 
@@ -78,6 +83,8 @@ nav:
         - contributor-info/documentation/README.md
         - Update: contributor-info/documentation/update-documentation.md
         - Deploy: contributor-info/documentation/deploy-documentation.md
-      - Dev Environment: 
-        - Install OB UK root certificate: contributor-info/dev-environment/install-ob-root-cert.md
-        - Use Microsoft's Secret Manager: contributor-info/dev-environment/use-secret-manager.md
+      - Developer setup:
+        - contributor-info/developer-setup/README.md
+        - Install OB UK root certificate: contributor-info/developer-setup/install-obuk-root-certs.md
+        - Use Microsoft's Secret Manager: contributor-info/developer-setup/use-secret-manager.md
+        - Install PostgreSQL: contributor-info/developer-setup/install-postgresql.md
