@@ -1,0 +1,138 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Auth Contexts API",
+    "description": "Auth Contexts API for Open Banking Connector Web App",
+    "version": "12.2.3"
+  },
+  "paths": {
+    "/auth/redirect-delegate": {
+      "post": {
+        "tags": [
+          "Post-Auth Redirects"
+        ],
+        "summary": "Delegate endpoint for forwarding data captured elsewhere from post-auth (OAuth 2/OpenID Connect) redirect",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "required": [
+                  "state"
+                ],
+                "type": "object",
+                "properties": {
+                  "state": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string"
+                  },
+                  "id_token": {
+                    "type": "string"
+                  },
+                  "error": {
+                    "type": "string"
+                  },
+                  "response_mode": {
+                    "type": "string"
+                  },
+                  "modified_by": {
+                    "type": "string"
+                  },
+                  "redirect_uri": {
+                    "type": "string"
+                  },
+                  "app_session_id": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "state": {
+                  "style": "form"
+                },
+                "code": {
+                  "style": "form"
+                },
+                "id_token": {
+                  "style": "form"
+                },
+                "error": {
+                  "style": "form"
+                },
+                "response_mode": {
+                  "style": "form"
+                },
+                "modified_by": {
+                  "style": "form"
+                },
+                "redirect_uri": {
+                  "style": "form"
+                },
+                "app_session_id": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthContextUpdateAuthResultResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthContextUpdateAuthResultResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthContextUpdateAuthResultResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthContextUpdateAuthResultResponse": {
+        "type": "object",
+        "properties": {
+          "ConsentType": {
+            "$ref": "#/components/schemas/ConsentType"
+          },
+          "ConsentId": {
+            "type": "string",
+            "description": "Consent ID.",
+            "format": "uuid"
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ConsentType": {
+        "enum": [
+          "AccountAccessConsent",
+          "DomesticPaymentConsent",
+          "DomesticVrpConsent"
+        ],
+        "type": "string"
+      }
+    }
+  }
+}

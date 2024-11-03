@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "6.3.1"
+    "version": "12.2.3"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -66,7 +66,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -94,6 +94,16 @@
           "Account Access Consents"
         ],
         "summary": "Create account access consent",
+        "parameters": [
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "description": "",
           "content": {
@@ -146,25 +156,25 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "x-obc-include-external-api-operation",
+            "name": "x-obc-exclude-external-api-operation",
             "in": "header",
             "description": "",
             "schema": {
               "type": "boolean"
             }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -202,39 +212,39 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "x-obc-include-external-api-operation",
+            "name": "x-obc-exclude-external-api-operation",
             "in": "header",
             "description": "",
             "schema": {
               "type": "boolean"
             }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               }
             }
@@ -260,7 +270,7 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
+            "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
             "schema": {
@@ -270,7 +280,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -319,7 +329,7 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
+            "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
             "schema": {
@@ -329,7 +339,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -368,7 +378,7 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
+            "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
             "schema": {
@@ -378,7 +388,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -426,7 +436,7 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
+            "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
             "schema": {
@@ -436,7 +446,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -475,7 +485,7 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
+            "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
             "schema": {
@@ -485,7 +495,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -533,7 +543,7 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
+            "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
             "schema": {
@@ -543,7 +553,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -558,6 +568,55 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DirectDebitsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aisp/monzo-pots": {
+      "get": {
+        "tags": [
+          "Monzo Pots"
+        ],
+        "summary": "Read Monzo pots",
+        "parameters": [
+          {
+            "name": "x-obc-account-access-consent-id",
+            "in": "header",
+            "description": "ID of AccountAccessConsent used for request (obtained when creating consent)",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonzoPotsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonzoPotsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonzoPotsResponse"
                 }
               }
             }
@@ -583,7 +642,7 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
+            "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
             "schema": {
@@ -593,7 +652,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -642,7 +701,7 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
+            "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
             "schema": {
@@ -652,7 +711,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -701,7 +760,7 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
+            "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
             "schema": {
@@ -711,7 +770,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -750,7 +809,7 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
+            "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
             "schema": {
@@ -760,7 +819,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -808,7 +867,7 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
+            "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
             "schema": {
@@ -818,7 +877,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -858,14 +917,6 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "fromBookingDateTime",
             "in": "query",
             "description": "Start date and time for filtering of the Transaction records on the\r\nTransaction/BookingDateTime field",
@@ -880,11 +931,19 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -933,14 +992,6 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "fromBookingDateTime",
             "in": "query",
             "description": "Start date and time for filtering of the Transaction records on the\r\nTransaction/BookingDateTime field",
@@ -955,11 +1006,19 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1017,14 +1076,6 @@
             }
           },
           {
-            "name": "x-obc-modified-by",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "fromBookingDateTime",
             "in": "query",
             "description": "Start date and time for filtering of the Transaction records on the\r\nTransaction/BookingDateTime field",
@@ -1039,11 +1090,19 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1068,6 +1127,58 @@
   },
   "components": {
     "schemas": {
+      "Account": {
+        "required": [
+          "Identification",
+          "SchemeName"
+        ],
+        "type": "object",
+        "properties": {
+          "SchemeName": {
+            "type": "string"
+          },
+          "Identification": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "Name": {
+            "maxLength": 350,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "SecondaryIdentification": {
+            "maxLength": 34,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { },
+        "description": "Provides the details to identify an account."
+      },
+      "Account3": {
+        "required": [
+          "Id",
+          "Related"
+        ],
+        "type": "object",
+        "properties": {
+          "Related": {
+            "type": "string",
+            "description": "Absolute URI to the related resource.",
+            "format": "uri"
+          },
+          "Id": {
+            "maxLength": 40,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identification as assigned by the ASPSP to uniquely identify the related resource."
+          }
+        },
+        "additionalProperties": { }
+      },
       "AccountAccessConsentAuthContext": {
         "required": [
           "AccountAccessConsentId"
@@ -1092,19 +1203,53 @@
         "additionalProperties": false
       },
       "AccountAccessConsentAuthContextCreateResponse": {
+        "required": [
+          "AccountAccessConsentId",
+          "AppSessionId",
+          "AuthUrl",
+          "Created",
+          "Id",
+          "State"
+        ],
         "type": "object",
         "properties": {
           "AuthUrl": {
             "type": "string",
             "description": "Time-sensitive URL to enable end-user authentication via website or mobile app",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "AppSessionId": {
             "type": "string",
             "description": "App session ID that can be checked when processing post-auth redirect",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
+          },
+          "AccountAccessConsentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "State": {
+            "type": "string",
+            "nullable": true
+          },
+          "Id": {
+            "type": "string",
+            "description": "Unique Open Banking Connector ID (used in local database).",
+            "format": "uuid"
+          },
+          "Created": {
+            "type": "string",
+            "description": "Created timestamp in local database.",
+            "format": "date-time"
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true
           },
           "Warnings": {
             "type": "array",
@@ -1112,102 +1257,121 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
-          },
-          "AccountAccessConsentId": {
-            "type": "string",
-            "format": "uuid",
-            "readOnly": true
-          },
-          "State": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "Id": {
-            "type": "string",
-            "description": "Unique Open Banking Connector ID (used in local database).",
-            "format": "uuid",
-            "readOnly": true
-          },
-          "Created": {
-            "type": "string",
-            "description": "Created timestamp in local database.",
-            "format": "date-time",
-            "readOnly": true
-          },
-          "CreatedBy": {
-            "type": "string",
-            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
-            "nullable": true,
-            "readOnly": true
-          },
-          "Reference": {
-            "type": "string",
-            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false,
         "description": "Response to create requests."
       },
       "AccountAccessConsentAuthContextReadResponse": {
+        "required": [
+          "AccountAccessConsentId",
+          "Created",
+          "Id",
+          "State"
+        ],
         "type": "object",
         "properties": {
+          "AccountAccessConsentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "State": {
+            "type": "string",
+            "nullable": true
+          },
+          "Id": {
+            "type": "string",
+            "description": "Unique Open Banking Connector ID (used in local database).",
+            "format": "uuid"
+          },
+          "Created": {
+            "type": "string",
+            "description": "Created timestamp in local database.",
+            "format": "date-time"
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true
+          },
           "Warnings": {
             "type": "array",
             "items": {
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
-          },
-          "AccountAccessConsentId": {
-            "type": "string",
-            "format": "uuid",
-            "readOnly": true
-          },
-          "State": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "Id": {
-            "type": "string",
-            "description": "Unique Open Banking Connector ID (used in local database).",
-            "format": "uuid",
-            "readOnly": true
-          },
-          "Created": {
-            "type": "string",
-            "description": "Created timestamp in local database.",
-            "format": "date-time",
-            "readOnly": true
-          },
-          "CreatedBy": {
-            "type": "string",
-            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
-            "nullable": true,
-            "readOnly": true
-          },
-          "Reference": {
-            "type": "string",
-            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false,
         "description": "Response to Read requests."
       },
       "AccountAccessConsentCreateResponse": {
+        "required": [
+          "AuthContextModified",
+          "BankRegistrationId",
+          "Created",
+          "ExternalApiId",
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo",
+          "Id"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
             "$ref": "#/components/schemas/OBReadConsentResponse1"
+          },
+          "ExternalApiResponseInfo": {
+            "$ref": "#/components/schemas/ExternalApiResponseInfo"
+          },
+          "ExternalApiUserId": {
+            "type": "string",
+            "description": "User ID at external API (bank) which may or may not be available via ID token \"sub\" claim. If retrieved from ID\r\ntoken or supplied on object creation, it will be stored here.",
+            "nullable": true
+          },
+          "AuthContextModified": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "AuthContextModifiedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "BankRegistrationId": {
+            "type": "string",
+            "description": "ID of associated BankRegistration object",
+            "format": "uuid"
+          },
+          "ExternalApiId": {
+            "type": "string",
+            "description": "External (bank) API ID. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks.",
+            "nullable": true
+          },
+          "Id": {
+            "type": "string",
+            "description": "Unique Open Banking Connector ID (used in local database).",
+            "format": "uuid"
+          },
+          "Created": {
+            "type": "string",
+            "description": "Created timestamp in local database.",
+            "format": "date-time"
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true
           },
           "Warnings": {
             "type": "array",
@@ -1215,64 +1379,11 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
-          },
-          "BankRegistrationId": {
-            "type": "string",
-            "description": "ID of associated BankRegistration object",
-            "format": "uuid",
-            "readOnly": true
-          },
-          "ExternalApiId": {
-            "type": "string",
-            "description": "External (bank) API ID. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks.",
-            "nullable": true,
-            "readOnly": true
-          },
-          "ExternalApiUserId": {
-            "type": "string",
-            "description": "User ID at external API (bank) which may or may not be available via ID token \"sub\" claim. If retrieved from ID\r\ntoken or supplied on object creation, it will be stored here.",
-            "nullable": true,
-            "readOnly": true
-          },
-          "AuthContextModified": {
-            "type": "string",
-            "format": "date-time",
-            "readOnly": true
-          },
-          "AuthContextModifiedBy": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "Id": {
-            "type": "string",
-            "description": "Unique Open Banking Connector ID (used in local database).",
-            "format": "uuid",
-            "readOnly": true
-          },
-          "Created": {
-            "type": "string",
-            "description": "Created timestamp in local database.",
-            "format": "date-time",
-            "readOnly": true
-          },
-          "CreatedBy": {
-            "type": "string",
-            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
-            "nullable": true,
-            "readOnly": true
-          },
-          "Reference": {
-            "type": "string",
-            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false,
-        "description": "Response to AccountAccessConsent Create requests."
+        "description": "Response to AccountAccessConsent Create and Read requests."
       },
       "AccountAccessConsentRequest": {
         "required": [
@@ -1318,6 +1429,9 @@
         "additionalProperties": false
       },
       "AccountAccessConsentTemplateRequest": {
+        "required": [
+          "Type"
+        ],
         "type": "object",
         "properties": {
           "Type": {
@@ -1336,10 +1450,17 @@
         "type": "string"
       },
       "AccountsResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
             "$ref": "#/components/schemas/OBReadAccount6"
+          },
+          "ExternalApiResponseInfo": {
+            "$ref": "#/components/schemas/ExternalApiResponseInfo"
           },
           "Warnings": {
             "type": "array",
@@ -1347,14 +1468,134 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false,
         "description": "Response to Account read requests"
       },
+      "Address": {
+        "required": [
+          "Country"
+        ],
+        "type": "object",
+        "properties": {
+          "AddressType": {
+            "$ref": "#/components/schemas/OBAddressTypeCode"
+          },
+          "AddressLine": {
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "StreetName": {
+            "maxLength": 70,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "BuildingNumber": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "PostCode": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "TownName": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "CountrySubDivision": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "Country": {
+            "pattern": "^[A-Z]{2,2}$",
+            "type": "string"
+          }
+        },
+        "additionalProperties": { },
+        "description": "Postal address of a party."
+      },
+      "Amount": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
+          },
+          "Currency": {
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
+          }
+        },
+        "additionalProperties": { }
+      },
+      "Amount3": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
+          },
+          "Currency": {
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
+          },
+          "SubType": {
+            "$ref": "#/components/schemas/Amount3SubType"
+          }
+        },
+        "additionalProperties": { }
+      },
+      "Amount3SubType": {
+        "enum": [
+          "BaseCurrency",
+          "LocalCurrency"
+        ],
+        "type": "string"
+      },
+      "Amount5": {
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string",
+            "nullable": true
+          },
+          "Currency": {
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
       "AuthContextRequest": {
+        "required": [
+          "Nonce",
+          "State"
+        ],
         "type": "object",
         "properties": {
           "State": {
@@ -1367,6 +1608,10 @@
             "description": "OpenID Connect \"nonce\".",
             "nullable": true
           },
+          "CodeVerifier": {
+            "type": "string",
+            "nullable": true
+          },
           "ModifiedBy": {
             "type": "string",
             "nullable": true
@@ -1374,30 +1619,61 @@
         },
         "additionalProperties": false
       },
+      "Balance": {
+        "required": [
+          "AccountId",
+          "Amount",
+          "CreditDebitIndicator",
+          "DateTime",
+          "Type"
+        ],
+        "type": "object",
+        "properties": {
+          "AccountId": {
+            "maxLength": 40,
+            "minLength": 1,
+            "type": "string"
+          },
+          "CreditDebitIndicator": {
+            "$ref": "#/components/schemas/OBCreditDebitCode_2"
+          },
+          "Type": {
+            "$ref": "#/components/schemas/OBBalanceType1Code"
+          },
+          "DateTime": {
+            "type": "string",
+            "description": "Indicates the date (and time) of the balance.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
+            "format": "date-time"
+          },
+          "Amount": {
+            "$ref": "#/components/schemas/Amount3"
+          },
+          "CreditLine": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreditLine"
+            },
+            "nullable": true
+          },
+          "LocalAmount": {
+            "$ref": "#/components/schemas/LocalAmount2"
+          }
+        },
+        "additionalProperties": { },
+        "description": "Set of elements used to define the balance details."
+      },
       "BalancesResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
             "$ref": "#/components/schemas/OBReadBalance1"
           },
-          "Warnings": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Response to Balance read requests"
-      },
-      "DirectDebitsResponse": {
-        "type": "object",
-        "properties": {
-          "ExternalApiResponse": {
-            "$ref": "#/components/schemas/OBReadDirectDebit2"
+          "ExternalApiResponseInfo": {
+            "$ref": "#/components/schemas/ExternalApiResponseInfo"
           },
           "Warnings": {
             "type": "array",
@@ -1405,8 +1681,306 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response to Balance read requests"
+      },
+      "BaseResponse": {
+        "type": "object",
+        "properties": {
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreditLine": {
+        "required": [
+          "Included"
+        ],
+        "type": "object",
+        "properties": {
+          "Included": {
+            "type": "boolean",
+            "description": "Indicates whether or not the credit line is included in the balance of the account.\r\n\r\nUsage: If not present, credit line is not included in the balance amount of the account."
+          },
+          "Type": {
+            "$ref": "#/components/schemas/CreditLineType"
+          },
+          "Amount": {
+            "$ref": "#/components/schemas/Amount5"
+          }
+        },
+        "additionalProperties": { },
+        "description": "Set of elements used to provide details on the credit line."
+      },
+      "CreditLineType": {
+        "enum": [
+          "Available",
+          "Credit",
+          "Emergency",
+          "Pre-Agreed",
+          "Temporary"
+        ],
+        "type": "string"
+      },
+      "Data": {
+        "type": "object",
+        "properties": {
+          "Account": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OBAccount6"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "Data12": {
+        "type": "object",
+        "properties": {
+          "StandingOrder": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OBStandingOrder6"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "Data2": {
+        "required": [
+          "Balance"
+        ],
+        "type": "object",
+        "properties": {
+          "Balance": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Balance"
+            }
+          },
+          "TotalValue": {
+            "$ref": "#/components/schemas/TotalValue2"
+          }
+        },
+        "additionalProperties": { }
+      },
+      "Data4": {
+        "required": [
+          "Permissions"
+        ],
+        "type": "object",
+        "properties": {
+          "Permissions": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Permissions"
+            }
+          },
+          "ExpirationDateTime": {
+            "type": "string",
+            "description": "Specified date and time the permissions will expire.\r\n\r\nIf this is not populated, the permissions will be open ended.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
+            "format": "date-time",
+            "nullable": true
+          },
+          "TransactionFromDateTime": {
+            "type": "string",
+            "description": "Specified start date and time for the transaction query period.\r\n\r\nIf this is not populated, the start date will be open ended, and data will be returned from the earliest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
+            "format": "date-time",
+            "nullable": true
+          },
+          "TransactionToDateTime": {
+            "type": "string",
+            "description": "Specified end date and time for the transaction query period.\r\n\r\nIf this is not populated, the end date will be open ended, and data will be returned to the latest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
+            "format": "date-time",
+            "nullable": true
+          },
+          "SupplementaryData": {
+            "$ref": "#/components/schemas/OBSupplementaryData1"
+          }
+        },
+        "additionalProperties": { }
+      },
+      "Data5": {
+        "required": [
+          "ConsentId",
+          "CreationDateTime",
+          "Permissions",
+          "Status",
+          "StatusUpdateDateTime"
+        ],
+        "type": "object",
+        "properties": {
+          "ConsentId": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identification as assigned to identify the account access consent resource."
+          },
+          "CreationDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Status": {
+            "$ref": "#/components/schemas/Data5Status"
+          },
+          "StatusUpdateDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Permissions": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Permissions2"
+            }
+          },
+          "ExpirationDateTime": {
+            "type": "string",
+            "description": "Specified date and time the permissions will expire.\r\n\r\nIf this is not populated, the permissions will be open ended.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
+            "format": "date-time",
+            "nullable": true
+          },
+          "TransactionFromDateTime": {
+            "type": "string",
+            "description": "Specified start date and time for the transaction query period.\r\n\r\nIf this is not populated, the start date will be open ended, and data will be returned from the earliest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
+            "format": "date-time",
+            "nullable": true
+          },
+          "TransactionToDateTime": {
+            "type": "string",
+            "description": "Specified end date and time for the transaction query period.\r\n\r\nIf this is not populated, the end date will be open ended, and data will be returned to the latest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "Data5Status": {
+        "enum": [
+          "Authorised",
+          "AwaitingAuthorisation",
+          "Rejected",
+          "Revoked"
+        ],
+        "type": "string"
+      },
+      "Data6": {
+        "type": "object",
+        "properties": {
+          "DirectDebit": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DirectDebit"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "Data8": {
+        "type": "object",
+        "properties": {
+          "Party": {
+            "$ref": "#/components/schemas/OBParty2"
+          }
+        },
+        "additionalProperties": { }
+      },
+      "Data9": {
+        "type": "object",
+        "properties": {
+          "Party": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OBParty2"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "DirectDebit": {
+        "required": [
+          "AccountId",
+          "MandateIdentification",
+          "Name"
+        ],
+        "type": "object",
+        "properties": {
+          "AccountId": {
+            "maxLength": 40,
+            "minLength": 1,
+            "type": "string"
+          },
+          "DirectDebitId": {
+            "maxLength": 40,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "MandateIdentification": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string"
+          },
+          "DirectDebitStatusCode": {
+            "$ref": "#/components/schemas/OBExternalDirectDebitStatus1Code"
+          },
+          "Name": {
+            "maxLength": 70,
+            "minLength": 1,
+            "type": "string"
+          },
+          "PreviousPaymentDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Frequency": {
+            "type": "string",
+            "description": "Regularity with which direct debit instructions are to be created and processed.",
+            "nullable": true
+          },
+          "PreviousPaymentAmount": {
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount_0"
+          }
+        },
+        "additionalProperties": { },
+        "description": "Account to or from which a cash entry is made."
+      },
+      "DirectDebitsResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
+        "type": "object",
+        "properties": {
+          "ExternalApiResponse": {
+            "$ref": "#/components/schemas/OBReadDirectDebit2"
+          },
+          "ExternalApiResponseInfo": {
+            "$ref": "#/components/schemas/ExternalApiResponseInfo"
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -1426,161 +2000,279 @@
         },
         "additionalProperties": false
       },
+      "ExternalApiResponseInfo": {
+        "required": [
+          "XFapiInteractionId"
+        ],
+        "type": "object",
+        "properties": {
+          "XFapiInteractionId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InstructedAmount": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
+          },
+          "Currency": {
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
+          }
+        },
+        "additionalProperties": { }
+      },
       "Links": {
+        "required": [
+          "Self"
+        ],
         "type": "object",
         "properties": {
           "Self": {
             "type": "string",
-            "description": "Gets the self.",
-            "nullable": true
+            "format": "uri"
           },
           "First": {
             "type": "string",
-            "description": "Gets the first.",
+            "format": "uri",
             "nullable": true
           },
           "Prev": {
             "type": "string",
-            "description": "Gets the prev.",
+            "format": "uri",
             "nullable": true
           },
           "Next": {
             "type": "string",
-            "description": "Gets the next.",
+            "format": "uri",
             "nullable": true
           },
           "Last": {
             "type": "string",
-            "description": "Gets the last.",
+            "format": "uri",
             "nullable": true
           }
         },
         "additionalProperties": false,
-        "description": "Links relevant to the payload."
+        "description": "Links relevant to the payload"
+      },
+      "LocalAmount2": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
+          },
+          "Currency": {
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
+          },
+          "SubType": {
+            "$ref": "#/components/schemas/LocalAmount2SubType"
+          }
+        },
+        "additionalProperties": { }
+      },
+      "LocalAmount2SubType": {
+        "enum": [
+          "BaseCurrency",
+          "LocalCurrency"
+        ],
+        "type": "string"
       },
       "Meta": {
         "type": "object",
         "properties": {
           "TotalPages": {
             "type": "integer",
-            "description": "Gets the total pages.",
             "format": "int32",
             "nullable": true
           },
           "FirstAvailableDateTime": {
             "type": "string",
-            "description": "All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "LastAvailableDateTime": {
             "type": "string",
-            "description": "All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           }
         },
         "additionalProperties": false,
-        "description": "Meta Data relevant to the payload."
+        "description": "Meta Data relevant to the payload"
+      },
+      "MonzoPot": {
+        "type": "object",
+        "properties": {
+          "PotId": {
+            "type": "string",
+            "nullable": true
+          },
+          "AccountId": {
+            "type": "string",
+            "description": "A unique and immutable identifier used to identify the account resource. This identifier has no meaning to\r\nthe account owner.",
+            "nullable": true
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Type": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreditDebitIndicator": {
+            "$ref": "#/components/schemas/OBCreditDebitCode_2"
+          },
+          "Balance": {
+            "$ref": "#/components/schemas/Amount3"
+          },
+          "Style": {
+            "type": "string",
+            "nullable": true
+          },
+          "Goal": {
+            "$ref": "#/components/schemas/Amount3"
+          },
+          "Updated": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Created": {
+            "type": "string",
+            "description": "Indicates the date (and time) of the balance.All dates in the JSON payloads are represented in ISO 8601 date-time\r\nformat.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
+            "format": "date-time"
+          },
+          "Status": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MonzoPotData": {
+        "type": "object",
+        "properties": {
+          "Pot": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MonzoPot"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MonzoPotsResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
+        "type": "object",
+        "properties": {
+          "ExternalApiResponse": {
+            "$ref": "#/components/schemas/ReadMonzoPot"
+          },
+          "ExternalApiResponseInfo": {
+            "$ref": "#/components/schemas/ExternalApiResponseInfo"
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response to Monzo pot read requests"
       },
       "OBAccount6": {
+        "required": [
+          "AccountId"
+        ],
         "type": "object",
         "properties": {
           "AccountId": {
-            "type": "string",
-            "description": "A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner.",
-            "nullable": true
+            "maxLength": 40,
+            "minLength": 1,
+            "type": "string"
           },
           "Status": {
-            "$ref": "#/components/schemas/OBAccountStatus1CodeEnum"
+            "$ref": "#/components/schemas/OBAccountStatus1Code"
           },
           "StatusUpdateDateTime": {
             "type": "string",
-            "description": "Date and time at which the resource status was updated.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "Currency": {
+            "pattern": "^[A-Z]{3,3}$",
             "type": "string",
-            "description": "Identification of the currency in which the account is held. \r\nUsage: Currency should only be used in case one and the same account number covers several currencies\r\nand the initiating party needs to identify which currency needs to be used for settlement on the account.",
             "nullable": true
           },
           "AccountType": {
-            "$ref": "#/components/schemas/OBExternalAccountType1CodeEnum"
+            "$ref": "#/components/schemas/OBExternalAccountType1Code"
           },
           "AccountSubType": {
-            "$ref": "#/components/schemas/OBExternalAccountSubType1CodeEnum"
+            "$ref": "#/components/schemas/OBExternalAccountSubType1Code"
           },
           "Description": {
+            "maxLength": 35,
+            "minLength": 1,
             "type": "string",
-            "description": "Specifies the description of the account type.",
             "nullable": true
           },
           "Nickname": {
+            "maxLength": 70,
+            "minLength": 1,
             "type": "string",
-            "description": "The nickname of the account, assigned by the account owner in order to provide an additional means of identification of the account.",
             "nullable": true
           },
           "OpeningDate": {
             "type": "string",
-            "description": "Date on which the account and related basic services are effectively operational for the account owner.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "MaturityDate": {
             "type": "string",
-            "description": "Maturity date of the account.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "SwitchStatus": {
             "type": "string",
-            "description": "Specifies the switch status for the account, in a coded form.",
             "nullable": true
           },
           "Account": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OBAccount6AccountItem"
+              "$ref": "#/components/schemas/Account"
             },
-            "description": "Gets the account.",
             "nullable": true
           },
           "Servicer": {
-            "$ref": "#/components/schemas/OBBranchAndFinancialInstitutionIdentification50"
+            "$ref": "#/components/schemas/OBBranchAndFinancialInstitutionIdentification5_0"
           }
         },
         "additionalProperties": false,
-        "description": "Unambiguous identification of the account to which credit and debit entries are made. The following fields are optional only for accounts that are switched:\r\n\r\n  * Data.Currency  \r\n  * Data.AccountType  \r\n  * Data.AccountSubType\r\n\r\nFor all other accounts, the fields must be populated by the ASPSP."
+        "description": "Unambiguous identification of the account to which credit and debit entries are made. The following fields are optional only for accounts that are switched:\r\n\r\n\r\n  * Data.Currency  \r\n\r\n  * Data.AccountType  \r\n\r\n  * Data.AccountSubType\r\n\r\n\r\nFor all other accounts, the fields must be populated by the ASPSP."
       },
-      "OBAccount6AccountItem": {
-        "type": "object",
-        "properties": {
-          "SchemeName": {
-            "type": "string",
-            "description": "Name of the identification scheme, in a coded form as published in an external list.",
-            "nullable": true
-          },
-          "Identification": {
-            "type": "string",
-            "description": "Identification assigned by an institution to identify an account. This identification is known by the account owner.",
-            "nullable": true
-          },
-          "Name": {
-            "type": "string",
-            "description": "The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels.\r\nNote, the account name is not the product name or the nickname of the account.",
-            "nullable": true
-          },
-          "SecondaryIdentification": {
-            "type": "string",
-            "description": "This is secondary identification of the account, as assigned by the account servicing institution. \r\nThis can be used by building societies to additionally identify accounts with a roll number (in addition to a sort code and account number combination).",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Provides the details to identify an account."
-      },
-      "OBAccountStatus1CodeEnum": {
+      "OBAccountStatus1Code": {
         "enum": [
           "Deleted",
           "Disabled",
@@ -1591,126 +2283,140 @@
         "type": "string",
         "description": "Specifies the status of account resource in code form."
       },
-      "OBActiveOrHistoricCurrencyAndAmount0": {
+      "OBActiveOrHistoricCurrencyAndAmount_0": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
         "type": "object",
         "properties": {
           "Amount": {
-            "type": "string",
-            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-            "nullable": true
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
           },
           "Currency": {
-            "type": "string",
-            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
-            "nullable": true
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": { },
         "description": "The amount of the most recent direct debit collection."
       },
-      "OBActiveOrHistoricCurrencyAndAmount10": {
+      "OBActiveOrHistoricCurrencyAndAmount_10": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
         "type": "object",
         "properties": {
           "Amount": {
-            "type": "string",
-            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-            "nullable": true
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
           },
           "Currency": {
-            "type": "string",
-            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
-            "nullable": true
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": { },
         "description": "Transaction charges to be paid by the charge bearer."
       },
-      "OBActiveOrHistoricCurrencyAndAmount11": {
+      "OBActiveOrHistoricCurrencyAndAmount_11": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
         "type": "object",
         "properties": {
           "Amount": {
-            "type": "string",
-            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-            "nullable": true
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
           },
           "Currency": {
-            "type": "string",
-            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
-            "nullable": true
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": { },
         "description": "The amount of the last (most recent) Standing Order instruction."
       },
-      "OBActiveOrHistoricCurrencyAndAmount2": {
+      "OBActiveOrHistoricCurrencyAndAmount_2": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
         "type": "object",
         "properties": {
           "Amount": {
-            "type": "string",
-            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-            "nullable": true
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
           },
           "Currency": {
-            "type": "string",
-            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
-            "nullable": true
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
           }
         },
-        "additionalProperties": false,
-        "description": "The amount of the first Standing Order."
+        "additionalProperties": { },
+        "description": "The amount of the first Standing Order"
       },
-      "OBActiveOrHistoricCurrencyAndAmount3": {
+      "OBActiveOrHistoricCurrencyAndAmount_3": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
         "type": "object",
         "properties": {
           "Amount": {
-            "type": "string",
-            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-            "nullable": true
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
           },
           "Currency": {
-            "type": "string",
-            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
-            "nullable": true
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": { },
         "description": "The amount of the next Standing Order."
       },
-      "OBActiveOrHistoricCurrencyAndAmount4": {
+      "OBActiveOrHistoricCurrencyAndAmount_4": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
         "type": "object",
         "properties": {
           "Amount": {
-            "type": "string",
-            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-            "nullable": true
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
           },
           "Currency": {
-            "type": "string",
-            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
-            "nullable": true
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
           }
         },
-        "additionalProperties": false,
-        "description": "The amount of the final Standing Order."
+        "additionalProperties": { },
+        "description": "The amount of the final Standing Order"
       },
-      "OBActiveOrHistoricCurrencyAndAmount9": {
+      "OBActiveOrHistoricCurrencyAndAmount_9": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
         "type": "object",
         "properties": {
           "Amount": {
-            "type": "string",
-            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-            "nullable": true
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
           },
           "Currency": {
-            "type": "string",
-            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
-            "nullable": true
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": { },
         "description": "Amount of money in the cash transaction entry."
       },
-      "OBAddressTypeCodeEnum": {
+      "OBAddressTypeCode": {
         "enum": [
           "Business",
           "Correspondence",
@@ -1724,7 +2430,7 @@
         "type": "string",
         "description": "Identifies the nature of the postal address."
       },
-      "OBBalanceType1CodeEnum": {
+      "OBBalanceType1Code": {
         "enum": [
           "ClosingAvailable",
           "ClosingBooked",
@@ -1744,188 +2450,205 @@
         "description": "Balance type, in a coded form."
       },
       "OBBankTransactionCodeStructure1": {
+        "required": [
+          "Code",
+          "SubCode"
+        ],
         "type": "object",
         "properties": {
           "Code": {
             "type": "string",
-            "description": "Specifies the family within a domain.",
-            "nullable": true
+            "description": "Specifies the family within a domain."
           },
           "SubCode": {
             "type": "string",
-            "description": "Specifies the sub-product family within a specific family.",
-            "nullable": true
+            "description": "Specifies the sub-product family within a specific family."
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": { },
         "description": "Set of elements used to fully identify the type of underlying transaction resulting in an entry."
       },
-      "OBBranchAndFinancialInstitutionIdentification50": {
+      "OBBranchAndFinancialInstitutionIdentification5_0": {
+        "required": [
+          "Identification",
+          "SchemeName"
+        ],
         "type": "object",
         "properties": {
           "SchemeName": {
-            "type": "string",
-            "description": "Name of the identification scheme, in a coded form as published in an external list.",
-            "nullable": true
+            "type": "string"
           },
           "Identification": {
-            "type": "string",
-            "description": "Unique and unambiguous identification of the servicing institution.",
-            "nullable": true
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string"
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": { },
         "description": "Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account."
       },
-      "OBBranchAndFinancialInstitutionIdentification51": {
+      "OBBranchAndFinancialInstitutionIdentification5_1": {
+        "required": [
+          "Identification",
+          "SchemeName"
+        ],
         "type": "object",
         "properties": {
           "SchemeName": {
-            "type": "string",
-            "description": "Name of the identification scheme, in a coded form as published in an external list.",
-            "nullable": true
+            "type": "string"
           },
           "Identification": {
-            "type": "string",
-            "description": "Unique and unambiguous identification of the servicing institution.",
-            "nullable": true
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string"
           }
         },
-        "additionalProperties": false,
-        "description": "Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account.\r\nThis is the servicer of the beneficiary account."
+        "additionalProperties": { },
+        "description": "Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account.\r\n\r\nThis is the servicer of the beneficiary account."
       },
-      "OBBranchAndFinancialInstitutionIdentification61": {
+      "OBBranchAndFinancialInstitutionIdentification6_1": {
         "type": "object",
         "properties": {
           "SchemeName": {
             "type": "string",
-            "description": "Name of the identification scheme, in a coded form as published in an external list.",
             "nullable": true
           },
           "Identification": {
+            "maxLength": 35,
+            "minLength": 1,
             "type": "string",
-            "description": "Unique and unambiguous identification of a financial institution or a branch of a financial institution.",
             "nullable": true
           },
           "Name": {
+            "maxLength": 140,
+            "minLength": 1,
             "type": "string",
-            "description": "Name by which an agent is known and which is usually used to identify that agent.",
             "nullable": true
           },
           "PostalAddress": {
             "$ref": "#/components/schemas/OBPostalAddress6"
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": { },
         "description": "Financial institution servicing an account for the creditor."
       },
-      "OBBranchAndFinancialInstitutionIdentification62": {
+      "OBBranchAndFinancialInstitutionIdentification6_2": {
         "type": "object",
         "properties": {
           "SchemeName": {
             "type": "string",
-            "description": "Name of the identification scheme, in a coded form as published in an external list.",
             "nullable": true
           },
           "Identification": {
+            "maxLength": 35,
+            "minLength": 1,
             "type": "string",
-            "description": "Unique and unambiguous identification of a financial institution or a branch of a financial institution.",
             "nullable": true
           },
           "Name": {
+            "maxLength": 140,
+            "minLength": 1,
             "type": "string",
-            "description": "Name by which an agent is known and which is usually used to identify that agent.",
             "nullable": true
           },
           "PostalAddress": {
             "$ref": "#/components/schemas/OBPostalAddress6"
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": { },
         "description": "Financial institution servicing an account for the debtor."
       },
-      "OBCashAccount51": {
+      "OBCashAccount5_1": {
+        "required": [
+          "Identification",
+          "SchemeName"
+        ],
         "type": "object",
         "properties": {
           "SchemeName": {
-            "type": "string",
-            "description": "Name of the identification scheme, in a coded form as published in an external list.",
-            "nullable": true
+            "type": "string"
           },
           "Identification": {
+            "maxLength": 256,
+            "minLength": 1,
             "type": "string",
-            "description": "Beneficiary account identification.",
-            "nullable": true
+            "description": "Beneficiary account identification."
           },
           "Name": {
+            "maxLength": 350,
+            "minLength": 1,
             "type": "string",
-            "description": "The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels.\r\nNote, the account name is not the product name or the nickname of the account.",
             "nullable": true
           },
           "SecondaryIdentification": {
+            "maxLength": 34,
+            "minLength": 1,
             "type": "string",
-            "description": "This is secondary identification of the account, as assigned by the account servicing institution. \r\nThis can be used by building societies to additionally identify accounts with a roll number (in addition to a sort code and account number combination).",
             "nullable": true
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": { },
         "description": "Provides the details to identify the beneficiary account."
       },
-      "OBCashAccount60": {
+      "OBCashAccount6_0": {
         "type": "object",
         "properties": {
           "SchemeName": {
             "type": "string",
-            "description": "Name of the identification scheme, in a coded form as published in an external list.",
             "nullable": true
           },
           "Identification": {
+            "maxLength": 256,
+            "minLength": 1,
             "type": "string",
-            "description": "Identification assigned by an institution to identify an account. This identification is known by the account owner.",
             "nullable": true
           },
           "Name": {
+            "maxLength": 350,
+            "minLength": 1,
             "type": "string",
-            "description": "The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels.\r\nNote, the account name is not the product name or the nickname of the account.",
             "nullable": true
           },
           "SecondaryIdentification": {
+            "maxLength": 34,
+            "minLength": 1,
             "type": "string",
-            "description": "This is secondary identification of the account, as assigned by the account servicing institution. \r\nThis can be used by building societies to additionally identify accounts with a roll number (in addition to a sort code and account number combination).",
             "nullable": true
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": { },
         "description": "Unambiguous identification of the account of the creditor, in the case of a debit transaction."
       },
-      "OBCashAccount61": {
+      "OBCashAccount6_1": {
         "type": "object",
         "properties": {
           "SchemeName": {
             "type": "string",
-            "description": "Name of the identification scheme, in a coded form as published in an external list.",
             "nullable": true
           },
           "Identification": {
+            "maxLength": 256,
+            "minLength": 1,
             "type": "string",
-            "description": "Identification assigned by an institution to identify an account. This identification is known by the account owner.",
             "nullable": true
           },
           "Name": {
+            "maxLength": 350,
+            "minLength": 1,
             "type": "string",
-            "description": "The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels.\r\nNote, the account name is not the product name or the nickname of the account.",
             "nullable": true
           },
           "SecondaryIdentification": {
+            "maxLength": 34,
+            "minLength": 1,
             "type": "string",
-            "description": "This is secondary identification of the account, as assigned by the account servicing institution. \r\nThis can be used by building societies to additionally identify accounts with a roll number (in addition to a sort code and account number combination).",
             "nullable": true
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": { },
         "description": "Unambiguous identification of the account of the debtor, in the case of a crebit transaction."
       },
-      "OBCreditDebitCode1Enum": {
+      "OBCreditDebitCode_1": {
         "enum": [
           "Credit",
           "Debit"
@@ -1933,73 +2656,64 @@
         "type": "string",
         "description": "Indicates whether the transaction is a credit or a debit entry."
       },
-      "OBCreditDebitCode2Enum": {
+      "OBCreditDebitCode_2": {
         "enum": [
           "Credit",
           "Debit"
         ],
         "type": "string",
-        "description": "Indicates whether the balance is a credit or a debit balance. \r\nUsage: A zero balance is considered to be a credit balance."
+        "description": "Indicates whether the balance is a credit or a debit balance. \r\n\r\nUsage: A zero balance is considered to be a credit balance."
       },
       "OBCurrencyExchange5": {
+        "required": [
+          "SourceCurrency"
+        ],
         "type": "object",
         "properties": {
           "SourceCurrency": {
+            "pattern": "^[A-Z]{3,3}$",
             "type": "string",
-            "description": "Currency from which an amount is to be converted in a currency conversion.",
-            "nullable": true
+            "description": "Currency from which an amount is to be converted in a currency conversion."
           },
           "TargetCurrency": {
+            "pattern": "^[A-Z]{3,3}$",
             "type": "string",
             "description": "Currency into which an amount is to be converted in a currency conversion.",
             "nullable": true
           },
           "UnitCurrency": {
+            "pattern": "^[A-Z]{3,3}$",
             "type": "string",
             "description": "Currency in which the rate of exchange is expressed in a currency exchange. In the example 1GBP = xxxCUR, the unit currency is GBP.",
             "nullable": true
           },
           "ExchangeRate": {
             "type": "number",
-            "description": "Factor used to convert an amount from one currency into another. This reflects the price at which one currency was bought with another currency.\r\nUsage: ExchangeRate expresses the ratio between UnitCurrency and QuotedCurrency (ExchangeRate = UnitCurrency/QuotedCurrency).",
-            "format": "float"
+            "description": "Factor used to convert an amount from one currency into another. This reflects the price at which one currency was bought with another currency.\r\n\r\nUsage: ExchangeRate expresses the ratio between UnitCurrency and QuotedCurrency (ExchangeRate = UnitCurrency/QuotedCurrency).",
+            "format": "double",
+            "nullable": true
           },
           "ContractIdentification": {
+            "maxLength": 35,
+            "minLength": 1,
             "type": "string",
             "description": "Unique identification to unambiguously identify the foreign exchange contract.",
             "nullable": true
           },
           "QuotationDate": {
             "type": "string",
-            "description": "Date and time at which an exchange rate is quoted.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
+            "description": "Date and time at which an exchange rate is quoted.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\n\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "InstructedAmount": {
-            "$ref": "#/components/schemas/OBCurrencyExchange5InstructedAmount"
+            "$ref": "#/components/schemas/InstructedAmount"
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": { },
         "description": "Set of elements used to provide details on the currency exchange."
       },
-      "OBCurrencyExchange5InstructedAmount": {
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "type": "string",
-            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-            "nullable": true
-          },
-          "Currency": {
-            "type": "string",
-            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Amount of money to be moved between the debtor and creditor, before deduction of charges, expressed in the currency as ordered by the initiating party."
-      },
-      "OBEntryStatus1CodeEnum": {
+      "OBEntryStatus1Code": {
         "enum": [
           "Booked",
           "Pending",
@@ -2008,7 +2722,7 @@
         "type": "string",
         "description": "Status of a transaction entry on the books of the account servicer."
       },
-      "OBExternalAccountSubType1CodeEnum": {
+      "OBExternalAccountSubType1Code": {
         "enum": [
           "ChargeCard",
           "CreditCard",
@@ -2022,7 +2736,7 @@
         "type": "string",
         "description": "Specifies the sub type of account (product family group)."
       },
-      "OBExternalAccountType1CodeEnum": {
+      "OBExternalAccountType1Code": {
         "enum": [
           "Business",
           "Personal"
@@ -2030,7 +2744,7 @@
         "type": "string",
         "description": "Specifies the type of account (personal or business)."
       },
-      "OBExternalDirectDebitStatus1CodeEnum": {
+      "OBExternalDirectDebitStatus1Code": {
         "enum": [
           "Active",
           "Inactive"
@@ -2038,7 +2752,7 @@
         "type": "string",
         "description": "Specifies the status of the direct debit in code form."
       },
-      "OBExternalPartyType1CodeEnum": {
+      "OBExternalPartyType1Code": {
         "enum": [
           "Delegate",
           "Joint",
@@ -2047,7 +2761,7 @@
         "type": "string",
         "description": "Party type, in a coded form."
       },
-      "OBExternalStandingOrderStatus1CodeEnum": {
+      "OBExternalStandingOrderStatus1Code": {
         "enum": [
           "Active",
           "Inactive"
@@ -2059,73 +2773,81 @@
         "type": "object",
         "properties": {
           "MerchantName": {
+            "maxLength": 350,
+            "minLength": 1,
             "type": "string",
             "description": "Name by which the merchant is known.",
             "nullable": true
           },
           "MerchantCategoryCode": {
+            "maxLength": 4,
+            "minLength": 3,
             "type": "string",
             "description": "Category code conform to ISO 18245, related to the type of services or goods the merchant provides for the transaction.",
             "nullable": true
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": { },
         "description": "Details of the merchant involved in the transaction."
       },
       "OBParty2": {
+        "required": [
+          "PartyId"
+        ],
         "type": "object",
         "properties": {
           "PartyId": {
-            "type": "string",
-            "description": "A unique and immutable identifier used to identify the customer resource. This identifier has no meaning to the account owner.",
-            "nullable": true
+            "maxLength": 40,
+            "minLength": 1,
+            "type": "string"
           },
           "PartyNumber": {
+            "maxLength": 35,
+            "minLength": 1,
             "type": "string",
-            "description": "Number assigned by an agent to identify its customer.",
             "nullable": true
           },
           "PartyType": {
-            "$ref": "#/components/schemas/OBExternalPartyType1CodeEnum"
+            "$ref": "#/components/schemas/OBExternalPartyType1Code"
           },
           "Name": {
+            "maxLength": 350,
+            "minLength": 1,
             "type": "string",
-            "description": "Name by which a party is known and which is usually used to identify that party.",
             "nullable": true
           },
           "FullLegalName": {
+            "maxLength": 350,
+            "minLength": 1,
             "type": "string",
-            "description": "Specifies a character string with a maximum length of 350 characters.",
             "nullable": true
           },
           "LegalStructure": {
             "type": "string",
-            "description": "Legal standing of the party.",
             "nullable": true
           },
           "BeneficialOwnership": {
             "type": "boolean",
-            "description": "Gets the beneficial ownership.",
             "nullable": true
           },
           "AccountRole": {
             "type": "string",
-            "description": "A party’s role with respect to the related account.",
             "nullable": true
           },
           "EmailAddress": {
+            "maxLength": 256,
+            "minLength": 1,
             "type": "string",
-            "description": "Address for electronic mail (e-mail).",
             "nullable": true
           },
           "Phone": {
+            "pattern": "\\+[0-9]{1,3}-[0-9()+\\-]{1,30}",
             "type": "string",
-            "description": "Collection of information that identifies a phone number, as defined by telecom services.",
             "nullable": true
           },
           "Mobile": {
+            "pattern": "\\+[0-9]{1,3}-[0-9()+\\-]{1,30}",
             "type": "string",
-            "description": "Collection of information that identifies a mobile phone number, as defined by telecom services.",
             "nullable": true
           },
           "Relationships": {
@@ -2134,153 +2856,100 @@
           "Address": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OBParty2AddressItem"
+              "$ref": "#/components/schemas/Address"
             },
-            "description": "Gets the address.",
             "nullable": true
           }
         },
-        "additionalProperties": false,
-        "description": "The OBParty2."
-      },
-      "OBParty2AddressItem": {
-        "type": "object",
-        "properties": {
-          "AddressType": {
-            "$ref": "#/components/schemas/OBAddressTypeCodeEnum"
-          },
-          "AddressLine": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Gets the address line.",
-            "nullable": true
-          },
-          "StreetName": {
-            "type": "string",
-            "description": "Name of a street or thoroughfare.",
-            "nullable": true
-          },
-          "BuildingNumber": {
-            "type": "string",
-            "description": "Number that identifies the position of a building on a street.",
-            "nullable": true
-          },
-          "PostCode": {
-            "type": "string",
-            "description": "Identifier consisting of a group of letters and/or numbers that is added to a postal address to assist the sorting of mail.",
-            "nullable": true
-          },
-          "TownName": {
-            "type": "string",
-            "description": "Name of a built-up area, with defined boundaries, and a local government.",
-            "nullable": true
-          },
-          "CountrySubDivision": {
-            "type": "string",
-            "description": "Identifies a subdivision of a country eg, state, region, county.",
-            "nullable": true
-          },
-          "Country": {
-            "type": "string",
-            "description": "Nation with its own government, occupying a particular territory.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Postal address of a party."
+        "additionalProperties": false
       },
       "OBPartyRelationships1": {
         "type": "object",
         "properties": {
           "Account": {
-            "$ref": "#/components/schemas/OBPartyRelationships1Account"
+            "$ref": "#/components/schemas/Account3"
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": { },
         "description": "The Party's relationships with other resources."
-      },
-      "OBPartyRelationships1Account": {
-        "type": "object",
-        "properties": {
-          "Related": {
-            "type": "string",
-            "description": "Absolute URI to the related resource.",
-            "nullable": true
-          },
-          "Id": {
-            "type": "string",
-            "description": "Unique identification as assigned by the ASPSP to uniquely identify the related resource.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Relationship to the Account resource."
       },
       "OBPostalAddress6": {
         "type": "object",
         "properties": {
           "AddressType": {
-            "$ref": "#/components/schemas/OBAddressTypeCodeEnum"
+            "$ref": "#/components/schemas/OBAddressTypeCode"
           },
           "Department": {
+            "maxLength": 70,
+            "minLength": 1,
             "type": "string",
             "description": "Identification of a division of a large organisation or building.",
             "nullable": true
           },
           "SubDepartment": {
+            "maxLength": 70,
+            "minLength": 1,
             "type": "string",
             "description": "Identification of a sub-division of a large organisation or building.",
             "nullable": true
           },
           "StreetName": {
+            "maxLength": 70,
+            "minLength": 1,
             "type": "string",
-            "description": "Name of a street or thoroughfare.",
             "nullable": true
           },
           "BuildingNumber": {
+            "maxLength": 16,
+            "minLength": 1,
             "type": "string",
-            "description": "Number that identifies the position of a building on a street.",
             "nullable": true
           },
           "PostCode": {
+            "maxLength": 16,
+            "minLength": 1,
             "type": "string",
-            "description": "Identifier consisting of a group of letters and/or numbers that is added to a postal address to assist the sorting of mail.",
             "nullable": true
           },
           "TownName": {
+            "maxLength": 35,
+            "minLength": 1,
             "type": "string",
-            "description": "Name of a built-up area, with defined boundaries, and a local government.",
             "nullable": true
           },
           "CountrySubDivision": {
+            "maxLength": 35,
+            "minLength": 1,
             "type": "string",
             "description": "Identifies a subdivision of a country such as state, region, county.",
             "nullable": true
           },
           "Country": {
+            "pattern": "^[A-Z]{2,2}$",
             "type": "string",
             "description": "Nation with its own government.",
             "nullable": true
           },
           "AddressLine": {
+            "maxItems": 7,
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Gets the address line.",
             "nullable": true
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": { },
         "description": "Information that locates and identifies a specific address, as defined by postal services."
       },
       "OBReadAccount6": {
+        "required": [
+          "Data"
+        ],
         "type": "object",
         "properties": {
           "Data": {
-            "$ref": "#/components/schemas/OBReadAccount6Data"
+            "$ref": "#/components/schemas/Data"
           },
           "Links": {
             "$ref": "#/components/schemas/Links"
@@ -2289,29 +2958,16 @@
             "$ref": "#/components/schemas/Meta"
           }
         },
-        "additionalProperties": false,
-        "description": "Response object OBReadAccount6 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
-      },
-      "OBReadAccount6Data": {
-        "type": "object",
-        "properties": {
-          "Account": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OBAccount6"
-            },
-            "description": "Gets the account.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "The OBReadAccount6Data."
+        "additionalProperties": false
       },
       "OBReadBalance1": {
+        "required": [
+          "Data"
+        ],
         "type": "object",
         "properties": {
           "Data": {
-            "$ref": "#/components/schemas/OBReadBalance1Data"
+            "$ref": "#/components/schemas/Data2"
           },
           "Links": {
             "$ref": "#/components/schemas/Links"
@@ -2320,265 +2976,35 @@
             "$ref": "#/components/schemas/Meta"
           }
         },
-        "additionalProperties": false,
-        "description": "Response object OBReadBalance1 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
-      },
-      "OBReadBalance1Data": {
-        "type": "object",
-        "properties": {
-          "Balance": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OBReadBalance1DataBalanceItem"
-            },
-            "description": "Gets the balance.",
-            "nullable": true
-          },
-          "TotalValue": {
-            "$ref": "#/components/schemas/OBReadBalance1DataTotalValue"
-          }
-        },
-        "additionalProperties": false,
-        "description": "The OBReadBalance1Data."
-      },
-      "OBReadBalance1DataBalanceAmountSubTypeEnum": {
-        "enum": [
-          "BaseCurrency",
-          "LocalCurrency"
-        ],
-        "type": "string",
-        "description": "The amount in the domestic or base accounting currency. Default is Base Currency (BCUR) if not specified."
-      },
-      "OBReadBalance1DataBalanceCreditLineTypeEnum": {
-        "enum": [
-          "Available",
-          "Credit",
-          "Emergency",
-          "Pre-Agreed",
-          "Temporary"
-        ],
-        "type": "string",
-        "description": "Limit type, in a coded form."
-      },
-      "OBReadBalance1DataBalanceItem": {
-        "type": "object",
-        "properties": {
-          "AccountId": {
-            "type": "string",
-            "description": "A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner.",
-            "nullable": true
-          },
-          "CreditDebitIndicator": {
-            "$ref": "#/components/schemas/OBCreditDebitCode2Enum"
-          },
-          "Type": {
-            "$ref": "#/components/schemas/OBBalanceType1CodeEnum"
-          },
-          "DateTime": {
-            "type": "string",
-            "description": "Indicates the date (and time) of the balance.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time"
-          },
-          "Amount": {
-            "$ref": "#/components/schemas/OBReadBalance1DataBalanceItemAmount"
-          },
-          "CreditLine": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OBReadBalance1DataBalancePropertiesItemsItem"
-            },
-            "description": "Gets the credit line.",
-            "nullable": true
-          },
-          "LocalAmount": {
-            "$ref": "#/components/schemas/OBReadBalance1DataBalanceItemLocalAmount"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Set of elements used to define the balance details."
-      },
-      "OBReadBalance1DataBalanceItemAmount": {
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "type": "string",
-            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-            "nullable": true
-          },
-          "Currency": {
-            "type": "string",
-            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
-            "nullable": true
-          },
-          "SubType": {
-            "$ref": "#/components/schemas/OBReadBalance1DataBalanceAmountSubTypeEnum"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Amount of money of the cash balance."
-      },
-      "OBReadBalance1DataBalanceItemCreditLineItemAmount": {
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "type": "string",
-            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-            "nullable": true
-          },
-          "Currency": {
-            "type": "string",
-            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Amount of money of the credit line."
-      },
-      "OBReadBalance1DataBalanceItemLocalAmount": {
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "type": "string",
-            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-            "nullable": true
-          },
-          "Currency": {
-            "type": "string",
-            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
-            "nullable": true
-          },
-          "SubType": {
-            "$ref": "#/components/schemas/OBReadBalance1DataBalanceLocalAmountSubTypeEnum"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Optional component providing the equivalent of Amount in local currency. Default is Local Currency (LCUR) if not specified."
-      },
-      "OBReadBalance1DataBalanceLocalAmountSubTypeEnum": {
-        "enum": [
-          "BaseCurrency",
-          "LocalCurrency"
-        ],
-        "type": "string",
-        "description": "The amount in the local market currency for which the asset is held."
-      },
-      "OBReadBalance1DataBalancePropertiesItemsItem": {
-        "type": "object",
-        "properties": {
-          "Included": {
-            "type": "boolean",
-            "description": "Indicates whether or not the credit line is included in the balance of the account.\r\nUsage: If not present, credit line is not included in the balance amount of the account."
-          },
-          "Type": {
-            "$ref": "#/components/schemas/OBReadBalance1DataBalanceCreditLineTypeEnum"
-          },
-          "Amount": {
-            "$ref": "#/components/schemas/OBReadBalance1DataBalanceItemCreditLineItemAmount"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Set of elements used to provide details on the credit line."
-      },
-      "OBReadBalance1DataTotalValue": {
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "type": "string",
-            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-            "nullable": true
-          },
-          "Currency": {
-            "type": "string",
-            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Combined sum of all Amounts in the accounts base currency."
+        "additionalProperties": false
       },
       "OBReadConsent1": {
+        "required": [
+          "Data",
+          "Risk"
+        ],
         "type": "object",
         "properties": {
           "Data": {
-            "$ref": "#/components/schemas/OBReadConsent1Data"
+            "$ref": "#/components/schemas/Data4"
           },
           "Risk": {
-            "description": "Any object.",
-            "nullable": true
+            "$ref": "#/components/schemas/OBRisk2"
           }
         },
-        "additionalProperties": false,
-        "description": "Request object OBReadConsent1 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>from</i> this to an older format for banks supporting an earlier spec version."
-      },
-      "OBReadConsent1Data": {
-        "type": "object",
-        "properties": {
-          "Permissions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OBReadConsent1DataPermissionsEnum"
-            },
-            "description": "Gets the permissions.",
-            "nullable": true
-          },
-          "ExpirationDateTime": {
-            "type": "string",
-            "description": "Specified date and time the permissions will expire.\r\nIf this is not populated, the permissions will be open ended.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time",
-            "nullable": true
-          },
-          "TransactionFromDateTime": {
-            "type": "string",
-            "description": "Specified start date and time for the transaction query period.\r\nIf this is not populated, the start date will be open ended, and data will be returned from the earliest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time",
-            "nullable": true
-          },
-          "TransactionToDateTime": {
-            "type": "string",
-            "description": "Specified end date and time for the transaction query period.\r\nIf this is not populated, the end date will be open ended, and data will be returned to the latest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "The OBReadConsent1Data."
-      },
-      "OBReadConsent1DataPermissionsEnum": {
-        "enum": [
-          "ReadAccountsBasic",
-          "ReadAccountsDetail",
-          "ReadBalances",
-          "ReadBeneficiariesBasic",
-          "ReadBeneficiariesDetail",
-          "ReadDirectDebits",
-          "ReadOffers",
-          "ReadPAN",
-          "ReadParty",
-          "ReadPartyPSU",
-          "ReadProducts",
-          "ReadScheduledPaymentsBasic",
-          "ReadScheduledPaymentsDetail",
-          "ReadStandingOrdersBasic",
-          "ReadStandingOrdersDetail",
-          "ReadStatementsBasic",
-          "ReadStatementsDetail",
-          "ReadTransactionsBasic",
-          "ReadTransactionsCredits",
-          "ReadTransactionsDebits",
-          "ReadTransactionsDetail"
-        ],
-        "type": "string",
-        "description": "Specifies the Open Banking account access data types. This is a list of the data clusters being consented by the PSU, and requested for authorisation with the ASPSP."
+        "additionalProperties": false
       },
       "OBReadConsentResponse1": {
+        "required": [
+          "Data"
+        ],
         "type": "object",
         "properties": {
           "Data": {
-            "$ref": "#/components/schemas/OBReadConsentResponse1Data"
+            "$ref": "#/components/schemas/Data5"
           },
           "Risk": {
-            "description": "Any object.",
-            "nullable": true
+            "$ref": "#/components/schemas/OBRisk2"
           },
           "Links": {
             "$ref": "#/components/schemas/Links"
@@ -2587,96 +3013,7 @@
             "$ref": "#/components/schemas/Meta"
           }
         },
-        "additionalProperties": false,
-        "description": "Response object OBReadConsentResponse1 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
-      },
-      "OBReadConsentResponse1Data": {
-        "type": "object",
-        "properties": {
-          "ConsentId": {
-            "type": "string",
-            "description": "Unique identification as assigned to identify the account access consent resource.",
-            "nullable": true
-          },
-          "CreationDateTime": {
-            "type": "string",
-            "description": "Date and time at which the resource was created.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time"
-          },
-          "Status": {
-            "$ref": "#/components/schemas/OBReadConsentResponse1DataStatusEnum"
-          },
-          "StatusUpdateDateTime": {
-            "type": "string",
-            "description": "Date and time at which the resource status was updated.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time"
-          },
-          "Permissions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OBReadConsentResponse1DataPermissionsEnum"
-            },
-            "description": "Gets the permissions.",
-            "nullable": true
-          },
-          "ExpirationDateTime": {
-            "type": "string",
-            "description": "Specified date and time the permissions will expire.\r\nIf this is not populated, the permissions will be open ended.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time",
-            "nullable": true
-          },
-          "TransactionFromDateTime": {
-            "type": "string",
-            "description": "Specified start date and time for the transaction query period.\r\nIf this is not populated, the start date will be open ended, and data will be returned from the earliest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time",
-            "nullable": true
-          },
-          "TransactionToDateTime": {
-            "type": "string",
-            "description": "Specified end date and time for the transaction query period.\r\nIf this is not populated, the end date will be open ended, and data will be returned to the latest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "The OBReadConsentResponse1Data."
-      },
-      "OBReadConsentResponse1DataPermissionsEnum": {
-        "enum": [
-          "ReadAccountsBasic",
-          "ReadAccountsDetail",
-          "ReadBalances",
-          "ReadBeneficiariesBasic",
-          "ReadBeneficiariesDetail",
-          "ReadDirectDebits",
-          "ReadOffers",
-          "ReadPAN",
-          "ReadParty",
-          "ReadPartyPSU",
-          "ReadProducts",
-          "ReadScheduledPaymentsBasic",
-          "ReadScheduledPaymentsDetail",
-          "ReadStandingOrdersBasic",
-          "ReadStandingOrdersDetail",
-          "ReadStatementsBasic",
-          "ReadStatementsDetail",
-          "ReadTransactionsBasic",
-          "ReadTransactionsCredits",
-          "ReadTransactionsDebits",
-          "ReadTransactionsDetail"
-        ],
-        "type": "string",
-        "description": "Specifies the Open Banking account access data types. This is a list of the data clusters being consented by the PSU, and requested for authorisation with the ASPSP."
-      },
-      "OBReadConsentResponse1DataStatusEnum": {
-        "enum": [
-          "Authorised",
-          "AwaitingAuthorisation",
-          "Rejected",
-          "Revoked"
-        ],
-        "type": "string",
-        "description": "Specifies the status of consent resource in code form."
+        "additionalProperties": false
       },
       "OBReadDataTransaction6": {
         "type": "object",
@@ -2686,18 +3023,19 @@
             "items": {
               "$ref": "#/components/schemas/OBTransaction6"
             },
-            "description": "Gets the transaction.",
             "nullable": true
           }
         },
-        "additionalProperties": false,
-        "description": "The OBReadDataTransaction6."
+        "additionalProperties": false
       },
       "OBReadDirectDebit2": {
+        "required": [
+          "Data"
+        ],
         "type": "object",
         "properties": {
           "Data": {
-            "$ref": "#/components/schemas/OBReadDirectDebit2Data"
+            "$ref": "#/components/schemas/Data6"
           },
           "Links": {
             "$ref": "#/components/schemas/Links"
@@ -2706,73 +3044,16 @@
             "$ref": "#/components/schemas/Meta"
           }
         },
-        "additionalProperties": false,
-        "description": "The OBReadDirectDebit2."
-      },
-      "OBReadDirectDebit2Data": {
-        "type": "object",
-        "properties": {
-          "DirectDebit": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OBReadDirectDebit2DataDirectDebitItem"
-            },
-            "description": "Gets the direct debit.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "The OBReadDirectDebit2Data."
-      },
-      "OBReadDirectDebit2DataDirectDebitItem": {
-        "type": "object",
-        "properties": {
-          "AccountId": {
-            "type": "string",
-            "description": "A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner.",
-            "nullable": true
-          },
-          "DirectDebitId": {
-            "type": "string",
-            "description": "A unique and immutable identifier used to identify the direct debit resource. This identifier has no meaning to the account owner.",
-            "nullable": true
-          },
-          "MandateIdentification": {
-            "type": "string",
-            "description": "Direct Debit reference. For AUDDIS service users provide Core Reference. For non AUDDIS service users provide Core reference if possible or last used reference.",
-            "nullable": true
-          },
-          "DirectDebitStatusCode": {
-            "$ref": "#/components/schemas/OBExternalDirectDebitStatus1CodeEnum"
-          },
-          "Name": {
-            "type": "string",
-            "description": "Name of Service User.",
-            "nullable": true
-          },
-          "PreviousPaymentDateTime": {
-            "type": "string",
-            "description": "Date of most recent direct debit collection.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-            "format": "date-time",
-            "nullable": true
-          },
-          "Frequency": {
-            "type": "string",
-            "description": "Regularity with which direct debit instructions are to be created and processed.",
-            "nullable": true
-          },
-          "PreviousPaymentAmount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount0"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Account to or from which a cash entry is made."
+        "additionalProperties": false
       },
       "OBReadParty2": {
+        "required": [
+          "Data"
+        ],
         "type": "object",
         "properties": {
           "Data": {
-            "$ref": "#/components/schemas/OBReadParty2Data"
+            "$ref": "#/components/schemas/Data8"
           },
           "Links": {
             "$ref": "#/components/schemas/Links"
@@ -2781,24 +3062,16 @@
             "$ref": "#/components/schemas/Meta"
           }
         },
-        "additionalProperties": false,
-        "description": "Response object OBReadParty2 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
-      },
-      "OBReadParty2Data": {
-        "type": "object",
-        "properties": {
-          "Party": {
-            "$ref": "#/components/schemas/OBParty2"
-          }
-        },
-        "additionalProperties": false,
-        "description": "The OBReadParty2Data."
+        "additionalProperties": false
       },
       "OBReadParty3": {
+        "required": [
+          "Data"
+        ],
         "type": "object",
         "properties": {
           "Data": {
-            "$ref": "#/components/schemas/OBReadParty3Data"
+            "$ref": "#/components/schemas/Data9"
           },
           "Links": {
             "$ref": "#/components/schemas/Links"
@@ -2807,29 +3080,16 @@
             "$ref": "#/components/schemas/Meta"
           }
         },
-        "additionalProperties": false,
-        "description": "Response object OBReadParty3 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
-      },
-      "OBReadParty3Data": {
-        "type": "object",
-        "properties": {
-          "Party": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OBParty2"
-            },
-            "description": "Gets the party.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "The OBReadParty3Data."
+        "additionalProperties": false
       },
       "OBReadStandingOrder6": {
+        "required": [
+          "Data"
+        ],
         "type": "object",
         "properties": {
           "Data": {
-            "$ref": "#/components/schemas/OBReadStandingOrder6Data"
+            "$ref": "#/components/schemas/Data12"
           },
           "Links": {
             "$ref": "#/components/schemas/Links"
@@ -2838,25 +3098,12 @@
             "$ref": "#/components/schemas/Meta"
           }
         },
-        "additionalProperties": false,
-        "description": "The OBReadStandingOrder6."
-      },
-      "OBReadStandingOrder6Data": {
-        "type": "object",
-        "properties": {
-          "StandingOrder": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OBStandingOrder6"
-            },
-            "description": "Gets the standing order.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "The OBReadStandingOrder6Data."
+        "additionalProperties": false
       },
       "OBReadTransaction6": {
+        "required": [
+          "Data"
+        ],
         "type": "object",
         "properties": {
           "Data": {
@@ -2869,108 +3116,124 @@
             "$ref": "#/components/schemas/Meta"
           }
         },
+        "additionalProperties": false
+      },
+      "OBRisk2": {
+        "type": "object",
         "additionalProperties": false,
-        "description": "Response object OBReadTransaction6 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
+        "description": "The Risk section is sent by the initiating party to the ASPSP. It is used to specify additional details for risk scoring for Account Info."
       },
       "OBStandingOrder6": {
+        "required": [
+          "AccountId",
+          "Frequency"
+        ],
         "type": "object",
         "properties": {
           "AccountId": {
-            "type": "string",
-            "description": "A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner.",
-            "nullable": true
+            "maxLength": 40,
+            "minLength": 1,
+            "type": "string"
           },
           "StandingOrderId": {
+            "maxLength": 40,
+            "minLength": 1,
             "type": "string",
-            "description": "A unique and immutable identifier used to identify the standing order resource. This identifier has no meaning to the account owner.",
             "nullable": true
           },
           "Frequency": {
-            "type": "string",
-            "description": "Individual Definitions:\r\nNotKnown - Not Known\r\nEvryDay - Every day\r\nEvryWorkgDay - Every working day\r\nIntrvlDay - An interval specified in number of calendar days (02 to 31)\r\nIntrvlWkDay - An interval specified in weeks (01 to 09), and the day within the week (01 to 07)\r\nWkInMnthDay - A monthly interval, specifying the week of the month (01 to 05) and day within the week (01 to 07)\r\nIntrvlMnthDay - An interval specified in months (between 01 to 06, 12, 24), specifying the day within the month (-05 to -01, 01 to 31)\r\nQtrDay - Quarterly (either ENGLISH, SCOTTISH, or RECEIVED)\r\nENGLISH = Paid on the 25th March, 24th June, 29th September and 25th December.\r\nSCOTTISH = Paid on the 2nd February, 15th May, 1st August and 11th November.\r\nRECEIVED = Paid on the 20th March, 19th June, 24th September and 20th December.\r\nIndividual Patterns:\r\nNotKnown (ScheduleCode)\r\nEvryDay (ScheduleCode)\r\nEvryWorkgDay (ScheduleCode)\r\nIntrvlDay:NoOfDay (ScheduleCode + NoOfDay)\r\nIntrvlWkDay:IntervalInWeeks:DayInWeek (ScheduleCode + IntervalInWeeks + DayInWeek)\r\nWkInMnthDay:WeekInMonth:DayInWeek (ScheduleCode + WeekInMonth + DayInWeek)\r\nIntrvlMnthDay:IntervalInMonths:DayInMonth (ScheduleCode + IntervalInMonths + DayInMonth)\r\nQtrDay: + either (ENGLISH, SCOTTISH or RECEIVED) ScheduleCode + QuarterDay\r\nThe regular expression for this element combines five smaller versions for each permitted pattern. To aid legibility - the components are presented individually here:\r\nNotKnown\r\nEvryDay\r\nEvryWorkgDay\r\nIntrvlDay:((0[2-9])|([1-2][0-9])|3[0-1])\r\nIntrvlWkDay:0[1-9]:0[1-7]\r\nWkInMnthDay:0[1-5]:0[1-7]\r\nIntrvlMnthDay:(0[1-6]|12|24):(-0[1-5]|0[1-9]|[12][0-9]|3[01])\r\nQtrDay:(ENGLISH|SCOTTISH|RECEIVED)\r\nFull Regular Expression:\r\n^(NotKnown)$|^(EvryDay)$|^(EvryWorkgDay)$|^(IntrvlDay:((0[2-9])|([1-2][0-9])|3[0-1]))$|^(IntrvlWkDay:0[1-9]:0[1-7])$|^(WkInMnthDay:0[1-5]:0[1-7])$|^(IntrvlMnthDay:(0[1-6]|12|24):(-0[1-5]|0[1-9]|[12][0-9]|3[01]))$|^(QtrDay:(ENGLISH|SCOTTISH|RECEIVED))$",
-            "nullable": true
+            "pattern": "^(NotKnown)$|^(EvryDay)$|^(EvryWorkgDay)$|^(IntrvlDay:((0[2-9])|([1-2][0-9])|3[0-1]))$|^(IntrvlWkDay:0[1-9]:0[1-7])$|^(WkInMnthDay:0[1-5]:0[1-7])$|^(IntrvlMnthDay:(0[1-6]|12|24):(-0[1-5]|0[1-9]|[12][0-9]|3[01]))$|^(QtrDay:(ENGLISH|SCOTTISH|RECEIVED))$",
+            "type": "string"
           },
           "Reference": {
+            "maxLength": 35,
+            "minLength": 1,
             "type": "string",
-            "description": "Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.\r\nUsage: If available, the initiating party should provide this reference in the structured remittance information, to enable reconciliation by the creditor upon receipt of the amount of money.\r\nIf the business context requires the use of a creditor reference or a payment remit identification, and only one identifier can be passed through the end-to-end chain, the creditor's reference or payment remittance identification should be quoted in the end-to-end transaction identification.",
             "nullable": true
           },
           "FirstPaymentDateTime": {
             "type": "string",
-            "description": "The date on which the first payment for a Standing Order schedule will be made.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "NextPaymentDateTime": {
             "type": "string",
-            "description": "The date on which the next payment for a Standing Order schedule will be made.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "LastPaymentDateTime": {
             "type": "string",
-            "description": "The date on which the last (most recent) payment for a Standing Order schedule was made.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "FinalPaymentDateTime": {
             "type": "string",
-            "description": "The date on which the final payment for a Standing Order schedule will be made.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "NumberOfPayments": {
+            "maxLength": 35,
+            "minLength": 1,
             "type": "string",
-            "description": "Number of the payments that will be made in completing this frequency sequence including any executed since the sequence start date.",
             "nullable": true
           },
           "StandingOrderStatusCode": {
-            "$ref": "#/components/schemas/OBExternalStandingOrderStatus1CodeEnum"
+            "$ref": "#/components/schemas/OBExternalStandingOrderStatus1Code"
           },
           "FirstPaymentAmount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount2"
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount_2"
           },
           "NextPaymentAmount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount3"
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount_3"
           },
           "LastPaymentAmount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount11"
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount_11"
           },
           "FinalPaymentAmount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount4"
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount_4"
           },
           "CreditorAgent": {
-            "$ref": "#/components/schemas/OBBranchAndFinancialInstitutionIdentification51"
+            "$ref": "#/components/schemas/OBBranchAndFinancialInstitutionIdentification5_1"
           },
           "CreditorAccount": {
-            "$ref": "#/components/schemas/OBCashAccount51"
+            "$ref": "#/components/schemas/OBCashAccount5_1"
           },
           "SupplementaryData": {
-            "type": "object",
-            "additionalProperties": { },
-            "description": "Additional information that can not be captured in the structured fields and/or any other specific block.",
-            "nullable": true
+            "$ref": "#/components/schemas/OBSupplementaryData1"
           }
         },
-        "additionalProperties": false,
-        "description": "The OBStandingOrder6."
+        "additionalProperties": false
+      },
+      "OBSupplementaryData1": {
+        "type": "object",
+        "additionalProperties": { },
+        "description": "Additional information that can not be captured in the structured fields and/or any other specific block."
       },
       "OBTransaction6": {
+        "required": [
+          "AccountId",
+          "Amount",
+          "BookingDateTime",
+          "CreditDebitIndicator",
+          "Status"
+        ],
         "type": "object",
         "properties": {
           "AccountId": {
-            "type": "string",
-            "description": "A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner.",
-            "nullable": true
+            "maxLength": 40,
+            "minLength": 1,
+            "type": "string"
           },
           "TransactionId": {
+            "maxLength": 210,
+            "minLength": 1,
             "type": "string",
-            "description": "Unique identifier for the transaction within an servicing institution. This identifier is both unique and immutable.",
             "nullable": true
           },
           "TransactionReference": {
+            "maxLength": 210,
+            "minLength": 1,
             "type": "string",
-            "description": "Unique reference for the transaction. This reference is optionally populated, and may as an example be the FPID in the Faster Payments context.",
             "nullable": true
           },
           "StatementReference": {
@@ -2978,44 +3241,43 @@
             "items": {
               "type": "string"
             },
-            "description": "Gets the statement reference.",
             "nullable": true
           },
           "CreditDebitIndicator": {
-            "$ref": "#/components/schemas/OBCreditDebitCode1Enum"
+            "$ref": "#/components/schemas/OBCreditDebitCode_1"
           },
           "Status": {
-            "$ref": "#/components/schemas/OBEntryStatus1CodeEnum"
+            "$ref": "#/components/schemas/OBEntryStatus1Code"
           },
           "TransactionMutability": {
-            "$ref": "#/components/schemas/OBTransactionMutability1CodeEnum"
+            "$ref": "#/components/schemas/OBTransactionMutability1Code"
           },
           "BookingDateTime": {
             "type": "string",
-            "description": "Date and time when a transaction entry is posted to an account on the account servicer's books.\r\nUsage: Booking date is the expected booking date, unless the status is booked, in which case it is the actual booking date.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time"
           },
           "ValueDateTime": {
             "type": "string",
-            "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
             "nullable": true
           },
           "TransactionInformation": {
+            "maxLength": 500,
+            "minLength": 1,
             "type": "string",
-            "description": "Further details of the transaction. \r\nThis is the transaction narrative, which is unstructured text.",
             "nullable": true
           },
           "AddressLine": {
+            "maxLength": 70,
+            "minLength": 1,
             "type": "string",
-            "description": "Information that locates and identifies a specific address for a transaction entry, that is presented in free format text.",
             "nullable": true
           },
           "Amount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount9"
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount_9"
           },
           "ChargeAmount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount10"
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount_10"
           },
           "CurrencyExchange": {
             "$ref": "#/components/schemas/OBCurrencyExchange5"
@@ -3033,25 +3295,22 @@
             "$ref": "#/components/schemas/OBMerchantDetails1"
           },
           "CreditorAgent": {
-            "$ref": "#/components/schemas/OBBranchAndFinancialInstitutionIdentification61"
+            "$ref": "#/components/schemas/OBBranchAndFinancialInstitutionIdentification6_1"
           },
           "CreditorAccount": {
-            "$ref": "#/components/schemas/OBCashAccount60"
+            "$ref": "#/components/schemas/OBCashAccount6_0"
           },
           "DebtorAgent": {
-            "$ref": "#/components/schemas/OBBranchAndFinancialInstitutionIdentification62"
+            "$ref": "#/components/schemas/OBBranchAndFinancialInstitutionIdentification6_2"
           },
           "DebtorAccount": {
-            "$ref": "#/components/schemas/OBCashAccount61"
+            "$ref": "#/components/schemas/OBCashAccount6_1"
           },
           "CardInstrument": {
             "$ref": "#/components/schemas/OBTransactionCardInstrument1"
           },
           "SupplementaryData": {
-            "type": "object",
-            "additionalProperties": { },
-            "description": "Additional information that can not be captured in the structured fields and/or any other specific block.",
-            "nullable": true
+            "$ref": "#/components/schemas/OBSupplementaryData1"
           }
         },
         "additionalProperties": false,
@@ -3061,17 +3320,21 @@
         "type": "object",
         "properties": {
           "CardSchemeName": {
-            "$ref": "#/components/schemas/OBTransactionCardInstrument1CardSchemeNameEnum"
+            "$ref": "#/components/schemas/OBTransactionCardInstrument1CardSchemeName"
           },
           "AuthorisationType": {
-            "$ref": "#/components/schemas/OBTransactionCardInstrument1AuthorisationTypeEnum"
+            "$ref": "#/components/schemas/OBTransactionCardInstrument1AuthorisationType"
           },
           "Name": {
+            "maxLength": 70,
+            "minLength": 1,
             "type": "string",
             "description": "Name of the cardholder using the card instrument.",
             "nullable": true
           },
           "Identification": {
+            "maxLength": 34,
+            "minLength": 1,
             "type": "string",
             "description": "Identification assigned by an institution to identify the card instrument used in the transaction. This identification is known by the account owner, and may be masked.",
             "nullable": true
@@ -3080,61 +3343,46 @@
         "additionalProperties": false,
         "description": "Set of elements to describe the card instrument used in the transaction."
       },
-      "OBTransactionCardInstrument1AuthorisationTypeEnum": {
+      "OBTransactionCardInstrument1AuthorisationType": {
         "enum": [
           "ConsumerDevice",
           "Contactless",
           "None",
           "PIN"
         ],
-        "type": "string",
-        "description": "The card authorisation type."
+        "type": "string"
       },
-      "OBTransactionCardInstrument1CardSchemeNameEnum": {
+      "OBTransactionCardInstrument1CardSchemeName": {
         "enum": [
           "AmericanExpress",
           "Diners",
           "Discover",
           "MasterCard",
-          "Visa"
+          "VISA"
         ],
-        "type": "string",
-        "description": "Name of the card scheme."
+        "type": "string"
       },
       "OBTransactionCashBalance": {
+        "required": [
+          "CreditDebitIndicator",
+          "Type"
+        ],
         "type": "object",
         "properties": {
           "CreditDebitIndicator": {
-            "$ref": "#/components/schemas/OBCreditDebitCode2Enum"
+            "$ref": "#/components/schemas/OBCreditDebitCode_2"
           },
           "Type": {
-            "$ref": "#/components/schemas/OBBalanceType1CodeEnum"
+            "$ref": "#/components/schemas/OBBalanceType1Code"
           },
           "Amount": {
-            "$ref": "#/components/schemas/OBTransactionCashBalanceAmount"
+            "$ref": "#/components/schemas/Amount"
           }
         },
         "additionalProperties": false,
         "description": "Set of elements used to define the balance as a numerical representation of the net increases and decreases in an account after a transaction entry is applied to the account."
       },
-      "OBTransactionCashBalanceAmount": {
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "type": "string",
-            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-            "nullable": true
-          },
-          "Currency": {
-            "type": "string",
-            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Amount of money of the cash balance after a transaction entry is applied to the account.."
-      },
-      "OBTransactionMutability1CodeEnum": {
+      "OBTransactionMutability1Code": {
         "enum": [
           "Mutable",
           "Immutable"
@@ -3142,25 +3390,18 @@
         "type": "string",
         "description": "Specifies the Mutability of the Transaction record."
       },
-      "ObjectDeleteResponse": {
-        "type": "object",
-        "properties": {
-          "Warnings": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "Parties2Response": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
             "$ref": "#/components/schemas/OBReadParty3"
+          },
+          "ExternalApiResponseInfo": {
+            "$ref": "#/components/schemas/ExternalApiResponseInfo"
           },
           "Warnings": {
             "type": "array",
@@ -3168,18 +3409,24 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false,
         "description": "Response to Parties read requests"
       },
       "PartiesResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
             "$ref": "#/components/schemas/OBReadParty2"
+          },
+          "ExternalApiResponseInfo": {
+            "$ref": "#/components/schemas/ExternalApiResponseInfo"
           },
           "Warnings": {
             "type": "array",
@@ -3187,22 +3434,81 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false,
         "description": "Response to Party read requests"
       },
+      "Permissions": {
+        "enum": [
+          "ReadAccountsBasic",
+          "ReadAccountsDetail",
+          "ReadBalances",
+          "ReadBeneficiariesBasic",
+          "ReadBeneficiariesDetail",
+          "ReadDirectDebits",
+          "ReadOffers",
+          "ReadPAN",
+          "ReadParty",
+          "ReadPartyPSU",
+          "ReadProducts",
+          "ReadScheduledPaymentsBasic",
+          "ReadScheduledPaymentsDetail",
+          "ReadStandingOrdersBasic",
+          "ReadStandingOrdersDetail",
+          "ReadStatementsBasic",
+          "ReadStatementsDetail",
+          "ReadTransactionsBasic",
+          "ReadTransactionsCredits",
+          "ReadTransactionsDebits",
+          "ReadTransactionsDetail"
+        ],
+        "type": "string",
+        "description": "Specifies the Open Banking account access data types. This is a list of the data clusters being consented by the PSU, and requested for authorisation with the ASPSP."
+      },
+      "Permissions2": {
+        "enum": [
+          "ReadAccountsBasic",
+          "ReadAccountsDetail",
+          "ReadBalances",
+          "ReadBeneficiariesBasic",
+          "ReadBeneficiariesDetail",
+          "ReadDirectDebits",
+          "ReadOffers",
+          "ReadPAN",
+          "ReadParty",
+          "ReadPartyPSU",
+          "ReadProducts",
+          "ReadScheduledPaymentsBasic",
+          "ReadScheduledPaymentsDetail",
+          "ReadStandingOrdersBasic",
+          "ReadStandingOrdersDetail",
+          "ReadStatementsBasic",
+          "ReadStatementsDetail",
+          "ReadTransactionsBasic",
+          "ReadTransactionsCredits",
+          "ReadTransactionsDebits",
+          "ReadTransactionsDetail"
+        ],
+        "type": "string",
+        "description": "Specifies the Open Banking account access data types. This is a list of the data clusters being consented by the PSU, and requested for authorisation with the ASPSP."
+      },
       "ProprietaryBankTransactionCodeStructure1": {
+        "required": [
+          "Code"
+        ],
         "type": "object",
         "properties": {
           "Code": {
+            "maxLength": 35,
+            "minLength": 1,
             "type": "string",
-            "description": "Proprietary bank transaction code to identify the underlying transaction.",
-            "nullable": true
+            "description": "Proprietary bank transaction code to identify the underlying transaction."
           },
           "Issuer": {
+            "maxLength": 35,
+            "minLength": 1,
             "type": "string",
             "description": "Identification of the issuer of the proprietary bank transaction code.",
             "nullable": true
@@ -3211,30 +3517,33 @@
         "additionalProperties": false,
         "description": "Set of elements to fully identify a proprietary bank transaction code."
       },
+      "ReadMonzoPot": {
+        "type": "object",
+        "properties": {
+          "Data": {
+            "$ref": "#/components/schemas/MonzoPotData"
+          },
+          "Links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "Meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "additionalProperties": false
+      },
       "StandingOrdersResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
             "$ref": "#/components/schemas/OBReadStandingOrder6"
           },
-          "Warnings": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Response to Standing Order read requests"
-      },
-      "TransactionsResponse": {
-        "type": "object",
-        "properties": {
-          "ExternalApiResponse": {
-            "$ref": "#/components/schemas/OBReadTransaction6"
+          "ExternalApiResponseInfo": {
+            "$ref": "#/components/schemas/ExternalApiResponseInfo"
           },
           "Warnings": {
             "type": "array",
@@ -3242,8 +3551,50 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response to Standing Order read requests"
+      },
+      "TotalValue2": {
+        "required": [
+          "Amount",
+          "Currency"
+        ],
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
+          },
+          "Currency": {
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
+          }
+        },
+        "additionalProperties": { }
+      },
+      "TransactionsResponse": {
+        "required": [
+          "ExternalApiResponse",
+          "ExternalApiResponseInfo"
+        ],
+        "type": "object",
+        "properties": {
+          "ExternalApiResponse": {
+            "$ref": "#/components/schemas/OBReadTransaction6"
+          },
+          "ExternalApiResponseInfo": {
+            "$ref": "#/components/schemas/ExternalApiResponseInfo"
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
           }
         },
         "additionalProperties": false,
