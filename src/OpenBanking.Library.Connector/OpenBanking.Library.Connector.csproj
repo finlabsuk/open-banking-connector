@@ -25,14 +25,14 @@
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="13.0.1"/>
         <PackageReference Include="EFCore.NamingConventions" Version="8.0.3"/>
-        <PackageReference Include="FluentValidation" Version="11.10.0"/>
-        <PackageReference Include="jose-jwt" Version="5.0.0"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10"/>
-        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.1.2"/>
-        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1"/>
+        <PackageReference Include="FluentValidation" Version="11.11.0"/>
+        <PackageReference Include="jose-jwt" Version="5.1.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.11"/>
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.2.1"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10"/>
-        <PackageReference Include="OpenTelemetry" Version="1.9.0"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11"/>
+        <PackageReference Include="OpenTelemetry" Version="1.10.0"/>
     </ItemGroup>
 
     <ItemGroup>
