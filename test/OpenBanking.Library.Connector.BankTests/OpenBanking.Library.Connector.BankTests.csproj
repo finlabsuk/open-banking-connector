@@ -27,15 +27,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="user.test.settings.json">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="local.test.settings.json">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
-
-    <ItemGroup>
         <None Remove="appsettings.json"/>
         <Content Include="appsettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
