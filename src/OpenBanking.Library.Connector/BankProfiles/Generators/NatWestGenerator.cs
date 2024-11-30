@@ -159,12 +159,11 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     IdTokenProcessingCustomBehaviour =
                         new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
                 },
-                AccountAccessConsentAuthCodeGrantPost =
-                    new AuthCodeGrantPostCustomBehaviour
-                    {
-                        IdTokenProcessingCustomBehaviour =
-                            new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
-                    },
+                AccountAccessConsentAuthCodeGrantPost = new AuthCodeGrantPostCustomBehaviour
+                {
+                    IdTokenProcessingCustomBehaviour =
+                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
+                },
                 AccountAccessConsentRefreshTokenGrantPost =
                     new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
                 AccountAccessConsentPost = bank is NatWestBank.Coutts
@@ -203,11 +202,21 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     IdTokenProcessingCustomBehaviour =
                         new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
                 },
+                DomesticPaymentConsentAuthCodeGrantPost = new AuthCodeGrantPostCustomBehaviour
+                {
+                    IdTokenProcessingCustomBehaviour =
+                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
+                },
                 DomesticPaymentConsentRefreshTokenGrantPost =
                     new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
                 DomesticVrpConsentAuthGet = new ConsentAuthGetCustomBehaviour
                 {
                     AudClaim = GetAudClaim(bank),
+                    IdTokenProcessingCustomBehaviour =
+                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
+                },
+                DomesticVrpConsentAuthCodeGrantPost = new AuthCodeGrantPostCustomBehaviour
+                {
                     IdTokenProcessingCustomBehaviour =
                         new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
                 },
