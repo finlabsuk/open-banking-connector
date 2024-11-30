@@ -56,43 +56,85 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                     Url =
                         "https://obonline.nationwide.co.uk/open-banking/.well-known/openid-configuration" // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
                 },
-                AccountAccessConsentRefreshTokenGrantPost = new RefreshTokenGrantPostCustomBehaviour
+                AccountAccessConsentAuthGet = new ConsentAuthGetCustomBehaviour
                 {
                     IdTokenProcessingCustomBehaviour =
-                        new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
+                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
+                },
+                AccountAccessConsentAuthCodeGrantPost = new AuthCodeGrantPostCustomBehaviour
+                {
+                    IdTokenProcessingCustomBehaviour =
+                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
+                },
+                AccountAccessConsentRefreshTokenGrantPost = new RefreshTokenGrantPostCustomBehaviour
+                {
+                    IdTokenProcessingCustomBehaviour = new IdTokenProcessingCustomBehaviour
+                    {
+                        IdTokenMayNotHaveAuthTimeClaim = true,
+                        DoNotValidateIdTokenAcrClaim = true
+                    }
                 },
                 AccountAccessConsentPost =
                     new ReadWritePostCustomBehaviour { PostResponseLinksMayOmitId = true },
-                DomesticPaymentConsentAuthCodeGrantPost =
-                    new AuthCodeGrantPostCustomBehaviour { ExpectedResponseRefreshTokenMayBeAbsent = true },
-                DomesticPaymentConsent =
-                    new DomesticPaymentConsentCustomBehaviour
-                    {
-                        PostResponseLinksMayOmitId = true,
-                        PreferMisspeltContractPresentIndicator = true
-                    },
-                DomesticPaymentConsentRefreshTokenGrantPost = new RefreshTokenGrantPostCustomBehaviour
+                DomesticPaymentConsentAuthGet = new ConsentAuthGetCustomBehaviour
                 {
-                    IdTokenProcessingCustomBehaviour =
-                        new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
+                    IdTokenProcessingCustomBehaviour = new IdTokenProcessingCustomBehaviour
+                    {
+                        DoNotValidateIdTokenAcrClaim = true
+                    }
                 },
-                DomesticPayment =
-                    new DomesticPaymentCustomBehaviour
+                DomesticPaymentConsentAuthCodeGrantPost = new AuthCodeGrantPostCustomBehaviour
+                {
+                    ExpectedResponseRefreshTokenMayBeAbsent = true,
+                    IdTokenProcessingCustomBehaviour =
+                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
+                },
+                DomesticPaymentConsentRefreshTokenGrantPost =
+                    new RefreshTokenGrantPostCustomBehaviour
                     {
-                        PostResponseLinksMayOmitId = true,
-                        PreferMisspeltContractPresentIndicator = true,
-                        ResponseDataDebtorMayBeMissingOrWrong = true
+                        IdTokenProcessingCustomBehaviour = new IdTokenProcessingCustomBehaviour
+                        {
+                            IdTokenMayNotHaveAuthTimeClaim = true,
+                            DoNotValidateIdTokenAcrClaim = true
+                        }
                     },
-                DomesticVrpConsent =
-                    new DomesticVrpConsentCustomBehaviour
+                DomesticPaymentConsent = new DomesticPaymentConsentCustomBehaviour
+                {
+                    PostResponseLinksMayOmitId = true,
+                    PreferMisspeltContractPresentIndicator = true
+                },
+                DomesticPayment = new DomesticPaymentCustomBehaviour
+                {
+                    PostResponseLinksMayOmitId = true,
+                    PreferMisspeltContractPresentIndicator = true,
+                    ResponseDataDebtorMayBeMissingOrWrong = true
+                },
+                DomesticVrpConsentAuthGet =
+                    new ConsentAuthGetCustomBehaviour
                     {
-                        PostResponseLinksMayOmitId = true,
-                        PreferMisspeltContractPresentIndicator = true
+                        IdTokenProcessingCustomBehaviour = new IdTokenProcessingCustomBehaviour
+                        {
+                            DoNotValidateIdTokenAcrClaim = true
+                        }
                     },
-                DomesticVrpConsentRefreshTokenGrantPost = new RefreshTokenGrantPostCustomBehaviour
+                DomesticVrpConsentAuthCodeGrantPost = new AuthCodeGrantPostCustomBehaviour
                 {
                     IdTokenProcessingCustomBehaviour =
-                        new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
+                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
+                },
+                DomesticVrpConsentRefreshTokenGrantPost =
+                    new RefreshTokenGrantPostCustomBehaviour
+                    {
+                        IdTokenProcessingCustomBehaviour = new IdTokenProcessingCustomBehaviour
+                        {
+                            IdTokenMayNotHaveAuthTimeClaim = true,
+                            DoNotValidateIdTokenAcrClaim = true
+                        }
+                    },
+                DomesticVrpConsent = new DomesticVrpConsentCustomBehaviour
+                {
+                    PostResponseLinksMayOmitId = true,
+                    PreferMisspeltContractPresentIndicator = true
                 },
                 DomesticVrp = new DomesticVrpCustomBehaviour
                 {
