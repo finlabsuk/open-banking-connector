@@ -13,7 +13,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServices;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.Management;
 
 public class SoftwareStatementCleanup
 {

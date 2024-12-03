@@ -46,14 +46,17 @@ public abstract class BaseDbContext : DbContext
     // Management objects
     internal DbSet<BankRegistrationEntity> BankRegistration => Set<BankRegistrationEntity>();
 
-    public DbSet<ObWacCertificateEntity> ObWacCertificate =>
+    internal DbSet<ObWacCertificateEntity> ObWacCertificate =>
         Set<ObWacCertificateEntity>();
 
-    public DbSet<ObSealCertificateEntity> ObSealCertificate =>
+    internal DbSet<ObSealCertificateEntity> ObSealCertificate =>
         Set<ObSealCertificateEntity>();
 
     internal DbSet<SoftwareStatementEntity> SoftwareStatement =>
         Set<SoftwareStatementEntity>();
+
+    internal DbSet<EncryptionKeyDescriptionEntity> EncryptionKeyDescription =>
+        Set<EncryptionKeyDescriptionEntity>();
 
     // Auth contexts
     internal DbSet<AuthContext> AuthContext => Set<AuthContext>();
@@ -106,6 +109,7 @@ public abstract class BaseDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ObWacCertificateConfig(DbProvider, true, JsonFormatting));
         modelBuilder.ApplyConfiguration(new ObSealCertificateConfig(DbProvider, true, JsonFormatting));
         modelBuilder.ApplyConfiguration(new SoftwareStatementConfig(DbProvider, true, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new EncryptionKeyDescriptionConfig(DbProvider, true, JsonFormatting));
 
         // Auth contexts (note global query filter not supported for inherited types)
         // var x = new AuthContextConfig(DbProvider, true, JsonFormatting);

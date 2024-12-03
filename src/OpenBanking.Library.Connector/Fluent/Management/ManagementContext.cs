@@ -9,6 +9,8 @@ using ObSealCertificate =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.ObSealCertificate;
 using ObWacCertificate =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.ObWacCertificate;
+using EncryptionKeyDescription =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.EncryptionKeyDescription;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Management;
 
@@ -20,6 +22,10 @@ public interface IManagementContext
     ///     created for the same bank.
     /// </summary>
     IBankRegistrationsContext BankRegistrations { get; }
+
+    ILocalEntityContext<EncryptionKeyDescription, IEncryptionKeyDescriptionPublicQuery,
+            EncryptionKeyDescriptionResponse, EncryptionKeyDescriptionResponse>
+        EncryptionKeyDescriptions { get; }
 
     ILocalEntityContext<ObWacCertificate, IObWacCertificatePublicQuery,
             ObWacCertificateResponse, ObWacCertificateResponse>
@@ -72,6 +78,19 @@ internal class ManagementContext : IManagementContext
                 _sharedContext.Instrumentation,
                 _sharedContext.MemoryCache,
                 _sharedContext.SecretProvider));
+
+    public ILocalEntityContext<EncryptionKeyDescription, IEncryptionKeyDescriptionPublicQuery,
+        EncryptionKeyDescriptionResponse, EncryptionKeyDescriptionResponse> EncryptionKeyDescriptions =>
+        new LocalEntityContext<EncryptionKeyDescriptionEntity, EncryptionKeyDescription,
+            IEncryptionKeyDescriptionPublicQuery, EncryptionKeyDescriptionResponse, EncryptionKeyDescriptionResponse>(
+            _sharedContext,
+            new EncryptionKeyDescriptionPost(
+                _sharedContext.DbService.GetDbEntityMethodsClass<EncryptionKeyDescriptionEntity>(),
+                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.TimeProvider,
+                _sharedContext.Instrumentation,
+                _sharedContext.SecretProvider,
+                _sharedContext.EncryptionKeyDescriptionMethods));
 
     public ISoftwareStatementsContext SoftwareStatements
     {

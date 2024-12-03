@@ -66,6 +66,7 @@ public class RequestBuilder : IRequestBuilder
     private readonly IApiVariantMapper _apiVariantMapper;
     private readonly IBankProfileService _bankProfileService;
     private readonly IDbService _dbService;
+    private readonly EncryptionKeyDescriptionMethods _encryptionKeyDescriptionMethods;
     private readonly IEncryptionKeyInfo _encryptionKeyInfo;
     private readonly ISettingsProvider<HttpClientSettings> _httpClientSettingsProvider;
     private readonly IInstrumentationClient _logger;
@@ -112,6 +113,11 @@ public class RequestBuilder : IRequestBuilder
             logger,
             tppReportingMetrics,
             dbService.GetDbEntityMethodsClass<ObWacCertificateEntity>());
+        _encryptionKeyDescriptionMethods = new EncryptionKeyDescriptionMethods(
+            memoryCache,
+            secretProvider,
+            logger,
+            dbService.GetDbEntityMethodsClass<EncryptionKeyDescriptionEntity>());
     }
 
     public IManagementContext Management =>
@@ -147,7 +153,8 @@ public class RequestBuilder : IRequestBuilder
             _httpClientSettingsProvider,
             _obSealCertificateMethods,
             _obWacCertificateMethods,
-            _tppReportingMetrics) { Created = _timeProvider.GetUtcNow() };
+            _tppReportingMetrics,
+            _encryptionKeyDescriptionMethods) { Created = _timeProvider.GetUtcNow() };
         return context;
     }
 }

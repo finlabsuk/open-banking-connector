@@ -38,5 +38,8 @@ public interface ISharedContext
     ObSealCertificateMethods ObSealCertificateMethods { get; }
 
     ObWacCertificateMethods ObWacCertificateMethods { get; }
+
+    EncryptionKeyDescriptionMethods EncryptionKeyDescriptionMethods { get; }
+
     TppReportingMetrics TppReportingMetrics { get; }
 }

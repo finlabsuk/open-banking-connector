@@ -7,10 +7,13 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.AccountAndTransaction;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -31,12 +34,16 @@ public class StartupTasksHostedService : IHostedService
 
     private readonly ISettingsProvider<DatabaseSettings> _databaseSettingsProvider;
 
+    private readonly EncryptionKeyDescriptionMethods _encryptionKeyDescriptionMethods;
+
     // Ensures this set up at application start-up
     private readonly IEncryptionKeyInfo _encryptionKeyInfo;
 
     private readonly HttpClientSettings _httpClientSettings;
 
     private readonly IInstrumentationClient _instrumentationClient;
+
+    private readonly KeysSettings _keySettings;
 
     private readonly ILogger<StartupTasksHostedService> _logger;
 
@@ -45,6 +52,9 @@ public class StartupTasksHostedService : IHostedService
     private readonly ISecretProvider _secretProvider;
 
     private readonly IServiceScopeFactory _serviceScopeFactory;
+
+    private readonly ITimeProvider _timeProvider;
+
     private readonly TppReportingMetrics _tppReportingMetrics;
 
     public StartupTasksHostedService(
@@ -58,7 +68,10 @@ public class StartupTasksHostedService : IHostedService
         IMemoryCache memoryCache,
         ISecretProvider secretProvider,
         IServiceScopeFactory serviceScopeFactory,
-        TppReportingMetrics tppReportingMetrics)
+        TppReportingMetrics tppReportingMetrics,
+        ISettingsProvider<KeysSettings> keySettingsProvider,
+        ITimeProvider timeProvider,
+        EncryptionKeyDescriptionMethods encryptionKeyDescriptionMethods)
     {
         _bankProfileService = bankProfileService ?? throw new ArgumentNullException(nameof(bankProfileService));
         _configurationRoot =
@@ -76,6 +89,9 @@ public class StartupTasksHostedService : IHostedService
         _secretProvider = secretProvider ?? throw new ArgumentNullException(nameof(secretProvider));
         _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         _tppReportingMetrics = tppReportingMetrics ?? throw new ArgumentNullException(nameof(tppReportingMetrics));
+        _timeProvider = timeProvider;
+        _encryptionKeyDescriptionMethods = encryptionKeyDescriptionMethods;
+        _keySettings = keySettingsProvider.GetSettings();
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -156,6 +172,25 @@ public class StartupTasksHostedService : IHostedService
 
             var postgreSqlDbContext = scope2.ServiceProvider.GetRequiredService<PostgreSqlDbContext>();
 
+            await new EncryptionKeyDescriptionCleanup()
+                .Cleanup(
+                    postgreSqlDbContext,
+                    _secretProvider,
+                    _keySettings,
+                    _encryptionKeyDescriptionMethods,
+                    _instrumentationClient,
+                    _timeProvider,
+                    cancellationToken);
+
+            await new SoftwareStatementCleanup()
+                .Cleanup(
+                    postgreSqlDbContext,
+                    _secretProvider,
+                    _httpClientSettings,
+                    _memoryCache,
+                    _instrumentationClient,
+                    _tppReportingMetrics);
+
             await new BankRegistrationCleanup()
                 .Cleanup(
                     postgreSqlDbContext,
@@ -170,16 +205,12 @@ public class StartupTasksHostedService : IHostedService
 
             await postgreSqlDbContext.SaveChangesAsync(cancellationToken);
 
-            await new SoftwareStatementCleanup()
+            await new EncryptedObjectCleanup()
                 .Cleanup(
                     postgreSqlDbContext,
-                    _secretProvider,
-                    _httpClientSettings,
-                    _memoryCache,
                     _instrumentationClient,
-                    _tppReportingMetrics);
-
-            await postgreSqlDbContext.SaveChangesAsync(cancellationToken);
+                    _timeProvider,
+                    cancellationToken);
         }
     }
 

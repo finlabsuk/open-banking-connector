@@ -5,6 +5,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using System.Text;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
@@ -69,6 +70,11 @@ internal class EncryptedObject : BaseEntity
     ///     Encryption key ID.
     /// </summary>
     public string? KeyId { get; private set; }
+
+    [ForeignKey(nameof(EncryptionKeyDescriptionId))]
+    public EncryptionKeyDescriptionEntity? EncryptionKeyDescriptionNavigation { get; private set; }
+
+    public Guid? EncryptionKeyDescriptionId { get; set; }
 
     /// <summary>
     ///     Update plain text with new value.

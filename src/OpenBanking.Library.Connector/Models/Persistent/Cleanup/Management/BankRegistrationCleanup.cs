@@ -6,7 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.Extensions.Logging;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.BankConfiguration;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.Management;
 
 public class BankRegistrationCleanup
 {
