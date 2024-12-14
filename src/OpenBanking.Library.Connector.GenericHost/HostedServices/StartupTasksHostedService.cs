@@ -10,9 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.Management;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -34,10 +32,8 @@ public class StartupTasksHostedService : IHostedService
 
     private readonly ISettingsProvider<DatabaseSettings> _databaseSettingsProvider;
 
-    private readonly EncryptionKeyDescriptionMethods _encryptionKeyDescriptionMethods;
-
     // Ensures this set up at application start-up
-    private readonly IEncryptionKeyInfo _encryptionKeyInfo;
+    private readonly EncryptionSettings _encryptionSettings;
 
     private readonly HttpClientSettings _httpClientSettings;
 
@@ -61,7 +57,7 @@ public class StartupTasksHostedService : IHostedService
         IBankProfileService bankProfileService,
         IConfiguration configuration,
         ISettingsProvider<DatabaseSettings> databaseSettingsProvider,
-        IEncryptionKeyInfo encryptionKeyInfo,
+        EncryptionSettings encryptionSettings,
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
         IInstrumentationClient instrumentationClient,
         ILogger<StartupTasksHostedService> logger,
@@ -70,15 +66,14 @@ public class StartupTasksHostedService : IHostedService
         IServiceScopeFactory serviceScopeFactory,
         TppReportingMetrics tppReportingMetrics,
         ISettingsProvider<KeysSettings> keySettingsProvider,
-        ITimeProvider timeProvider,
-        EncryptionKeyDescriptionMethods encryptionKeyDescriptionMethods)
+        ITimeProvider timeProvider)
     {
         _bankProfileService = bankProfileService ?? throw new ArgumentNullException(nameof(bankProfileService));
         _configurationRoot =
             (IConfigurationRoot) (configuration ?? throw new ArgumentNullException(nameof(configuration)));
         _databaseSettingsProvider = databaseSettingsProvider ??
                                     throw new ArgumentNullException(nameof(databaseSettingsProvider));
-        _encryptionKeyInfo = encryptionKeyInfo ?? throw new ArgumentNullException(nameof(encryptionKeyInfo));
+        _encryptionSettings = encryptionSettings ?? throw new ArgumentNullException(nameof(encryptionSettings));
         _httpClientSettings =
             (httpClientSettingsProvider ?? throw new ArgumentNullException(nameof(httpClientSettingsProvider)))
             .GetSettings();
@@ -90,7 +85,6 @@ public class StartupTasksHostedService : IHostedService
         _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         _tppReportingMetrics = tppReportingMetrics ?? throw new ArgumentNullException(nameof(tppReportingMetrics));
         _timeProvider = timeProvider;
-        _encryptionKeyDescriptionMethods = encryptionKeyDescriptionMethods;
         _keySettings = keySettingsProvider.GetSettings();
     }
 
@@ -177,7 +171,8 @@ public class StartupTasksHostedService : IHostedService
                     postgreSqlDbContext,
                     _secretProvider,
                     _keySettings,
-                    _encryptionKeyDescriptionMethods,
+                    _encryptionSettings,
+                    _memoryCache,
                     _instrumentationClient,
                     _timeProvider,
                     cancellationToken);

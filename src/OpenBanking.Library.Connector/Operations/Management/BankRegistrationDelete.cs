@@ -14,7 +14,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,7 +23,7 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
 {
     private readonly IBankProfileService _bankProfileService;
     private readonly ClientAccessTokenGet _clientAccessTokenGet;
-    private readonly IEncryptionKeyInfo _encryptionKeyInfo;
+    private readonly IEncryptionKeyDescription _encryptionKeyInfo;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
 
@@ -37,7 +36,7 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
         ClientAccessTokenGet clientAccessTokenGet,
-        IEncryptionKeyInfo encryptionKeyInfo) : base(
+        IEncryptionKeyDescription encryptionKeyInfo) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
@@ -118,7 +117,8 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
                 accessToken = registrationAccessTokenEntity
                     .GetRegistrationAccessToken(
                         entity.GetAssociatedData(),
-                        _encryptionKeyInfo.GetEncryptionKey(registrationAccessTokenEntity.KeyId));
+                        await _encryptionKeyInfo.GetEncryptionKey(
+                            registrationAccessTokenEntity.EncryptionKeyDescriptionId));
             }
             else
             {

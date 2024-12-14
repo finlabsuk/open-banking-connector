@@ -85,11 +85,11 @@ internal class EncryptedObject : BaseEntity
         byte[] encryptionKey,
         DateTimeOffset modified,
         string? modifiedBy,
-        string? keyId)
+        Guid? keyId)
     {
         Modified = modified;
         ModifiedBy = modifiedBy;
-        KeyId = keyId;
+        EncryptionKeyDescriptionId = keyId;
 
         // Create nonce
         int nonceLengthBytes = AesGcm.NonceByteSizes.MaxSize;
@@ -103,7 +103,7 @@ internal class EncryptedObject : BaseEntity
 
         byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 
-        if (KeyId is null)
+        if (EncryptionKeyDescriptionId is null)
         {
             _text = plainTextBytes;
             _text2 = plainText;
@@ -141,7 +141,7 @@ internal class EncryptedObject : BaseEntity
             throw new InvalidOperationException();
         }
         return Encoding.UTF8.GetString(
-            KeyId is not null
+            EncryptionKeyDescriptionId is not null
                 ? AesGcmDecrypt(
                     _nonce,
                     _text,

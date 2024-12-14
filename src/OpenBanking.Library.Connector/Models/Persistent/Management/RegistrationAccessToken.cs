@@ -44,7 +44,7 @@ internal class RegistrationAccessTokenEntity : EncryptedObject
         byte[] encryptionKey,
         DateTimeOffset modified,
         string? modifiedBy,
-        string? keyId) =>
+        Guid? keyId) =>
         UpdatePlainText(registrationAccessToken, associatedData, encryptionKey, modified, modifiedBy, keyId);
 
     public string GetRegistrationAccessToken(string associatedData, byte[] encryptionKey) => GetPlainText(

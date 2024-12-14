@@ -11,6 +11,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using EncryptionKeyDescriptionCached =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management.EncryptionKeyDescription;
 
@@ -22,7 +23,8 @@ public class EncryptionKeyDescriptionCleanup
         PostgreSqlDbContext postgreSqlDbContext,
         ISecretProvider secretProvider,
         KeysSettings keysSettings,
-        EncryptionKeyDescriptionMethods encryptionKeyDescriptionMethods,
+        EncryptionSettings encryptionSettings,
+        IMemoryCache memoryCache,
         IInstrumentationClient instrumentationClient,
         ITimeProvider timeProvider,
         CancellationToken cancellationToken)
@@ -33,6 +35,8 @@ public class EncryptionKeyDescriptionCleanup
 
         var createdBy = "Database cleanup";
         DateTimeOffset utcNow = timeProvider.GetUtcNow();
+
+        encryptionSettings.SetDisableEncryption(keysSettings.DisableEncryption);
 
         // Check current key has description record in database if encryption enabled
         if (!keysSettings.DisableEncryption)
@@ -72,6 +76,7 @@ public class EncryptionKeyDescriptionCleanup
                     },
                     currentEncryptionKeyId);
                 encryptionKeyDescriptions.Add(entity);
+                encryptionSettings.SetCurrentKeyId(entity.Id);
             }
             // Check current key has description in database
             else
@@ -86,11 +91,12 @@ public class EncryptionKeyDescriptionCleanup
                         "Configuration or key secrets error: " +
                         $"EncryptionKeyDescription with ID {currentEncryptionKeyId} as specified by CurrentEncryptionKeyId not found.");
                 }
+                encryptionSettings.SetCurrentKeyId(currentKeyEntity.Id);
             }
         }
 
         // Check and cache encryption keys
-        foreach (EncryptionKeyDescriptionEntity encryptionKeyDescriptionEntity in encryptionKeyDescriptions)
+        foreach (EncryptionKeyDescriptionEntity encryptionKeyDescriptionEntity in encryptionKeyDescriptions.Local)
         {
             // Attempt to obtain key
             SecretResult keyResult = await secretProvider.GetSecretAsync(encryptionKeyDescriptionEntity.Key);
@@ -122,7 +128,10 @@ public class EncryptionKeyDescriptionCleanup
             var encryptionKeyDescription = new EncryptionKeyDescriptionCached { Key = key };
 
             // Add cache entry
-            encryptionKeyDescriptionMethods.Set(encryptionKeyDescriptionEntity.Id, encryptionKeyDescription);
+            EncryptionKeyDescriptionMethods.SetEncryptionKeyDescription(
+                encryptionKeyDescriptionEntity.Id,
+                encryptionKeyDescription,
+                memoryCache);
         }
 
         await postgreSqlDbContext.SaveChangesAsync(cancellationToken);

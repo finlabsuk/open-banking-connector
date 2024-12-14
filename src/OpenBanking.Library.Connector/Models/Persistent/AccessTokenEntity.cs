@@ -34,7 +34,7 @@ internal abstract class AccessTokenEntity : EncryptedObject
         byte[] encryptionKey,
         DateTimeOffset modified,
         string? modifiedBy,
-        string? keyId) =>
+        Guid? keyId) =>
         UpdatePlainText(
             AccessToken.GetPlainText(accessToken),
             associatedData,

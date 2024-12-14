@@ -20,7 +20,7 @@ internal class EncryptionKeyDescriptionPost :
     IObjectCreate<EncryptionKeyDescription, EncryptionKeyDescriptionResponse, LocalCreateParams>
 {
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
-    private readonly EncryptionKeyDescriptionMethods _encryptionKeyDescriptionMethods;
+    private readonly IEncryptionKeyDescription _encryptionKeyDescriptionMethods;
     private readonly IDbReadWriteEntityMethods<EncryptionKeyDescriptionEntity> _entityMethods;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly ISecretProvider _secretProvider;
@@ -32,7 +32,7 @@ internal class EncryptionKeyDescriptionPost :
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         ISecretProvider secretProvider,
-        EncryptionKeyDescriptionMethods encryptionKeyDescriptionMethods)
+        IEncryptionKeyDescription encryptionKeyDescriptionMethods)
     {
         _entityMethods = entityMethods;
         _dbSaveChangesMethod = dbSaveChangesMethod;

@@ -11,7 +11,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -26,7 +25,7 @@ public interface ISharedContext
     IBankProfileService BankProfileService { get; }
     IDbService DbService { get; }
 
-    IEncryptionKeyInfo EncryptionKeyInfo { get; }
+    IEncryptionKeyDescription EncryptionKeyInfo { get; }
 
     IApiVariantMapper ApiVariantMapper { get; }
     ITimeProvider TimeProvider { get; }
@@ -38,8 +37,6 @@ public interface ISharedContext
     ObSealCertificateMethods ObSealCertificateMethods { get; }
 
     ObWacCertificateMethods ObWacCertificateMethods { get; }
-
-    EncryptionKeyDescriptionMethods EncryptionKeyDescriptionMethods { get; }
 
     TppReportingMetrics TppReportingMetrics { get; }
 }

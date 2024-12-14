@@ -32,7 +32,7 @@ internal abstract class RefreshTokenEntity : EncryptedObject
         byte[] encryptionKey,
         DateTimeOffset modified,
         string? modifiedBy,
-        string? keyId) =>
+        Guid? keyId) =>
         UpdatePlainText(refreshToken, associatedData, encryptionKey, modified, modifiedBy, keyId);
 
     public string GetRefreshToken(string associatedData, byte[] encryptionKey) => GetPlainText(

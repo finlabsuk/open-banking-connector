@@ -90,7 +90,7 @@ internal class ManagementContext : IManagementContext
                 _sharedContext.TimeProvider,
                 _sharedContext.Instrumentation,
                 _sharedContext.SecretProvider,
-                _sharedContext.EncryptionKeyDescriptionMethods));
+                _sharedContext.EncryptionKeyInfo));
 
     public ISoftwareStatementsContext SoftwareStatements
     {

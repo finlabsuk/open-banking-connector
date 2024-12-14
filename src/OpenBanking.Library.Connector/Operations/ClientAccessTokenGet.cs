@@ -9,8 +9,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 internal class ClientAccessTokenGet
 {
-    private readonly IEncryptionKeyInfo _encryptionKeyInfo;
+    private readonly IEncryptionKeyDescription _encryptionKeyInfo;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IMemoryCache _memoryCache;
@@ -30,7 +30,7 @@ internal class ClientAccessTokenGet
         IGrantPost grantPost,
         IInstrumentationClient instrumentationClient,
         IMemoryCache memoryCache,
-        IEncryptionKeyInfo encryptionKeyInfo)
+        IEncryptionKeyDescription encryptionKeyInfo)
     {
         _timeProvider = timeProvider;
         _grantPost = grantPost;
@@ -65,7 +65,8 @@ internal class ClientAccessTokenGet
                 }
 
                 // Extract client secret
-                byte[] encryptionKey = _encryptionKeyInfo.GetEncryptionKey(externalApiSecretEntity.KeyId);
+                byte[] encryptionKey =
+                    await _encryptionKeyInfo.GetEncryptionKey(externalApiSecretEntity.EncryptionKeyDescriptionId);
                 clientSecret = externalApiSecretEntity
                     .GetClientSecret(bankRegistrationAssociatedData, encryptionKey);
             }

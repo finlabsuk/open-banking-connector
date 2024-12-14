@@ -20,7 +20,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -34,7 +33,7 @@ internal class AuthContextUpdate :
     private readonly IDbReadWriteEntityMethods<AuthContext> _authContextMethods;
     private readonly IBankProfileService _bankProfileService;
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
-    private readonly IEncryptionKeyInfo _encryptionKeyInfo;
+    private readonly IEncryptionKeyDescription _encryptionKeyInfo;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IMemoryCache _memoryCache;
@@ -51,7 +50,7 @@ internal class AuthContextUpdate :
         IGrantPost grantPost,
         IBankProfileService bankProfileService,
         IMemoryCache memoryCache,
-        IEncryptionKeyInfo encryptionKeyInfo,
+        IEncryptionKeyDescription encryptionKeyInfo,
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods)
     {
@@ -367,7 +366,7 @@ internal class AuthContextUpdate :
                 clientSecret = externalApiSecretEntity
                     .GetClientSecret(
                         bankRegistrationAssociatedData,
-                        _encryptionKeyInfo.GetEncryptionKey(externalApiSecretEntity.KeyId));
+                        await _encryptionKeyInfo.GetEncryptionKey(externalApiSecretEntity.EncryptionKeyDescriptionId));
             }
 
             // Make request to token endpoint
@@ -440,11 +439,11 @@ internal class AuthContextUpdate :
                     modifiedBy,
                     modified,
                     modifiedBy);
-                string? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
+                Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newAccessTokenObject.UpdateAccessToken(
                     newAccessToken,
                     consentAssociatedData,
-                    _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
+                    await _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
                     modified,
                     modifiedBy,
                     currentKeyId);
@@ -462,11 +461,11 @@ internal class AuthContextUpdate :
                     modifiedBy,
                     modified,
                     modifiedBy);
-                string? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
+                Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newRefreshTokenObject.UpdateRefreshToken(
                     tokenEndpointResponse.RefreshToken,
                     consentAssociatedData,
-                    _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
+                    await _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
                     modified,
                     modifiedBy,
                     currentKeyId);

@@ -44,7 +44,7 @@ internal class ExternalApiSecretEntity : EncryptedObject
         byte[] encryptionKey,
         DateTimeOffset modified,
         string? modifiedBy,
-        string? keyId) =>
+        Guid? keyId) =>
         UpdatePlainText(clientSecret, associatedData, encryptionKey, modified, modifiedBy, keyId);
 
     public string GetClientSecret(string associatedData, byte[] encryptionKey) => GetPlainText(

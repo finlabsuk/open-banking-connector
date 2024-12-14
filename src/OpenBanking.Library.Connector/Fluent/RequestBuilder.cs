@@ -17,7 +17,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -66,8 +65,7 @@ public class RequestBuilder : IRequestBuilder
     private readonly IApiVariantMapper _apiVariantMapper;
     private readonly IBankProfileService _bankProfileService;
     private readonly IDbService _dbService;
-    private readonly EncryptionKeyDescriptionMethods _encryptionKeyDescriptionMethods;
-    private readonly IEncryptionKeyInfo _encryptionKeyInfo;
+    private readonly IEncryptionKeyDescription _encryptionKeyInfo;
     private readonly ISettingsProvider<HttpClientSettings> _httpClientSettingsProvider;
     private readonly IInstrumentationClient _logger;
     private readonly IMemoryCache _memoryCache;
@@ -85,7 +83,7 @@ public class RequestBuilder : IRequestBuilder
         IDbService dbService,
         IBankProfileService bankProfileService,
         IMemoryCache memoryCache,
-        IEncryptionKeyInfo encryptionKeyInfo,
+        EncryptionSettings encryptionSettings,
         ISecretProvider secretProvider,
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
         TppReportingMetrics tppReportingMetrics)
@@ -94,7 +92,6 @@ public class RequestBuilder : IRequestBuilder
         _apiVariantMapper = apiVariantMapper.ArgNotNull(nameof(apiVariantMapper));
         _dbService = dbService;
         _bankProfileService = bankProfileService;
-        _encryptionKeyInfo = encryptionKeyInfo;
         _secretProvider = secretProvider;
         _httpClientSettingsProvider = httpClientSettingsProvider;
         _tppReportingMetrics = tppReportingMetrics;
@@ -113,9 +110,10 @@ public class RequestBuilder : IRequestBuilder
             logger,
             tppReportingMetrics,
             dbService.GetDbEntityMethodsClass<ObWacCertificateEntity>());
-        _encryptionKeyDescriptionMethods = new EncryptionKeyDescriptionMethods(
+        _encryptionKeyInfo = new EncryptionKeyDescriptionMethods(
             memoryCache,
             secretProvider,
+            encryptionSettings,
             logger,
             dbService.GetDbEntityMethodsClass<EncryptionKeyDescriptionEntity>());
     }
@@ -153,8 +151,7 @@ public class RequestBuilder : IRequestBuilder
             _httpClientSettingsProvider,
             _obSealCertificateMethods,
             _obWacCertificateMethods,
-            _tppReportingMetrics,
-            _encryptionKeyDescriptionMethods) { Created = _timeProvider.GetUtcNow() };
+            _tppReportingMetrics) { Created = _timeProvider.GetUtcNow() };
         return context;
     }
 }

@@ -44,13 +44,6 @@ public class KeysSettings : ISettings<KeysSettings>
             return this;
         }
 
-        if (!Encryption.Any())
-        {
-            throw new ArgumentException(
-                "Configuration or key secrets error: " +
-                "No encryption keys provided.");
-        }
-
         foreach ((string key, EncryptionKey value) in Encryption)
         {
             if (string.IsNullOrEmpty(value.Value))
@@ -59,20 +52,6 @@ public class KeysSettings : ISettings<KeysSettings>
                     "Configuration or key secrets error: " +
                     $"No non-empty Value provided for encryption key {key}.");
             }
-        }
-
-        if (string.IsNullOrEmpty(CurrentEncryptionKeyId))
-        {
-            throw new ArgumentException(
-                "Configuration or key secrets error: " +
-                "No non-empty value provided for CurrentEncryptionKeyId.");
-        }
-
-        if (!Encryption.TryGetValue(CurrentEncryptionKeyId, out EncryptionKey? _))
-        {
-            throw new ArgumentException(
-                "Configuration or key secrets error: " +
-                $"Encryption key with ID {CurrentEncryptionKeyId} (specified by CurrentEncryptionKeyId) not found.");
         }
 
         return this;

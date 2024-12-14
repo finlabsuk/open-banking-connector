@@ -11,7 +11,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -27,13 +26,12 @@ internal class SharedContext : ISharedContext
         IApiVariantMapper apiVariantMapper,
         IBankProfileService bankProfileService,
         IMemoryCache memoryCache,
-        IEncryptionKeyInfo encryptionKeyInfo,
+        IEncryptionKeyDescription encryptionKeyInfo,
         ISecretProvider secretProvider,
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
         ObSealCertificateMethods obSealCertificateMethods,
         ObWacCertificateMethods obWacCertificateMethods,
-        TppReportingMetrics tppReportingMetrics,
-        EncryptionKeyDescriptionMethods encryptionKeyDescriptionMethods)
+        TppReportingMetrics tppReportingMetrics)
     {
         TimeProvider = timeProvider;
         ApiClient = apiClient;
@@ -48,7 +46,6 @@ internal class SharedContext : ISharedContext
         ObSealCertificateMethods = obSealCertificateMethods;
         ObWacCertificateMethods = obWacCertificateMethods;
         TppReportingMetrics = tppReportingMetrics;
-        EncryptionKeyDescriptionMethods = encryptionKeyDescriptionMethods;
     }
 
     public ITimeProvider TimeProvider { get; }
@@ -58,7 +55,7 @@ internal class SharedContext : ISharedContext
     public IInstrumentationClient Instrumentation { get; }
     public IBankProfileService BankProfileService { get; }
     public IDbService DbService { get; }
-    public IEncryptionKeyInfo EncryptionKeyInfo { get; }
+    public IEncryptionKeyDescription EncryptionKeyInfo { get; }
     public IApiVariantMapper ApiVariantMapper { get; }
     public ISecretProvider SecretProvider { get; }
     public ISettingsProvider<HttpClientSettings> HttpClientSettingsProvider { get; }
@@ -66,8 +63,6 @@ internal class SharedContext : ISharedContext
     public ObSealCertificateMethods ObSealCertificateMethods { get; }
 
     public ObWacCertificateMethods ObWacCertificateMethods { get; }
-
-    public EncryptionKeyDescriptionMethods EncryptionKeyDescriptionMethods { get; }
 
     public TppReportingMetrics TppReportingMetrics { get; }
 }

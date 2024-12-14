@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using EncryptionKeyDescriptionCached =
@@ -18,15 +19,57 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 /// </summary>
 /// <param name="memoryCache"></param>
 /// <param name="secretProvider"></param>
+/// <param name="encryptionSettings"></param>
 /// <param name="instrumentationClient"></param>
 /// <param name="entityMethods"></param>
 public class EncryptionKeyDescriptionMethods(
     IMemoryCache memoryCache,
     ISecretProvider secretProvider,
+    EncryptionSettings encryptionSettings,
     IInstrumentationClient instrumentationClient,
-    IDbReadOnlyEntityMethods<EncryptionKeyDescriptionEntity> entityMethods)
+    IDbReadOnlyEntityMethods<EncryptionKeyDescriptionEntity> entityMethods) : IEncryptionKeyDescription
 {
     private readonly IInstrumentationClient _instrumentationClient = instrumentationClient;
+
+    public void Set(Guid entityId, EncryptionKeyDescriptionCached encryptionKeyDescription) =>
+        SetEncryptionKeyDescription(entityId, encryptionKeyDescription, memoryCache);
+
+    public Guid? GetCurrentKeyId()
+    {
+        if (encryptionSettings.DisableEncryption)
+        {
+            return null;
+        }
+        if (encryptionSettings.CurrentKeyId is null)
+        {
+            throw new ArgumentException(
+                "Configuration or key secrets warning: " +
+                "No encryption key specified by CurrentEncryptionKeyId. If you haven't done so, " +
+                "please create an EncryptionKeyDescription and specify its ID as CurrentEncryptionKeyId.");
+        }
+        return encryptionSettings.CurrentKeyId;
+    }
+
+    public async Task<byte[]> GetEncryptionKey(Guid? keyId)
+    {
+        if (keyId is null)
+        {
+            return [];
+        }
+
+        EncryptionKeyDescriptionCached encryptionKeyDescription =
+            await Get(keyId.Value);
+
+        return encryptionKeyDescription.Key;
+    }
+
+    public static void SetEncryptionKeyDescription(
+        Guid entityId,
+        EncryptionKeyDescriptionCached encryptionKeyDescription,
+        IMemoryCache memoryCache) =>
+        memoryCache.Set(
+            GetCacheKey(entityId),
+            encryptionKeyDescription);
 
     public async Task<EncryptionKeyDescriptionCached> Get(
         Guid entityId) =>
@@ -60,13 +103,6 @@ public class EncryptionKeyDescriptionMethods(
 
                 return encryptionKeyDescription;
             }))!;
-
-    public void Set(Guid entityId, EncryptionKeyDescriptionCached encryptionKeyDescription)
-    {
-        memoryCache.Set(
-            GetCacheKey(entityId),
-            encryptionKeyDescription);
-    }
 
     private static string GetCacheKey(Guid entityId) => string.Join(
         ":",

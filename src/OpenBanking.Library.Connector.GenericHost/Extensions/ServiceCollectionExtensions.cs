@@ -14,7 +14,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -39,9 +38,8 @@ public static class ServiceCollectionExtensions
         // Add secret provider
         services.AddSingleton<ISecretProvider, SecretProvider>();
 
-        // Set up encryption key
-        services
-            .AddSingleton<IEncryptionKeyInfo, EncryptionKeyInfo>();
+        // Set up encryption settings
+        services.AddSingleton<EncryptionSettings>();
 
         // Set up bank profile definitions
         services.AddSingleton<IBankProfileService, BankProfileService>();

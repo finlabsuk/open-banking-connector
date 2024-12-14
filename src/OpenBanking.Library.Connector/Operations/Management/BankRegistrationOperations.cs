@@ -26,7 +26,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Jose;
 using Microsoft.EntityFrameworkCore;
@@ -52,7 +51,7 @@ internal class
     private readonly ClientAccessTokenGet _clientAccessTokenGet;
     private readonly IOpenIdConfigurationRead _configurationRead;
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
-    private readonly IEncryptionKeyInfo _encryptionKeyInfo;
+    private readonly IEncryptionKeyDescription _encryptionKeyInfo;
     private readonly IDbReadWriteEntityMethods<BankRegistrationEntity> _entityMethods;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
@@ -76,7 +75,7 @@ internal class
         ObSealCertificateMethods obSealCertificateMethods,
         ClientAccessTokenGet clientAccessTokenGet,
         IGrantPost grantPost,
-        IEncryptionKeyInfo encryptionKeyInfo,
+        IEncryptionKeyDescription encryptionKeyInfo,
         ISecretProvider secretProvider)
     {
         _bankProfileService = bankProfileService;
@@ -260,26 +259,27 @@ internal class
         // Get re-usable existing bank registration if possible
         BankGroup bankGroup = bankProfile.BankProfileEnum.GetBankGroup();
         Func<string?, string?, string?, BankProfile, BankGroup, Guid, TokenEndpointAuthMethodSupportedValues,
-            RegistrationScopeEnum, IBankProfileService, (BankRegistrationEntity? existingRegistration,
-            IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> getExistingRegistration = bankGroup switch
-        {
-            BankGroup.Barclays => GetExistingRegistration<BarclaysBank, BarclaysRegistrationGroup>,
-            BankGroup.Cooperative => GetExistingRegistration<CooperativeBank, CooperativeRegistrationGroup>,
-            BankGroup.Danske => GetExistingRegistration<DanskeBank, DanskeRegistrationGroup>,
-            BankGroup.Hsbc => GetExistingRegistration<HsbcBank, HsbcRegistrationGroup>,
-            BankGroup.Lloyds => GetExistingRegistration<LloydsBank, LloydsRegistrationGroup>,
-            BankGroup.Monzo => GetExistingRegistration<MonzoBank, MonzoRegistrationGroup>,
-            BankGroup.Nationwide =>
-                GetExistingRegistration<NationwideBank, NationwideRegistrationGroup>,
-            BankGroup.NatWest => GetExistingRegistration<NatWestBank, NatWestRegistrationGroup>,
-            BankGroup.Obie => GetExistingRegistration<ObieBank, ObieRegistrationGroup>,
-            BankGroup.Revolut => GetExistingRegistration<RevolutBank, RevolutRegistrationGroup>,
-            BankGroup.Santander => GetExistingRegistration<SantanderBank, SantanderRegistrationGroup>,
-            BankGroup.Starling => GetExistingRegistration<StarlingBank, StarlingRegistrationGroup>,
-            _ => throw new ArgumentOutOfRangeException()
-        };
+            RegistrationScopeEnum, IBankProfileService, Task<(BankRegistrationEntity? existingRegistration,
+                IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>> getExistingRegistration =
+            bankGroup switch
+            {
+                BankGroup.Barclays => GetExistingRegistration<BarclaysBank, BarclaysRegistrationGroup>,
+                BankGroup.Cooperative => GetExistingRegistration<CooperativeBank, CooperativeRegistrationGroup>,
+                BankGroup.Danske => GetExistingRegistration<DanskeBank, DanskeRegistrationGroup>,
+                BankGroup.Hsbc => GetExistingRegistration<HsbcBank, HsbcRegistrationGroup>,
+                BankGroup.Lloyds => GetExistingRegistration<LloydsBank, LloydsRegistrationGroup>,
+                BankGroup.Monzo => GetExistingRegistration<MonzoBank, MonzoRegistrationGroup>,
+                BankGroup.Nationwide =>
+                    GetExistingRegistration<NationwideBank, NationwideRegistrationGroup>,
+                BankGroup.NatWest => GetExistingRegistration<NatWestBank, NatWestRegistrationGroup>,
+                BankGroup.Obie => GetExistingRegistration<ObieBank, ObieRegistrationGroup>,
+                BankGroup.Revolut => GetExistingRegistration<RevolutBank, RevolutRegistrationGroup>,
+                BankGroup.Santander => GetExistingRegistration<SantanderBank, SantanderRegistrationGroup>,
+                BankGroup.Starling => GetExistingRegistration<StarlingBank, StarlingRegistrationGroup>,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         (BankRegistrationEntity? existingGroupRegistration,
-            IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2) = getExistingRegistration(
+            IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2) = await getExistingRegistration(
             request.ExternalApiId,
             requestExternalApiSecret,
             requestRegistrationAccessToken,
@@ -407,11 +407,11 @@ internal class
                 request.CreatedBy,
                 utcNow,
                 request.CreatedBy);
-            string? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
+            Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
             clientSecretEntity.UpdateClientSecret(
                 externalApiSecret,
                 entity.GetAssociatedData(),
-                _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
+                await _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
                 utcNow,
                 request.CreatedBy,
                 currentKeyId);
@@ -428,11 +428,11 @@ internal class
                 request.CreatedBy,
                 utcNow,
                 request.CreatedBy);
-            string? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
+            Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
             registrationAccessTokenEntity.UpdateRegistrationAccessToken(
                 registrationAccessToken,
                 entity.GetAssociatedData(),
-                _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
+                await _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
                 utcNow,
                 request.CreatedBy,
                 currentKeyId);
@@ -544,7 +544,8 @@ internal class
                 accessToken = registrationAccessTokenEntity
                     .GetRegistrationAccessToken(
                         entity.GetAssociatedData(),
-                        _encryptionKeyInfo.GetEncryptionKey(registrationAccessTokenEntity.KeyId));
+                        await _encryptionKeyInfo.GetEncryptionKey(
+                            registrationAccessTokenEntity.EncryptionKeyDescriptionId));
             }
             else
             {
@@ -625,8 +626,9 @@ internal class
         return (response, nonErrorMessages);
     }
 
-    private (BankRegistrationEntity? existingRegistration, IList<IFluentResponseInfoOrWarningMessage>
-        nonErrorMessages) GetExistingRegistration<TBank, TRegistrationGroup>(
+    private async
+        Task<(BankRegistrationEntity? existingRegistration, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages
+            )> GetExistingRegistration<TBank, TRegistrationGroup>(
             string? requestExternalApiId,
             string? requestExternalApiSecret,
             string? requestRegistrationAccessToken,
@@ -681,7 +683,7 @@ internal class
                 .SingleOrDefault(x => !x.IsDeleted);
 
             IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2 =
-                CheckExistingRegistrationCompatible(
+                await CheckExistingRegistrationCompatible(
                     existingRegistration,
                     externalApiSecretEntity,
                     registrationAccessTokenEntity,
@@ -708,7 +710,7 @@ internal class
         return (existingRegistration, nonErrorMessages);
     }
 
-    private IList<IFluentResponseInfoOrWarningMessage> CheckExistingRegistrationCompatible(
+    private async Task<IList<IFluentResponseInfoOrWarningMessage>> CheckExistingRegistrationCompatible(
         BankRegistrationEntity existingRegistration,
         ExternalApiSecretEntity? externalApiSecretEntity,
         RegistrationAccessTokenEntity? registrationAccessTokenEntity,
@@ -743,7 +745,7 @@ internal class
                 existingRegExternalApiSecret = externalApiSecretEntity
                     .GetClientSecret(
                         existingRegistration.GetAssociatedData(),
-                        _encryptionKeyInfo.GetEncryptionKey(externalApiSecretEntity.KeyId));
+                        await _encryptionKeyInfo.GetEncryptionKey(externalApiSecretEntity.EncryptionKeyDescriptionId));
             }
 
             if (requestExternalApiSecret != existingRegExternalApiSecret)
@@ -762,7 +764,8 @@ internal class
                 existingRegRegistrationAccessToken = registrationAccessTokenEntity
                     .GetRegistrationAccessToken(
                         existingRegistration.GetAssociatedData(),
-                        _encryptionKeyInfo.GetEncryptionKey(registrationAccessTokenEntity.KeyId));
+                        await _encryptionKeyInfo.GetEncryptionKey(
+                            registrationAccessTokenEntity.EncryptionKeyDescriptionId));
             }
 
             if (requestRegistrationAccessToken != existingRegRegistrationAccessToken)

@@ -12,9 +12,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
@@ -30,7 +30,7 @@ internal class ConsentAccessTokenGet
     private static readonly ConcurrentDictionary<string, SemaphoreSlim> LockDictionary = new();
 
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
-    private readonly IEncryptionKeyInfo _encryptionKeyInfo;
+    private readonly IEncryptionKeyDescription _encryptionKeyInfo;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IMemoryCache _memoryCache;
@@ -42,7 +42,7 @@ internal class ConsentAccessTokenGet
         IGrantPost grantPost,
         IInstrumentationClient instrumentationClient,
         IMemoryCache memoryCache,
-        IEncryptionKeyInfo encryptionKeyInfo)
+        IEncryptionKeyDescription encryptionKeyInfo)
     {
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
@@ -92,7 +92,8 @@ internal class ConsentAccessTokenGet
             if (storedAccessTokenEntity is not null)
             {
                 // Extract token
-                byte[] encryptionKey = _encryptionKeyInfo.GetEncryptionKey(storedAccessTokenEntity.KeyId);
+                byte[] encryptionKey =
+                    await _encryptionKeyInfo.GetEncryptionKey(storedAccessTokenEntity.EncryptionKeyDescriptionId);
                 AccessToken storedAccessToken =
                     storedAccessTokenEntity
                         .GetAccessToken(consentAssociatedData, encryptionKey);
@@ -133,7 +134,7 @@ internal class ConsentAccessTokenGet
                 clientSecret = externalApiSecretEntity
                     .GetClientSecret(
                         bankRegistrationAssociatedData,
-                        _encryptionKeyInfo.GetEncryptionKey(externalApiSecretEntity.KeyId));
+                        await _encryptionKeyInfo.GetEncryptionKey(externalApiSecretEntity.EncryptionKeyDescriptionId));
             }
 
             // Load stored refresh token
@@ -148,7 +149,7 @@ internal class ConsentAccessTokenGet
                 storedRefreshTokenEntity
                     .GetRefreshToken(
                         consentAssociatedData,
-                        _encryptionKeyInfo.GetEncryptionKey(storedRefreshTokenEntity.KeyId));
+                        await _encryptionKeyInfo.GetEncryptionKey(storedRefreshTokenEntity.EncryptionKeyDescriptionId));
 
             // POST refresh token grant
             string externalApiClientId = bankRegistration.ExternalApiId;
@@ -195,11 +196,11 @@ internal class ConsentAccessTokenGet
                     modifiedBy,
                     modified,
                     modifiedBy);
-                string? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
+                Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newAccessTokenObject.UpdateAccessToken(
                     newAccessToken,
                     consentAssociatedData,
-                    _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
+                    await _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
                     modified,
                     modifiedBy,
                     currentKeyId);
@@ -220,11 +221,11 @@ internal class ConsentAccessTokenGet
                     modifiedBy,
                     modified,
                     modifiedBy);
-                string? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
+                Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newRefreshTokenObject.UpdateRefreshToken(
                     tokenEndpointResponse.RefreshToken,
                     consentAssociatedData,
-                    _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
+                    await _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
                     modified,
                     modifiedBy,
                     currentKeyId);
