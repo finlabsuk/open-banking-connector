@@ -569,10 +569,17 @@ internal class GrantPost : IGrantPost
         if (idToken.Acr is not null)
         {
             if (supportsSca &&
-                !doNotValidateIdTokenAcrClaim &&
                 idToken.Acr is not Acr.Sca)
             {
-                throw new Exception("Acr from ID token does not match expected Acr.");
+                var message = $"Acr from ID token is {idToken.Acr} rather then expected {Acr.Sca}.";
+                if (doNotValidateIdTokenAcrClaim)
+                {
+                    _instrumentationClient.Info(message);
+                }
+                else
+                {
+                    throw new Exception(message);
+                }
             }
         }
 
