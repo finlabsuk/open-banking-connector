@@ -25,6 +25,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using FluentAssertions;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
 using ObSealCertificateRequest =
@@ -94,8 +95,12 @@ public class AppTests
     public static IEnumerable<object[]> GetTestCases(TestType testType)
     {
         // Read bank registrations list
+        var userSecretsId = "aa921213-9461-4f9e-8fec-153624ec67ad"; // from .csproj file
+        string secretsPath = PathHelper.GetSecretsPathFromSecretsId(userSecretsId);
+        string secretsDirectory = Path.GetDirectoryName(secretsPath) ?? throw new InvalidOperationException();
+        string requestsDirectory = Path.Combine(secretsDirectory, "Requests");
         string bankRegistrationEnvFile = Path.Combine(
-            AppConfiguration.RequestsDirectory,
+            requestsDirectory,
             "BankRegistration",
             "http-client.private.env.json");
         BankRegistrationEnvFile bankRegistrationEnvs = DataFile.ReadFile<BankRegistrationEnvFile>(
