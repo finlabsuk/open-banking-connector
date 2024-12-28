@@ -2,13 +2,19 @@
 
 Configuration in Open Banking Connector is described in detail [here](../../configuration/README.md).
 
-Here we describe some [basic configuration settings](#basic-configuration-settings) that can be used to get started with Open Banking Connector.
+To run and get started with Open Banking Connector, some [basic configuration settings](#basic-configuration-settings)
+are required including database settings.
 
-Configuration settings are generally specified via environment variables but can also be specified using command line options. Here we describe configuration settings using environment variables.
+Configuration settings are generally specified via environment variables but can also be specified using command line
+options. Here we use environment variables.
 
-The simplest way to use these settings (environment variables) when running Open Banking Connector locally is to place them in a `.env` file. This file can then be supplied this as argument `--env-file` to `docker run` when running the Open Banking Connector Docker container.
+The simplest way to supply environment variables when running the Open Banking Connector container locally is to place
+them in a `.env` file. This file can then be supplied as argument `--env-file` to `docker run`. For production, you
+may have a different way to supply environment variables to a container.
 
-Note that Open Banking Connector uses the .NET convention of replacing ":" with "__" when environment variables are used. So the configuration setting `OpenBankingConnector:Database:Provider` is set by the environment variable `OpenBankingConnector__Database__Provider`.
+Note that Open Banking Connector uses the .NET convention of replacing ":" with "__" when environment variables are
+used. So the configuration setting `OpenBankingConnector:Database:Provider` is set by the environment variable
+`OpenBankingConnector__Database__Provider`.
 
 ## Basic configuration settings
 
@@ -19,6 +25,7 @@ Database settings are documented [here](../../configuration/database-settings.md
 Open Banking Connector requires connection to a PostgreSQL database.
 
 The following environment variables can be used to configure use of a PostgreSQL database:
+
 ```bash
 # Database settings
 OpenBankingConnector__Database__Provider=PostgreSql # currently unnecessary as this is the default but recommended for future-proofing
@@ -30,25 +37,35 @@ OpenBankingConnector__Custom__PostgreSqlPassword=placeholder # example arbitrary
 
 ### Encryption key settings
 
+Note: this setting should be included
+after [adding an encryption key description](../add-software-statement-etc/README.md#add-an-encryption-key-description-to-open-banking-connector)
+so can be skipped for now but
+please include once you have added an encryption key description.
+
 Encryption key settings are documented [here](../../configuration/encryption-key-settings.md).
 
-Below are the environment variables necessary to configure a single 256-bit encryption key which can be generated using example code [here](../../configuration/encryption-key-settings.md#encryption-keys-settings)).
+Below is the environment variable necessary to configure which encryption key should be used for encryption of sensitive
+data added to the database.
 
 ```bash
 # Encryption key settings
-OpenBankingConnector__Keys__CurrentEncryptionKeyId=MyKey # use encryption key with ID "MyKey"
-OpenBankingConnector__Keys__Encryption__MyKey__Value=Q95hOua2S5wXK9W5q/j0+1xIThOSbGhUl2Wano2uTc4= # substitute your base64-encoded 256-bit encryption key (see text for link to example generation code)
+OpenBankingConnector__Keys__CurrentEncryptionKeyId=MyKeyId # use encryption key description with ID "MyKeyId"
 ```
 
 ### Bank profile settings
 
 Almost all bank profile information is supplied via source code.
 
-However, sometimes important information such as org IDs and URLs cannot be obtained from public sources and is only available to those registered with the UK Open Banking Directory or from bank dev portals. In such cases, extra information needs to be provided to Open Banking Connector via configuration to complete the bank profile definitions.
+However, sometimes important information such as org IDs and URLs cannot be obtained from public sources and is only
+available to those registered with the UK Open Banking Directory or from bank dev portals. In such cases, extra
+information needs to be provided to Open Banking Connector via configuration to complete the bank profile definitions.
 
-*Important: It is only necessary to provide information that relates to bank profiles you want to use.* When using a bank profile for the first time, if any required information from configuration is not available, Open Banking Connector will provide an error with details.
+*Important: It is only necessary to provide information that relates to bank profiles you want to use.* When using a
+bank profile for the first time, if any required information from configuration is not available, Open Banking Connector
+will provide an error with details.
 
-For reference, we list here currently-required configuration for supported bank groups.
+For reference, we list here configuration required to support all
+current [bank integrations](../../bank-integrations.md).
 
 Please contact us if you need any assistance populating these configuration values.
 

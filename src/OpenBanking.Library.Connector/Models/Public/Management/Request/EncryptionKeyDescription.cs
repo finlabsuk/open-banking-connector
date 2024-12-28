@@ -13,8 +13,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management
 public class EncryptionKeyDescription : EntityBase, ISupportsValidation
 {
     /// <summary>
-    ///     Encryption key (PKCS #8) as "stringified" PEM file with escaped newline characters ("\n") and "PRIVATE KEY" label.
-    ///     Example: "-----BEGIN PRIVATE KEY-----\nABC\n-----END PRIVATE KEY-----\n"
+    ///     Description of encryption key secret. An encryption key (256-bit) enables symmetric encryption (AES-256-GCM) of
+    ///     sensitive data in the database such as bank tokens. It should be specified as a base64-encoded string.
     /// </summary>
     [JsonProperty(Required = Required.Always)]
     public required SecretDescription Key { get; init; }

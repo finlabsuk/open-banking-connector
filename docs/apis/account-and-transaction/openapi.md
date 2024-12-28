@@ -1,3 +1,3 @@
-# OpenAPI spec    
+# OpenAPI spec
 
-!!swagger openapi.json!!
+!!swagger openapi-aisp.json!!

@@ -21,12 +21,13 @@ namespace) and subsequent levels are separated by colons (:).
 Values are always representable as strings (although in JSON files, where applicable and optionally, they may be
 represented in natural form as numbers and booleans where applicable).
 
-Below is an example of a setting and value that configures the Open Banking Connector database provider to be
-`"Sqlite"`:
+Below is an example of a setting and value that configures the Open Banking Connector database setting
+*EnsureDatabaseCreated* to be
+`"true"`:
 
-| Setting                                | Value      |
-|----------------------------------------|------------|
-| OpenBankingConnector:Database:Provider | `"Sqlite"` |
+| Setting                                             | Value    |
+|-----------------------------------------------------|----------|
+| OpenBankingConnector:Database:EnsureDatabaseCreated | `"true"` |
 
 ## Settings groups
 

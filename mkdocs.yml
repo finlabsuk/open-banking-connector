@@ -32,14 +32,15 @@ extra_css:
   - stylesheets/style.css
 copyright: Copyright &copy; 2024 Finnovation Labs Limited and contributors
 nav:
-  - Overview: README.md
-  - Guide:
-    - guide/README.md
+  - Overview:
+    - README.md
+    - Common questions: guide/README.md
+  - Bank integrations: bank-integrations.md
   - Get started:
     - get-started/README.md
     - Set up basic configuration: get-started\set-up-basic-configuration\README.md
-    - Run Docker container: get-started\run-docker-container\README.md
-    - Add software statement and certificates: get-started/add-software-statement-and-certificates/README.md
+    - Run container: get-started\run-container\README.md
+    - Add software statement, certificates and an encryption key description: get-started/add-software-statement-etc/README.md
     - Create bank registration: get-started\create-bank-registration\README.md
     - Account access consents:
       - get-started/account-access-consents/README.md
@@ -53,7 +54,6 @@ nav:
       - get-started/domestic-vrp-consents/README.md
       - Create and authorise a domestic VRP consent: get-started\domestic-vrp-consents\create-and-authorise-domestic-vrp-consent\README.md
       - Check funds and make payment: get-started\domestic-vrp-consents\confirm-funds-and-make-payment\README.md
-  - Bank Integrations: bank-integrations.md
   - Configuration:
     - configuration/README.md
     - Database settings: configuration/database-settings.md

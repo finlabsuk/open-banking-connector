@@ -3,7 +3,7 @@
   "info": {
     "title": "Auth Contexts API",
     "description": "Auth Contexts API for Open Banking Connector Web App",
-    "version": "12.2.3"
+    "version": "12.4.0"
   },
   "paths": {
     "/auth/redirect-delegate": {
@@ -22,28 +22,36 @@
                 "type": "object",
                 "properties": {
                   "state": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "state provided by post-auth redirect"
                   },
                   "code": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "code provided by post-auth redirect"
                   },
                   "id_token": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "ID token provided by post-auth redirect"
                   },
                   "error": {
-                    "type": "string"
+                    "type": "string",
+                    "description": ""
                   },
                   "response_mode": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "response mode used by post-auth redirect (for checking), one of {\"query\", \"fragment\"}"
                   },
                   "modified_by": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "user or comment for any database updates"
                   },
                   "redirect_uri": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "redirect URL used by post-auth redirect (for checking)"
                   },
                   "app_session_id": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "app session ID associated with post-auth redirect (for checking)"
                   }
                 }
               },
