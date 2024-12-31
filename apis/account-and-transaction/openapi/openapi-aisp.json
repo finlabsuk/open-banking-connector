@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "12.2.3"
+    "version": "12.4.0"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -2731,7 +2731,8 @@
           "Loan",
           "Mortgage",
           "PrePaidCard",
-          "Savings"
+          "Savings",
+          "Wallet"
         ],
         "type": "string",
         "description": "Specifies the sub type of account (product family group)."

@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "12.2.3"
+    "version": "12.4.0"
   },
   "paths": {
     "/manage/bank-registrations": {
@@ -117,6 +117,128 @@
             "description": "",
             "schema": {
               "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/manage/encryption-key-descriptions": {
+      "post": {
+        "tags": [
+          "Encryption Key Descriptions"
+        ],
+        "summary": "Add encryption key description",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EncryptionKeyDescription"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncryptionKeyDescriptionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncryptionKeyDescriptionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncryptionKeyDescriptionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/manage/encryption-key-descriptions/{encryptionKeyDescriptionId}": {
+      "get": {
+        "tags": [
+          "Encryption Key Descriptions"
+        ],
+        "summary": "Read encryption key description",
+        "parameters": [
+          {
+            "name": "encryptionKeyDescriptionId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncryptionKeyDescriptionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncryptionKeyDescriptionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncryptionKeyDescriptionResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Encryption Key Descriptions"
+        ],
+        "summary": "Delete encryption key description",
+        "parameters": [
+          {
+            "name": "encryptionKeyDescriptionId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -823,6 +945,71 @@
           }
         },
         "additionalProperties": false
+      },
+      "EncryptionKeyDescription": {
+        "required": [
+          "Key"
+        ],
+        "type": "object",
+        "properties": {
+          "Key": {
+            "$ref": "#/components/schemas/SecretDescription"
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EncryptionKeyDescriptionResponse": {
+        "required": [
+          "Created",
+          "Id",
+          "Key"
+        ],
+        "type": "object",
+        "properties": {
+          "Key": {
+            "$ref": "#/components/schemas/SecretDescription"
+          },
+          "Id": {
+            "type": "string",
+            "description": "Unique Open Banking Connector ID (used in local database).",
+            "format": "uuid"
+          },
+          "Created": {
+            "type": "string",
+            "description": "Created timestamp in local database.",
+            "format": "date-time"
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response to EncryptionKeyDescription read and create requests."
       },
       "OAuth2ResponseMode": {
         "enum": [
