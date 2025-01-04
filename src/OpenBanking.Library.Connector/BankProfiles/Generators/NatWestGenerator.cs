@@ -259,8 +259,6 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                         bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
                 }
             },
-            VariableRecurringPaymentsApiSettings =
-                new VariableRecurringPaymentsApiSettings { UseDomesticVrpGetPaymentDetailsEndpoint = true },
             AspspBrandId = bank switch
             {
                 NatWestBank.NatWestSandbox => 100001, // sandbox
