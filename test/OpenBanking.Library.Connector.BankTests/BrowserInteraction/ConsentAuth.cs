@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics;
 using System.Net;
 using System.Net.Mail;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
@@ -71,7 +72,9 @@ public class ConsentAuth
             }
 
             // Perform automated auth
-            waitForRedirect = redirectObserver.WaitForRedirect(TimeSpan.FromMinutes(2));
+            TimeSpan timeOut =
+                Debugger.IsAttached ? TimeSpan.FromMinutes(10) : TimeSpan.FromSeconds(20);
+            waitForRedirect = redirectObserver.WaitForRedirect(timeOut);
             await AutomatedAuthAsync(
                 authUrl,
                 bankProfileEnum,
