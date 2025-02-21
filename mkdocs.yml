@@ -48,7 +48,7 @@ nav:
       - Get account data: get-started\account-access-consents\get-account-data\README.md
     - Domestic payment consents:
       - get-started/domestic-payment-consents/README.md
-      - Create and authorise a domestic VRP consent: get-started\domestic-payment-consents\create-and-authorise-domestic-payment-consent\README.md
+      - Create and authorise a domestic payment consent: get-started\domestic-payment-consents\create-and-authorise-domestic-payment-consent\README.md
       - Check funds and make payment: get-started\domestic-payment-consents\confirm-funds-and-make-payment\README.md
     - Domestic VRP consents:
       - get-started/domestic-vrp-consents/README.md
