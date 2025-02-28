@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
@@ -27,7 +28,12 @@ public static class CertificateFactories
                     X509ContentType.Pkcs12); // workaround for issue: https://github.com/dotnet/runtime/issues/45680 
         string?
             password = null; // workaround from https://support.microsoft.com/en-gb/topic/kb5025823-change-in-how-net-applications-import-x-509-certificates-bf81c936-af2b-446e-9f7a-016f4713b46b
-        return new X509Certificate2(exportedCert, password);
+
+        X509Certificate2 loadedCert = RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+            ? X509CertificateLoader.LoadPkcs12(exportedCert, password, X509KeyStorageFlags.EphemeralKeySet)
+            : X509CertificateLoader.LoadPkcs12(exportedCert, password);
+
+        return loadedCert;
     }
 
     private static string CleanPem(string pem)
@@ -37,11 +43,5 @@ public static class CertificateFactories
         // contain "\n".
         string cleanedPem = Regex.Replace(pem, @"\\n", "\n");
         return cleanedPem;
-    }
-
-    public static X509Certificate2 CreateCert(string certPem)
-    {
-        string cleanedCertPem = CleanPem(certPem);
-        return X509Certificate2.CreateFromPem(cleanedCertPem);
     }
 }
