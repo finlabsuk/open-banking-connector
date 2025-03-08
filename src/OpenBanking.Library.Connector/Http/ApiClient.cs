@@ -168,19 +168,26 @@ public class ApiClient(
         // SSL settings
         var sslClientAuthenticationOptions = new SslClientAuthenticationOptions
         {
-            EnabledSslProtocols = SslProtocols.Tls12
+            EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13
         };
 
         // Limit cipher suites on Linux
-        var cipherSuites = new[]
+        var tls12CipherSuites = new[]
         {
             TlsCipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
             TlsCipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
             TlsCipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384, TlsCipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         };
+        var tls13CipherSuites = new[]
+        {
+            TlsCipherSuite.TLS_AES_256_GCM_SHA384, TlsCipherSuite.TLS_AES_128_GCM_SHA256,
+            TlsCipherSuite.TLS_CHACHA20_POLY1305_SHA256
+        };
+        TlsCipherSuite[] allCipherSuites = tls13CipherSuites.Concat(tls12CipherSuites).ToArray();
+
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
-            sslClientAuthenticationOptions.CipherSuitesPolicy = new CipherSuitesPolicy(cipherSuites);
+            sslClientAuthenticationOptions.CipherSuitesPolicy = new CipherSuitesPolicy(allCipherSuites);
         }
 
         // Add client certs
