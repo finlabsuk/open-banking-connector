@@ -51,6 +51,27 @@ public class OBTypesTests
     }
 
     [Fact]
+    public void ConverOBBankTransactionCodeStructure1()
+    {
+        var bankTransactionCode = new AccountAndTransactionModelsPublic.OBBankTransactionCodeStructure1
+        {
+            Code = "code",
+            SubCode = null
+        };
+
+        string jsonString = JsonConvert.SerializeObject(
+            bankTransactionCode,
+            Formatting.Indented,
+            new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+
+        var result =
+            JsonConvert
+                .DeserializeObject<AccountAndTransactionModelsPublic.OBBankTransactionCodeStructure1>(jsonString);
+
+        result.Should().BeEquivalentTo(bankTransactionCode);
+    }
+
+    [Fact]
     public void ConvertOBAccount6()
     {
         var initialValue = new AccountAndTransactionModelsPublic.OBAccount6
