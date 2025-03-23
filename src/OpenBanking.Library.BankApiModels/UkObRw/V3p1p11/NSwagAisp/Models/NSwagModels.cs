@@ -49,7 +49,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Self", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.Uri Self { get; set; } = default!;
+        public required System.Uri Self { get; set; }
 
         [Newtonsoft.Json.JsonProperty("First", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Uri? First { get; set; } = default!;
@@ -97,7 +97,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -152,7 +152,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -164,17 +164,17 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("AccountType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalAccountType1Code AccountType { get; set; } = default!;
+        public required OBExternalAccountType1Code AccountType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("AccountSubType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalAccountSubType1Code AccountSubType { get; set; } = default!;
+        public required OBExternalAccountSubType1Code AccountSubType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -204,7 +204,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -216,17 +216,17 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("AccountType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalAccountType1Code AccountType { get; set; } = default!;
+        public required OBExternalAccountType1Code AccountType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("AccountSubType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalAccountSubType1Code AccountSubType { get; set; } = default!;
+        public required OBExternalAccountSubType1Code AccountSubType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -247,7 +247,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("Account", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<Account2> Account { get; set; } = new System.Collections.ObjectModel.Collection<Account2>();
+        public required System.Collections.Generic.ICollection<Account2> Account { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Servicer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBBranchAndFinancialInstitutionIdentification5_0? Servicer { get; set; } = default!;
@@ -287,12 +287,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -315,12 +315,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -342,12 +342,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -369,12 +369,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -396,12 +396,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -423,12 +423,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -450,12 +450,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -477,12 +477,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -504,12 +504,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -531,12 +531,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -558,12 +558,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("SubType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -589,12 +589,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -725,14 +725,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// </summary>
         [Newtonsoft.Json.JsonProperty("Code", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Code { get; set; } = default!;
+        public required string Code { get; set; }
 
         /// <summary>
         /// Specifies the sub-product family within a specific family.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("SubCode", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string SubCode { get; set; } = default!;
+        public required string SubCode { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -826,7 +826,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("CreditorAccount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBCashAccount5_0 CreditorAccount { get; set; } = new OBCashAccount5_0();
+        public required OBCashAccount5_0 CreditorAccount { get; set; }
 
     }
 
@@ -838,12 +838,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("SchemeName", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string SchemeName { get; set; } = default!;
+        public required string SchemeName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Identification", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
-        public string Identification { get; set; } = default!;
+        public required string Identification { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -865,12 +865,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("SchemeName", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string SchemeName { get; set; } = default!;
+        public required string SchemeName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Identification", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
-        public string Identification { get; set; } = default!;
+        public required string Identification { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -985,12 +985,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("SchemeName", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string SchemeName { get; set; } = default!;
+        public required string SchemeName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Identification", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(256, MinimumLength = 1)]
-        public string Identification { get; set; } = default!;
+        public required string Identification { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
@@ -1019,7 +1019,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("SchemeName", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string SchemeName { get; set; } = default!;
+        public required string SchemeName { get; set; }
 
         /// <summary>
         /// Beneficiary account identification.
@@ -1027,7 +1027,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Identification", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(256, MinimumLength = 1)]
-        public string Identification { get; set; } = default!;
+        public required string Identification { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
@@ -1171,7 +1171,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("SourceCurrency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string SourceCurrency { get; set; } = default!;
+        public required string SourceCurrency { get; set; }
 
         /// <summary>
         /// Currency into which an amount is to be converted in a currency conversion.
@@ -1192,7 +1192,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// <br/>Usage: ExchangeRate expresses the ratio between UnitCurrency and QuotedCurrency (ExchangeRate = UnitCurrency/QuotedCurrency).
         /// </summary>
         [Newtonsoft.Json.JsonProperty("ExchangeRate", Required = Newtonsoft.Json.Required.Always)]
-        public double ExchangeRate { get; set; } = default!;
+        public required double ExchangeRate { get; set; }
 
         /// <summary>
         /// Unique identification to unambiguously identify the foreign exchange contract.
@@ -1267,7 +1267,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// </summary>
         [Newtonsoft.Json.JsonProperty("ErrorCode", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string ErrorCode { get; set; } = default!;
+        public required string ErrorCode { get; set; }
 
         /// <summary>
         /// A description of the error that occurred. e.g., 'A mandatory field isn't supplied' or 'RequestedExecutionDateTime must be in future'
@@ -1276,7 +1276,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Message", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(500, MinimumLength = 1)]
-        public string Message { get; set; } = default!;
+        public required string Message { get; set; }
 
         /// <summary>
         /// Recommended but optional reference to the JSON Path of the field with error, e.g., Data.Initiation.InstructedAmount.Currency
@@ -1305,7 +1305,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Code", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string Code { get; set; } = default!;
+        public required string Code { get; set; }
 
         /// <summary>
         /// A unique reference for the error instance, for audit purposes, in case of unknown/unclassified errors.
@@ -1320,12 +1320,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Message", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(500, MinimumLength = 1)]
-        public string Message { get; set; } = default!;
+        public required string Message { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Errors", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<OBError1> Errors { get; set; } = new System.Collections.ObjectModel.Collection<OBError1>();
+        public required System.Collections.Generic.ICollection<OBError1> Errors { get; set; }
 
     }
 
@@ -1545,7 +1545,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("PartyId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string PartyId { get; set; } = default!;
+        public required string PartyId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("PartyNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -1689,7 +1689,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Data", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public Data Data { get; set; } = new Data();
+        public required Data Data { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Links", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Links? Links { get; set; } = default!;
@@ -1704,7 +1704,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Data", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public Data2 Data { get; set; } = new Data2();
+        public required Data2 Data { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Links", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Links? Links { get; set; } = default!;
@@ -1719,7 +1719,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Data", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public Data3 Data { get; set; } = new Data3();
+        public required Data3 Data { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Links", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Links? Links { get; set; } = default!;
@@ -1734,11 +1734,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Data", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public Data4 Data { get; set; } = new Data4();
+        public required Data4 Data { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Risk", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBRisk2 Risk { get; set; } = new OBRisk2();
+        public required OBRisk2 Risk { get; set; }
 
     }
 
@@ -1747,11 +1747,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Data", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public Data5 Data { get; set; } = new Data5();
+        public required Data5 Data { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Risk", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBRisk2 Risk { get; set; } = new OBRisk2();
+        public required OBRisk2 Risk { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Links", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Links? Links { get; set; } = default!;
@@ -1782,7 +1782,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Data", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public Data6 Data { get; set; } = new Data6();
+        public required Data6 Data { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Links", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Links? Links { get; set; } = default!;
@@ -1797,7 +1797,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Data", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public Data7 Data { get; set; } = new Data7();
+        public required Data7 Data { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Links", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Links? Links { get; set; } = default!;
@@ -1812,7 +1812,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Data", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public Data8 Data { get; set; } = new Data8();
+        public required Data8 Data { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Links", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Links? Links { get; set; } = default!;
@@ -1827,7 +1827,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Data", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public Data9 Data { get; set; } = new Data9();
+        public required Data9 Data { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Links", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Links? Links { get; set; } = default!;
@@ -1848,7 +1848,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// </summary>
         [Newtonsoft.Json.JsonProperty("Data", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public Data10 Data { get; set; } = new Data10();
+        public required Data10 Data { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Links", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Links? Links { get; set; } = default!;
@@ -1863,7 +1863,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Data", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public Data11 Data { get; set; } = new Data11();
+        public required Data11 Data { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Links", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Links? Links { get; set; } = default!;
@@ -1878,7 +1878,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Data", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public Data12 Data { get; set; } = new Data12();
+        public required Data12 Data { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Links", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Links? Links { get; set; } = default!;
@@ -1893,7 +1893,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Data", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBReadDataStatement2 Data { get; set; } = new OBReadDataStatement2();
+        public required OBReadDataStatement2 Data { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Links", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Links? Links { get; set; } = default!;
@@ -1908,7 +1908,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Data", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBReadDataTransaction6 Data { get; set; } = new OBReadDataTransaction6();
+        public required OBReadDataTransaction6 Data { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Links", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Links? Links { get; set; } = default!;
@@ -1933,7 +1933,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("ScheduledPaymentId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
@@ -1941,12 +1941,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("ScheduledPaymentDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset ScheduledPaymentDateTime { get; set; } = default!;
+        public required System.DateTimeOffset ScheduledPaymentDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("ScheduledType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalScheduleType1Code ScheduledType { get; set; } = default!;
+        public required OBExternalScheduleType1Code ScheduledType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Reference", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -1958,7 +1958,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("InstructedAmount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBActiveOrHistoricCurrencyAndAmount_1 InstructedAmount { get; set; } = new OBActiveOrHistoricCurrencyAndAmount_1();
+        public required OBActiveOrHistoricCurrencyAndAmount_1 InstructedAmount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("CreditorAgent", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBBranchAndFinancialInstitutionIdentification5_1? CreditorAgent { get; set; } = default!;
@@ -1974,7 +1974,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("ScheduledPaymentId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
@@ -1982,12 +1982,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("ScheduledPaymentDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset ScheduledPaymentDateTime { get; set; } = default!;
+        public required System.DateTimeOffset ScheduledPaymentDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("ScheduledType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalScheduleType1Code ScheduledType { get; set; } = default!;
+        public required OBExternalScheduleType1Code ScheduledType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Reference", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -1999,7 +1999,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("InstructedAmount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBActiveOrHistoricCurrencyAndAmount_1 InstructedAmount { get; set; } = new OBActiveOrHistoricCurrencyAndAmount_1();
+        public required OBActiveOrHistoricCurrencyAndAmount_1 InstructedAmount { get; set; }
 
     }
 
@@ -2009,7 +2009,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("ScheduledPaymentId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
@@ -2017,12 +2017,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("ScheduledPaymentDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset ScheduledPaymentDateTime { get; set; } = default!;
+        public required System.DateTimeOffset ScheduledPaymentDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("ScheduledType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalScheduleType1Code ScheduledType { get; set; } = default!;
+        public required OBExternalScheduleType1Code ScheduledType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Reference", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -2034,14 +2034,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("InstructedAmount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBActiveOrHistoricCurrencyAndAmount_1 InstructedAmount { get; set; } = new OBActiveOrHistoricCurrencyAndAmount_1();
+        public required OBActiveOrHistoricCurrencyAndAmount_1 InstructedAmount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("CreditorAgent", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBBranchAndFinancialInstitutionIdentification5_1? CreditorAgent { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("CreditorAccount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBCashAccount5_1 CreditorAccount { get; set; } = new OBCashAccount5_1();
+        public required OBCashAccount5_1 CreditorAccount { get; set; }
 
     }
 
@@ -2051,7 +2051,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("StandingOrderId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
@@ -2060,7 +2060,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Frequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(NotKnown)$|^(EvryDay)$|^(EvryWorkgDay)$|^(IntrvlDay:((0[2-9])|([1-2][0-9])|3[0-1]))$|^(IntrvlWkDay:0[1-9]:0[1-7])$|^(WkInMnthDay:0[1-5]:0[1-7])$|^(IntrvlMnthDay:(0[1-6]|12|24):(-0[1-5]|0[1-9]|[12][0-9]|3[01]))$|^(QtrDay:(ENGLISH|SCOTTISH|RECEIVED))$")]
-        public string Frequency { get; set; } = default!;
+        public required string Frequency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Reference", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -2115,7 +2115,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("StandingOrderId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
@@ -2124,7 +2124,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Frequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(NotKnown)$|^(EvryDay)$|^(EvryWorkgDay)$|^(IntrvlDay:((0[2-9])|([1-2][0-9])|3[0-1]))$|^(IntrvlWkDay:0[1-9]:0[1-7])$|^(WkInMnthDay:0[1-5]:0[1-7])$|^(IntrvlMnthDay:(0[1-6]|12|24):(-0[1-5]|0[1-9]|[12][0-9]|3[01]))$|^(QtrDay:(ENGLISH|SCOTTISH|RECEIVED))$")]
-        public string Frequency { get; set; } = default!;
+        public required string Frequency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Reference", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -2173,7 +2173,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("StandingOrderId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
@@ -2182,7 +2182,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Frequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(NotKnown)$|^(EvryDay)$|^(EvryWorkgDay)$|^(IntrvlDay:((0[2-9])|([1-2][0-9])|3[0-1]))$|^(IntrvlWkDay:0[1-9]:0[1-7])$|^(WkInMnthDay:0[1-5]:0[1-7])$|^(IntrvlMnthDay:(0[1-6]|12|24):(-0[1-5]|0[1-9]|[12][0-9]|3[01]))$|^(QtrDay:(ENGLISH|SCOTTISH|RECEIVED))$")]
-        public string Frequency { get; set; } = default!;
+        public required string Frequency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Reference", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -2225,7 +2225,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("CreditorAccount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBCashAccount5_1 CreditorAccount { get; set; } = new OBCashAccount5_1();
+        public required OBCashAccount5_1 CreditorAccount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("SupplementaryData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBSupplementaryData1? SupplementaryData { get; set; } = default!;
@@ -2241,7 +2241,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("StatementId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
@@ -2254,19 +2254,19 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalStatementType1Code Type { get; set; } = default!;
+        public required OBExternalStatementType1Code Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("StartDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset StartDateTime { get; set; } = default!;
+        public required System.DateTimeOffset StartDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("EndDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset EndDateTime { get; set; } = default!;
+        public required System.DateTimeOffset EndDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("CreationDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset CreationDateTime { get; set; } = default!;
+        public required System.DateTimeOffset CreationDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("StatementDescription", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<string>? StatementDescription { get; set; } = default!;
@@ -2309,7 +2309,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("StatementId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
@@ -2322,19 +2322,19 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalStatementType1Code Type { get; set; } = default!;
+        public required OBExternalStatementType1Code Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("StartDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset StartDateTime { get; set; } = default!;
+        public required System.DateTimeOffset StartDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("EndDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset EndDateTime { get; set; } = default!;
+        public required System.DateTimeOffset EndDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("CreationDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset CreationDateTime { get; set; } = default!;
+        public required System.DateTimeOffset CreationDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("StatementDescription", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<string>? StatementDescription { get; set; } = default!;
@@ -2368,7 +2368,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("StatementId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
@@ -2381,19 +2381,19 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalStatementType1Code Type { get; set; } = default!;
+        public required OBExternalStatementType1Code Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("StartDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset StartDateTime { get; set; } = default!;
+        public required System.DateTimeOffset StartDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("EndDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset EndDateTime { get; set; } = default!;
+        public required System.DateTimeOffset EndDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("CreationDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset CreationDateTime { get; set; } = default!;
+        public required System.DateTimeOffset CreationDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("StatementDescription", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<string>? StatementDescription { get; set; } = default!;
@@ -2448,7 +2448,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("TransactionId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(210, MinimumLength = 1)]
@@ -2464,12 +2464,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("CreditDebitIndicator", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBCreditDebitCode_1 CreditDebitIndicator { get; set; } = default!;
+        public required OBCreditDebitCode_1 CreditDebitIndicator { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Status", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBEntryStatus1Code Status { get; set; } = default!;
+        public required OBEntryStatus1Code Status { get; set; }
 
         [Newtonsoft.Json.JsonProperty("TransactionMutability", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -2477,7 +2477,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("BookingDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset BookingDateTime { get; set; } = default!;
+        public required System.DateTimeOffset BookingDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("ValueDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? ValueDateTime { get; set; } = default!;
@@ -2492,7 +2492,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBActiveOrHistoricCurrencyAndAmount_9 Amount { get; set; } = new OBActiveOrHistoricCurrencyAndAmount_9();
+        public required OBActiveOrHistoricCurrencyAndAmount_9 Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("ChargeAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBActiveOrHistoricCurrencyAndAmount_10? ChargeAmount { get; set; } = default!;
@@ -2541,7 +2541,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("TransactionId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(210, MinimumLength = 1)]
@@ -2557,12 +2557,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("CreditDebitIndicator", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBCreditDebitCode_1 CreditDebitIndicator { get; set; } = default!;
+        public required OBCreditDebitCode_1 CreditDebitIndicator { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Status", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBEntryStatus1Code Status { get; set; } = default!;
+        public required OBEntryStatus1Code Status { get; set; }
 
         [Newtonsoft.Json.JsonProperty("TransactionMutability", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -2570,7 +2570,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("BookingDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset BookingDateTime { get; set; } = default!;
+        public required System.DateTimeOffset BookingDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("ValueDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? ValueDateTime { get; set; } = default!;
@@ -2581,7 +2581,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBActiveOrHistoricCurrencyAndAmount_9 Amount { get; set; } = new OBActiveOrHistoricCurrencyAndAmount_9();
+        public required OBActiveOrHistoricCurrencyAndAmount_9 Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("ChargeAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBActiveOrHistoricCurrencyAndAmount_10? ChargeAmount { get; set; } = default!;
@@ -2612,7 +2612,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("TransactionId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(210, MinimumLength = 1)]
@@ -2628,12 +2628,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("CreditDebitIndicator", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBCreditDebitCode_1 CreditDebitIndicator { get; set; } = default!;
+        public required OBCreditDebitCode_1 CreditDebitIndicator { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Status", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBEntryStatus1Code Status { get; set; } = default!;
+        public required OBEntryStatus1Code Status { get; set; }
 
         [Newtonsoft.Json.JsonProperty("TransactionMutability", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -2641,7 +2641,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("BookingDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset BookingDateTime { get; set; } = default!;
+        public required System.DateTimeOffset BookingDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("ValueDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? ValueDateTime { get; set; } = default!;
@@ -2656,7 +2656,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBActiveOrHistoricCurrencyAndAmount_9 Amount { get; set; } = new OBActiveOrHistoricCurrencyAndAmount_9();
+        public required OBActiveOrHistoricCurrencyAndAmount_9 Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("ChargeAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBActiveOrHistoricCurrencyAndAmount_10? ChargeAmount { get; set; } = default!;
@@ -2708,7 +2708,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("CardSchemeName", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBTransactionCardInstrument1CardSchemeName CardSchemeName { get; set; } = default!;
+        public required OBTransactionCardInstrument1CardSchemeName CardSchemeName { get; set; }
 
         /// <summary>
         /// The card authorisation type.
@@ -2742,19 +2742,19 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("CreditDebitIndicator", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBCreditDebitCode_2 CreditDebitIndicator { get; set; } = default!;
+        public required OBCreditDebitCode_2 CreditDebitIndicator { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBBalanceType1Code Type { get; set; } = default!;
+        public required OBBalanceType1Code Type { get; set; }
 
         /// <summary>
         /// Amount of money of the cash balance after a transaction entry is applied to the account..
         /// </summary>
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public Amount Amount { get; set; } = new Amount();
+        public required Amount Amount { get; set; }
 
     }
 
@@ -3284,12 +3284,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -3306,12 +3306,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -3328,12 +3328,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -3350,12 +3350,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -3372,12 +3372,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -3394,12 +3394,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -3416,12 +3416,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -3438,12 +3438,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -3460,12 +3460,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -3482,17 +3482,17 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeCategory", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_FeeCategory1Code FeeCategory { get; set; } = default!;
+        public required OB_FeeCategory1Code FeeCategory { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -3583,7 +3583,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Code", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
-        public string Code { get; set; } = default!;
+        public required string Code { get; set; }
 
         /// <summary>
         /// Identification of the issuer of the proprietary bank transaction code.
@@ -3634,12 +3634,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("SchemeName", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string SchemeName { get; set; } = default!;
+        public required string SchemeName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Identification", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(256, MinimumLength = 1)]
-        public string Identification { get; set; } = default!;
+        public required string Identification { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
@@ -3668,12 +3668,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("SchemeName", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string SchemeName { get; set; } = default!;
+        public required string SchemeName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Identification", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(256, MinimumLength = 1)]
-        public string Identification { get; set; } = default!;
+        public required string Identification { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
@@ -3736,7 +3736,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierBandSet", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<TierBandSet> TierBandSet { get; set; } = new System.Collections.ObjectModel.Collection<TierBandSet>();
+        public required System.Collections.Generic.ICollection<TierBandSet> TierBandSet { get; set; }
 
     }
 
@@ -3755,7 +3755,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("OverdraftTierBandSet", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<OverdraftTierBandSet> OverdraftTierBandSet { get; set; } = new System.Collections.ObjectModel.Collection<OverdraftTierBandSet>();
+        public required System.Collections.Generic.ICollection<OverdraftTierBandSet> OverdraftTierBandSet { get; set; }
 
     }
 
@@ -3791,7 +3791,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeChargeDetail", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeChargeDetail> FeeChargeDetail { get; set; } = new System.Collections.ObjectModel.Collection<FeeChargeDetail>();
+        public required System.Collections.Generic.ICollection<FeeChargeDetail> FeeChargeDetail { get; set; }
 
         /// <summary>
         /// Details about any caps (maximum charges) that apply to a particular or group of fee/charge
@@ -3816,12 +3816,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -3870,7 +3870,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierBandSet", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<TierBandSet2> TierBandSet { get; set; } = new System.Collections.ObjectModel.Collection<TierBandSet2>();
+        public required System.Collections.Generic.ICollection<TierBandSet2> TierBandSet { get; set; }
 
     }
 
@@ -3889,7 +3889,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("OverdraftTierBandSet", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<OverdraftTierBandSet2> OverdraftTierBandSet { get; set; } = new System.Collections.ObjectModel.Collection<OverdraftTierBandSet2>();
+        public required System.Collections.Generic.ICollection<OverdraftTierBandSet2> OverdraftTierBandSet { get; set; }
 
     }
 
@@ -3902,7 +3902,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeChargeDetail", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeChargeDetail2> FeeChargeDetail { get; set; } = new System.Collections.ObjectModel.Collection<FeeChargeDetail2>();
+        public required System.Collections.Generic.ICollection<FeeChargeDetail2> FeeChargeDetail { get; set; }
 
         /// <summary>
         /// Details about any caps (maximum charges) that apply to a particular fee/charge
@@ -3949,7 +3949,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Country", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{2,2}$")]
-        public string Country { get; set; } = default!;
+        public required string Country { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -3970,7 +3970,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// </summary>
         [Newtonsoft.Json.JsonProperty("Related", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.Uri Related { get; set; } = default!;
+        public required System.Uri Related { get; set; }
 
         /// <summary>
         /// Unique identification as assigned by the ASPSP to uniquely identify the related resource.
@@ -3978,7 +3978,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Id", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string Id { get; set; } = default!;
+        public required string Id { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4014,7 +4014,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Balance", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<Balance> Balance { get; set; } = new System.Collections.ObjectModel.Collection<Balance>();
+        public required System.Collections.Generic.ICollection<Balance> Balance { get; set; }
 
         /// <summary>
         /// Combined sum of all Amounts in the accounts base currency
@@ -4056,7 +4056,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Permissions", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<Permissions> Permissions { get; set; } = new System.Collections.ObjectModel.Collection<Permissions>();
+        public required System.Collections.Generic.ICollection<Permissions> Permissions { get; set; }
 
         /// <summary>
         /// Specified date and time the permissions will expire.
@@ -4105,11 +4105,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ConsentId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(128, MinimumLength = 1)]
-        public string ConsentId { get; set; } = default!;
+        public required string ConsentId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("CreationDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset CreationDateTime { get; set; } = default!;
+        public required System.DateTimeOffset CreationDateTime { get; set; }
 
         /// <summary>
         /// Specifies the status of consent resource in code form.
@@ -4117,16 +4117,16 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Status", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public Data5Status Status { get; set; } = default!;
+        public required Data5Status Status { get; set; }
 
         [Newtonsoft.Json.JsonProperty("StatusUpdateDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset StatusUpdateDateTime { get; set; } = default!;
+        public required System.DateTimeOffset StatusUpdateDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Permissions", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<Permissions2> Permissions { get; set; } = new System.Collections.ObjectModel.Collection<Permissions2>();
+        public required System.Collections.Generic.ICollection<Permissions2> Permissions { get; set; }
 
         /// <summary>
         /// Specified date and time the permissions will expire.
@@ -4293,11 +4293,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBActiveOrHistoricCurrencyAndAmount_5 Amount { get; set; } = new OBActiveOrHistoricCurrencyAndAmount_5();
+        public required OBActiveOrHistoricCurrencyAndAmount_5 Amount { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4323,11 +4323,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("CreditDebitIndicator", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBCreditDebitCode_0 CreditDebitIndicator { get; set; } = default!;
+        public required OBCreditDebitCode_0 CreditDebitIndicator { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Rate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? Rate { get; set; } = default!;
@@ -4340,7 +4340,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBActiveOrHistoricCurrencyAndAmount_6 Amount { get; set; } = new OBActiveOrHistoricCurrencyAndAmount_6();
+        public required OBActiveOrHistoricCurrencyAndAmount_6 Amount { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4366,11 +4366,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("CreditDebitIndicator", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBCreditDebitCode_0 CreditDebitIndicator { get; set; } = default!;
+        public required OBCreditDebitCode_0 CreditDebitIndicator { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Rate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? Rate { get; set; } = default!;
@@ -4383,7 +4383,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBActiveOrHistoricCurrencyAndAmount_7 Amount { get; set; } = new OBActiveOrHistoricCurrencyAndAmount_7();
+        public required OBActiveOrHistoricCurrencyAndAmount_7 Amount { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4405,18 +4405,18 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("CreditDebitIndicator", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBCreditDebitCode_0 CreditDebitIndicator { get; set; } = default!;
+        public required OBCreditDebitCode_0 CreditDebitIndicator { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         /// <summary>
         /// Amount of money of the cash balance.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public Amount2 Amount { get; set; } = new Amount2();
+        public required Amount2 Amount { get; set; }
 
         /// <summary>
         /// Optional component providing the equivalent of Amount in local currency.
@@ -4443,11 +4443,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("DateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset DateTime { get; set; } = default!;
+        public required System.DateTimeOffset DateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4469,11 +4469,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Rate", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,3}){1}(\.\d{1,4}){0,1}$")]
-        public string Rate { get; set; } = default!;
+        public required string Rate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4495,11 +4495,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Value", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string Value { get; set; } = default!;
+        public required string Value { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4518,12 +4518,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4544,11 +4544,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBActiveOrHistoricCurrencyAndAmount_5 Amount { get; set; } = new OBActiveOrHistoricCurrencyAndAmount_5();
+        public required OBActiveOrHistoricCurrencyAndAmount_5 Amount { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4574,11 +4574,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("CreditDebitIndicator", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBCreditDebitCode_0 CreditDebitIndicator { get; set; } = default!;
+        public required OBCreditDebitCode_0 CreditDebitIndicator { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Rate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? Rate { get; set; } = default!;
@@ -4591,7 +4591,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBActiveOrHistoricCurrencyAndAmount_6 Amount { get; set; } = new OBActiveOrHistoricCurrencyAndAmount_6();
+        public required OBActiveOrHistoricCurrencyAndAmount_6 Amount { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4617,11 +4617,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("CreditDebitIndicator", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBCreditDebitCode_0 CreditDebitIndicator { get; set; } = default!;
+        public required OBCreditDebitCode_0 CreditDebitIndicator { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Rate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? Rate { get; set; } = default!;
@@ -4634,7 +4634,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBActiveOrHistoricCurrencyAndAmount_7 Amount { get; set; } = new OBActiveOrHistoricCurrencyAndAmount_7();
+        public required OBActiveOrHistoricCurrencyAndAmount_7 Amount { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4655,11 +4655,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("DateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset DateTime { get; set; } = default!;
+        public required System.DateTimeOffset DateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4681,11 +4681,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Rate", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,3}){1}(\.\d{1,4}){0,1}$")]
-        public string Rate { get; set; } = default!;
+        public required string Rate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4707,11 +4707,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Value", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string Value { get; set; } = default!;
+        public required string Value { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4732,11 +4732,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBActiveOrHistoricCurrencyAndAmount_5 Amount { get; set; } = new OBActiveOrHistoricCurrencyAndAmount_5();
+        public required OBActiveOrHistoricCurrencyAndAmount_5 Amount { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4762,11 +4762,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("CreditDebitIndicator", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBCreditDebitCode_0 CreditDebitIndicator { get; set; } = default!;
+        public required OBCreditDebitCode_0 CreditDebitIndicator { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Rate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? Rate { get; set; } = default!;
@@ -4779,7 +4779,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBActiveOrHistoricCurrencyAndAmount_6 Amount { get; set; } = new OBActiveOrHistoricCurrencyAndAmount_6();
+        public required OBActiveOrHistoricCurrencyAndAmount_6 Amount { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4805,11 +4805,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("CreditDebitIndicator", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBCreditDebitCode_0 CreditDebitIndicator { get; set; } = default!;
+        public required OBCreditDebitCode_0 CreditDebitIndicator { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Rate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? Rate { get; set; } = default!;
@@ -4822,7 +4822,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBActiveOrHistoricCurrencyAndAmount_7 Amount { get; set; } = new OBActiveOrHistoricCurrencyAndAmount_7();
+        public required OBActiveOrHistoricCurrencyAndAmount_7 Amount { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4844,15 +4844,15 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("CreditDebitIndicator", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBCreditDebitCode_0 CreditDebitIndicator { get; set; } = default!;
+        public required OBCreditDebitCode_0 CreditDebitIndicator { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public OBActiveOrHistoricCurrencyAndAmount_8 Amount { get; set; } = new OBActiveOrHistoricCurrencyAndAmount_8();
+        public required OBActiveOrHistoricCurrencyAndAmount_8 Amount { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4873,11 +4873,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("DateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset DateTime { get; set; } = default!;
+        public required System.DateTimeOffset DateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4899,11 +4899,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Rate", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,3}){1}(\.\d{1,4}){0,1}$")]
-        public string Rate { get; set; } = default!;
+        public required string Rate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4925,11 +4925,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Value", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string Value { get; set; } = default!;
+        public required string Value { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Type { get; set; } = default!;
+        public required string Type { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4987,12 +4987,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount1 { get; set; } = default!;
+        public required string Amount1 { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -5086,7 +5086,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierBandMethod", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public TierBandSetTierBandMethod TierBandMethod { get; set; } = default!;
+        public required TierBandSetTierBandMethod TierBandMethod { get; set; }
 
         /// <summary>
         /// Methods of calculating interest
@@ -5101,7 +5101,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Destination", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public TierBandSetDestination Destination { get; set; } = default!;
+        public required TierBandSetDestination Destination { get; set; }
 
         /// <summary>
         /// Optional additional notes to supplement the Tier Band Set details
@@ -5115,7 +5115,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierBand", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<TierBand> TierBand { get; set; } = new System.Collections.ObjectModel.Collection<TierBand>();
+        public required System.Collections.Generic.ICollection<TierBand> TierBand { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -5143,7 +5143,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierBandMethod", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftTierBandSetTierBandMethod TierBandMethod { get; set; } = default!;
+        public required OverdraftTierBandSetTierBandMethod TierBandMethod { get; set; }
 
         /// <summary>
         /// An overdraft can either be 'committed' which means that the facility cannot be withdrawn without reasonable notification before it's agreed end date, or 'on demand' which means that the financial institution can demand repayment at any point in time.
@@ -5184,7 +5184,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("OverdraftTierBand", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<OverdraftTierBand> OverdraftTierBand { get; set; } = new System.Collections.ObjectModel.Collection<OverdraftTierBand>();
+        public required System.Collections.Generic.ICollection<OverdraftTierBand> OverdraftTierBand { get; set; }
 
         /// <summary>
         /// Overdraft fees and charges details
@@ -5235,7 +5235,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -5243,7 +5243,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -5259,7 +5259,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeCategory", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public FeeChargeDetailFeeCategory FeeCategory { get; set; } = default!;
+        public required FeeChargeDetailFeeCategory FeeCategory { get; set; }
 
         /// <summary>
         /// Fee/Charge Type
@@ -5267,7 +5267,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public FeeChargeDetailFeeType FeeType { get; set; } = default!;
+        public required FeeChargeDetailFeeType FeeType { get; set; }
 
         /// <summary>
         /// Fee/charge which is usually negotiable rather than a fixed amount
@@ -5302,7 +5302,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ApplicationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public FeeChargeDetailApplicationFrequency ApplicationFrequency { get; set; } = default!;
+        public required FeeChargeDetailApplicationFrequency ApplicationFrequency { get; set; }
 
         /// <summary>
         /// How frequently the fee/charge is calculated
@@ -5379,7 +5379,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType>();
+        public required System.Collections.Generic.ICollection<FeeType> FeeType { get; set; }
 
         /// <summary>
         /// Min Max type
@@ -5387,7 +5387,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public FeeChargeCapMinMaxType MinMaxType { get; set; } = default!;
+        public required FeeChargeCapMinMaxType MinMaxType { get; set; }
 
         /// <summary>
         /// fee/charges are captured dependent on the number of occurrences rather than capped at a particular amount
@@ -5507,7 +5507,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierBandMethod", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public TierBandSet2TierBandMethod TierBandMethod { get; set; } = default!;
+        public required TierBandSet2TierBandMethod TierBandMethod { get; set; }
 
         /// <summary>
         /// Methods of calculating interest
@@ -5535,7 +5535,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierBand", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<TierBand2> TierBand { get; set; } = new System.Collections.ObjectModel.Collection<TierBand2>();
+        public required System.Collections.Generic.ICollection<TierBand2> TierBand { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -5563,7 +5563,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierBandMethod", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftTierBandSet2TierBandMethod TierBandMethod { get; set; } = default!;
+        public required OverdraftTierBandSet2TierBandMethod TierBandMethod { get; set; }
 
         /// <summary>
         /// An overdraft can either be 'committed' which means that the facility cannot be withdrawn without reasonable notification before it's agreed end date, or 'on demand' which means that the financial institution can demand repayment at any point in time.
@@ -5604,7 +5604,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("OverdraftTierBand", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<OverdraftTierBand2> OverdraftTierBand { get; set; } = new System.Collections.ObjectModel.Collection<OverdraftTierBand2>();
+        public required System.Collections.Generic.ICollection<OverdraftTierBand2> OverdraftTierBand { get; set; }
 
         /// <summary>
         /// Overdraft fees and charges details
@@ -5635,7 +5635,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeCategory", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public FeeChargeDetail2FeeCategory FeeCategory { get; set; } = default!;
+        public required FeeChargeDetail2FeeCategory FeeCategory { get; set; }
 
         /// <summary>
         /// Fee/Charge Type
@@ -5643,7 +5643,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public FeeChargeDetail2FeeType FeeType { get; set; } = default!;
+        public required FeeChargeDetail2FeeType FeeType { get; set; }
 
         /// <summary>
         /// Fee Amount charged for a fee/charge (where it is charged in terms of an amount rather than a rate)
@@ -5672,7 +5672,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ApplicationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public FeeChargeDetail2ApplicationFrequency ApplicationFrequency { get; set; } = default!;
+        public required FeeChargeDetail2ApplicationFrequency ApplicationFrequency { get; set; }
 
         /// <summary>
         /// How frequently the fee/charge is calculated
@@ -5749,7 +5749,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType2> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType2>();
+        public required System.Collections.Generic.ICollection<FeeType2> FeeType { get; set; }
 
         /// <summary>
         /// Indicates that this is the minimum/ maximum fee/charge that can be applied by the financial institution
@@ -5757,7 +5757,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public FeeChargeCap2MinMaxType MinMaxType { get; set; } = default!;
+        public required FeeChargeCap2MinMaxType MinMaxType { get; set; }
 
         /// <summary>
         /// fee/charges are captured dependent on the number of occurrences rather than capped at a particular amount
@@ -5811,17 +5811,17 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("CreditDebitIndicator", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBCreditDebitCode_2 CreditDebitIndicator { get; set; } = default!;
+        public required OBCreditDebitCode_2 CreditDebitIndicator { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBBalanceType1Code Type { get; set; } = default!;
+        public required OBBalanceType1Code Type { get; set; }
 
         /// <summary>
         /// Indicates the date (and time) of the balance.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
@@ -5830,14 +5830,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// </summary>
         [Newtonsoft.Json.JsonProperty("DateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset DateTime { get; set; } = default!;
+        public required System.DateTimeOffset DateTime { get; set; }
 
         /// <summary>
         /// Amount of money of the cash balance.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public Amount3 Amount { get; set; } = new Amount3();
+        public required Amount3 Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("CreditLine", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<CreditLine>? CreditLine { get; set; } = default!;
@@ -5865,12 +5865,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -6054,7 +6054,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("DirectDebitId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
@@ -6063,7 +6063,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("MandateIdentification", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
-        public string MandateIdentification { get; set; } = default!;
+        public required string MandateIdentification { get; set; }
 
         [Newtonsoft.Json.JsonProperty("DirectDebitStatusCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -6072,7 +6072,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("PreviousPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? PreviousPaymentDateTime { get; set; } = default!;
@@ -6103,7 +6103,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         /// <summary>
         /// A unique and immutable identifier used to identify the offer resource. This identifier has no meaning to the account owner.
@@ -6215,7 +6215,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AccountId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string AccountId { get; set; } = default!;
+        public required string AccountId { get; set; }
 
         /// <summary>
         /// Any secondary Identification which  supports Product Identifier to uniquely identify the current account banking products.
@@ -6230,7 +6230,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ProductType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public ProductType ProductType { get; set; } = default!;
+        public required ProductType ProductType { get; set; }
 
         /// <summary>
         /// Unique and unambiguous identification of a  Product Marketing State.
@@ -6268,12 +6268,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         /// <summary>
         /// The amount in the domestic or base accounting currency. Default is Base Currency (BCUR) if not specified
@@ -6299,12 +6299,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         /// <summary>
         /// The amount in the local market currency for which the asset is held. Default is Local Currency (LCUR) if not specified
@@ -6382,7 +6382,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierValueMinimum", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,14}){1}(\.\d{1,4}){0,1}$")]
-        public string TierValueMinimum { get; set; } = default!;
+        public required string TierValueMinimum { get; set; }
 
         /// <summary>
         /// Maximum deposit value for which the credit interest tier applies.
@@ -6404,7 +6404,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ApplicationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public TierBandApplicationFrequency ApplicationFrequency { get; set; } = default!;
+        public required TierBandApplicationFrequency ApplicationFrequency { get; set; }
 
         /// <summary>
         /// Amount on which Interest applied.
@@ -6419,7 +6419,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FixedVariableInterestRateType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public TierBandFixedVariableInterestRateType FixedVariableInterestRateType { get; set; } = default!;
+        public required TierBandFixedVariableInterestRateType FixedVariableInterestRateType { get; set; }
 
         /// <summary>
         /// The annual equivalent rate (AER) is interest that is calculated under the assumption that any interest paid is combined with the original balance and the next interest payment will be based on the slightly higher account balance. Overall, this means that interest can be compounded several times in a year depending on the number of times that interest payments are made. 
@@ -6429,7 +6429,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AER", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,3}){1}(\.\d{1,4}){0,1}$")]
-        public string AER { get; set; } = default!;
+        public required string AER { get; set; }
 
         /// <summary>
         /// Interest rate types, other than AER, which financial institutions may use to describe the annual interest rate payable to the BCA.
@@ -6526,7 +6526,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierValueMin", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,14}){1}(\.\d{1,4}){0,1}$")]
-        public string TierValueMin { get; set; } = default!;
+        public required string TierValueMin { get; set; }
 
         /// <summary>
         /// Maximum value of Overdraft Tier/Band
@@ -6623,7 +6623,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("OverdraftFeeChargeDetail", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<OverdraftFeeChargeDetail> OverdraftFeeChargeDetail { get; set; } = new System.Collections.ObjectModel.Collection<OverdraftFeeChargeDetail>();
+        public required System.Collections.Generic.ICollection<OverdraftFeeChargeDetail> OverdraftFeeChargeDetail { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -6834,7 +6834,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType3> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType3>();
+        public required System.Collections.Generic.ICollection<FeeType3> FeeType { get; set; }
 
         /// <summary>
         /// Min Max type
@@ -6842,7 +6842,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public FeeChargeCap3MinMaxType MinMaxType { get; set; } = default!;
+        public required FeeChargeCap3MinMaxType MinMaxType { get; set; }
 
         /// <summary>
         /// fee/charges are captured dependent on the number of occurrences rather than capped at a particular amount
@@ -6904,7 +6904,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -6912,7 +6912,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -6933,7 +6933,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeCategory", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OtherFeeTypeFeeCategory FeeCategory { get; set; } = default!;
+        public required OtherFeeTypeFeeCategory FeeCategory { get; set; }
 
         /// <summary>
         /// Long name associated with the code
@@ -6941,7 +6941,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -6949,7 +6949,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -6970,7 +6970,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -6978,7 +6978,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -6999,7 +6999,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -7007,7 +7007,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -7028,7 +7028,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -7036,7 +7036,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -7162,7 +7162,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -7170,7 +7170,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -7238,7 +7238,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierValueMinimum", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,14}){1}(\.\d{1,4}){0,1}$")]
-        public string TierValueMinimum { get; set; } = default!;
+        public required string TierValueMinimum { get; set; }
 
         /// <summary>
         /// Maximum deposit value for which the credit interest tier applies.
@@ -7260,7 +7260,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ApplicationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public TierBand2ApplicationFrequency ApplicationFrequency { get; set; } = default!;
+        public required TierBand2ApplicationFrequency ApplicationFrequency { get; set; }
 
         /// <summary>
         /// Amount on which Interest applied.
@@ -7275,7 +7275,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FixedVariableInterestRateType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public TierBand2FixedVariableInterestRateType FixedVariableInterestRateType { get; set; } = default!;
+        public required TierBand2FixedVariableInterestRateType FixedVariableInterestRateType { get; set; }
 
         /// <summary>
         /// The annual equivalent rate (AER) is interest that is calculated under the assumption that any interest paid is combined with the original balance and the next interest payment will be based on the slightly higher account balance. Overall, this means that interest can be compounded several times in a year depending on the number of times that interest payments are made. 
@@ -7285,7 +7285,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AER", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,3}){1}(\.\d{1,4}){0,1}$")]
-        public string AER { get; set; } = default!;
+        public required string AER { get; set; }
 
         /// <summary>
         /// Interest rate types, other than AER, which financial institutions may use to describe the annual interest rate payable to the PCA.
@@ -7385,7 +7385,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierValueMin", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,14}){1}(\.\d{1,4}){0,1}$")]
-        public string TierValueMin { get; set; } = default!;
+        public required string TierValueMin { get; set; }
 
         /// <summary>
         /// Maximum value of Overdraft Tier/Band
@@ -7463,7 +7463,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("OverdraftFeeChargeDetail", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<OverdraftFeeChargeDetail2> OverdraftFeeChargeDetail { get; set; } = new System.Collections.ObjectModel.Collection<OverdraftFeeChargeDetail2>();
+        public required System.Collections.Generic.ICollection<OverdraftFeeChargeDetail2> OverdraftFeeChargeDetail { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -7673,7 +7673,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -7681,7 +7681,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -7702,7 +7702,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeCategory", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OtherFeeType3FeeCategory FeeCategory { get; set; } = default!;
+        public required OtherFeeType3FeeCategory FeeCategory { get; set; }
 
         /// <summary>
         /// Long name associated with the code
@@ -7710,7 +7710,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -7718,7 +7718,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -7739,7 +7739,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -7747,7 +7747,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -7768,7 +7768,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -7776,7 +7776,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -7797,7 +7797,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -7805,7 +7805,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -7821,7 +7821,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType4> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType4>();
+        public required System.Collections.Generic.ICollection<FeeType4> FeeType { get; set; }
 
         /// <summary>
         /// Indicates that this is the minimum/ maximum fee/charge that can be applied by the financial institution
@@ -7829,7 +7829,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public FeeChargeCap4MinMaxType MinMaxType { get; set; } = default!;
+        public required FeeChargeCap4MinMaxType MinMaxType { get; set; }
 
         /// <summary>
         /// fee/charges are captured dependent on the number of occurrences rather than capped at a particular amount
@@ -7987,7 +7987,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -7995,7 +7995,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -8014,12 +8014,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         /// <summary>
         /// The amount in the domestic or base accounting currency. Default is Base Currency (BCUR) if not specified
@@ -8050,7 +8050,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// <br/>Usage: If not present, credit line is not included in the balance amount of the account.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("Included", Required = Newtonsoft.Json.Required.Always)]
-        public bool Included { get; set; } = default!;
+        public required bool Included { get; set; }
 
         /// <summary>
         /// Limit type, in a coded form.
@@ -8082,12 +8082,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         /// <summary>
         /// The amount in the local market currency for which the asset is held.
@@ -8134,12 +8134,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -8158,12 +8158,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -8206,7 +8206,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description of the Product associated with the account
@@ -8214,7 +8214,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         [Newtonsoft.Json.JsonProperty("ProductDetails", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public ProductDetails3? ProductDetails { get; set; } = default!;
@@ -8400,7 +8400,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -8408,7 +8408,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -8429,7 +8429,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -8437,7 +8437,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -8458,7 +8458,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -8466,7 +8466,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -8527,7 +8527,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("OverdraftFeeChargeDetail", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<OverdraftFeeChargeDetail3> OverdraftFeeChargeDetail { get; set; } = new System.Collections.ObjectModel.Collection<OverdraftFeeChargeDetail3>();
+        public required System.Collections.Generic.ICollection<OverdraftFeeChargeDetail3> OverdraftFeeChargeDetail { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -8552,7 +8552,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType5> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType5>();
+        public required System.Collections.Generic.ICollection<FeeType5> FeeType { get; set; }
 
         /// <summary>
         /// Min Max type
@@ -8560,7 +8560,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftFeeChargeCapMinMaxType MinMaxType { get; set; } = default!;
+        public required OverdraftFeeChargeCapMinMaxType MinMaxType { get; set; }
 
         /// <summary>
         /// Indicates whether the advertised overdraft rate is guaranteed to be offered to a borrower by the bank e.g. if it’s part of a government scheme, or whether the rate may vary dependent on the applicant’s circumstances.
@@ -8617,7 +8617,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftFeeChargeDetailFeeType FeeType { get; set; } = default!;
+        public required OverdraftFeeChargeDetailFeeType FeeType { get; set; }
 
         /// <summary>
         /// Indicates whether fee and charges are negotiable
@@ -8665,7 +8665,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ApplicationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftFeeChargeDetailApplicationFrequency ApplicationFrequency { get; set; } = default!;
+        public required OverdraftFeeChargeDetailApplicationFrequency ApplicationFrequency { get; set; }
 
         /// <summary>
         /// How often is the overdraft fee/charge calculated for the account.
@@ -8810,7 +8810,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -8818,7 +8818,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -8968,7 +8968,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -8976,7 +8976,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -8997,7 +8997,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -9005,7 +9005,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -9026,7 +9026,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -9034,7 +9034,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -9068,7 +9068,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("OverdraftFeeChargeDetail", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<OverdraftFeeChargeDetail4> OverdraftFeeChargeDetail { get; set; } = new System.Collections.ObjectModel.Collection<OverdraftFeeChargeDetail4>();
+        public required System.Collections.Generic.ICollection<OverdraftFeeChargeDetail4> OverdraftFeeChargeDetail { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -9093,7 +9093,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType6> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType6>();
+        public required System.Collections.Generic.ICollection<FeeType6> FeeType { get; set; }
 
         /// <summary>
         /// Specifies for the overdraft control feature/benefit
@@ -9107,7 +9107,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftFeeChargeCap2MinMaxType MinMaxType { get; set; } = default!;
+        public required OverdraftFeeChargeCap2MinMaxType MinMaxType { get; set; }
 
         /// <summary>
         /// fee/charges are captured dependent on the number of occurrences rather than capped at a particular amount
@@ -9164,7 +9164,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftFeeChargeDetail2FeeType FeeType { get; set; } = default!;
+        public required OverdraftFeeChargeDetail2FeeType FeeType { get; set; }
 
         /// <summary>
         /// Specifies for the overdraft control feature/benefit
@@ -9206,7 +9206,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ApplicationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftFeeChargeDetail2ApplicationFrequency ApplicationFrequency { get; set; } = default!;
+        public required OverdraftFeeChargeDetail2ApplicationFrequency ApplicationFrequency { get; set; }
 
         /// <summary>
         /// How often is the overdraft fee/charge calculated for the account.
@@ -9354,7 +9354,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -9362,7 +9362,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -9414,12 +9414,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
-        public string Amount { get; set; } = default!;
+        public required string Amount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public string Currency { get; set; } = default!;
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -9493,7 +9493,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierBandSet", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<TierBandSet3> TierBandSet { get; set; } = new System.Collections.ObjectModel.Collection<TierBandSet3>();
+        public required System.Collections.Generic.ICollection<TierBandSet3> TierBandSet { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -9515,7 +9515,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("OverdraftTierBandSet", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<OverdraftTierBandSet3> OverdraftTierBandSet { get; set; } = new System.Collections.ObjectModel.Collection<OverdraftTierBandSet3>();
+        public required System.Collections.Generic.ICollection<OverdraftTierBandSet3> OverdraftTierBandSet { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -9537,7 +9537,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("LoanInterestTierBandSet", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<LoanInterestTierBandSet> LoanInterestTierBandSet { get; set; } = new System.Collections.ObjectModel.Collection<LoanInterestTierBandSet>();
+        public required System.Collections.Generic.ICollection<LoanInterestTierBandSet> LoanInterestTierBandSet { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -9644,7 +9644,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeChargeDetail", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeChargeDetail3> FeeChargeDetail { get; set; } = new System.Collections.ObjectModel.Collection<FeeChargeDetail3>();
+        public required System.Collections.Generic.ICollection<FeeChargeDetail3> FeeChargeDetail { get; set; }
 
         [Newtonsoft.Json.JsonProperty("FeeChargeCap", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<FeeChargeCap5>? FeeChargeCap { get; set; } = default!;
@@ -9672,7 +9672,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType7> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType7>();
+        public required System.Collections.Generic.ICollection<FeeType7> FeeType { get; set; }
 
         /// <summary>
         /// Min Max type
@@ -9680,7 +9680,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftFeeChargeCap3MinMaxType MinMaxType { get; set; } = default!;
+        public required OverdraftFeeChargeCap3MinMaxType MinMaxType { get; set; }
 
         /// <summary>
         /// Indicates whether the advertised overdraft rate is guaranteed to be offered to a borrower by the bank e.g. if it’s part of a government scheme, or whether the rate may vary dependent on the applicant’s circumstances.
@@ -9737,7 +9737,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftFeeChargeDetail3FeeType FeeType { get; set; } = default!;
+        public required OverdraftFeeChargeDetail3FeeType FeeType { get; set; }
 
         /// <summary>
         /// Indicates whether fee and charges are negotiable
@@ -9785,7 +9785,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ApplicationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftFeeChargeDetail3ApplicationFrequency ApplicationFrequency { get; set; } = default!;
+        public required OverdraftFeeChargeDetail3ApplicationFrequency ApplicationFrequency { get; set; }
 
         /// <summary>
         /// How often is the overdraft fee/charge calculated for the account.
@@ -9942,7 +9942,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -9950,7 +9950,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -10161,7 +10161,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType8> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType8>();
+        public required System.Collections.Generic.ICollection<FeeType8> FeeType { get; set; }
 
         /// <summary>
         /// Min Max type
@@ -10169,7 +10169,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftFeeChargeCap4MinMaxType MinMaxType { get; set; } = default!;
+        public required OverdraftFeeChargeCap4MinMaxType MinMaxType { get; set; }
 
         /// <summary>
         /// Indicates whether the advertised overdraft rate is guaranteed to be offered to a borrower by the bank e.g. if it’s part of a government scheme, or whether the rate may vary dependent on the applicant’s circumstances.
@@ -10231,7 +10231,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -10239,7 +10239,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -10260,7 +10260,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -10268,7 +10268,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -10289,7 +10289,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -10297,7 +10297,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -10318,7 +10318,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -10326,7 +10326,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -10342,7 +10342,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType9> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType9>();
+        public required System.Collections.Generic.ICollection<FeeType9> FeeType { get; set; }
 
         /// <summary>
         /// Specifies for the overdraft control feature/benefit
@@ -10356,7 +10356,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftFeeChargeCap5MinMaxType MinMaxType { get; set; } = default!;
+        public required OverdraftFeeChargeCap5MinMaxType MinMaxType { get; set; }
 
         /// <summary>
         /// fee/charges are captured dependent on the number of occurrences rather than capped at a particular amount
@@ -10413,7 +10413,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftFeeChargeDetail4FeeType FeeType { get; set; } = default!;
+        public required OverdraftFeeChargeDetail4FeeType FeeType { get; set; }
 
         /// <summary>
         /// Specifies for the overdraft control feature/benefit
@@ -10455,7 +10455,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ApplicationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftFeeChargeDetail4ApplicationFrequency ApplicationFrequency { get; set; } = default!;
+        public required OverdraftFeeChargeDetail4ApplicationFrequency ApplicationFrequency { get; set; }
 
         /// <summary>
         /// How often is the overdraft fee/charge calculated for the account.
@@ -10615,7 +10615,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -10623,7 +10623,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -10845,7 +10845,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -10853,7 +10853,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -10874,7 +10874,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -10882,7 +10882,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -10903,7 +10903,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -10911,7 +10911,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -10932,7 +10932,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -10940,7 +10940,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -10953,7 +10953,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType10> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType10>();
+        public required System.Collections.Generic.ICollection<FeeType10> FeeType { get; set; }
 
         /// <summary>
         /// Specifies for the overdraft control feature/benefit
@@ -10967,7 +10967,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftFeeChargeCap6MinMaxType MinMaxType { get; set; } = default!;
+        public required OverdraftFeeChargeCap6MinMaxType MinMaxType { get; set; }
 
         /// <summary>
         /// fee/charges are captured dependent on the number of occurrences rather than capped at a particular amount
@@ -11139,7 +11139,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierBandMethod", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public TierBandSet3TierBandMethod TierBandMethod { get; set; } = default!;
+        public required TierBandSet3TierBandMethod TierBandMethod { get; set; }
 
         [Newtonsoft.Json.JsonProperty("CalculationMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -11151,7 +11151,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Destination", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public TierBandSet3Destination Destination { get; set; } = default!;
+        public required TierBandSet3Destination Destination { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Notes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<string>? Notes { get; set; } = default!;
@@ -11165,7 +11165,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierBand", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<TierBand3> TierBand { get; set; } = new System.Collections.ObjectModel.Collection<TierBand3>();
+        public required System.Collections.Generic.ICollection<TierBand3> TierBand { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -11193,7 +11193,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierBandMethod", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftTierBandSet3TierBandMethod TierBandMethod { get; set; } = default!;
+        public required OverdraftTierBandSet3TierBandMethod TierBandMethod { get; set; }
 
         /// <summary>
         /// An overdraft can either be 'committed' which means that the facility cannot be withdrawn without reasonable notification before it's agreed end date, or 'on demand' which means that the financial institution can demand repayment at any point in time.
@@ -11228,7 +11228,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("OverdraftTierBand", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<OverdraftTierBand3> OverdraftTierBand { get; set; } = new System.Collections.ObjectModel.Collection<OverdraftTierBand3>();
+        public required System.Collections.Generic.ICollection<OverdraftTierBand3> OverdraftTierBand { get; set; }
 
         [Newtonsoft.Json.JsonProperty("OverdraftFeesCharges", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<OverdraftFeesCharges5>? OverdraftFeesCharges { get; set; } = default!;
@@ -11262,7 +11262,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierBandMethod", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public LoanInterestTierBandSetTierBandMethod TierBandMethod { get; set; } = default!;
+        public required LoanInterestTierBandSetTierBandMethod TierBandMethod { get; set; }
 
         /// <summary>
         /// Loan interest tierbandset identification. Used by  loan providers for internal use purpose.
@@ -11274,7 +11274,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("CalculationMethod", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_InterestCalculationMethod1Code CalculationMethod { get; set; } = default!;
+        public required OB_InterestCalculationMethod1Code CalculationMethod { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Notes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<string>? Notes { get; set; } = default!;
@@ -11285,7 +11285,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("LoanInterestTierBand", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<LoanInterestTierBand> LoanInterestTierBand { get; set; } = new System.Collections.ObjectModel.Collection<LoanInterestTierBand>();
+        public required System.Collections.Generic.ICollection<LoanInterestTierBand> LoanInterestTierBand { get; set; }
 
         [Newtonsoft.Json.JsonProperty("LoanInterestFeesCharges", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<LoanInterestFeesCharges>? LoanInterestFeesCharges { get; set; } = default!;
@@ -11416,12 +11416,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -11444,12 +11444,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -11472,12 +11472,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -11496,7 +11496,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("RepaymentFeeChargeDetail", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<RepaymentFeeChargeDetail> RepaymentFeeChargeDetail { get; set; } = new System.Collections.ObjectModel.Collection<RepaymentFeeChargeDetail>();
+        public required System.Collections.Generic.ICollection<RepaymentFeeChargeDetail> RepaymentFeeChargeDetail { get; set; }
 
         [Newtonsoft.Json.JsonProperty("RepaymentFeeChargeCap", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<RepaymentFeeChargeCap>? RepaymentFeeChargeCap { get; set; } = default!;
@@ -11570,12 +11570,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -11597,12 +11597,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeCategory", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_FeeCategory1Code FeeCategory { get; set; } = default!;
+        public required OB_FeeCategory1Code FeeCategory { get; set; }
 
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_FeeType1Code FeeType { get; set; } = default!;
+        public required OB_FeeType1Code FeeType { get; set; }
 
         /// <summary>
         /// Fee/charge which is usually negotiable rather than a fixed amount
@@ -11625,7 +11625,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ApplicationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_FeeFrequency1Code_2 ApplicationFrequency { get; set; } = default!;
+        public required OB_FeeFrequency1Code_2 ApplicationFrequency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("CalculationFrequency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -11678,12 +11678,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType11> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType11>();
+        public required System.Collections.Generic.ICollection<FeeType11> FeeType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_MinMaxType1Code MinMaxType { get; set; } = default!;
+        public required OB_MinMaxType1Code MinMaxType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("FeeCapOccurrence", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? FeeCapOccurrence { get; set; } = default!;
@@ -11814,7 +11814,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -11822,7 +11822,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12033,7 +12033,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType12> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType12>();
+        public required System.Collections.Generic.ICollection<FeeType12> FeeType { get; set; }
 
         /// <summary>
         /// Min Max type
@@ -12041,7 +12041,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftFeeChargeCap7MinMaxType MinMaxType { get; set; } = default!;
+        public required OverdraftFeeChargeCap7MinMaxType MinMaxType { get; set; }
 
         /// <summary>
         /// Indicates whether the advertised overdraft rate is guaranteed to be offered to a borrower by the bank e.g. if it’s part of a government scheme, or whether the rate may vary dependent on the applicant’s circumstances.
@@ -12103,7 +12103,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -12111,7 +12111,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -12132,7 +12132,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -12140,7 +12140,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -12161,7 +12161,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -12169,7 +12169,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -12190,7 +12190,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -12198,7 +12198,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -12303,7 +12303,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -12311,7 +12311,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12428,7 +12428,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -12436,7 +12436,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12658,7 +12658,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -12666,7 +12666,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -12687,7 +12687,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -12695,7 +12695,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -12716,7 +12716,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -12724,7 +12724,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -12745,7 +12745,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -12753,7 +12753,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
     }
 
@@ -12766,7 +12766,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType13> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType13>();
+        public required System.Collections.Generic.ICollection<FeeType13> FeeType { get; set; }
 
         /// <summary>
         /// Specifies for the overdraft control feature/benefit
@@ -12780,7 +12780,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OverdraftFeeChargeCap8MinMaxType MinMaxType { get; set; } = default!;
+        public required OverdraftFeeChargeCap8MinMaxType MinMaxType { get; set; }
 
         /// <summary>
         /// fee/charges are captured dependent on the number of occurrences rather than capped at a particular amount
@@ -12920,7 +12920,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -12928,7 +12928,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12990,7 +12990,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierValueMinimum", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,14}){1}(\.\d{1,4}){0,1}$")]
-        public string TierValueMinimum { get; set; } = default!;
+        public required string TierValueMinimum { get; set; }
 
         /// <summary>
         /// Maximum deposit value for which the credit interest tier applies.
@@ -13012,7 +13012,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ApplicationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public TierBand3ApplicationFrequency ApplicationFrequency { get; set; } = default!;
+        public required TierBand3ApplicationFrequency ApplicationFrequency { get; set; }
 
         /// <summary>
         /// Amount on which Interest applied.
@@ -13024,7 +13024,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FixedVariableInterestRateType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_InterestFixedVariableType1Code FixedVariableInterestRateType { get; set; } = default!;
+        public required OB_InterestFixedVariableType1Code FixedVariableInterestRateType { get; set; }
 
         /// <summary>
         /// The annual equivalent rate (AER) is interest that is calculated under the assumption that any interest paid is combined with the original balance and the next interest payment will be based on the slightly higher account balance. Overall, this means that interest can be compounded several times in a year depending on the number of times that interest payments are made. 
@@ -13033,7 +13033,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("AER", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,3}){1}(\.\d{1,4}){0,1}$")]
-        public string AER { get; set; } = default!;
+        public required string AER { get; set; }
 
         /// <summary>
         /// Interest rate types, other than AER, which financial institutions may use to describe the annual interest rate payable to the account holder's account.
@@ -13124,7 +13124,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierValueMin", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,14}){1}(\.\d{1,4}){0,1}$")]
-        public string TierValueMin { get; set; } = default!;
+        public required string TierValueMin { get; set; }
 
         /// <summary>
         /// Maximum value of Overdraft Tier/Band
@@ -13202,7 +13202,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("OverdraftFeeChargeDetail", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<OverdraftFeeChargeDetail5> OverdraftFeeChargeDetail { get; set; } = new System.Collections.ObjectModel.Collection<OverdraftFeeChargeDetail5>();
+        public required System.Collections.Generic.ICollection<OverdraftFeeChargeDetail5> OverdraftFeeChargeDetail { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -13249,7 +13249,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("TierValueMinimum", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,14}){1}(\.\d{1,4}){0,1}$")]
-        public string TierValueMinimum { get; set; } = default!;
+        public required string TierValueMinimum { get; set; }
 
         /// <summary>
         /// Maximum loan value for which the loan interest tier applies.
@@ -13262,7 +13262,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// Minimum loan term for which the loan interest tier applies.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("TierValueMinTerm", Required = Newtonsoft.Json.Required.Always)]
-        public int TierValueMinTerm { get; set; } = default!;
+        public required int TierValueMinTerm { get; set; }
 
         /// <summary>
         /// The unit of period (days, weeks, months etc.) of the Minimum Term
@@ -13270,7 +13270,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("MinTermPeriod", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public LoanInterestTierBandMinTermPeriod MinTermPeriod { get; set; } = default!;
+        public required LoanInterestTierBandMinTermPeriod MinTermPeriod { get; set; }
 
         /// <summary>
         /// Maximum loan term for which the loan interest tier applies.
@@ -13288,7 +13288,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FixedVariableInterestRateType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_InterestFixedVariableType1Code FixedVariableInterestRateType { get; set; } = default!;
+        public required OB_InterestFixedVariableType1Code FixedVariableInterestRateType { get; set; }
 
         /// <summary>
         /// The annual equivalent rate (AER) is interest that is calculated under the assumption that any interest paid is combined with the original balance and the next interest payment will be based on the slightly higher account balance. Overall, this means that interest can be compounded several times in a year depending on the number of times that interest payments are made. 
@@ -13297,7 +13297,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("RepAPR", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,3}){1}(\.\d{1,4}){0,1}$")]
-        public string RepAPR { get; set; } = default!;
+        public required string RepAPR { get; set; }
 
         /// <summary>
         /// Interest rate types, other than APR, which financial institutions may use to describe the annual interest rate payable for the SME Loan.
@@ -13345,7 +13345,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("LoanInterestFeeChargeDetail", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<LoanInterestFeeChargeDetail> LoanInterestFeeChargeDetail { get; set; } = new System.Collections.ObjectModel.Collection<LoanInterestFeeChargeDetail>();
+        public required System.Collections.Generic.ICollection<LoanInterestFeeChargeDetail> LoanInterestFeeChargeDetail { get; set; }
 
         [Newtonsoft.Json.JsonProperty("LoanInterestFeeChargeCap", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<LoanInterestFeeChargeCap>? LoanInterestFeeChargeCap { get; set; } = default!;
@@ -13370,7 +13370,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_FeeType1Code FeeType { get; set; } = default!;
+        public required OB_FeeType1Code FeeType { get; set; }
 
         /// <summary>
         /// Fee/charge which is usually negotiable rather than a fixed amount
@@ -13393,12 +13393,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ApplicationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_FeeFrequency1Code_2 ApplicationFrequency { get; set; } = default!;
+        public required OB_FeeFrequency1Code_2 ApplicationFrequency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("CalculationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_FeeFrequency1Code_3 CalculationFrequency { get; set; } = default!;
+        public required OB_FeeFrequency1Code_3 CalculationFrequency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Notes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<string>? Notes { get; set; } = default!;
@@ -13435,12 +13435,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType14> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType14>();
+        public required System.Collections.Generic.ICollection<FeeType14> FeeType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_MinMaxType1Code MinMaxType { get; set; } = default!;
+        public required OB_MinMaxType1Code MinMaxType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("FeeCapOccurrence", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? FeeCapOccurrence { get; set; } = default!;
@@ -13506,12 +13506,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType15> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType15>();
+        public required System.Collections.Generic.ICollection<FeeType15> FeeType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_MinMaxType1Code MinMaxType { get; set; } = default!;
+        public required OB_MinMaxType1Code MinMaxType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("FeeCapOccurrence", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? FeeCapOccurrence { get; set; } = default!;
@@ -13632,12 +13632,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -13751,7 +13751,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -13759,7 +13759,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -13876,7 +13876,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         /// <summary>
         /// Description to describe the purpose of the code
@@ -13884,7 +13884,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -14012,12 +14012,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -14084,7 +14084,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("OverdraftFeeChargeDetail", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<OverdraftFeeChargeDetail6> OverdraftFeeChargeDetail { get; set; } = new System.Collections.ObjectModel.Collection<OverdraftFeeChargeDetail6>();
+        public required System.Collections.Generic.ICollection<OverdraftFeeChargeDetail6> OverdraftFeeChargeDetail { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -14106,12 +14106,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType16> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType16>();
+        public required System.Collections.Generic.ICollection<FeeType16> FeeType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_MinMaxType1Code MinMaxType { get; set; } = default!;
+        public required OB_MinMaxType1Code MinMaxType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("FeeCapOccurrence", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? FeeCapOccurrence { get; set; } = default!;
@@ -14150,7 +14150,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_OverdraftFeeType1Code FeeType { get; set; } = default!;
+        public required OB_OverdraftFeeType1Code FeeType { get; set; }
 
         /// <summary>
         /// Indicates whether fee and charges are negotiable
@@ -14183,7 +14183,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ApplicationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_FeeFrequency1Code_0 ApplicationFrequency { get; set; } = default!;
+        public required OB_FeeFrequency1Code_0 ApplicationFrequency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("CalculationFrequency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -14306,12 +14306,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -14333,7 +14333,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("LoanInterestFeeChargeDetail", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<LoanInterestFeeChargeDetail2> LoanInterestFeeChargeDetail { get; set; } = new System.Collections.ObjectModel.Collection<LoanInterestFeeChargeDetail2>();
+        public required System.Collections.Generic.ICollection<LoanInterestFeeChargeDetail2> LoanInterestFeeChargeDetail { get; set; }
 
         [Newtonsoft.Json.JsonProperty("LoanInterestFeeChargeCap", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<LoanInterestFeeChargeCap2>? LoanInterestFeeChargeCap { get; set; } = default!;
@@ -14358,7 +14358,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_FeeType1Code FeeType { get; set; } = default!;
+        public required OB_FeeType1Code FeeType { get; set; }
 
         /// <summary>
         /// Fee/charge which is usually negotiable rather than a fixed amount
@@ -14381,12 +14381,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ApplicationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_FeeFrequency1Code_2 ApplicationFrequency { get; set; } = default!;
+        public required OB_FeeFrequency1Code_2 ApplicationFrequency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("CalculationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_FeeFrequency1Code_3 CalculationFrequency { get; set; } = default!;
+        public required OB_FeeFrequency1Code_3 CalculationFrequency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Notes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<string>? Notes { get; set; } = default!;
@@ -14423,12 +14423,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType17> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType17>();
+        public required System.Collections.Generic.ICollection<FeeType17> FeeType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_MinMaxType1Code MinMaxType { get; set; } = default!;
+        public required OB_MinMaxType1Code MinMaxType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("FeeCapOccurrence", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? FeeCapOccurrence { get; set; } = default!;
@@ -14507,12 +14507,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -14574,12 +14574,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -14601,12 +14601,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType18> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType18>();
+        public required System.Collections.Generic.ICollection<FeeType18> FeeType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_MinMaxType1Code MinMaxType { get; set; } = default!;
+        public required OB_MinMaxType1Code MinMaxType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("FeeCapOccurrence", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? FeeCapOccurrence { get; set; } = default!;
@@ -14645,7 +14645,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_OverdraftFeeType1Code FeeType { get; set; } = default!;
+        public required OB_OverdraftFeeType1Code FeeType { get; set; }
 
         /// <summary>
         /// Indicates whether fee and charges are negotiable
@@ -14678,7 +14678,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ApplicationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_FeeFrequency1Code_0 ApplicationFrequency { get; set; } = default!;
+        public required OB_FeeFrequency1Code_0 ApplicationFrequency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("CalculationFrequency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -14771,12 +14771,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -14798,12 +14798,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType19> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType19>();
+        public required System.Collections.Generic.ICollection<FeeType19> FeeType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_MinMaxType1Code MinMaxType { get; set; } = default!;
+        public required OB_MinMaxType1Code MinMaxType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("FeeCapOccurrence", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? FeeCapOccurrence { get; set; } = default!;
@@ -14842,7 +14842,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_FeeType1Code FeeType { get; set; } = default!;
+        public required OB_FeeType1Code FeeType { get; set; }
 
         /// <summary>
         /// Fee/charge which is usually negotiable rather than a fixed amount
@@ -14865,12 +14865,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ApplicationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_FeeFrequency1Code_2 ApplicationFrequency { get; set; } = default!;
+        public required OB_FeeFrequency1Code_2 ApplicationFrequency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("CalculationFrequency", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_FeeFrequency1Code_3 CalculationFrequency { get; set; } = default!;
+        public required OB_FeeFrequency1Code_3 CalculationFrequency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Notes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<string>? Notes { get; set; } = default!;
@@ -14907,12 +14907,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType20> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType20>();
+        public required System.Collections.Generic.ICollection<FeeType20> FeeType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_MinMaxType1Code MinMaxType { get; set; } = default!;
+        public required OB_MinMaxType1Code MinMaxType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("FeeCapOccurrence", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? FeeCapOccurrence { get; set; } = default!;
@@ -14991,12 +14991,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -15067,12 +15067,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -15094,12 +15094,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("FeeType", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<FeeType21> FeeType { get; set; } = new System.Collections.ObjectModel.Collection<FeeType21>();
+        public required System.Collections.Generic.ICollection<FeeType21> FeeType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("MinMaxType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OB_MinMaxType1Code MinMaxType { get; set; } = default!;
+        public required OB_MinMaxType1Code MinMaxType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("FeeCapOccurrence", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? FeeCapOccurrence { get; set; } = default!;
@@ -15187,12 +15187,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -15254,12 +15254,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -15330,12 +15330,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Name { get; set; } = default!;
+        public required string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
+        public required string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
