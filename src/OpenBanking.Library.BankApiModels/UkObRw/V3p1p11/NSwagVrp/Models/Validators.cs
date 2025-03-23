@@ -9,25 +9,25 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
 // Validators for bank API response types
 
-public partial class OBDomesticVRPConsentResponse : ISupportsValidation
+public partial record OBDomesticVRPConsentResponse : ISupportsValidation
 {
     public async Task<ValidationResult> ValidateAsync() =>
         await Task.FromResult(new ValidationResult());
 }
 
-public partial class OBVRPFundsConfirmationResponse : ISupportsValidation
+public partial record OBVRPFundsConfirmationResponse : ISupportsValidation
 {
     public async Task<ValidationResult> ValidateAsync() =>
         await Task.FromResult(new ValidationResult());
 }
 
-public partial class OBDomesticVRPResponse : ISupportsValidation
+public partial record OBDomesticVRPResponse : ISupportsValidation
 {
     public async Task<ValidationResult> ValidateAsync() =>
          await Task.FromResult(new ValidationResult());
 }
 
-public partial class OBDomesticVRPDetails : ISupportsValidation
+public partial record OBDomesticVRPDetails : ISupportsValidation
 {
     public async Task<ValidationResult> ValidateAsync() =>
         await Task.FromResult(new ValidationResult());

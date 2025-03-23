@@ -10,49 +10,49 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
 // Validators for bank API response types
 
-public partial class OBReadAccount6 : ISupportsValidation
+public partial record OBReadAccount6 : ISupportsValidation
 {
     public Task<ValidationResult> ValidateAsync() =>
         Task.FromResult(new ValidationResult());
 }
 
-public partial class OBReadDirectDebit2 : ISupportsValidation
+public partial record OBReadDirectDebit2 : ISupportsValidation
 {
     public Task<ValidationResult> ValidateAsync() =>
         Task.FromResult(new ValidationResult());
 }
 
-public partial class OBReadStandingOrder6 : ISupportsValidation
+public partial record OBReadStandingOrder6 : ISupportsValidation
 {
     public Task<ValidationResult> ValidateAsync() =>
         Task.FromResult(new ValidationResult());
 }
 
-public partial class OBReadBalance1 : ISupportsValidation
+public partial record OBReadBalance1 : ISupportsValidation
 {
     public Task<ValidationResult> ValidateAsync() =>
         Task.FromResult(new ValidationResult());
 }
 
-public partial class OBReadParty3 : ISupportsValidation
+public partial record OBReadParty3 : ISupportsValidation
 {
     public Task<ValidationResult> ValidateAsync() =>
         Task.FromResult(new ValidationResult());
 }
 
-public partial class OBReadParty2 : ISupportsValidation
+public partial record OBReadParty2 : ISupportsValidation
 {
     public Task<ValidationResult> ValidateAsync() =>
         Task.FromResult(new ValidationResult());
 }
 
-public partial class OBReadTransaction6 : ISupportsValidation
+public partial record OBReadTransaction6 : ISupportsValidation
 {
     public Task<ValidationResult> ValidateAsync() =>
         Task.FromResult(new ValidationResult());
 }
 
-public partial class OBReadConsentResponse1 : ISupportsValidation
+public partial record OBReadConsentResponse1 : ISupportsValidation
 {
     public Task<ValidationResult> ValidateAsync() =>
         Task.FromResult(new ValidationResult());
