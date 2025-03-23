@@ -1,9 +1,9 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": {
     "title": "Payment Initiation API",
     "description": "Payment Initiation API for Open Banking Connector Web App",
-    "version": "12.4.0"
+    "version": "12.5.2"
   },
   "paths": {
     "/pisp/domestic-payment-consent-auth-contexts": {

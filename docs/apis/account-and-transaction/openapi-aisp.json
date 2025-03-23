@@ -1,9 +1,9 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "12.4.0"
+    "version": "12.5.2"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -2451,8 +2451,7 @@
       },
       "OBBankTransactionCodeStructure1": {
         "required": [
-          "Code",
-          "SubCode"
+          "Code"
         ],
         "type": "object",
         "properties": {
@@ -2462,7 +2461,8 @@
           },
           "SubCode": {
             "type": "string",
-            "description": "Specifies the sub-product family within a specific family."
+            "description": "Specifies the sub-product family within a specific family.",
+            "nullable": true
           }
         },
         "additionalProperties": { },

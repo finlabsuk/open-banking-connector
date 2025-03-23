@@ -6,6 +6,8 @@
 
 #nullable enable
 
+using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
+
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
 #pragma warning disable 114 // Disable "CS0114 '{derivedDto}.RaisePropertyChanged(String)' hides inherited member 'dtoBase.RaisePropertyChanged(String)'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword."
 #pragma warning disable 472 // Disable "CS0472 The result of the expression is always 'false' since a value of type 'Int32' is never equal to 'null' of type 'Int32?'
@@ -890,9 +892,44 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// <summary>
         /// Indicates if Payee has a contractual relationship with the PISP.
         /// </summary>
+        [Newtonsoft.Json.JsonProperty("ContractPresentIndicator", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? ContractPresentIndicator { get; set; } = default!;
+
+        /// <summary>
+        /// Indicates if Payee has a contractual relationship with the PISP.
+        /// </summary>
         [Newtonsoft.Json.JsonProperty("ContractPresentInidicator", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool? ContractPresentInidicator { get; set; } = default!;
+        
+        public void AdjustBeforeSendToBank(bool preferMisspelt)
+        {
+            if (ContractPresentInidicator is not null)
+            {
+                throw new Exception("ContractPresentInidicator should be null.");
+            }
+            if (preferMisspelt)
+            {
+                ContractPresentInidicator = ContractPresentIndicator;
+                ContractPresentIndicator = null;
+            }
+            
+        }
 
+        public void AdjustAfterReceiveFromBank()
+        {
+            if (ContractPresentIndicator is not null &&
+                ContractPresentInidicator is not null)
+            {
+                throw new Exception("Both ContractPresentIndicator and ContractPresentInidicator received.");
+            }
+
+            if (ContractPresentInidicator is not null)
+            {
+                ContractPresentIndicator = ContractPresentInidicator;
+                ContractPresentInidicator = null;
+            }
+        }
+        
         /// <summary>
         /// Indicates if PISP has immutably prepopulated payment details in for the PSU.
         /// </summary>
@@ -1143,20 +1180,18 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// Identifier for the Domestic VRP Consent that this payment is made under.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("ConsentId", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(128, MinimumLength = 1)]
         public required string ConsentId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("PSUAuthenticationMethod", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
-        public required PSUAuthenticationMethod PSUAuthenticationMethod { get; set; }
+        public required string PSUAuthenticationMethod { get; set; }
 
         [Newtonsoft.Json.JsonProperty("PSUInteractionType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public PSUInteractionType? PSUInteractionType { get; set; } = default!;
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public OBVRPInteractionTypes? PSUInteractionType { get; set; } = default!;
 
-        [Newtonsoft.Json.JsonProperty("VRPType", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public required string VRPType { get; set; }
+        [Newtonsoft.Json.JsonProperty("VRPType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string? VRPType { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Initiation", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
@@ -1251,6 +1286,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// Only included in the response if `Data.ReadRefundAccount` is set to `Yes` in the consent.
         /// <br/>
         /// </summary>
+        [Newtonsoft.Json.JsonConverter(
+            typeof(DomesticVrpRefundConverter),
+            JsonConverterLabel.DomesticVrpRefund)]
         [Newtonsoft.Json.JsonProperty("Refund", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBCashAccountDebtorWithName? Refund { get; set; } = default!;
 
@@ -1303,8 +1341,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// Unique identification as assigned by the ASPSP to uniquely identify the funds confirmation consent resource.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("ConsentId", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(128, MinimumLength = 1)]
         public required string ConsentId { get; set; }
 
         /// <summary>
@@ -1557,18 +1593,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [System.Runtime.Serialization.EnumMember(Value = @"Calendar")]
         Calendar = 1,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record PSUAuthenticationMethod : string
-    {
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record PSUInteractionType : OBVRPInteractionTypes
-    {
 
     }
 
