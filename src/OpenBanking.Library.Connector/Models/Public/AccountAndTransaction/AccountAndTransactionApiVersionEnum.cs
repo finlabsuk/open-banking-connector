@@ -11,24 +11,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
 [JsonConverter(typeof(StringEnumConverter))]
 public enum AccountAndTransactionApiVersion
 {
-    [EnumMember(Value = "Version3p1p7")]
-    Version3p1p7,
-
-    // Support not currently required
-    // [EnumMember(Value = "Version3p1p8")]
-    // Version3p1p8,
-
-    // Support not currently required
-    // [EnumMember(Value = "Version3p1p9")]
-    // Version3p1p9,
-
-    // Support not currently required
-    // [EnumMember(Value = "Version3p1p10")]
-    // Version3p1p10,
-
     [EnumMember(Value = "Version3p1p11")]
     Version3p1p11,
 
+    [EnumMember(Value = "Version4p0")]
+    Version4p0,
+
     [EnumMember(Value = "VersionPublic")]
-    VersionPublic = Version3p1p11
+    VersionPublic = Version4p0
 }

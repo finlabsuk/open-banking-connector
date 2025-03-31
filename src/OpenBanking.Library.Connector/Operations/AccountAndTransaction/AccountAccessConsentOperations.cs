@@ -140,15 +140,6 @@ internal class
                     bankProfile.BankProfileEnum);
 
             // Create new object at external API
-            JsonSerializerSettings? requestJsonSerializerSettings = null;
-            JsonSerializerSettings? responseJsonSerializerSettings = null;
-            IApiPostRequests<AccountAndTransactionModelsPublic.OBReadConsent1,
-                AccountAndTransactionModelsPublic.OBReadConsentResponse1> apiRequests =
-                ApiRequests(
-                    accountAndTransactionApi.ApiVersion,
-                    bankFinancialId,
-                    ccGrantAccessToken,
-                    _instrumentationClient);
             var externalApiUrl = new Uri(accountAndTransactionApi.BaseUrl + RelativePathBeforeId);
             AccountAndTransactionModelsPublic.OBReadConsent1 externalApiRequest =
                 request.ExternalApiRequest ??
@@ -165,17 +156,70 @@ internal class
                       """,
                 BankProfile = bankProfile.BankProfileEnum
             };
-            (externalApiResponse, string? xFapiInteractionId,
-                    IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
-                await apiRequests.PostAsync(
-                    externalApiUrl,
-                    createParams.ExtraHeaders,
-                    externalApiRequest,
-                    tppReportingRequestInfo,
-                    requestJsonSerializerSettings,
-                    responseJsonSerializerSettings,
-                    apiClient,
-                    _mapper);
+            JsonSerializerSettings? requestJsonSerializerSettings = null;
+            JsonSerializerSettings? responseJsonSerializerSettings = null;
+            string? xFapiInteractionId;
+            IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
+            switch (accountAndTransactionApi.ApiVersion)
+            {
+                case AccountAndTransactionApiVersion.Version3p1p11:
+                    AccountAndTransactionModelsV3p1p11.OBReadConsent1 externalApiRequestV3 =
+                        AccountAndTransactionModelsPublic.Mappings.MapFromOBReadConsent1(externalApiRequest);
+                    var apiRequestsV3 =
+                        new ApiRequests<AccountAndTransactionModelsV3p1p11.OBReadConsent1,
+                            AccountAndTransactionModelsV3p1p11.OBReadConsentResponse1,
+                            AccountAndTransactionModelsV3p1p11.OBReadConsent1,
+                            AccountAndTransactionModelsV3p1p11.OBReadConsentResponse1>(
+                            new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken),
+                            new AccountAndTransactionPostRequestProcessor<
+                                AccountAndTransactionModelsV3p1p11.OBReadConsent1>(
+                                bankFinancialId,
+                                ccGrantAccessToken,
+                                _instrumentationClient));
+                    (AccountAndTransactionModelsV3p1p11.OBReadConsentResponse1 externalApiResponseV3,
+                            xFapiInteractionId,
+                            newNonErrorMessages) =
+                        await apiRequestsV3.PostAsync(
+                            externalApiUrl,
+                            createParams.ExtraHeaders,
+                            externalApiRequestV3,
+                            tppReportingRequestInfo,
+                            requestJsonSerializerSettings,
+                            responseJsonSerializerSettings,
+                            apiClient,
+                            _mapper);
+                    externalApiResponse =
+                        AccountAndTransactionModelsPublic.Mappings.MapToOBReadConsentResponse1(externalApiResponseV3);
+                    break;
+                case AccountAndTransactionApiVersion.VersionPublic:
+                    var apiRequests =
+                        new ApiRequests<AccountAndTransactionModelsPublic.OBReadConsent1,
+                            AccountAndTransactionModelsPublic.OBReadConsentResponse1,
+                            AccountAndTransactionModelsPublic.OBReadConsent1,
+                            AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
+                            new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken),
+                            new AccountAndTransactionPostRequestProcessor<
+                                AccountAndTransactionModelsPublic.OBReadConsent1>(
+                                bankFinancialId,
+                                ccGrantAccessToken,
+                                _instrumentationClient));
+                    (externalApiResponse, xFapiInteractionId,
+                            newNonErrorMessages) =
+                        await apiRequests.PostAsync(
+                            externalApiUrl,
+                            createParams.ExtraHeaders,
+                            externalApiRequest,
+                            tppReportingRequestInfo,
+                            requestJsonSerializerSettings,
+                            responseJsonSerializerSettings,
+                            apiClient,
+                            _mapper);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        $"AISP API version {accountAndTransactionApi.ApiVersion} not supported.");
+            }
+
             nonErrorMessages.AddRange(newNonErrorMessages);
             externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
             externalApiId = externalApiResponse.Data.ConsentId;
@@ -338,13 +382,6 @@ internal class
                     bankProfile.BankProfileEnum);
 
             // Read object from external API
-            JsonSerializerSettings? responseJsonSerializerSettings = null;
-            IApiGetRequests<AccountAndTransactionModelsPublic.OBReadConsentResponse1> apiRequests =
-                ApiRequests(
-                    accountAndTransactionApi.ApiVersion,
-                    bankFinancialId,
-                    ccGrantAccessToken,
-                    _instrumentationClient);
             var externalApiUrl = new Uri(
                 accountAndTransactionApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}");
             var tppReportingRequestInfo = new TppReportingRequestInfo
@@ -355,15 +392,64 @@ internal class
                       """,
                 BankProfile = bankProfile.BankProfileEnum
             };
-            (externalApiResponse, string? xFapiInteractionId,
-                    IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
-                await apiRequests.GetAsync(
-                    externalApiUrl,
-                    readParams.ExtraHeaders,
-                    tppReportingRequestInfo,
-                    responseJsonSerializerSettings,
-                    apiClient,
-                    _mapper);
+            JsonSerializerSettings? responseJsonSerializerSettings = null;
+
+            string? xFapiInteractionId;
+            IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
+            switch (accountAndTransactionApi.ApiVersion)
+            {
+                case AccountAndTransactionApiVersion.Version3p1p11:
+                    var apiRequestsV3 =
+                        new ApiRequests<AccountAndTransactionModelsV3p1p11.OBReadConsent1,
+                            AccountAndTransactionModelsV3p1p11.OBReadConsentResponse1,
+                            AccountAndTransactionModelsV3p1p11.OBReadConsent1,
+                            AccountAndTransactionModelsV3p1p11.OBReadConsentResponse1>(
+                            new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken),
+                            new AccountAndTransactionPostRequestProcessor<
+                                AccountAndTransactionModelsV3p1p11.OBReadConsent1>(
+                                bankFinancialId,
+                                ccGrantAccessToken,
+                                _instrumentationClient));
+                    (AccountAndTransactionModelsV3p1p11.OBReadConsentResponse1 externalApiResponseV3,
+                            xFapiInteractionId,
+                            newNonErrorMessages) =
+                        await apiRequestsV3.GetAsync(
+                            externalApiUrl,
+                            readParams.ExtraHeaders,
+                            tppReportingRequestInfo,
+                            responseJsonSerializerSettings,
+                            apiClient,
+                            _mapper);
+                    externalApiResponse =
+                        AccountAndTransactionModelsPublic.Mappings.MapToOBReadConsentResponse1(externalApiResponseV3);
+                    break;
+                case AccountAndTransactionApiVersion.VersionPublic:
+                    var apiRequests =
+                        new ApiRequests<AccountAndTransactionModelsPublic.OBReadConsent1,
+                            AccountAndTransactionModelsPublic.OBReadConsentResponse1,
+                            AccountAndTransactionModelsPublic.OBReadConsent1,
+                            AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
+                            new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken),
+                            new AccountAndTransactionPostRequestProcessor<
+                                AccountAndTransactionModelsPublic.OBReadConsent1>(
+                                bankFinancialId,
+                                ccGrantAccessToken,
+                                _instrumentationClient));
+                    (externalApiResponse, xFapiInteractionId,
+                            newNonErrorMessages) =
+                        await apiRequests.GetAsync(
+                            externalApiUrl,
+                            readParams.ExtraHeaders,
+                            tppReportingRequestInfo,
+                            responseJsonSerializerSettings,
+                            apiClient,
+                            _mapper);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        $"AISP API version {accountAndTransactionApi.ApiVersion} not supported.");
+            }
+
             nonErrorMessages.AddRange(newNonErrorMessages);
             externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
 
@@ -430,38 +516,4 @@ internal class
 
         return (response, nonErrorMessages);
     }
-
-    public static IApiRequests<AccountAndTransactionModelsPublic.OBReadConsent1,
-        AccountAndTransactionModelsPublic.OBReadConsentResponse1> ApiRequests(
-        AccountAndTransactionApiVersion accountAndTransactionApiVersion,
-        string bankFinancialId,
-        string accessToken,
-        IInstrumentationClient instrumentationClient) =>
-        accountAndTransactionApiVersion switch
-        {
-            AccountAndTransactionApiVersion.Version3p1p7 => new ApiRequests<
-                AccountAndTransactionModelsPublic.OBReadConsent1,
-                AccountAndTransactionModelsPublic.OBReadConsentResponse1,
-                AccountAndTransactionModelsV3p1p7.OBReadConsent1,
-                AccountAndTransactionModelsV3p1p7.OBReadConsentResponse1>(
-                new ApiGetRequestProcessor(bankFinancialId, accessToken),
-                new AccountAndTransactionPostRequestProcessor<
-                    AccountAndTransactionModelsV3p1p7.OBReadConsent1>(
-                    bankFinancialId,
-                    accessToken,
-                    instrumentationClient)),
-            AccountAndTransactionApiVersion.VersionPublic => new ApiRequests<
-                AccountAndTransactionModelsPublic.OBReadConsent1,
-                AccountAndTransactionModelsPublic.OBReadConsentResponse1,
-                AccountAndTransactionModelsPublic.OBReadConsent1,
-                AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
-                new ApiGetRequestProcessor(bankFinancialId, accessToken),
-                new AccountAndTransactionPostRequestProcessor<
-                    AccountAndTransactionModelsPublic.OBReadConsent1>(
-                    bankFinancialId,
-                    accessToken,
-                    instrumentationClient)),
-            _ => throw new ArgumentOutOfRangeException(
-                $"AISP API version {accountAndTransactionApiVersion} not supported.")
-        };
 }
