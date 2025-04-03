@@ -117,21 +117,6 @@ internal class AccountGet : IAccountAccessConsentExternalRead<AccountsResponse, 
             new UriBuilder(urlStringWihoutQuery) { Query = readParams.QueryString ?? string.Empty }.Uri;
 
         // Get external object from bank API
-        JsonSerializerSettings? jsonSerializerSettings = null;
-        IApiGetRequests<AccountAndTransactionModelsPublic.OBReadAccount6> apiRequests =
-            accountAndTransactionApi.ApiVersion switch
-            {
-                AccountAndTransactionApiVersion.Version3p1p7 => new ApiGetRequests<
-                    AccountAndTransactionModelsPublic.OBReadAccount6,
-                    AccountAndTransactionModelsV3p1p7.OBReadAccount6>(
-                    new ApiGetRequestProcessor(bankFinancialId, accessToken)),
-                AccountAndTransactionApiVersion.VersionPublic => new ApiGetRequests<
-                    AccountAndTransactionModelsPublic.OBReadAccount6,
-                    AccountAndTransactionModelsPublic.OBReadAccount6>(
-                    new ApiGetRequestProcessor(bankFinancialId, accessToken)),
-                _ => throw new ArgumentOutOfRangeException(
-                    $"AISP API version {accountAndTransactionApi.ApiVersion} not supported.")
-            };
         var tppReportingRequestInfo = new TppReportingRequestInfo
         {
             EndpointDescription = readParams.ExternalApiAccountId is null
@@ -139,15 +124,47 @@ internal class AccountGet : IAccountAccessConsentExternalRead<AccountsResponse, 
                 : "GET {AispBaseUrl}/accounts/{AccountId}",
             BankProfile = bankProfile.BankProfileEnum
         };
-        (AccountAndTransactionModelsPublic.OBReadAccount6 externalApiResponse, string? xFapiInteractionId,
-                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
-            await apiRequests.GetAsync(
-                externalApiUrl,
-                readParams.ExtraHeaders,
-                tppReportingRequestInfo,
-                jsonSerializerSettings,
-                apiClient,
-                _mapper);
+        JsonSerializerSettings? jsonSerializerSettings = null;
+        AccountAndTransactionModelsPublic.OBReadAccount6 externalApiResponse;
+        string? xFapiInteractionId;
+        IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
+        switch (accountAndTransactionApi.ApiVersion)
+        {
+            case AccountAndTransactionApiVersion.Version3p1p11:
+                IApiGetRequests<AccountAndTransactionModelsV3p1p11.OBReadAccount6> apiRequestsV3 =
+                    new ApiGetRequests<AccountAndTransactionModelsV3p1p11.OBReadAccount6,
+                        AccountAndTransactionModelsV3p1p11.OBReadAccount6>(
+                        new ApiGetRequestProcessor(bankFinancialId, accessToken));
+                (AccountAndTransactionModelsV3p1p11.OBReadAccount6 externalApiResponseV3, xFapiInteractionId,
+                        newNonErrorMessages) =
+                    await apiRequestsV3.GetAsync(
+                        externalApiUrl,
+                        readParams.ExtraHeaders,
+                        tppReportingRequestInfo,
+                        jsonSerializerSettings,
+                        apiClient,
+                        _mapper);
+                externalApiResponse =
+                    AccountAndTransactionModelsPublic.Mappings.MapToOBReadAccount6(externalApiResponseV3);
+                break;
+            case AccountAndTransactionApiVersion.VersionPublic:
+                IApiGetRequests<AccountAndTransactionModelsPublic.OBReadAccount6> apiRequests =
+                    new ApiGetRequests<AccountAndTransactionModelsPublic.OBReadAccount6,
+                        AccountAndTransactionModelsPublic.OBReadAccount6>(
+                        new ApiGetRequestProcessor(bankFinancialId, accessToken));
+                (externalApiResponse, xFapiInteractionId, newNonErrorMessages) =
+                    await apiRequests.GetAsync(
+                        externalApiUrl,
+                        readParams.ExtraHeaders,
+                        tppReportingRequestInfo,
+                        jsonSerializerSettings,
+                        apiClient,
+                        _mapper);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    $"AISP API version {accountAndTransactionApi.ApiVersion} not supported.");
+        }
         nonErrorMessages.AddRange(newNonErrorMessages);
 
         // Transform links 

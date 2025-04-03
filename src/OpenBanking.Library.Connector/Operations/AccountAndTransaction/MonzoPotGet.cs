@@ -228,7 +228,7 @@ internal class
         IApiGetRequests<ReadMonzoPot> apiRequests =
             accountAndTransactionApi.ApiVersion switch
             {
-                AccountAndTransactionApiVersion.Version3p1p7 => new ApiGetRequests<
+                AccountAndTransactionApiVersion.Version3p1p11 => new ApiGetRequests<
                     ReadMonzoPot,
                     ReadMonzoPot>(new ApiGetRequestProcessor(bankFinancialId, accessToken)),
                 AccountAndTransactionApiVersion.VersionPublic => new ApiGetRequests<

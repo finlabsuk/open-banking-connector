@@ -233,7 +233,7 @@ public class DomesticPaymentConsentSubtest(
             Data = new PaymentInitiationModelsPublic.Data
             {
                 ConsentId = "",
-                Initiation =
+                Initiation = new PaymentInitiationModelsPublic.Initiation
                 {
                     InstructionIdentification = "placeholder", // logging placeholder
                     EndToEndIdentification = "placeholder", // logging placeholder

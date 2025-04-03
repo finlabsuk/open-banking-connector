@@ -120,6 +120,13 @@ internal class
             new UriBuilder(urlStringWihoutQuery) { Query = readParams.QueryString ?? string.Empty }.Uri;
 
         // Get external object from bank API
+        var tppReportingRequestInfo = new TppReportingRequestInfo
+        {
+            EndpointDescription = readParams.ExternalApiAccountId is null
+                ? "GET {AispBaseUrl}/direct-debits"
+                : "GET {AispBaseUrl}/accounts/{AccountId}/direct-debits",
+            BankProfile = bankProfile.BankProfileEnum
+        };
         JsonSerializerSettings jsonSerializerSettings = ApiClient.GetDefaultJsonSerializerSettings;
         DateTimeOffsetConverterEnum? previousPaymentDateTimeJsonConverter =
             directDebitGetCustomBehaviour?.PreviousPaymentDateTimeJsonConverter;
@@ -135,37 +142,48 @@ internal class
                     StreamingContextStates.All,
                     optionsDict);
         }
-
-        IApiGetRequests<AccountAndTransactionModelsPublic.OBReadDirectDebit2> apiRequests =
-            accountAndTransactionApi.ApiVersion switch
-            {
-                AccountAndTransactionApiVersion.Version3p1p7 => new ApiGetRequests<
-                    AccountAndTransactionModelsPublic.OBReadDirectDebit2,
-                    AccountAndTransactionModelsV3p1p7.OBReadDirectDebit2>(
-                    new ApiGetRequestProcessor(bankFinancialId, accessToken)),
-                AccountAndTransactionApiVersion.VersionPublic => new ApiGetRequests<
-                    AccountAndTransactionModelsPublic.OBReadDirectDebit2,
-                    AccountAndTransactionModelsPublic.OBReadDirectDebit2>(
-                    new ApiGetRequestProcessor(bankFinancialId, accessToken)),
-                _ => throw new ArgumentOutOfRangeException(
-                    $"AISP API version {accountAndTransactionApi.ApiVersion} not supported.")
-            };
-        var tppReportingRequestInfo = new TppReportingRequestInfo
+        AccountAndTransactionModelsPublic.OBReadDirectDebit2 externalApiResponse;
+        string? xFapiInteractionId;
+        IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
+        switch (accountAndTransactionApi.ApiVersion)
         {
-            EndpointDescription = readParams.ExternalApiAccountId is null
-                ? "GET {AispBaseUrl}/direct-debits"
-                : "GET {AispBaseUrl}/accounts/{AccountId}/direct-debits",
-            BankProfile = bankProfile.BankProfileEnum
-        };
-        (AccountAndTransactionModelsPublic.OBReadDirectDebit2 externalApiResponse, string? xFapiInteractionId,
-                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
-            await apiRequests.GetAsync(
-                externalApiUrl,
-                readParams.ExtraHeaders,
-                tppReportingRequestInfo,
-                jsonSerializerSettings,
-                apiClient,
-                _mapper);
+            case AccountAndTransactionApiVersion.Version3p1p11:
+
+                var apiRequestsV3 =
+                    new ApiGetRequests<AccountAndTransactionModelsV3p1p11.OBReadDirectDebit2,
+                        AccountAndTransactionModelsV3p1p11.OBReadDirectDebit2>(
+                        new ApiGetRequestProcessor(bankFinancialId, accessToken));
+                (AccountAndTransactionModelsV3p1p11.OBReadDirectDebit2 externalApiResponseV3, xFapiInteractionId,
+                        newNonErrorMessages) =
+                    await apiRequestsV3.GetAsync(
+                        externalApiUrl,
+                        readParams.ExtraHeaders,
+                        tppReportingRequestInfo,
+                        jsonSerializerSettings,
+                        apiClient,
+                        _mapper);
+                externalApiResponse =
+                    AccountAndTransactionModelsPublic.Mappings.MapToOBReadDirectDebit2(externalApiResponseV3);
+                break;
+            case AccountAndTransactionApiVersion.VersionPublic:
+                var apiRequests =
+                    new ApiGetRequests<AccountAndTransactionModelsPublic.OBReadDirectDebit2,
+                        AccountAndTransactionModelsPublic.OBReadDirectDebit2>(
+                        new ApiGetRequestProcessor(bankFinancialId, accessToken));
+                (externalApiResponse, xFapiInteractionId,
+                        newNonErrorMessages) =
+                    await apiRequests.GetAsync(
+                        externalApiUrl,
+                        readParams.ExtraHeaders,
+                        tppReportingRequestInfo,
+                        jsonSerializerSettings,
+                        apiClient,
+                        _mapper);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    $"AISP API version {accountAndTransactionApi.ApiVersion} not supported.");
+        }
         nonErrorMessages.AddRange(newNonErrorMessages);
 
         // Transform links 

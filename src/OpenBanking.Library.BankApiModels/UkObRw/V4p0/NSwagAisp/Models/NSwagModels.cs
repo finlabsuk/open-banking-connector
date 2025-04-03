@@ -20,11 +20,499 @@
 #pragma warning disable 8625 // Disable "CS8625 Cannot convert null literal to non-nullable reference type"
 #pragma warning disable 8765 // Disable "CS8765 Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes)."
 
-namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagAisp.Models
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAisp.Models
 {
     using System = global::System;
 
     
+
+    /// <summary>
+    /// Specifies the type of creditor reference as published in an external creditor reference type code set. For more information see `ExternalCreditorReferenceType1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ExternalCreditorReferenceType1Code
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DISP")]
+        DISP = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FXDR")]
+        FXDR = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PUOR")]
+        PUOR = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RPIN")]
+        RPIN = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RADM")]
+        RADM = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SCOR")]
+        SCOR = 5,
+
+    }
+
+    /// <summary>
+    /// Specifies the document type as published in an external document type code list. For more information see `ExternalDocumentType1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ExternalDocumentType1Code
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CINV")]
+        CINV = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CNFA")]
+        CNFA = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CONT")]
+        CONT = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CREN")]
+        CREN = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DEBN")]
+        DEBN = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DISP")]
+        DISP = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DNFA")]
+        DNFA = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"HIRI")]
+        HIRI = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INVS")]
+        INVS = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MSIN")]
+        MSIN = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PROF")]
+        PROF = 10,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PUOR")]
+        PUOR = 11,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"QUOT")]
+        QUOT = 12,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SBIN")]
+        SBIN = 13,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SPRR")]
+        SPRR = 14,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TISH")]
+        TISH = 15,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record OBReferredDocumentInformation
+    {
+        [Newtonsoft.Json.JsonProperty("Code", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(4, MinimumLength = 1)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ExternalDocumentType1Code? Code { get; set; } = default!;
+
+        /// <summary>
+        /// dentification of the issuer of the reference document type.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Issuer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(140, MinimumLength = 1)]
+        public string? Issuer { get; set; } = default!;
+
+        /// <summary>
+        /// Identification of the type specified for the referred document line.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
+        public string? Number { get; set; } = default!;
+
+        /// <summary>
+        /// Date associated with the referred document line.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("RelatedDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? RelatedDate { get; set; } = default!;
+
+        /// <summary>
+        /// Set of elements used to provide the content of the referred document line.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("LineDetails", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<string>? LineDetails { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    /// <summary>
+    /// Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record OBRemittanceInformation2
+    {
+        [Newtonsoft.Json.JsonProperty("Structured", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<OBRemittanceInformationStructured>? Structured { get; set; } = default!;
+
+        /// <summary>
+        /// Information supplied to enable the matching/reconciliation of an entry with the items that the payment is intended to settle, such as commercial invoices in an accounts' receivable system, in an unstructured form.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Unstructured", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<string>? Unstructured { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record OBRemittanceInformationStructured
+    {
+        [Newtonsoft.Json.JsonProperty("ReferredDocumentInformation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<OBReferredDocumentInformation>? ReferredDocumentInformation { get; set; } = default!;
+
+        /// <summary>
+        /// Provides details on the amounts of the referred document.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("ReferredDocumentAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? ReferredDocumentAmount { get; set; } = default!;
+
+        /// <summary>
+        /// Reference information provided by the creditor to allow the identification of the underlying documents.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("CreditorReferenceInformation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public CreditorReferenceInformation? CreditorReferenceInformation { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("Invoicer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(256, MinimumLength = 1)]
+        public string? Invoicer { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("Invoicee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(256, MinimumLength = 1)]
+        public string? Invoicee { get; set; } = default!;
+
+        /// <summary>
+        /// Provides remittance information about a payment made for tax-related purposes.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("TaxRemittance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(140, MinimumLength = 1)]
+        public string? TaxRemittance { get; set; } = default!;
+
+        /// <summary>
+        /// Additional information, in free text form, to complement the structured remittance information.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("AdditionalRemittanceInformation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.MaxLength(3)]
+        public System.Collections.Generic.ICollection<string>? AdditionalRemittanceInformation { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    /// <summary>
+    /// Ultimate party to which an amount of money is due.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record OBUltimateCreditor1
+    {
+        /// <summary>
+        /// Name by which a party is known and which is usually used to identify that party.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(140, MinimumLength = 1)]
+        public string? Name { get; set; } = default!;
+
+        /// <summary>
+        /// Identification assigned by an institution.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Identification", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(256, MinimumLength = 1)]
+        public string? Identification { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("LEI", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(20, MinimumLength = 1)]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z0-9]{18,18}[0-9]{2,2}$")]
+        public string? LEI { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("SchemeName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string? SchemeName { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("PostalAddress", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBPostalAddress7? PostalAddress { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    /// <summary>
+    /// Ultimate party that owes an amount of money to the (ultimate) creditor.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record OBUltimateDebtor1
+    {
+        /// <summary>
+        /// Name by which a party is known and which is usually used to identify that party.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(140, MinimumLength = 1)]
+        public string? Name { get; set; } = default!;
+
+        /// <summary>
+        /// Identification assigned by an institution.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Identification", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(256, MinimumLength = 1)]
+        public string? Identification { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("LEI", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(20, MinimumLength = 1)]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z0-9]{18,18}[0-9]{2,2}$")]
+        public string? LEI { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("SchemeName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string? SchemeName { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("PostalAddress", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBPostalAddress7? PostalAddress { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    /// <summary>
+    /// Regularity with which credit transfer instructions are to be created and processed
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record OBFrequency6
+    {
+        [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public required OBFrequency6Code Type { get; set; }
+
+        /// <summary>
+        /// Number of instructions to be created and processed during the specified period. Specifies a frequency in terms of a count per period within a specified frequency type. Note: should not be used alongside `PointInTime`
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("CountPerPeriod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? CountPerPeriod { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("PointInTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(2)]
+        public string? PointInTime { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    /// <summary>
+    /// For a full list of values see `OBFrequency6Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum OBFrequency6Code
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ADHO")]
+        ADHO = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"YEAR")]
+        YEAR = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DAIL")]
+        DAIL = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FRTN")]
+        FRTN = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INDA")]
+        INDA = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MNTH")]
+        MNTH = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"QURT")]
+        QURT = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MIAN")]
+        MIAN = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"WEEK")]
+        WEEK = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"WODL")]
+        WODL = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FOWK")]
+        FOWK = 10,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TWMH")]
+        TWMH = 11,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FOMH")]
+        FOMH = 12,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FIMH")]
+        FIMH = 13,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ALMH")]
+        ALMH = 14,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"NONE")]
+        NONE = 15,
+
+    }
+
+    /// <summary>
+    /// Specifies an alternate assumed name for the identification of the account.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record OBProxy1
+    {
+        /// <summary>
+        /// Identification used to indicate the account identification under another specified name.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Identification", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(2048, MinimumLength = 1)]
+        public required string Identification { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("Code", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public required ExternalProxyAccountType1Code Code { get; set; }
+
+        /// <summary>
+        /// Type of the proxy identification.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
+        public string? Type { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    /// <summary>
+    /// Specifies the external proxy account type code, as published in the proxy account type external code set.&lt;br /&gt; For more information and a full list of values see `ExternalProxyAccountType1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ExternalProxyAccountType1Code
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TELE")]
+        TELE = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EMAL")]
+        EMAL = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DNAM")]
+        DNAM = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CINC")]
+        CINC = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"COTX")]
+        COTX = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"COID")]
+        COID = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CUST")]
+        CUST = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DRLC")]
+        DRLC = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EIDN")]
+        EIDN = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EWAL")]
+        EWAL = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PVTX")]
+        PVTX = 10,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LEIC")]
+        LEIC = 11,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MBNO")]
+        MBNO = 12,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"NIDN")]
+        NIDN = 13,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CCPT")]
+        CCPT = 14,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SHID")]
+        SHID = 15,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SOSE")]
+        SOSE = 16,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TOKN")]
+        TOKN = 17,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"UBIL")]
+        UBIL = 18,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"VIPN")]
+        VIPN = 19,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BIID")]
+        BIID = 20,
+
+    }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record File
@@ -86,8 +574,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     /// Unambiguous identification of the account to which credit and debit entries are made. The following fields are optional only for accounts that are switched:
     /// <br/>
     /// <br/>  * Data.Currency  
-    /// <br/>  * Data.AccountType  
-    /// <br/>  * Data.AccountSubType
+    /// <br/>  * Data.AccountCategory  
+    /// <br/>  * Data.AccountTypeCode
     /// <br/>
     /// <br/>For all other accounts, the fields must be populated by the ASPSP.
     /// </summary>
@@ -101,7 +589,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("Status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBAccountStatus1Code? Status { get; set; } = default!;
+        public OBInternalAccountStatus1Code? Status { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("StatusUpdateDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? StatusUpdateDateTime { get; set; } = default!;
@@ -110,13 +598,13 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
         public string? Currency { get; set; } = default!;
 
-        [Newtonsoft.Json.JsonProperty("AccountType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("AccountCategory", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalAccountType1Code? AccountType { get; set; } = default!;
+        public OBInternalAccountType1Code? AccountCategory { get; set; } = default!;
 
-        [Newtonsoft.Json.JsonProperty("AccountSubType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("AccountTypeCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalAccountSubType1Code? AccountSubType { get; set; } = default!;
+        public OBExternalAccountSubType1Code? AccountTypeCode { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -138,6 +626,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Account", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<Account>? Account { get; set; } = default!;
 
+        [Newtonsoft.Json.JsonProperty("StatementFrequencyAndFormat", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<StatementFrequencyAndFormatInner>? StatementFrequencyAndFormat { get; set; } = default!;
+
         [Newtonsoft.Json.JsonProperty("Servicer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBBranchAndFinancialInstitutionIdentification5_0? Servicer { get; set; } = default!;
 
@@ -156,25 +647,22 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("Status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBAccountStatus1Code? Status { get; set; } = default!;
+        public OBInternalAccountStatus1Code? Status { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("StatusUpdateDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? StatusUpdateDateTime { get; set; } = default!;
 
-        [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public required string Currency { get; set; }
+        public string? Currency { get; set; } = default!;
 
-        [Newtonsoft.Json.JsonProperty("AccountType", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [Newtonsoft.Json.JsonProperty("AccountCategory", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required OBExternalAccountType1Code AccountType { get; set; }
+        public OBInternalAccountType1Code? AccountCategory { get; set; } = default!;
 
-        [Newtonsoft.Json.JsonProperty("AccountSubType", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [Newtonsoft.Json.JsonProperty("AccountTypeCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required OBExternalAccountSubType1Code AccountSubType { get; set; }
+        public OBExternalAccountSubType1Code? AccountTypeCode { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -208,25 +696,22 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("Status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBAccountStatus1Code? Status { get; set; } = default!;
+        public OBInternalAccountStatus1Code? Status { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("StatusUpdateDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? StatusUpdateDateTime { get; set; } = default!;
 
-        [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public required string Currency { get; set; }
+        public string? Currency { get; set; } = default!;
 
-        [Newtonsoft.Json.JsonProperty("AccountType", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [Newtonsoft.Json.JsonProperty("AccountCategory", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required OBExternalAccountType1Code AccountType { get; set; }
+        public OBInternalAccountType1Code? AccountCategory { get; set; } = default!;
 
-        [Newtonsoft.Json.JsonProperty("AccountSubType", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [Newtonsoft.Json.JsonProperty("AccountTypeCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required OBExternalAccountSubType1Code AccountSubType { get; set; }
+        public OBExternalAccountSubType1Code? AccountTypeCode { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -249,16 +734,20 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [System.ComponentModel.DataAnnotations.Required]
         public required System.Collections.Generic.ICollection<Account2> Account { get; set; }
 
+        [Newtonsoft.Json.JsonProperty("StatementFrequencyAndFormat", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<StatementFrequencyAndFormatInner>? StatementFrequencyAndFormat { get; set; } = default!;
+
         [Newtonsoft.Json.JsonProperty("Servicer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBBranchAndFinancialInstitutionIdentification5_0? Servicer { get; set; } = default!;
 
     }
 
     /// <summary>
-    /// Specifies the status of account resource in code form.
+    /// Specifies the status of account resource in code form. &lt;br /&gt;
+    /// <br/>For a full list of enumeration values refer to `OBInternalAccountStatus1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OBAccountStatus1Code
+    public enum OBInternalAccountStatus1Code
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"Deleted")]
@@ -640,6 +1129,39 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
     }
 
+    /// <summary>
+    /// Identifies the nature of the postal address. &lt;br /&gt; For a full set of codes see `OBAddressType2Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets).
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum OBAddressType2Code
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BIZZ")]
+        BIZZ = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DLVY")]
+        DLVY = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MLTO")]
+        MLTO = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PBOX")]
+        PBOX = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ADDR")]
+        ADDR = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"HOME")]
+        HOME = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CORR")]
+        CORR = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"STAT")]
+        STAT = 7,
+
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record OBBCAData1
     {
@@ -667,50 +1189,41 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     }
 
     /// <summary>
-    /// Balance type, in a coded form.
+    /// Balance type, in a coded form. &lt;br /&gt; For a full list of enumeration values refer to `ExternalBalanceType1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets).
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum OBBalanceType1Code
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"ClosingAvailable")]
-        ClosingAvailable = 0,
+        [System.Runtime.Serialization.EnumMember(Value = @"CLAV")]
+        CLAV = 0,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"ClosingBooked")]
-        ClosingBooked = 1,
+        [System.Runtime.Serialization.EnumMember(Value = @"CLBD")]
+        CLBD = 1,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"ClosingCleared")]
-        ClosingCleared = 2,
+        [System.Runtime.Serialization.EnumMember(Value = @"FWAV")]
+        FWAV = 2,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Expected")]
-        Expected = 3,
+        [System.Runtime.Serialization.EnumMember(Value = @"INFO")]
+        INFO = 3,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"ForwardAvailable")]
-        ForwardAvailable = 4,
+        [System.Runtime.Serialization.EnumMember(Value = @"ITAV")]
+        ITAV = 4,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Information")]
-        Information = 5,
+        [System.Runtime.Serialization.EnumMember(Value = @"ITBD")]
+        ITBD = 5,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"InterimAvailable")]
-        InterimAvailable = 6,
+        [System.Runtime.Serialization.EnumMember(Value = @"OPAV")]
+        OPAV = 6,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"InterimBooked")]
-        InterimBooked = 7,
+        [System.Runtime.Serialization.EnumMember(Value = @"OPBD")]
+        OPBD = 7,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"InterimCleared")]
-        InterimCleared = 8,
+        [System.Runtime.Serialization.EnumMember(Value = @"PRCD")]
+        PRCD = 8,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"OpeningAvailable")]
-        OpeningAvailable = 9,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"OpeningBooked")]
-        OpeningBooked = 10,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"OpeningCleared")]
-        OpeningCleared = 11,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"PreviouslyClosedBooked")]
-        PreviouslyClosedBooked = 12,
+        [System.Runtime.Serialization.EnumMember(Value = @"XPCD")]
+        XPCD = 9,
 
     }
 
@@ -757,7 +1270,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("BeneficiaryType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBBeneficiaryType1Code? BeneficiaryType { get; set; } = default!;
+        public OBInternalBeneficiaryType1Code? BeneficiaryType { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Reference", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -787,7 +1300,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("BeneficiaryType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBBeneficiaryType1Code? BeneficiaryType { get; set; } = default!;
+        public OBInternalBeneficiaryType1Code? BeneficiaryType { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Reference", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -811,7 +1324,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("BeneficiaryType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBBeneficiaryType1Code? BeneficiaryType { get; set; } = default!;
+        public OBInternalBeneficiaryType1Code? BeneficiaryType { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Reference", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -844,6 +1357,10 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
         public required string Identification { get; set; }
 
+        [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(140, MinimumLength = 1)]
+        public string? Name { get; set; } = default!;
+
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
         [Newtonsoft.Json.JsonExtensionData]
@@ -870,6 +1387,18 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
         public required string Identification { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(140, MinimumLength = 1)]
+        public string? Name { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("PostalAddress", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBPostalAddress7? PostalAddress { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("LEI", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(20, MinimumLength = 1)]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z0-9]{18,18}[0-9]{2,2}$")]
+        public string? LEI { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -901,7 +1430,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public string? Name { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("PostalAddress", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public OBPostalAddress6? PostalAddress { get; set; } = default!;
+        public OBPostalAddress7? PostalAddress { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("LEI", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(20, MinimumLength = 1)]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z0-9]{18,18}[0-9]{2,2}$")]
+        public string? LEI { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -931,8 +1465,13 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [System.ComponentModel.DataAnnotations.StringLength(140, MinimumLength = 1)]
         public string? Name { get; set; } = default!;
 
+        [Newtonsoft.Json.JsonProperty("LEI", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(20, MinimumLength = 1)]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z0-9]{18,18}[0-9]{2,2}$")]
+        public string? LEI { get; set; } = default!;
+
         [Newtonsoft.Json.JsonProperty("PostalAddress", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public OBPostalAddress6? PostalAddress { get; set; } = default!;
+        public OBPostalAddress7? PostalAddress { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -962,8 +1501,13 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [System.ComponentModel.DataAnnotations.StringLength(140, MinimumLength = 1)]
         public string? Name { get; set; } = default!;
 
+        [Newtonsoft.Json.JsonProperty("LEI", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(20, MinimumLength = 1)]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z0-9]{18,18}[0-9]{2,2}$")]
+        public string? LEI { get; set; } = default!;
+
         [Newtonsoft.Json.JsonProperty("PostalAddress", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public OBPostalAddress6? PostalAddress { get; set; } = default!;
+        public OBPostalAddress7? PostalAddress { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -998,6 +1542,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("SecondaryIdentification", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(34, MinimumLength = 1)]
         public string? SecondaryIdentification { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("Proxy", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBProxy1? Proxy { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -1036,6 +1583,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [System.ComponentModel.DataAnnotations.StringLength(34, MinimumLength = 1)]
         public string? SecondaryIdentification { get; set; } = default!;
 
+        [Newtonsoft.Json.JsonProperty("Proxy", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBProxy1? Proxy { get; set; } = default!;
+
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
         [Newtonsoft.Json.JsonExtensionData]
@@ -1067,6 +1617,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("SecondaryIdentification", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(34, MinimumLength = 1)]
         public string? SecondaryIdentification { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("Proxy", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBProxy1? Proxy { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -1100,6 +1653,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [System.ComponentModel.DataAnnotations.StringLength(34, MinimumLength = 1)]
         public string? SecondaryIdentification { get; set; } = default!;
 
+        [Newtonsoft.Json.JsonProperty("Proxy", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBProxy1? Proxy { get; set; } = default!;
+
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
         [Newtonsoft.Json.JsonExtensionData]
@@ -1112,7 +1668,190 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     }
 
     /// <summary>
-    /// Indicates whether the amount is a credit or a debit. 
+    /// Enumeration of codes that outlines the type of purpose behind a transaction, payment or risk.  For all enum values see `ExternalCategoryPurpose1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ExternalCategoryPurpose1Code
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BONU")]
+        BONU = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CASH")]
+        CASH = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CBLK")]
+        CBLK = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CCRD")]
+        CCRD = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CGWV")]
+        CGWV = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CIPC")]
+        CIPC = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CONC")]
+        CONC = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CORT")]
+        CORT = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DCRD")]
+        DCRD = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DIVI")]
+        DIVI = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DVPM")]
+        DVPM = 10,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EPAY")]
+        EPAY = 11,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FCDT")]
+        FCDT = 12,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FCIN")]
+        FCIN = 13,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FCOL")]
+        FCOL = 14,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GOVT")]
+        GOVT = 15,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GP2P")]
+        GP2P = 16,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"HEDG")]
+        HEDG = 17,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ICCP")]
+        ICCP = 18,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"IDCP")]
+        IDCP = 19,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INTC")]
+        INTC = 20,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INTE")]
+        INTE = 21,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LBOX")]
+        LBOX = 22,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LOAN")]
+        LOAN = 23,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MP2B")]
+        MP2B = 24,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MP2P")]
+        MP2P = 25,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OTHR")]
+        OTHR = 26,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PENS")]
+        PENS = 27,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RPRE")]
+        RPRE = 28,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RRCT")]
+        RRCT = 29,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RVPM")]
+        RVPM = 30,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SALA")]
+        SALA = 31,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SECU")]
+        SECU = 32,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SSBE")]
+        SSBE = 33,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SUPP")]
+        SUPP = 34,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SWEP")]
+        SWEP = 35,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TAXS")]
+        TAXS = 36,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TOPG")]
+        TOPG = 37,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TRAD")]
+        TRAD = 38,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TREA")]
+        TREA = 39,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"VATX")]
+        VATX = 40,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"VOST")]
+        VOST = 41,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"WHLD")]
+        WHLD = 42,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ZABA")]
+        ZABA = 43,
+
+    }
+
+    /// <summary>
+    /// Type of mandate instruction. For a full list of values see `OBExternalClassification1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum OBExternalMandateClassification1Code
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FIXE")]
+        FIXE = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"USGB")]
+        USGB = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"VARI")]
+        VARI = 2,
+
+    }
+
+    /// <summary>
+    /// For a full list of enumeration values see `OBExternalCommunicationMethod2Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_internal_CodeSets) 
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum OBCommunicationMethod
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EMAL")]
+        EMAL = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FAXI")]
+        FAXI = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FILE")]
+        FILE = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ONLI")]
+        ONLI = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"POST")]
+        POST = 4,
+
+    }
+
+    /// <summary>
+    /// Indicates whether the amount is a credit or a debit. For a full list of values see `OBInternalCreditDebitCode` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)&lt;br /&gt;
     /// <br/>Usage: A zero amount is considered to be a credit amount.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -1128,7 +1867,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     }
 
     /// <summary>
-    /// Indicates whether the transaction is a credit or a debit entry.
+    /// Indicates whether the transaction is a credit or a debit entry. &lt;br /&gt;
+    /// <br/>&lt;br /&gt;
+    /// <br/>For a full list of enumeration values refer to `OBInternalCreditDebitCode` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum OBCreditDebitCode_1
@@ -1145,6 +1886,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     /// <summary>
     /// Indicates whether the balance is a credit or a debit balance. 
     /// <br/>Usage: A zero balance is considered to be a credit balance.
+    /// <br/>&lt;br /&gt;
+    /// <br/>For a full list of enumeration values refer to `OBInternalCreditDebitCode` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum OBCreditDebitCode_2
@@ -1201,7 +1944,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public string? ContractIdentification { get; set; } = default!;
 
         /// <summary>
-        /// Date and time at which an exchange rate is quoted.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
+        /// Date and time at which an exchange rate is quoted. All dates in the JSON payloads are represented in ISO 8601 date-time format. 
         /// <br/>All date-time fields in responses must include the timezone. An example is below:
         /// <br/>2017-04-05T10:43:07+00:00
         /// </summary>
@@ -1226,28 +1969,36 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     }
 
     /// <summary>
-    /// Status of a transaction entry on the books of the account servicer.
+    /// Status of a transaction entry on the books of the account servicer. &lt;br /&gt;
+    /// <br/>For a full list of enumeration values refer to `ExternalEntryStatus1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OBEntryStatus1Code
+    public enum ExternalEntryStatus1Code
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Booked")]
-        Booked = 0,
+        [System.Runtime.Serialization.EnumMember(Value = @"BOOK")]
+        BOOK = 0,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Pending")]
-        Pending = 1,
+        [System.Runtime.Serialization.EnumMember(Value = @"FUTR")]
+        FUTR = 1,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Rejected")]
-        Rejected = 2,
+        [System.Runtime.Serialization.EnumMember(Value = @"INFO")]
+        INFO = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PDNG")]
+        PDNG = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RJCT")]
+        RJCT = 4,
 
     }
 
     /// <summary>
-    /// Specifies the Mutability of the Transaction record.
+    /// Specifies the Mutability of the Transaction record. &lt;br /&gt;
+    /// <br/>For a full list of enumeration values refer to `OBInternalTransactionMutability1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OBTransactionMutability1Code
+    public enum OBInternalTransactionMutability1Code
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"Mutable")]
@@ -1261,21 +2012,18 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record OBError1
     {
-        /// <summary>
-        /// Low level textual error code, e.g., UK.OBIE.Field.Missing
-        /// </summary>
         [Newtonsoft.Json.JsonProperty("ErrorCode", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(4, MinimumLength = 4)]
         public required string ErrorCode { get; set; }
 
         /// <summary>
         /// A description of the error that occurred. e.g., 'A mandatory field isn't supplied' or 'RequestedExecutionDateTime must be in future'
-        /// <br/>OBIE doesn't standardise this field
+        /// <br/>OBL doesn't standardise this field
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("Message", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
+        [Newtonsoft.Json.JsonProperty("Message", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(500, MinimumLength = 1)]
-        public required string Message { get; set; }
+        public string? Message { get; set; } = default!;
 
         /// <summary>
         /// Recommended but optional reference to the JSON Path of the field with error, e.g., Data.Initiation.InstructedAmount.Currency
@@ -1299,14 +2047,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     public partial record OBErrorResponse1
     {
         /// <summary>
-        /// High level textual error code, to help categorize the errors.
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("Code", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public required string Code { get; set; }
-
-        /// <summary>
         /// A unique reference for the error instance, for audit purposes, in case of unknown/unclassified errors.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("Id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -1314,12 +2054,18 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public string? Id { get; set; } = default!;
 
         /// <summary>
-        /// Brief Error message, e.g., 'There is something wrong with the request parameters provided'
+        /// Deprecated &lt;br /&gt;High level textual error code, to help categorise the errors.
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("Message", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
+        [Newtonsoft.Json.JsonProperty("Code", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
+        public string? Code { get; set; } = default!;
+
+        /// <summary>
+        /// Deprecated &lt;br /&gt;Brief Error message
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Message", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(500, MinimumLength = 1)]
-        public required string Message { get; set; }
+        public string? Message { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Errors", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
@@ -1329,46 +2075,94 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     }
 
     /// <summary>
-    /// Specifies the sub type of account (product family group).
+    /// Specifies the sub type of account (product family group) &lt;br /&gt; For a full list of enumeration values refer to `OBExternalCashAccountType1Code` *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum OBExternalAccountSubType1Code
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"ChargeCard")]
-        ChargeCard = 0,
+        [System.Runtime.Serialization.EnumMember(Value = @"CACC")]
+        CACC = 0,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"CreditCard")]
-        CreditCard = 1,
+        [System.Runtime.Serialization.EnumMember(Value = @"CARD")]
+        CARD = 1,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"CurrentAccount")]
-        CurrentAccount = 2,
+        [System.Runtime.Serialization.EnumMember(Value = @"CASH")]
+        CASH = 2,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"EMoney")]
-        EMoney = 3,
+        [System.Runtime.Serialization.EnumMember(Value = @"CHAR")]
+        CHAR = 3,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Loan")]
-        Loan = 4,
+        [System.Runtime.Serialization.EnumMember(Value = @"CISH")]
+        CISH = 4,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Mortgage")]
-        Mortgage = 5,
+        [System.Runtime.Serialization.EnumMember(Value = @"COMM")]
+        COMM = 5,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"PrePaidCard")]
-        PrePaidCard = 6,
+        [System.Runtime.Serialization.EnumMember(Value = @"CPAC")]
+        CPAC = 6,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Savings")]
-        Savings = 7,
+        [System.Runtime.Serialization.EnumMember(Value = @"LLSV")]
+        LLSV = 7,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Wallet")]
-        Wallet = 8,
+        [System.Runtime.Serialization.EnumMember(Value = @"LOAN")]
+        LOAN = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MGLD")]
+        MGLD = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MOMA")]
+        MOMA = 10,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"NREX")]
+        NREX = 11,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ODFT")]
+        ODFT = 12,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ONDP")]
+        ONDP = 13,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OTHR")]
+        OTHR = 14,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SACC")]
+        SACC = 15,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SLRY")]
+        SLRY = 16,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SVGS")]
+        SVGS = 17,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TAXE")]
+        TAXE = 18,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TRAN")]
+        TRAN = 19,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TRAS")]
+        TRAS = 20,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"VACC")]
+        VACC = 21,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"NFCA")]
+        NFCA = 22,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MORT")]
+        MORT = 23,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"WALT")]
+        WALT = 24,
 
     }
 
     /// <summary>
-    /// Specifies the type of account (personal or business).
+    /// Specifies the type of account (personal or business). &lt;br /&gt; For a full list of enumeration values refer to 'OBInternalAccountType1Code' in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OBExternalAccountType1Code
+    public enum OBInternalAccountType1Code
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"Business")]
@@ -1380,40 +2174,25 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     }
 
     /// <summary>
-    /// Amount sub type, in a coded form.
+    /// Amount sub type, in a coded form. Default if not specified is BCUR of the account.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum OBExternalBalanceSubType1Code
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"BaseCurrency")]
-        BaseCurrency = 0,
+        [System.Runtime.Serialization.EnumMember(Value = @"BCUR")]
+        BCUR = 0,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"LocalCurrency")]
-        LocalCurrency = 1,
-
-    }
-
-    /// <summary>
-    /// Specifies the status of the direct debit in code form.
-    /// </summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OBExternalDirectDebitStatus1Code
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Active")]
-        Active = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Inactive")]
-        Inactive = 1,
+        [System.Runtime.Serialization.EnumMember(Value = @"LCUR")]
+        LCUR = 1,
 
     }
 
     /// <summary>
-    /// Party type, in a coded form.
+    /// Party type, in a coded form. For a full list see `OBInternalPartyType1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OBExternalPartyType1Code
+    public enum OBInternalPartyType1Code
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"Delegate")]
@@ -1428,10 +2207,1003 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     }
 
     /// <summary>
-    /// Specifies the scheduled payment date type requested
+    /// For a full list of enumeration values refer to `ExternalPurpose1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OBExternalScheduleType1Code
+    public enum OBExternalPurpose1Code
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BKDF")]
+        BKDF = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BKFE")]
+        BKFE = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BKFM")]
+        BKFM = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BKIP")]
+        BKIP = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BKPP")]
+        BKPP = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CBLK")]
+        CBLK = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CDCB")]
+        CDCB = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CDCD")]
+        CDCD = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CDCS")]
+        CDCS = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CDDP")]
+        CDDP = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CDOC")]
+        CDOC = 10,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CDQC")]
+        CDQC = 11,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ETUP")]
+        ETUP = 12,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FCOL")]
+        FCOL = 13,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MTUP")]
+        MTUP = 14,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ACCT")]
+        ACCT = 15,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CASH")]
+        CASH = 16,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"COLL")]
+        COLL = 17,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CSDB")]
+        CSDB = 18,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DEPT")]
+        DEPT = 19,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INTC")]
+        INTC = 20,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INTP")]
+        INTP = 21,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LIMA")]
+        LIMA = 22,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"NETT")]
+        NETT = 23,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BFWD")]
+        BFWD = 24,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CCIR")]
+        CCIR = 25,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CCPC")]
+        CCPC = 26,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CCPM")]
+        CCPM = 27,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CCSM")]
+        CCSM = 28,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CRDS")]
+        CRDS = 29,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CRPR")]
+        CRPR = 30,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CRSP")]
+        CRSP = 31,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CRTL")]
+        CRTL = 32,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EQPT")]
+        EQPT = 33,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EQUS")]
+        EQUS = 34,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EXPT")]
+        EXPT = 35,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EXTD")]
+        EXTD = 36,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FIXI")]
+        FIXI = 37,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FWBC")]
+        FWBC = 38,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FWCC")]
+        FWCC = 39,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FWSB")]
+        FWSB = 40,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FWSC")]
+        FWSC = 41,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MARG")]
+        MARG = 42,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MBSB")]
+        MBSB = 43,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MBSC")]
+        MBSC = 44,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MGCC")]
+        MGCC = 45,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MGSC")]
+        MGSC = 46,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OCCC")]
+        OCCC = 47,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OPBC")]
+        OPBC = 48,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OPCC")]
+        OPCC = 49,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OPSB")]
+        OPSB = 50,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OPSC")]
+        OPSC = 51,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OPTN")]
+        OPTN = 52,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OTCD")]
+        OTCD = 53,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"REPO")]
+        REPO = 54,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RPBC")]
+        RPBC = 55,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RPCC")]
+        RPCC = 56,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RPSB")]
+        RPSB = 57,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RPSC")]
+        RPSC = 58,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RVPO")]
+        RVPO = 59,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SBSC")]
+        SBSC = 60,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SCIE")]
+        SCIE = 61,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SCIR")]
+        SCIR = 62,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SCRP")]
+        SCRP = 63,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SHBC")]
+        SHBC = 64,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SHCC")]
+        SHCC = 65,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SHSL")]
+        SHSL = 66,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SLEB")]
+        SLEB = 67,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SLOA")]
+        SLOA = 68,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SWBC")]
+        SWBC = 69,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SWCC")]
+        SWCC = 70,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SWPT")]
+        SWPT = 71,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SWSB")]
+        SWSB = 72,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SWSC")]
+        SWSC = 73,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TBAS")]
+        TBAS = 74,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TBBC")]
+        TBBC = 75,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TBCC")]
+        TBCC = 76,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TRCP")]
+        TRCP = 77,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"AGRT")]
+        AGRT = 78,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"AREN")]
+        AREN = 79,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BEXP")]
+        BEXP = 80,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BOCE")]
+        BOCE = 81,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"COMC")]
+        COMC = 82,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CPYR")]
+        CPYR = 83,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GDDS")]
+        GDDS = 84,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GDSV")]
+        GDSV = 85,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GSCB")]
+        GSCB = 86,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LICF")]
+        LICF = 87,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MP2B")]
+        MP2B = 88,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"POPE")]
+        POPE = 89,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ROYA")]
+        ROYA = 90,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SCVE")]
+        SCVE = 91,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SERV")]
+        SERV = 92,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SUBS")]
+        SUBS = 93,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SUPP")]
+        SUPP = 94,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TRAD")]
+        TRAD = 95,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CHAR")]
+        CHAR = 96,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"COMT")]
+        COMT = 97,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MP2P")]
+        MP2P = 98,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ECPG")]
+        ECPG = 99,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ECPR")]
+        ECPR = 100,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ECPU")]
+        ECPU = 101,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EPAY")]
+        EPAY = 102,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CLPR")]
+        CLPR = 103,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"COMP")]
+        COMP = 104,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DBTC")]
+        DBTC = 105,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GOVI")]
+        GOVI = 106,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"HLRP")]
+        HLRP = 107,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"HLST")]
+        HLST = 108,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INPC")]
+        INPC = 109,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INPR")]
+        INPR = 110,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INSC")]
+        INSC = 111,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INSU")]
+        INSU = 112,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INTE")]
+        INTE = 113,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LBRI")]
+        LBRI = 114,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LIFI")]
+        LIFI = 115,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LOAN")]
+        LOAN = 116,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LOAR")]
+        LOAR = 117,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PENO")]
+        PENO = 118,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PPTI")]
+        PPTI = 119,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RELG")]
+        RELG = 120,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RINP")]
+        RINP = 121,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TRFD")]
+        TRFD = 122,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FORW")]
+        FORW = 123,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FXNT")]
+        FXNT = 124,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ADMG")]
+        ADMG = 125,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ADVA")]
+        ADVA = 126,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BCDM")]
+        BCDM = 127,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BCFG")]
+        BCFG = 128,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BLDM")]
+        BLDM = 129,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BNET")]
+        BNET = 130,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CBFF")]
+        CBFF = 131,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CBFR")]
+        CBFR = 132,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CCRD")]
+        CCRD = 133,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CDBL")]
+        CDBL = 134,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CFEE")]
+        CFEE = 135,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CGDD")]
+        CGDD = 136,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CORT")]
+        CORT = 137,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"COST")]
+        COST = 138,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CPKC")]
+        CPKC = 139,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DCRD")]
+        DCRD = 140,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DSMT")]
+        DSMT = 141,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DVPM")]
+        DVPM = 142,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EDUC")]
+        EDUC = 143,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FACT")]
+        FACT = 144,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FAND")]
+        FAND = 145,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FCPM")]
+        FCPM = 146,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FEES")]
+        FEES = 147,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GIFT")]
+        GIFT = 148,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GOVT")]
+        GOVT = 149,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ICCP")]
+        ICCP = 150,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"IDCP")]
+        IDCP = 151,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"IHRP")]
+        IHRP = 152,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INSM")]
+        INSM = 153,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"IVPT")]
+        IVPT = 154,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MCDM")]
+        MCDM = 155,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MCFG")]
+        MCFG = 156,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MSVC")]
+        MSVC = 157,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"NOWS")]
+        NOWS = 158,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OCDM")]
+        OCDM = 159,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OCFG")]
+        OCFG = 160,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OFEE")]
+        OFEE = 161,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OTHR")]
+        OTHR = 162,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PADD")]
+        PADD = 163,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PTSP")]
+        PTSP = 164,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RCKE")]
+        RCKE = 165,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RCPT")]
+        RCPT = 166,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"REBT")]
+        REBT = 167,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"REFU")]
+        REFU = 168,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RENT")]
+        RENT = 169,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"REOD")]
+        REOD = 170,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RIMB")]
+        RIMB = 171,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RPNT")]
+        RPNT = 172,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RRBN")]
+        RRBN = 173,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RRCT")]
+        RRCT = 174,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RRTP")]
+        RRTP = 175,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RVPM")]
+        RVPM = 176,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SLPI")]
+        SLPI = 177,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SPLT")]
+        SPLT = 178,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"STDY")]
+        STDY = 179,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TBAN")]
+        TBAN = 180,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TBIL")]
+        TBIL = 181,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TCSC")]
+        TCSC = 182,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TELI")]
+        TELI = 183,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TMPG")]
+        TMPG = 184,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TPRI")]
+        TPRI = 185,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TPRP")]
+        TPRP = 186,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TRNC")]
+        TRNC = 187,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TRVC")]
+        TRVC = 188,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"WEBI")]
+        WEBI = 189,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"IPAY")]
+        IPAY = 190,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"IPCA")]
+        IPCA = 191,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"IPDO")]
+        IPDO = 192,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"IPEA")]
+        IPEA = 193,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"IPEC")]
+        IPEC = 194,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"IPEW")]
+        IPEW = 195,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"IPPS")]
+        IPPS = 196,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"IPRT")]
+        IPRT = 197,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"IPU2")]
+        IPU2 = 198,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"IPUW")]
+        IPUW = 199,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ANNI")]
+        ANNI = 200,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CAFI")]
+        CAFI = 201,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CFDI")]
+        CFDI = 202,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CMDT")]
+        CMDT = 203,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DERI")]
+        DERI = 204,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DIVD")]
+        DIVD = 205,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FREX")]
+        FREX = 206,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"HEDG")]
+        HEDG = 207,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INVS")]
+        INVS = 208,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PRME")]
+        PRME = 209,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SAVG")]
+        SAVG = 210,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SECU")]
+        SECU = 211,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SEPI")]
+        SEPI = 212,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TREA")]
+        TREA = 213,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"UNIT")]
+        UNIT = 214,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FNET")]
+        FNET = 215,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FUTR")]
+        FUTR = 216,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ANTS")]
+        ANTS = 217,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CVCF")]
+        CVCF = 218,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DMEQ")]
+        DMEQ = 219,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DNTS")]
+        DNTS = 220,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"HLTC")]
+        HLTC = 221,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"HLTI")]
+        HLTI = 222,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"HSPC")]
+        HSPC = 223,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ICRF")]
+        ICRF = 224,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LTCF")]
+        LTCF = 225,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MAFC")]
+        MAFC = 226,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MARF")]
+        MARF = 227,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MDCS")]
+        MDCS = 228,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"VIEW")]
+        VIEW = 229,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CDEP")]
+        CDEP = 230,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SWFP")]
+        SWFP = 231,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SWPP")]
+        SWPP = 232,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SWRS")]
+        SWRS = 233,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SWUF")]
+        SWUF = 234,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ADCS")]
+        ADCS = 235,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"AEMP")]
+        AEMP = 236,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ALLW")]
+        ALLW = 237,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ALMY")]
+        ALMY = 238,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BBSC")]
+        BBSC = 239,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BECH")]
+        BECH = 240,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BENE")]
+        BENE = 241,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BONU")]
+        BONU = 242,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CCHD")]
+        CCHD = 243,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"COMM")]
+        COMM = 244,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CSLP")]
+        CSLP = 245,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GFRP")]
+        GFRP = 246,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GVEA")]
+        GVEA = 247,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GVEB")]
+        GVEB = 248,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GVEC")]
+        GVEC = 249,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GVED")]
+        GVED = 250,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GWLT")]
+        GWLT = 251,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"HREC")]
+        HREC = 252,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PAYR")]
+        PAYR = 253,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PEFC")]
+        PEFC = 254,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PENS")]
+        PENS = 255,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PRCP")]
+        PRCP = 256,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RHBS")]
+        RHBS = 257,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SALA")]
+        SALA = 258,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SPSP")]
+        SPSP = 259,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SSBE")]
+        SSBE = 260,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LBIN")]
+        LBIN = 261,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LCOL")]
+        LCOL = 262,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LFEE")]
+        LFEE = 263,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LMEQ")]
+        LMEQ = 264,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LMFI")]
+        LMFI = 265,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LMRK")]
+        LMRK = 266,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LREB")]
+        LREB = 267,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LREV")]
+        LREV = 268,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LSFL")]
+        LSFL = 269,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ESTX")]
+        ESTX = 270,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FWLV")]
+        FWLV = 271,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GSTX")]
+        GSTX = 272,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"HSTX")]
+        HSTX = 273,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INTX")]
+        INTX = 274,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"NITX")]
+        NITX = 275,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PTXP")]
+        PTXP = 276,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RDTX")]
+        RDTX = 277,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TAXS")]
+        TAXS = 278,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"VATX")]
+        VATX = 279,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"WHLD")]
+        WHLD = 280,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TAXR")]
+        TAXR = 281,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"B112")]
+        B112 = 282,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BR12")]
+        BR12 = 283,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TLRF")]
+        TLRF = 284,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TLRR")]
+        TLRR = 285,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"AIRB")]
+        AIRB = 286,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BUSB")]
+        BUSB = 287,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FERB")]
+        FERB = 288,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RLWY")]
+        RLWY = 289,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TRPT")]
+        TRPT = 290,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CBTV")]
+        CBTV = 291,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ELEC")]
+        ELEC = 292,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ENRG")]
+        ENRG = 293,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GASB")]
+        GASB = 294,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"NWCH")]
+        NWCH = 295,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"NWCM")]
+        NWCM = 296,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OTLC")]
+        OTLC = 297,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PHON")]
+        PHON = 298,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"UBIL")]
+        UBIL = 299,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"WTER")]
+        WTER = 300,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BOND")]
+        BOND = 301,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CABD")]
+        CABD = 302,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CAEQ")]
+        CAEQ = 303,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CBCR")]
+        CBCR = 304,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DBCR")]
+        DBCR = 305,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DICL")]
+        DICL = 306,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EQTS")]
+        EQTS = 307,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FLCR")]
+        FLCR = 308,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EFTC")]
+        EFTC = 309,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EFTD")]
+        EFTD = 310,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MOMA")]
+        MOMA = 311,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RAPI")]
+        RAPI = 312,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GAMB")]
+        GAMB = 313,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LOTT")]
+        LOTT = 314,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"AMEX")]
+        AMEX = 315,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SASW")]
+        SASW = 316,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"AUCO")]
+        AUCO = 317,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PCOM")]
+        PCOM = 318,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PDEP")]
+        PDEP = 319,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PLDS")]
+        PLDS = 320,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PLRF")]
+        PLRF = 321,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GAFA")]
+        GAFA = 322,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GAHO")]
+        GAHO = 323,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CPEN")]
+        CPEN = 324,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DEPD")]
+        DEPD = 325,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RETL")]
+        RETL = 326,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DEBT")]
+        DEBT = 327,
+
+    }
+
+    /// <summary>
+    /// Specifies the scheduled payment date type requested. For a full list of enumeration values refer to `OBInternalScheduleType1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum OBInternalScheduleType1Code
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"Arrival")]
@@ -1443,25 +3215,31 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     }
 
     /// <summary>
-    /// Specifies the status of the standing order in code form.
+    /// Specifies the status of the standing order in code form. For a full list of enumeration values refer to 'ExternalMandateStatus1Code' in *ISO_External_Codeset* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OBExternalStandingOrderStatus1Code
+    public enum ExternalMandateStatus1Code
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Active")]
-        Active = 0,
+        [System.Runtime.Serialization.EnumMember(Value = @"ACTV")]
+        ACTV = 0,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Inactive")]
-        Inactive = 1,
+        [System.Runtime.Serialization.EnumMember(Value = @"CANC")]
+        CANC = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EXPI")]
+        EXPI = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SUSP")]
+        SUSP = 3,
 
     }
 
     /// <summary>
-    /// Statement type, in a coded form.
+    /// Statement type, in a coded form. For a full list of values see `OBInternalStatementType1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OBExternalStatementType1Code
+    public enum OBInternalStatementType1Code
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"AccountClosure")]
@@ -1478,6 +3256,170 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [System.Runtime.Serialization.EnumMember(Value = @"RegularPeriodic")]
         RegularPeriodic = 4,
+
+    }
+
+    /// <summary>
+    /// For a full list of enumeration values refer to `OBFrequency2Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_internal_CodeSets)
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum OBFrequency2
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"YEAR")]
+        YEAR = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DAIL")]
+        DAIL = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INDA")]
+        INDA = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MNTH")]
+        MNTH = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"QURT")]
+        QURT = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MIAN")]
+        MIAN = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TEND")]
+        TEND = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MOVE")]
+        MOVE = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"WEEK")]
+        WEEK = 8,
+
+    }
+
+    /// <summary>
+    /// Individual Definitions:
+    /// <br/> ADHO - Adhoc 
+    /// <br/> YEAR - Annual
+    /// <br/>DAIL - Daily
+    /// <br/>INDA - Intra Day
+    /// <br/>MNTH - Monthly
+    /// <br/>QURT - Quarterly
+    /// <br/>WEEK - Weekly 
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum OBFrequencyPeriodType
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ADHO")]
+        ADHO = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"YEAR")]
+        YEAR = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DAIL")]
+        DAIL = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INDA")]
+        INDA = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MNTH")]
+        MNTH = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"QURT")]
+        QURT = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MIAN")]
+        MIAN = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"WEEK")]
+        WEEK = 7,
+
+    }
+
+    /// <summary>
+    /// For a full list of enumeration values refer to `ExternalDocumentFormat1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_internal_CodeSets)
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum OBFileFormat
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DPDF")]
+        DPDF = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DXML")]
+        DXML = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SDSH")]
+        SDSH = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"WORD")]
+        WORD = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"XSLT")]
+        XSLT = 4,
+
+    }
+
+    /// <summary>
+    /// Provides further details of the mandate signed between the creditor and the debtor.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record OBMandateRelatedInformation1
+    {
+        /// <summary>
+        /// Unique identification, as assigned by the creditor, to unambiguously identify the mandate.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("MandateIdentification", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
+        public string? MandateIdentification { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("Classification", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public OBExternalMandateClassification1Code? Classification { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("CategoryPurposeCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ExternalCategoryPurpose1Code? CategoryPurposeCode { get; set; } = default!;
+
+        /// <summary>
+        /// The date on which the first payment for a recurrent credit transfer will be made.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("FirstPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? FirstPaymentDateTime { get; set; } = default!;
+
+        /// <summary>
+        /// The date on which the first recurring payment for a Standing Order schedule will be made. 
+        /// <br/>Usage: This must be populated only if the first recurring date is different to the first payment date. All dates in the JSON payloads are represented in ISO 8601 date-time format. 
+        /// <br/>All date-time fields in responses must include the timezone. An example is below:
+        /// <br/>2017-04-05T10:43:07+00:00
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("RecurringPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? RecurringPaymentDateTime { get; set; } = default!;
+
+        /// <summary>
+        /// The date on which the final payment for a recurrent credit transfer will be made.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("FinalPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? FinalPaymentDateTime { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("Frequency", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        public required OBFrequency6 Frequency { get; set; }
+
+        /// <summary>
+        /// Reason for the setup of the credit transfer mandate.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Reason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(256, MinimumLength = 1)]
+        public string? Reason { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 
@@ -1552,7 +3494,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("PartyType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalPartyType1Code? PartyType { get; set; } = default!;
+        public OBInternalPartyType1Code? PartyType { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
@@ -1565,6 +3507,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("LegalStructure", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string? LegalStructure { get; set; } = default!;
 
+        [Newtonsoft.Json.JsonProperty("LEI", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(20, MinimumLength = 1)]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z0-9]{18,18}[0-9]{2,2}$")]
+        public string? LEI { get; set; } = default!;
+
+        /// <summary>
+        /// A flag to indicate a party's beneficial ownership of the related account
+        /// </summary>
         [Newtonsoft.Json.JsonProperty("BeneficialOwnership", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool? BeneficialOwnership { get; set; } = default!;
 
@@ -1587,7 +3537,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public OBPartyRelationships1? Relationships { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Address", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<Address>? Address { get; set; } = default!;
+        public System.Collections.Generic.ICollection<OBPostalAddress7>? Address { get; set; } = default!;
 
     }
 
@@ -1618,11 +3568,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     /// Information that locates and identifies a specific address, as defined by postal services.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record OBPostalAddress6
+    public partial record OBPostalAddress7
     {
         [Newtonsoft.Json.JsonProperty("AddressType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBAddressTypeCode? AddressType { get; set; } = default!;
+        public OBAddressType2Code? AddressType { get; set; } = default!;
 
         /// <summary>
         /// Identification of a division of a large organisation or building.
@@ -1639,19 +3589,51 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public string? SubDepartment { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("StreetName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
+        [System.ComponentModel.DataAnnotations.StringLength(140, MinimumLength = 1)]
         public string? StreetName { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("BuildingNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(16, MinimumLength = 1)]
         public string? BuildingNumber { get; set; } = default!;
 
+        [Newtonsoft.Json.JsonProperty("BuildingName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(140, MinimumLength = 1)]
+        public string? BuildingName { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("Floor", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
+        public string? Floor { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("UnitNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(16, MinimumLength = 1)]
+        public string? UnitNumber { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("Room", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
+        public string? Room { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("PostBox", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(16, MinimumLength = 1)]
+        public string? PostBox { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("TownLocationName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(140, MinimumLength = 1)]
+        public string? TownLocationName { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("DistrictName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(140, MinimumLength = 1)]
+        public string? DistrictName { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("CareOf", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(140, MinimumLength = 1)]
+        public string? CareOf { get; set; } = default!;
+
         [Newtonsoft.Json.JsonProperty("PostCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(16, MinimumLength = 1)]
         public string? PostCode { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("TownName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
+        [System.ComponentModel.DataAnnotations.StringLength(140, MinimumLength = 1)]
         public string? TownName { get; set; } = default!;
 
         /// <summary>
@@ -1726,6 +3708,15 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Meta", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Meta? Meta { get; set; } = default!;
 
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -1738,6 +3729,15 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Risk", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         public required OBRisk2 Risk { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 
@@ -1836,7 +3836,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     }
 
     /// <summary>
-    /// Product details of Other Product which is not avaiable in the standard list
+    /// Product details of Other Product which is not available in the standard list
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record OBReadProduct2
@@ -1916,15 +3916,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
     }
 
-    /// <summary>
-    /// The Risk section is sent by the initiating party to the ASPSP. It is used to specify additional details for risk scoring for Account Info.
-    /// </summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record OBRisk2
-    {
-
-    }
-
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record OBScheduledPayment3
     {
@@ -1944,7 +3935,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ScheduledType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required OBExternalScheduleType1Code ScheduledType { get; set; }
+        public required OBInternalScheduleType1Code ScheduledType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Reference", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -1985,7 +3976,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ScheduledType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required OBExternalScheduleType1Code ScheduledType { get; set; }
+        public required OBInternalScheduleType1Code ScheduledType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Reference", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -2020,7 +4011,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ScheduledType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required OBExternalScheduleType1Code ScheduledType { get; set; }
+        public required OBInternalScheduleType1Code ScheduledType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Reference", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -2055,26 +4046,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
         public string? StandingOrderId { get; set; } = default!;
 
-        [Newtonsoft.Json.JsonProperty("Frequency", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^(NotKnown)$|^(EvryDay)$|^(EvryWorkgDay)$|^(IntrvlDay:((0[2-9])|([1-2][0-9])|3[0-1]))$|^(IntrvlWkDay:0[1-9]:0[1-7])$|^(WkInMnthDay:0[1-5]:0[1-7])$|^(IntrvlMnthDay:(0[1-6]|12|24):(-0[1-5]|0[1-9]|[12][0-9]|3[01]))$|^(QtrDay:(ENGLISH|SCOTTISH|RECEIVED))$")]
-        public required string Frequency { get; set; }
-
-        [Newtonsoft.Json.JsonProperty("Reference", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
-        public string? Reference { get; set; } = default!;
-
-        [Newtonsoft.Json.JsonProperty("FirstPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset? FirstPaymentDateTime { get; set; } = default!;
-
         [Newtonsoft.Json.JsonProperty("NextPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? NextPaymentDateTime { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("LastPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? LastPaymentDateTime { get; set; } = default!;
-
-        [Newtonsoft.Json.JsonProperty("FinalPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset? FinalPaymentDateTime { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("NumberOfPayments", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -2082,7 +4058,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("StandingOrderStatusCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalStandingOrderStatus1Code? StandingOrderStatusCode { get; set; } = default!;
+        public ExternalMandateStatus1Code? StandingOrderStatusCode { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("FirstPaymentAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBActiveOrHistoricCurrencyAndAmount_2? FirstPaymentAmount { get; set; } = default!;
@@ -2105,6 +4081,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("SupplementaryData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBSupplementaryData1? SupplementaryData { get; set; } = default!;
 
+        [Newtonsoft.Json.JsonProperty("MandateRelatedInformation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBMandateRelatedInformation1? MandateRelatedInformation { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("RemittanceInformation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBRemittanceInformation2? RemittanceInformation { get; set; } = default!;
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -2119,26 +4101,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
         public string? StandingOrderId { get; set; } = default!;
 
-        [Newtonsoft.Json.JsonProperty("Frequency", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^(NotKnown)$|^(EvryDay)$|^(EvryWorkgDay)$|^(IntrvlDay:((0[2-9])|([1-2][0-9])|3[0-1]))$|^(IntrvlWkDay:0[1-9]:0[1-7])$|^(WkInMnthDay:0[1-5]:0[1-7])$|^(IntrvlMnthDay:(0[1-6]|12|24):(-0[1-5]|0[1-9]|[12][0-9]|3[01]))$|^(QtrDay:(ENGLISH|SCOTTISH|RECEIVED))$")]
-        public required string Frequency { get; set; }
-
-        [Newtonsoft.Json.JsonProperty("Reference", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
-        public string? Reference { get; set; } = default!;
-
-        [Newtonsoft.Json.JsonProperty("FirstPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset? FirstPaymentDateTime { get; set; } = default!;
-
         [Newtonsoft.Json.JsonProperty("NextPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? NextPaymentDateTime { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("LastPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? LastPaymentDateTime { get; set; } = default!;
-
-        [Newtonsoft.Json.JsonProperty("FinalPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset? FinalPaymentDateTime { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("NumberOfPayments", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -2146,7 +4113,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("StandingOrderStatusCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalStandingOrderStatus1Code? StandingOrderStatusCode { get; set; } = default!;
+        public ExternalMandateStatus1Code? StandingOrderStatusCode { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("FirstPaymentAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBActiveOrHistoricCurrencyAndAmount_2? FirstPaymentAmount { get; set; } = default!;
@@ -2163,6 +4130,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("SupplementaryData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBSupplementaryData1? SupplementaryData { get; set; } = default!;
 
+        [Newtonsoft.Json.JsonProperty("MandateRelatedInformation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBMandateRelatedInformation1? MandateRelatedInformation { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("RemittanceInformation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBRemittanceInformation2? RemittanceInformation { get; set; } = default!;
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -2177,26 +4150,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
         public string? StandingOrderId { get; set; } = default!;
 
-        [Newtonsoft.Json.JsonProperty("Frequency", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^(NotKnown)$|^(EvryDay)$|^(EvryWorkgDay)$|^(IntrvlDay:((0[2-9])|([1-2][0-9])|3[0-1]))$|^(IntrvlWkDay:0[1-9]:0[1-7])$|^(WkInMnthDay:0[1-5]:0[1-7])$|^(IntrvlMnthDay:(0[1-6]|12|24):(-0[1-5]|0[1-9]|[12][0-9]|3[01]))$|^(QtrDay:(ENGLISH|SCOTTISH|RECEIVED))$")]
-        public required string Frequency { get; set; }
-
-        [Newtonsoft.Json.JsonProperty("Reference", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
-        public string? Reference { get; set; } = default!;
-
-        [Newtonsoft.Json.JsonProperty("FirstPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset? FirstPaymentDateTime { get; set; } = default!;
-
         [Newtonsoft.Json.JsonProperty("NextPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? NextPaymentDateTime { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("LastPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? LastPaymentDateTime { get; set; } = default!;
-
-        [Newtonsoft.Json.JsonProperty("FinalPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset? FinalPaymentDateTime { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("NumberOfPayments", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -2204,7 +4162,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("StandingOrderStatusCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalStandingOrderStatus1Code? StandingOrderStatusCode { get; set; } = default!;
+        public ExternalMandateStatus1Code? StandingOrderStatusCode { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("FirstPaymentAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBActiveOrHistoricCurrencyAndAmount_2? FirstPaymentAmount { get; set; } = default!;
@@ -2227,6 +4185,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("SupplementaryData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBSupplementaryData1? SupplementaryData { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("MandateRelatedInformation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBMandateRelatedInformation1? MandateRelatedInformation { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("RemittanceInformation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBRemittanceInformation2? RemittanceInformation { get; set; } = default!;
 
     }
 
@@ -2252,7 +4216,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required OBExternalStatementType1Code Type { get; set; }
+        public required OBInternalStatementType1Code Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("StartDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
@@ -2320,7 +4284,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required OBExternalStatementType1Code Type { get; set; }
+        public required OBInternalStatementType1Code Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("StartDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
@@ -2355,6 +4319,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("StatementValue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<StatementValue2>? StatementValue { get; set; } = default!;
 
+        /// <summary>
+        /// Combined sum of all Amounts in the accounts base currency
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("TotalValue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public TotalValue2? TotalValue { get; set; } = default!;
+
     }
 
     /// <summary>
@@ -2379,7 +4349,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required OBExternalStatementType1Code Type { get; set; }
+        public required OBInternalStatementType1Code Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("StartDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
@@ -2416,6 +4386,48 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("StatementValue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<StatementValue3>? StatementValue { get; set; } = default!;
+
+        /// <summary>
+        /// Combined sum of all Amounts in the accounts base currency
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("TotalValue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public TotalValue3? TotalValue { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record OBStatusReason
+    {
+        /// <summary>
+        /// Specifies the status reason in a code form. 
+        /// <br/> For a full description see `OBExternalStatusReason1Code` [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("StatusReasonCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(4, MinimumLength = 1)]
+        public string? StatusReasonCode { get; set; } = default!;
+
+        /// <summary>
+        /// Description supporting the StatusReasonCode.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("StatusReasonDescription", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(500, MinimumLength = 1)]
+        public string? StatusReasonDescription { get; set; } = default!;
+
+        /// <summary>
+        /// Recommended but optional reference to JSON path if relevant to the StatusReasonCode.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Path", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(500, MinimumLength = 1)]
+        public string? Path { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 
@@ -2467,11 +4479,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Status", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required OBEntryStatus1Code Status { get; set; }
+        public required ExternalEntryStatus1Code Status { get; set; }
 
         [Newtonsoft.Json.JsonProperty("TransactionMutability", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBTransactionMutability1Code? TransactionMutability { get; set; } = default!;
+        public OBInternalTransactionMutability1Code? TransactionMutability { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("BookingDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
@@ -2504,6 +4516,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ProprietaryBankTransactionCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public ProprietaryBankTransactionCodeStructure1? ProprietaryBankTransactionCode { get; set; } = default!;
 
+        [Newtonsoft.Json.JsonProperty("ExtendedProprietaryBankTransactionCodes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<OBExtendedProprietaryBankTransactionCode>? ExtendedProprietaryBankTransactionCodes { get; set; } = default!;
+
         [Newtonsoft.Json.JsonProperty("Balance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBTransactionCashBalance? Balance { get; set; } = default!;
 
@@ -2527,6 +4542,21 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("SupplementaryData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBSupplementaryData1? SupplementaryData { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("CategoryPurposeCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ExternalCategoryPurpose1Code? CategoryPurposeCode { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("PaymentPurposeCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(4, MinimumLength = 1)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public OBExternalPurpose1Code? PaymentPurposeCode { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("UltimateCreditor", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBUltimateCreditor1? UltimateCreditor { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("UltimateDebtor", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBUltimateDebtor1? UltimateDebtor { get; set; } = default!;
 
     }
 
@@ -2560,11 +4590,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Status", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required OBEntryStatus1Code Status { get; set; }
+        public required ExternalEntryStatus1Code Status { get; set; }
 
         [Newtonsoft.Json.JsonProperty("TransactionMutability", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBTransactionMutability1Code? TransactionMutability { get; set; } = default!;
+        public OBInternalTransactionMutability1Code? TransactionMutability { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("BookingDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
@@ -2593,11 +4623,23 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ProprietaryBankTransactionCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public ProprietaryBankTransactionCodeStructure1? ProprietaryBankTransactionCode { get; set; } = default!;
 
+        [Newtonsoft.Json.JsonProperty("ExtendedProprietaryBankTransactionCodes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<OBExtendedProprietaryBankTransactionCode>? ExtendedProprietaryBankTransactionCodes { get; set; } = default!;
+
         [Newtonsoft.Json.JsonProperty("CardInstrument", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBTransactionCardInstrument1? CardInstrument { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("SupplementaryData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBSupplementaryData1? SupplementaryData { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("CategoryPurposeCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ExternalCategoryPurpose1Code? CategoryPurposeCode { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("PaymentPurposeCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(4, MinimumLength = 1)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public OBExternalPurpose1Code? PaymentPurposeCode { get; set; } = default!;
 
     }
 
@@ -2631,11 +4673,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Status", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required OBEntryStatus1Code Status { get; set; }
+        public required ExternalEntryStatus1Code Status { get; set; }
 
         [Newtonsoft.Json.JsonProperty("TransactionMutability", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBTransactionMutability1Code? TransactionMutability { get; set; } = default!;
+        public OBInternalTransactionMutability1Code? TransactionMutability { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("BookingDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
@@ -2668,6 +4710,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("ProprietaryBankTransactionCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public ProprietaryBankTransactionCodeStructure1? ProprietaryBankTransactionCode { get; set; } = default!;
 
+        [Newtonsoft.Json.JsonProperty("ExtendedProprietaryBankTransactionCodes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<OBExtendedProprietaryBankTransactionCode>? ExtendedProprietaryBankTransactionCodes { get; set; } = default!;
+
         [Newtonsoft.Json.JsonProperty("Balance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBTransactionCashBalance? Balance { get; set; } = default!;
 
@@ -2692,23 +4737,41 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("SupplementaryData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBSupplementaryData1? SupplementaryData { get; set; } = default!;
 
+        [Newtonsoft.Json.JsonProperty("CategoryPurposeCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ExternalCategoryPurpose1Code? CategoryPurposeCode { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("PaymentPurposeCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(4, MinimumLength = 1)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public OBExternalPurpose1Code? PaymentPurposeCode { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("UltimateCreditor", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBUltimateCreditor1? UltimateCreditor { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("UltimateDebtor", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBUltimateDebtor1? UltimateDebtor { get; set; } = default!;
+
     }
 
     /// <summary>
-    /// Set of elements to describe the card instrument used in the transaction.
+    /// Set of elements to describe the card instrument used in the transaction. &lt;br /&gt;
+    /// <br/>For a full list of enumeration values refer to `OBInternalCardSchemeType1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record OBTransactionCardInstrument1
     {
         /// <summary>
-        /// Name of the card scheme.
+        /// Name of the card scheme. &lt;br /&gt;
+        /// <br/>For a full list of enumeration values refer to `OBInternalCardSchemeType1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
         /// </summary>
         [Newtonsoft.Json.JsonProperty("CardSchemeName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public OBTransactionCardInstrument1CardSchemeName? CardSchemeName { get; set; } = default!;
 
         /// <summary>
-        /// The card authorisation type.
+        /// The card authorisation type. &lt;br /&gt;
+        /// <br/>For a full list of enumeration values refer to `OBInternalCardAuthorisationType1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
         /// </summary>
         [Newtonsoft.Json.JsonProperty("AuthorisationType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -2751,6 +4814,16 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// </summary>
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Amount? Amount { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// The Risk section is sent by the initiating party to the ASPSP. &lt;br /&gt;
+    /// <br/>It is used to specify additional details for risk scoring for Account Info.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record OBRisk2
+    {
 
     }
 
@@ -3591,10 +5664,49 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     }
 
     /// <summary>
+    /// Additional proprietary bank transaction codes used by the ASPSP for the underlying transaction
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record OBExtendedProprietaryBankTransactionCode
+    {
+        /// <summary>
+        /// Proprietary bank transaction code to identify the underlying transaction.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Code", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
+        public required string Code { get; set; }
+
+        /// <summary>
+        /// Identification of the issuer of the proprietary bank transaction code.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Issuer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
+        public string? Issuer { get; set; } = default!;
+
+        /// <summary>
+        /// Description of the code and its usage on the ASPSP channel
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(500, MinimumLength = 1)]
+        public string? Description { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    /// <summary>
     /// Specifies the Beneficiary Type.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OBBeneficiaryType1Code
+    public enum OBInternalBeneficiaryType1Code
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"Trusted")]
@@ -3605,11 +5717,76 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
     }
 
+    /// <summary>
+    /// Frequency and format of statments for an account
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record StatementFrequencyAndFormatInner
+    {
+        [Newtonsoft.Json.JsonProperty("Frequency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public OBFrequency2? Frequency { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("CommunicationMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public OBCommunicationMethod? CommunicationMethod { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("Format", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public OBFileFormat? Format { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("DeliveryAddress", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBPostalAddress7? DeliveryAddress { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record Model
     {
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public long? Id { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record CreditorReferenceInformation
+    {
+        [Newtonsoft.Json.JsonProperty("Code", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(4, MinimumLength = 1)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ExternalCreditorReferenceType1Code? Code { get; set; } = default!;
+
+        /// <summary>
+        /// Entity that assigns the identification.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Issuer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
+        public string? Issuer { get; set; } = default!;
+
+        /// <summary>
+        /// Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Reference", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
+        public string? Reference { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -3640,6 +5817,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
         public string? Name { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("LEI", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(20, MinimumLength = 1)]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z0-9]{18,18}[0-9]{2,2}$")]
+        public string? LEI { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("SecondaryIdentification", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(34, MinimumLength = 1)]
@@ -3675,6 +5857,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [System.ComponentModel.DataAnnotations.StringLength(350, MinimumLength = 1)]
         public string? Name { get; set; } = default!;
 
+        [Newtonsoft.Json.JsonProperty("LEI", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(20, MinimumLength = 1)]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z0-9]{18,18}[0-9]{2,2}$")]
+        public string? LEI { get; set; } = default!;
+
         [Newtonsoft.Json.JsonProperty("SecondaryIdentification", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(34, MinimumLength = 1)]
         public string? SecondaryIdentification { get; set; } = default!;
@@ -3695,7 +5882,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         /// <summary>
         /// Market segmentation is a marketing term referring to the aggregating of prospective buyers into groups, or segments, that have common needs and respond similarly to a marketing action. Market segmentation enables companies to target different categories of consumers who perceive the full value of certain products and services differently from one another.
-        /// <br/>
         /// <br/>Read more: Market Segmentation http://www.investopedia.com/terms/m/marketsegmentation.asp#ixzz4gfEEalTd 
         /// <br/>With respect to BCA products, they are segmented in relation to different markets that they wish to focus on. 
         /// </summary>
@@ -3835,7 +6021,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         /// <summary>
         /// Market segmentation is a marketing term referring to the aggregating of prospective buyers into groups, or segments, that have common needs and respond similarly to a marketing action. Market segmentation enables companies to target different categories of consumers who perceive the full value of certain products and services differently from one another.
-        /// <br/>
         /// <br/>Read more: Market Segmentation http://www.investopedia.com/terms/m/marketsegmentation.asp#ixzz4gfEEalTd 
         /// <br/>With respect to PCA products, they are segmented in relation to different markets that they wish to focus on. 
         /// </summary>
@@ -3908,56 +6093,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
     }
 
-    /// <summary>
-    /// Postal address of a party.
-    /// </summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record Address
-    {
-        [Newtonsoft.Json.JsonProperty("AddressType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBAddressTypeCode? AddressType { get; set; } = default!;
-
-        [Newtonsoft.Json.JsonProperty("AddressLine", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.MaxLength(5)]
-        public System.Collections.Generic.ICollection<string>? AddressLine { get; set; } = default!;
-
-        [Newtonsoft.Json.JsonProperty("StreetName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string? StreetName { get; set; } = default!;
-
-        [Newtonsoft.Json.JsonProperty("BuildingNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(16, MinimumLength = 1)]
-        public string? BuildingNumber { get; set; } = default!;
-
-        [Newtonsoft.Json.JsonProperty("PostCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(16, MinimumLength = 1)]
-        public string? PostCode { get; set; } = default!;
-
-        [Newtonsoft.Json.JsonProperty("TownName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
-        public string? TownName { get; set; } = default!;
-
-        [Newtonsoft.Json.JsonProperty("CountrySubDivision", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
-        public string? CountrySubDivision { get; set; } = default!;
-
-        [Newtonsoft.Json.JsonProperty("Country", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{2,2}$")]
-        public required string Country { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [Newtonsoft.Json.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record Account3
     {
@@ -4016,7 +6151,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// Combined sum of all Amounts in the accounts base currency
         /// </summary>
         [Newtonsoft.Json.JsonProperty("TotalValue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public TotalValue2? TotalValue { get; set; } = default!;
+        public TotalValue4? TotalValue { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4056,7 +6191,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         /// <summary>
         /// Specified date and time the permissions will expire.
-        /// <br/>If this is not populated, the permissions will be open ended.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
+        /// <br/>If this is not populated, the permissions will be open ended. All dates in the JSON payloads are represented in ISO 8601 date-time format. 
         /// <br/>All date-time fields in responses must include the timezone. An example is below:
         /// <br/>2017-04-05T10:43:07+00:00
         /// </summary>
@@ -4065,7 +6200,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         /// <summary>
         /// Specified start date and time for the transaction query period.
-        /// <br/>If this is not populated, the start date will be open ended, and data will be returned from the earliest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
+        /// <br/>If this is not populated, the start date will be open ended, and data will be returned from the earliest available transaction. All dates in the JSON payloads are represented in ISO 8601 date-time format. 
         /// <br/>All date-time fields in responses must include the timezone. An example is below:
         /// <br/>2017-04-05T10:43:07+00:00
         /// </summary>
@@ -4074,7 +6209,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         /// <summary>
         /// Specified end date and time for the transaction query period.
-        /// <br/>If this is not populated, the end date will be open ended, and data will be returned to the latest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
+        /// <br/>If this is not populated, the end date will be open ended, and data will be returned to the latest available transaction. All dates in the JSON payloads are represented in ISO 8601 date-time format. 
         /// <br/>All date-time fields in responses must include the timezone. An example is below:
         /// <br/>2017-04-05T10:43:07+00:00
         /// </summary>
@@ -4118,6 +6253,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public required Data5Status Status { get; set; }
 
+        /// <summary>
+        /// Specifies the status reason.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("StatusReason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<OBStatusReason>? StatusReason { get; set; } = default!;
+
         [Newtonsoft.Json.JsonProperty("StatusUpdateDateTime", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public required System.DateTimeOffset StatusUpdateDateTime { get; set; }
@@ -4129,7 +6270,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         /// <summary>
         /// Specified date and time the permissions will expire.
-        /// <br/>If this is not populated, the permissions will be open ended.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
+        /// <br/>If this is not populated, the permissions will be open ended. All dates in the JSON payloads are represented in ISO 8601 date-time format. 
         /// <br/>All date-time fields in responses must include the timezone. An example is below:
         /// <br/>2017-04-05T10:43:07+00:00
         /// </summary>
@@ -4138,7 +6279,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         /// <summary>
         /// Specified start date and time for the transaction query period.
-        /// <br/>If this is not populated, the start date will be open ended, and data will be returned from the earliest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
+        /// <br/>If this is not populated, the start date will be open ended, and data will be returned from the earliest available transaction. All dates in the JSON payloads are represented in ISO 8601 date-time format. 
         /// <br/>All date-time fields in responses must include the timezone. An example is below:
         /// <br/>2017-04-05T10:43:07+00:00
         /// </summary>
@@ -4147,7 +6288,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         /// <summary>
         /// Specified end date and time for the transaction query period.
-        /// <br/>If this is not populated, the end date will be open ended, and data will be returned to the latest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
+        /// <br/>If this is not populated, the end date will be open ended, and data will be returned to the latest available transaction. All dates in the JSON payloads are represented in ISO 8601 date-time format. 
         /// <br/>All date-time fields in responses must include the timezone. An example is below:
         /// <br/>2017-04-05T10:43:07+00:00
         /// </summary>
@@ -4467,6 +6608,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Rate", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(40)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,3}){1}(\.\d{1,4}){0,1}$")]
         public required string Rate { get; set; }
 
@@ -4679,6 +6821,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Rate", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(40)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,3}){1}(\.\d{1,4}){0,1}$")]
         public required string Rate { get; set; }
 
@@ -4711,6 +6854,30 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public required string Type { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record TotalValue2
+    {
+        [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
+        public required string Amount { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4853,6 +7020,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [System.ComponentModel.DataAnnotations.Required]
         public required OBActiveOrHistoricCurrencyAndAmount_8 Amount { get; set; }
 
+        /// <summary>
+        /// Optional component providing the equivalent of Amount in local currency.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("LocalAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public LocalAmount2? LocalAmount { get; set; } = default!;
+
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
         [Newtonsoft.Json.JsonExtensionData]
@@ -4897,6 +7070,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     {
         [Newtonsoft.Json.JsonProperty("Rate", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(40)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^(-?\d{1,3}){1}(\.\d{1,4}){0,1}$")]
         public required string Rate { get; set; }
 
@@ -4929,6 +7103,30 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public required string Type { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record TotalValue3
+    {
+        [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
+        public required string Amount { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
+        public required string Currency { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -5006,7 +7204,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
     /// <summary>
     /// Market segmentation is a marketing term referring to the aggregating of prospective buyers into groups, or segments, that have common needs and respond similarly to a marketing action. Market segmentation enables companies to target different categories of consumers who perceive the full value of certain products and services differently from one another.
-    /// <br/>
     /// <br/>Read more: Market Segmentation http://www.investopedia.com/terms/m/marketsegmentation.asp#ixzz4gfEEalTd 
     /// <br/>With respect to BCA products, they are segmented in relation to different markets that they wish to focus on. 
     /// </summary>
@@ -5433,7 +7630,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
     /// <summary>
     /// Market segmentation is a marketing term referring to the aggregating of prospective buyers into groups, or segments, that have common needs and respond similarly to a marketing action. Market segmentation enables companies to target different categories of consumers who perceive the full value of certain products and services differently from one another.
-    /// <br/>
     /// <br/>Read more: Market Segmentation http://www.investopedia.com/terms/m/marketsegmentation.asp#ixzz4gfEEalTd 
     /// <br/>With respect to PCA products, they are segmented in relation to different markets that they wish to focus on. 
     /// </summary>
@@ -5823,7 +8019,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public required OBBalanceType1Code Type { get; set; }
 
         /// <summary>
-        /// Indicates the date (and time) of the balance.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
+        /// Indicates the date (and time) of the balance. All dates in the JSON payloads are represented in ISO 8601 date-time format. 
         /// <br/>All date-time fields in responses must include the timezone. An example is below:
         /// <br/>2017-04-05T10:43:07+00:00
         /// </summary>
@@ -5845,7 +8041,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// Optional component providing the equivalent of Amount in local currency. Default is Local Currency (LCUR) if not specified
         /// </summary>
         [Newtonsoft.Json.JsonProperty("LocalAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public LocalAmount2? LocalAmount { get; set; } = default!;
+        public LocalAmount3? LocalAmount { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -5859,7 +8055,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record TotalValue2
+    public partial record TotalValue4
     {
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
@@ -5883,7 +8079,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     }
 
     /// <summary>
-    /// Specifies the Open Banking account access data types. This is a list of the data clusters being consented by the PSU, and requested for authorisation with the ASPSP.
+    /// Specifies the Open Banking account access data types. &lt;br /&gt; This is a list of the data clusters being consented by the PSU, and requested for authorisation with the ASPSP. &lt;br /&gt; For a full list of enumeration values refer to `OBInternalPermissions1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_internal_CodeSets)
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum Permissions
@@ -5958,22 +8154,25 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     public enum Data5Status
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Authorised")]
-        Authorised = 0,
+        [System.Runtime.Serialization.EnumMember(Value = @"AWAU")]
+        AWAU = 0,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"AwaitingAuthorisation")]
-        AwaitingAuthorisation = 1,
+        [System.Runtime.Serialization.EnumMember(Value = @"RJCT")]
+        RJCT = 1,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Rejected")]
-        Rejected = 2,
+        [System.Runtime.Serialization.EnumMember(Value = @"AUTH")]
+        AUTH = 2,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Revoked")]
-        Revoked = 3,
+        [System.Runtime.Serialization.EnumMember(Value = @"EXPD")]
+        EXPD = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CANC")]
+        CANC = 4,
 
     }
 
     /// <summary>
-    /// Specifies the Open Banking account access data types. This is a list of the data clusters being consented by the PSU, and requested for authorisation with the ASPSP.
+    /// Specifies the Open Banking account access data types. &lt;br /&gt; This is a list of the data clusters being consented by the PSU, and requested for authorisation with the ASPSP. &lt;br /&gt; For a full list of enumeration values refer to `OBInternalPermissions1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_internal_CodeSets)
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum Permissions2
@@ -6059,14 +8258,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
         public string? DirectDebitId { get; set; } = default!;
 
-        [Newtonsoft.Json.JsonProperty("MandateIdentification", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
-        public required string MandateIdentification { get; set; }
-
         [Newtonsoft.Json.JsonProperty("DirectDebitStatusCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalDirectDebitStatus1Code? DirectDebitStatusCode { get; set; } = default!;
+        public ExternalMandateStatus1Code? DirectDebitStatusCode { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("MandateRelatedInformation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBMandateRelatedInformation1? MandateRelatedInformation { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
@@ -6075,12 +8272,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("PreviousPaymentDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? PreviousPaymentDateTime { get; set; } = default!;
-
-        /// <summary>
-        /// Regularity with which direct debit instructions are to be created and processed.
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("Frequency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string? Frequency { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("PreviousPaymentAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBActiveOrHistoricCurrencyAndAmount_0? PreviousPaymentAmount { get; set; } = default!;
@@ -6112,7 +8303,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public string? OfferId { get; set; } = default!;
 
         /// <summary>
-        /// Offer type, in a coded form.
+        /// Offer type, in a coded form. For a full list of values refer to `OBExternalOfferType1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
         /// </summary>
         [Newtonsoft.Json.JsonProperty("OfferType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -6126,7 +8317,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public string? Description { get; set; } = default!;
 
         /// <summary>
-        /// Date and time at which the offer starts.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
+        /// Date and time at which the offer starts. All dates in the JSON payloads are represented in ISO 8601 date-time format. 
         /// <br/>All date-time fields in responses must include the timezone. An example is below:
         /// <br/>2017-04-05T10:43:07+00:00
         /// </summary>
@@ -6134,7 +8325,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public System.DateTimeOffset? StartDateTime { get; set; } = default!;
 
         /// <summary>
-        /// Date and time at which the offer ends.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
+        /// Date and time at which the offer ends. All dates in the JSON payloads are represented in ISO 8601 date-time format. 
         /// <br/>All date-time fields in responses must include the timezone. An example is below:
         /// <br/>2017-04-05T10:43:07+00:00
         /// </summary>
@@ -6205,7 +8396,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public string? ProductName { get; set; } = default!;
 
         /// <summary>
-        /// The unique ID that has been internally assigned by the financial institution to each of the current account banking products they market to their retail and/or small to medium enterprise (SME) customers.
+        /// Identifier within the parent organisation for the product. Must be unique in the organisation
         /// </summary>
         [Newtonsoft.Json.JsonProperty("ProductId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
@@ -6217,14 +8408,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public required string AccountId { get; set; }
 
         /// <summary>
-        /// Any secondary Identification which  supports Product Identifier to uniquely identify the current account banking products.
+        /// Any secondary Identification which supports Product Identifier to uniquely identify the current account banking products.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("SecondaryProductId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
         public string? SecondaryProductId { get; set; } = default!;
 
         /// <summary>
-        /// Product type : Personal Current Account, Business Current Account
+        /// Descriptive code for the product category.  For a full list refer to `OBInternalProductType1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)&lt;br /&gt;&lt;br /&gt; If ProductType - "Other" is chosen, the object OtherProductType must be populated with name, and description.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("ProductType", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
@@ -6232,14 +8423,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public required ProductType ProductType { get; set; }
 
         /// <summary>
-        /// Unique and unambiguous identification of a  Product Marketing State.
+        /// Unique and unambiguous identification of a Product Marketing State.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("MarketingStateId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
         public string? MarketingStateId { get; set; } = default!;
 
         /// <summary>
-        /// Other product type details associated with the account.
+        /// This field provides extension to the ProductType enumeration. If ProductType - "Other" is chosen, this field must be populated with name, and description for ASPSP specific product type.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("OtherProductType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OtherProductType? OtherProductType { get; set; } = default!;
@@ -6279,7 +8470,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// </summary>
         [Newtonsoft.Json.JsonProperty("SubType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public Amount2SubType? SubType { get; set; } = FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagAisp.Models.Amount2SubType.BaseCurrency;
+        public Amount2SubType? SubType { get; set; } = FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAisp.Models.Amount2SubType.BCUR;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -6310,7 +8501,38 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// </summary>
         [Newtonsoft.Json.JsonProperty("SubType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public LocalAmountSubType? SubType { get; set; } = FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagAisp.Models.LocalAmountSubType.LocalCurrency;
+        public LocalAmountSubType? SubType { get; set; } = FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAisp.Models.LocalAmountSubType.LCUR;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [Newtonsoft.Json.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record LocalAmount2
+    {
+        [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
+        public required string Amount { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("Currency", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
+        public required string Currency { get; set; }
+
+        /// <summary>
+        /// The amount in the local market currency for which the asset is held. Default is Local Currency (LCUR) if not specified
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("SubType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public LocalAmount2SubType? SubType { get; set; } = FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAisp.Models.LocalAmount2SubType.LCUR;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -6422,7 +8644,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         /// <summary>
         /// The annual equivalent rate (AER) is interest that is calculated under the assumption that any interest paid is combined with the original balance and the next interest payment will be based on the slightly higher account balance. Overall, this means that interest can be compounded several times in a year depending on the number of times that interest payments are made. 
-        /// <br/>
         /// <br/>Read more: Annual Equivalent Rate (AER) http://www.investopedia.com/terms/a/aer.asp#ixzz4gfR7IO1A
         /// </summary>
         [Newtonsoft.Json.JsonProperty("AER", Required = Newtonsoft.Json.Required.Always)]
@@ -7278,7 +9499,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         /// <summary>
         /// The annual equivalent rate (AER) is interest that is calculated under the assumption that any interest paid is combined with the original balance and the next interest payment will be based on the slightly higher account balance. Overall, this means that interest can be compounded several times in a year depending on the number of times that interest payments are made. 
-        /// <br/>
         /// <br/>Read more: Annual Equivalent Rate (AER) http://www.investopedia.com/terms/a/aer.asp#ixzz4gfR7IO1A
         /// </summary>
         [Newtonsoft.Json.JsonProperty("AER", Required = Newtonsoft.Json.Required.Always)]
@@ -8021,11 +10241,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public required string Currency { get; set; }
 
         /// <summary>
-        /// The amount in the domestic or base accounting currency. Default is Base Currency (BCUR) if not specified
+        /// Balance sub type, in a coded form. Default if not specified is BCUR of the account
         /// </summary>
         [Newtonsoft.Json.JsonProperty("SubType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public Amount3SubType? SubType { get; set; } = FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagAisp.Models.Amount3SubType.BaseCurrency;
+        public Amount3SubType? SubType { get; set; } = FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAisp.Models.Amount3SubType.BCUR;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -8052,7 +10272,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public required bool Included { get; set; }
 
         /// <summary>
-        /// Limit type, in a coded form.
+        /// Limit type, in a coded form. &lt;br /&gt; For a full list of enumeration values refer to `OBInternalLimitType1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
         /// </summary>
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -8076,7 +10296,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record LocalAmount2
+    public partial record LocalAmount3
     {
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
@@ -8089,11 +10309,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public required string Currency { get; set; }
 
         /// <summary>
-        /// The amount in the local market currency for which the asset is held.
+        /// Balance sub type, in a coded form. Default if not specified is LCUR of the account
         /// </summary>
         [Newtonsoft.Json.JsonProperty("SubType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public LocalAmount2SubType? SubType { get; set; } = FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagAisp.Models.LocalAmount2SubType.LocalCurrency;
+        public LocalAmount3SubType? SubType { get; set; } = FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAisp.Models.LocalAmount3SubType.LCUR;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -8200,7 +10420,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     public partial record OtherProductType
     {
         /// <summary>
-        /// Long name associated with the product
+        /// Name of "Other" product type.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("Name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
@@ -8208,7 +10428,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public required string Name { get; set; }
 
         /// <summary>
-        /// Description of the Product associated with the account
+        /// Description of "Other" product type
         /// </summary>
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
@@ -8263,11 +10483,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     public enum Amount2SubType
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"BaseCurrency")]
-        BaseCurrency = 0,
+        [System.Runtime.Serialization.EnumMember(Value = @"BCUR")]
+        BCUR = 0,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"LocalCurrency")]
-        LocalCurrency = 1,
+        [System.Runtime.Serialization.EnumMember(Value = @"LCUR")]
+        LCUR = 1,
 
     }
 
@@ -8275,11 +10495,23 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     public enum LocalAmountSubType
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"BaseCurrency")]
-        BaseCurrency = 0,
+        [System.Runtime.Serialization.EnumMember(Value = @"BCUR")]
+        BCUR = 0,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"LocalCurrency")]
-        LocalCurrency = 1,
+        [System.Runtime.Serialization.EnumMember(Value = @"LCUR")]
+        LCUR = 1,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum LocalAmount2SubType
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BCUR")]
+        BCUR = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LCUR")]
+        LCUR = 1,
 
     }
 
@@ -9378,11 +11610,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     public enum Amount3SubType
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"BaseCurrency")]
-        BaseCurrency = 0,
+        [System.Runtime.Serialization.EnumMember(Value = @"BCUR")]
+        BCUR = 0,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"LocalCurrency")]
-        LocalCurrency = 1,
+        [System.Runtime.Serialization.EnumMember(Value = @"LCUR")]
+        LCUR = 1,
 
     }
 
@@ -9430,14 +11662,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum LocalAmount2SubType
+    public enum LocalAmount3SubType
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"BaseCurrency")]
-        BaseCurrency = 0,
+        [System.Runtime.Serialization.EnumMember(Value = @"BCUR")]
+        BCUR = 0,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"LocalCurrency")]
-        LocalCurrency = 1,
+        [System.Runtime.Serialization.EnumMember(Value = @"LCUR")]
+        LCUR = 1,
 
     }
 
@@ -13158,14 +15390,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public OverdraftTierBand3AgreementPeriod? AgreementPeriod { get; set; } = default!;
 
         /// <summary>
-        /// Refers to which interest rate is applied when interests are tiered. For example, if an overdraft balance is �2k and the interest tiers are:- 0-�500 0.1%, 500-1000 0.2%, 1000-10000 0.5%, then the applicable interest rate could either be 0.5% of the entire balance (since the account balance sits in the top interest tier) or (0.1%*500)+(0.2%*500)+(0.5%*1000). In the 1st situation, we say the interest is applied to the �Whole� of the account balance,  and in the 2nd that it is �Tiered�.
+        /// Refers to which interest rate is applied when interests are tiered. For example, if an overdraft balance is  2k and the interest tiers are:- 0- 500 0.1%, 500-1000 0.2%, 1000-10000 0.5%, then the applicable interest rate could either be 0.5% of the entire balance (since the account balance sits in the top interest tier) or (0.1%*500)+(0.2%*500)+(0.5%*1000). In the 1st situation, we say the interest is applied to the  Whole  of the account balance,  and in the 2nd that it is  Tiered .
         /// </summary>
         [Newtonsoft.Json.JsonProperty("OverdraftInterestChargingCoverage", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public OverdraftTierBand3OverdraftInterestChargingCoverage? OverdraftInterestChargingCoverage { get; set; } = default!;
 
         /// <summary>
-        /// Indicates whether the advertised overdraft rate is guaranteed to be offered to a borrower by the bank e.g. if it�s part of a government scheme, or whether the rate may vary dependent on the applicant�s circumstances.
+        /// Indicates whether the advertised overdraft rate is guaranteed to be offered to a borrower by the bank e.g. if it s part of a government scheme, or whether the rate may vary dependent on the applicant s circumstances.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("BankGuaranteedIndicator", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool? BankGuaranteedIndicator { get; set; } = default!;

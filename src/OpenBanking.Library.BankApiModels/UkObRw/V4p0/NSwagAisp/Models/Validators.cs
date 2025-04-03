@@ -6,7 +6,7 @@ using System.Text.Json;
 using Azure.Core;
 using FluentValidation.Results;
 
-namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagAisp.Models;
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAisp.Models;
 
 // Validators for bank API response types
 

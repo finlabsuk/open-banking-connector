@@ -24,7 +24,6 @@ using Microsoft.Extensions.Caching.Memory;
 using AccountAccessConsentAuthContext =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request.
     AccountAccessConsentAuthContext;
-using OBAccount6 = FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagAisp.Models.OBAccount6;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.AccountAndTransaction.
     AccountAccessConsent;
@@ -224,7 +223,8 @@ public class AccountAccessConsentSubtest(
 
             if (accountsResp.ExternalApiResponse.Data.Account is not null)
             {
-                foreach (OBAccount6 account in accountsResp.ExternalApiResponse.Data.Account)
+                foreach (AccountAndTransactionModelsPublic.OBAccount6 account in accountsResp.ExternalApiResponse.Data
+                             .Account)
                 {
                     string externalAccountId = account.AccountId;
                     var readForSingleAccount = new AccountAccessConsentExternalReadParams
@@ -237,7 +237,7 @@ public class AccountAccessConsentSubtest(
                         PublicRequestUrlWithoutQuery = null
                     };
                     AccountAndTransactionModelsPublic.OBExternalAccountSubType1Code? accountSubType =
-                        account.AccountSubType;
+                        account.AccountTypeCode;
 
                     // GET /accounts/{accountId}
                     AccountsResponse accountsResp2 =
@@ -321,8 +321,7 @@ public class AccountAccessConsentSubtest(
                     // GET /accounts/{AccountId}/direct-debits
                     bool testGetDirectDebits =
                         requestedPermissions.Contains(AccountAndTransactionModelsPublic.Permissions.ReadDirectDebits) &&
-                        accountSubType is not AccountAndTransactionModelsPublic.OBExternalAccountSubType1Code
-                            .CreditCard;
+                        accountSubType is not AccountAndTransactionModelsPublic.OBExternalAccountSubType1Code.CARD;
                     if (testGetDirectDebits)
                     {
                         DirectDebitsResponse directDebitsResp =
@@ -336,7 +335,7 @@ public class AccountAccessConsentSubtest(
                          requestedPermissions.Contains(
                              AccountAndTransactionModelsPublic.Permissions.ReadStandingOrdersDetail)) &&
                         accountSubType is not AccountAndTransactionModelsPublic.OBExternalAccountSubType1Code
-                            .CreditCard;
+                            .CARD;
                     if (testGetStandingOrders)
                     {
                         StandingOrdersResponse standingOrdersResp =
