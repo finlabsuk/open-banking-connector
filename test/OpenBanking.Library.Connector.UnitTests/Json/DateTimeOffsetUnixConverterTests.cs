@@ -5,6 +5,7 @@
 using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FsCheck;
+using FsCheck.Fluent;
 using FsCheck.Xunit;
 using Newtonsoft.Json;
 

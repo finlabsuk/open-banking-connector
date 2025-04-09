@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FsCheck;
+using FsCheck.Fluent;
 using FsCheck.Xunit;
 using Xunit.Abstractions;
 
@@ -28,7 +29,7 @@ public class BankClientProfileDbRepoTests : DbTest
     /// </summary>
     /// <param name="s"></param>
     /// <returns></returns>
-    [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]
+    [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = [typeof(FsCheckCustomArbs)])]
     public bool FsCheckStringNotNullAndContainsNoNulls_WorksCorrectly(StringNotNullAndContainsNoNulls s)
     {
         bool? outcome = !s.Item.Contains("\0");
