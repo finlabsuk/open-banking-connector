@@ -170,9 +170,11 @@ internal class DomesticVrp :
                 [JsonConverterLabel.DomesticVrpRefund] = (int) refundResponseJsonConverter
             };
             responseJsonSerializerSettings.Context =
+#pragma warning disable SYSLIB0050 // see https://github.com/JamesNK/Newtonsoft.Json/issues/2953
                 new StreamingContext(
                     StreamingContextStates.All,
                     optionsDict);
+#pragma warning restore SYSLIB0050
         }
 
         IApiPostRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
@@ -312,9 +314,11 @@ internal class DomesticVrp :
             {
                 [JsonConverterLabel.DomesticVrpRefund] = (int) refundResponseJsonConverter
             };
+#pragma warning disable SYSLIB0050 // see https://github.com/JamesNK/Newtonsoft.Json/issues/2953
             responseJsonSerializerSettings.Context =
                 new StreamingContext(
                     StreamingContextStates.All,
+#pragma warning restore SYSLIB0050
                     optionsDict);
         }
 

@@ -78,7 +78,9 @@ public class DateTimeOffsetUnixConverterTests
             };
             var jsonSerializerSettings = new JsonSerializerSettings
             {
+#pragma warning disable SYSLIB0050 // see https://github.com/JamesNK/Newtonsoft.Json/issues/2953
                 Context = new StreamingContext(StreamingContextStates.All, optionsDict)
+#pragma warning restore SYSLIB0050
             };
 
             var stringWriter = new StringWriter();

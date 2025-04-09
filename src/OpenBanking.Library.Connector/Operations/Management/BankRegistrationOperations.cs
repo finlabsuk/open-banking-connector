@@ -1124,9 +1124,11 @@ internal class
 
             requestJsonSerializerSettings = new JsonSerializerSettings
             {
+#pragma warning disable SYSLIB0050 // see https://github.com/JamesNK/Newtonsoft.Json/issues/2953
                 Context = new StreamingContext(
                     StreamingContextStates.All,
                     optionsDict)
+#pragma warning restore SYSLIB0050
             };
         }
 
@@ -1160,9 +1162,11 @@ internal class
 
             responseJsonSerializerSettings = new JsonSerializerSettings
             {
+#pragma warning disable SYSLIB0050 // see https://github.com/JamesNK/Newtonsoft.Json/issues/2953
                 Context = new StreamingContext(
                     StreamingContextStates.All,
                     optionsDict)
+#pragma warning restore SYSLIB0050
             };
         }
 

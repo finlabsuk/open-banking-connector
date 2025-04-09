@@ -729,9 +729,11 @@ internal class GrantPost : IGrantPost
             new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
+#pragma warning disable SYSLIB0050 // see https://github.com/JamesNK/Newtonsoft.Json/issues/2953
                 Context = new StreamingContext(
                     StreamingContextStates.All,
                     optionsDict)
+#pragma warning restore SYSLIB0050
             };
 
         TIdToken idToken =

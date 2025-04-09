@@ -138,9 +138,11 @@ internal class
                 (int) previousPaymentDateTimeJsonConverter);
 
             jsonSerializerSettings.Context =
+#pragma warning disable SYSLIB0050 // see https://github.com/JamesNK/Newtonsoft.Json/issues/2953
                 new StreamingContext(
                     StreamingContextStates.All,
                     optionsDict);
+#pragma warning restore SYSLIB0050
         }
         AccountAndTransactionModelsPublic.OBReadDirectDebit2 externalApiResponse;
         string? xFapiInteractionId;
