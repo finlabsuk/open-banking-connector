@@ -27,9 +27,9 @@
         <PackageReference Include="EFCore.NamingConventions" Version="8.0.3"/>
         <PackageReference Include="FluentValidation" Version="11.11.0"/>
         <PackageReference Include="jose-jwt" Version="5.1.1"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.14"/>
-        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.7.0" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.3"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.15"/>
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.8.0"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.4"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11"/>
         <PackageReference Include="OpenTelemetry" Version="1.11.2"/>
