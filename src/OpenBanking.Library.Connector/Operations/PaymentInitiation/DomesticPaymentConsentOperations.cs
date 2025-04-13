@@ -260,7 +260,8 @@ internal class
             utcNow,
             request.CreatedBy,
             request.BankRegistrationId,
-            externalApiId);
+            externalApiId,
+            false);
 
         AuthContextRequest? authContext = request.ExternalApiObject?.AuthContext;
         if (authContext is not null)

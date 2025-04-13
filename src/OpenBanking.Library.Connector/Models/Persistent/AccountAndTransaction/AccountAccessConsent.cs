@@ -35,7 +35,8 @@ internal class AccountAccessConsent :
         DateTimeOffset externalApiUserIdModified,
         string? externalApiUserIdModifiedBy,
         Guid bankRegistrationId,
-        string externalApiId) : base(
+        string externalApiId,
+        bool createdWithV4) : base(
         id,
         reference,
         isDeleted,
@@ -57,7 +58,8 @@ internal class AccountAccessConsent :
         externalApiUserIdModified,
         externalApiUserIdModifiedBy,
         bankRegistrationId,
-        externalApiId) { }
+        externalApiId,
+        createdWithV4) { }
 
     /// <summary>
     ///     Associated access tokens

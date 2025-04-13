@@ -378,12 +378,12 @@ internal class
             request.CreatedBy,
             null,
             null,
-            null,
-            tokenEndpointAuthMethod,
             bankGroup,
             softwareStatementId,
             "",
             null,
+            null,
+            tokenEndpointAuthMethod,
             useSimulatedBank,
             externalApiId,
             bankProfile.BankProfileEnum,
@@ -391,6 +391,9 @@ internal class
             registrationEndpoint,
             tokenEndpoint,
             authorizationEndpoint,
+            false,
+            false,
+            false,
             defaultFragmentRedirectUri,
             defaultQueryRedirectUri,
             redirectUris,
@@ -658,16 +661,14 @@ internal class
                 .Include(x => x.ExternalApiSecretsNavigation)
                 .Include(x => x.RegistrationAccessTokensNavigation)
                 .AsSplitQuery()
-                .Where(
-                    x => x.SoftwareStatementId == softwareStatementId &&
-                         x.BankGroup == bankGroupEnum)
+                .Where(x => x.SoftwareStatementId == softwareStatementId &&
+                            x.BankGroup == bankGroupEnum)
                 .OrderByDescending(x => x.Created) // most recent first
                 .AsEnumerable(); // force next where clause to run client-side as cannot be translated
         List<BankRegistrationEntity> existingRegistrations = existingRegistrationsFirstPass
-            .Where(
-                x => EqualityComparer<TRegistrationGroup>.Default.Equals(
-                    bankGroup.GetRegistrationGroup(bankGroup.GetBank(x.BankProfile), x.RegistrationScope),
-                    registrationGroup))
+            .Where(x => EqualityComparer<TRegistrationGroup>.Default.Equals(
+                bankGroup.GetRegistrationGroup(bankGroup.GetBank(x.BankProfile), x.RegistrationScope),
+                registrationGroup))
             .ToList();
 
         // Check first registration in same registration group for compatibility (error if not compatible)

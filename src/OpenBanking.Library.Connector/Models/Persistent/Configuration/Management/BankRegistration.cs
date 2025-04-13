@@ -65,6 +65,12 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistrationEntity>
             .HasConversion(new EnumToStringConverter<BankGroup>());
         builder.Property(e => e.UseSimulatedBank)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.AispUseV4)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.PispUseV4)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.VrpUseV4)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.BankProfile)
             .HasConversion(new EnumToStringConverter<BankProfileEnum>());
         builder.Property(e => e.JwksUri)
