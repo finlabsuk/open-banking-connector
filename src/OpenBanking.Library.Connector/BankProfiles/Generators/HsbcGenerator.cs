@@ -56,7 +56,7 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
             issuerUrl,
             GetFinancialId(bank),
             GetAccountAndTransactionApi(bank),
-            null,
+            GetAccountAndTransactionV4Api(bank),
             GetPaymentInitiationApi(bank),
             GetVariableRecurringPaymentsApi(bank),
             bank is not HsbcBank.Sandbox,
@@ -152,6 +152,28 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
             HsbcBank.HsbcNetUk =>
                 // from: https://develop.hsbc.com/sites/default/files/open_banking/HSBC%20Open%20Banking%20TPP%20Implementation%20Guide%20(v3.1).pdf
                 "https://api.ob.hsbcnet.com/obie/open-banking/v3.1/aisp",
+            _ => throw new ArgumentOutOfRangeException()
+        }
+    };
+
+    private AccountAndTransactionApi GetAccountAndTransactionV4Api(HsbcBank bank) => new()
+    {
+        ApiVersion = AccountAndTransactionApiVersion.Version4p0,
+        BaseUrl = bank switch
+        {
+            // from https://develop.hsbc.com/sites/default/files/open_banking/HSBC%20UK%20Open%20Banking%20Implementation%20Guide%20(v4).pdf
+            HsbcBank.FirstDirect =>
+                "https://api.ob.firstdirect.com/obie/open-banking/v4.0/aisp",
+            HsbcBank.Sandbox =>
+                GetAccountAndTransactionApiBaseUrl(bank),
+            HsbcBank.UkBusiness =>
+                "https://api.ob.business.hsbc.co.uk/obie/open-banking/v4.0/aisp",
+            HsbcBank.UkKinetic =>
+                "https://api.ob.hsbckinetic.co.uk/obie/open-banking/v4.0/aisp",
+            HsbcBank.UkPersonal =>
+                "https://api.ob.hsbc.co.uk/obie/open-banking/v4.0/aisp",
+            HsbcBank.HsbcNetUk =>
+                "https://api.ob.hsbcnet.com/obie/open-banking/v4.0/aisp",
             _ => throw new ArgumentOutOfRangeException()
         }
     };
