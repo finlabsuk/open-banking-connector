@@ -73,6 +73,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                 _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
             },
             bank is not LloydsBank.Sandbox ? GetAccountAndTransactionApi(bank) : null,
+            null,
             GetPaymentInitiationApi(bank),
             GetVariableRecurringPaymentsApi(bank),
             bank is not LloydsBank.Sandbox,

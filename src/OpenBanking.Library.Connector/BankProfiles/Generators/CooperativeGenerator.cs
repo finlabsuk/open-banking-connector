@@ -30,6 +30,7 @@ public class CooperativeGenerator : BankProfileGeneratorBase<CooperativeBank>
             GetAccountAndTransactionApi(bank),
             null,
             null,
+            null,
             bank is not CooperativeBank.CooperativeSandbox,
             instrumentationClient)
         {

@@ -84,7 +84,8 @@ internal class
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
-        AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
+        bool aispUseV4 = bankRegistration.AispUseV4;
+        AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi(aispUseV4);
         string bankFinancialId = bankProfile.FinancialId;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
         OAuth2ResponseType responseType = bankProfile.DefaultResponseType;

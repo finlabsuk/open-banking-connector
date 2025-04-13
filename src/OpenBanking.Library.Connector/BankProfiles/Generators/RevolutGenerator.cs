@@ -30,6 +30,7 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
             GetAccountAndTransactionApi(bank),
             null,
             null,
+            null,
             true,
             instrumentationClient)
         {

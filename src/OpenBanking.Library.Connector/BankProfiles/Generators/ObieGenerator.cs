@@ -36,6 +36,7 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
                 BaseUrl =
                     "https://rs1.obie.uk.ozoneapi.io/open-banking/v3.1/aisp" // from https://github.com/OpenBankingUK/OBL-ModelBank-Integration
             },
+            null,
             GetPaymentInitiationApi(bank),
             GetVariableRecurringPaymentsApi(bank),
             false,

@@ -31,6 +31,7 @@ public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistration
             "https://openbanking.santander.co.uk/sanuk/external/open-banking/openid-connect-provider/v1/", // from https://developer.santander.co.uk/sanuk/external/faq-page#t4n553
             GetFinancialId(bank),
             GetAccountAndTransactionApi(bank),
+            null,
             GetPaymentInitiationApi(bank),
             GetVariableRecurringPaymentsApi(bank),
             true,

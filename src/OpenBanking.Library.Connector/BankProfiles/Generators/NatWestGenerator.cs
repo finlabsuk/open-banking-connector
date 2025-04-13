@@ -92,6 +92,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 _ => throw new ArgumentOutOfRangeException()
             },
             GetAccountAndTransactionApi(bank),
+            null,
             GetPaymentInitiationApi(bank),
             GetVariableRecurringPaymentsApi(bank),
             bank is not (NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox),

@@ -31,6 +31,7 @@ public class StarlingGenerator : BankProfileGeneratorBase<StarlingBank>
             GetAccountAndTransactionApi(bank),
             null,
             null,
+            null,
             true,
             instrumentationClient)
         {
