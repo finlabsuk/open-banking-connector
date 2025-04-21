@@ -1812,29 +1812,26 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
         [System.Runtime.Serialization.EnumMember(Value = @"WEEK")]
         WEEK = 8,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"WEEK")]
-        WEEK = 9,
-
         [System.Runtime.Serialization.EnumMember(Value = @"WODL")]
-        WODL = 10,
+        WODL = 9,
 
         [System.Runtime.Serialization.EnumMember(Value = @"FOWK")]
-        FOWK = 11,
+        FOWK = 10,
 
         [System.Runtime.Serialization.EnumMember(Value = @"TWMH")]
-        TWMH = 12,
+        TWMH = 11,
 
         [System.Runtime.Serialization.EnumMember(Value = @"FOMH")]
-        FOMH = 13,
+        FOMH = 12,
 
         [System.Runtime.Serialization.EnumMember(Value = @"FIMH")]
-        FIMH = 14,
+        FIMH = 13,
 
         [System.Runtime.Serialization.EnumMember(Value = @"ALMH")]
-        ALMH = 15,
+        ALMH = 14,
 
         [System.Runtime.Serialization.EnumMember(Value = @"NONE")]
-        NONE = 16,
+        NONE = 15,
 
     }
 
@@ -2331,6 +2328,41 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
         public bool? ContractPresentIndicator { get; set; } = default!;
 
         /// <summary>
+        /// Indicates if Payee has a contractual relationship with the PISP.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("ContractPresentInidicator", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? ContractPresentInidicator { get; set; } = default!;
+   
+        public void AdjustBeforeSendToBank(bool preferMisspelt)
+        {
+            if (ContractPresentInidicator is not null)
+            {
+                throw new Exception("ContractPresentInidicator should be null.");
+            }
+            if (preferMisspelt)
+            {
+                ContractPresentInidicator = ContractPresentIndicator;
+                ContractPresentIndicator = null;
+            }
+            
+        }
+
+        public void AdjustAfterReceiveFromBank()
+        {
+            if (ContractPresentIndicator is not null &&
+                ContractPresentInidicator is not null)
+            {
+                throw new Exception("Both ContractPresentIndicator and ContractPresentInidicator received.");
+            }
+
+            if (ContractPresentInidicator is not null)
+            {
+                ContractPresentIndicator = ContractPresentInidicator;
+                ContractPresentInidicator = null;
+            }
+        }
+        
+        /// <summary>
         /// Indicates if PISP has immutably prepopulated payment details in for the PSU.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("BeneficiaryPrepopulatedIndicator", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -2489,6 +2521,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
 
     }
 
+    [SourceApiEquivalent(typeof(OBWriteDomesticConsent4))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record OBWriteDomestic2
     {
@@ -3091,6 +3124,21 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
 
     }
 
+    [SourceApiEquivalent(
+        typeof(Data2),
+        ValueMappingSourceMembers = new[]
+        {
+            (string?) null
+        },
+        ValueMappingDestinationMembers = new[]
+        {
+            "ConsentId"
+        },
+        ValueMappings = new[]
+        {
+            ValueMapping.SetNull
+        })
+    ]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record Data
     {
@@ -3098,8 +3146,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
         /// OB: Unique identification as assigned by the ASPSP to uniquely identify the consent resource.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("ConsentId", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(128, MinimumLength = 1)]
         public required string ConsentId { get; set; }
 
         /// <summary>
@@ -4796,6 +4842,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
 
     }
 
+    [SourceApiEquivalent(typeof(Initiation2))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record Initiation
     {
@@ -5105,10 +5152,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
         /// <summary>
         /// Type of authorisation flow requested. For a full list of values refer to `OBInternalAuthorisation1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("AuthorisationType", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [Newtonsoft.Json.JsonProperty("AuthorisationType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required Authorisation2AuthorisationType AuthorisationType { get; set; }
+        public Authorisation2AuthorisationType? AuthorisationType { get; set; } = default!;
 
         /// <summary>
         /// Date and time at which the requested authorisation flow must be completed. All dates in the JSON payloads are represented in ISO 8601 date-time format. 
@@ -9047,6 +9093,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
 
     }
 
+    [SourceApiEquivalent(typeof(InstructedAmount2))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record InstructedAmount
     {
@@ -9062,6 +9109,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
 
     }
 
+    [SourceApiEquivalent(typeof(DebtorAccount2))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record DebtorAccount
     {
@@ -9115,6 +9163,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
 
     }
 
+    [SourceApiEquivalent(typeof(CreditorAccount2))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record CreditorAccount
     {
