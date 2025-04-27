@@ -344,7 +344,7 @@ public static class Mappings
                 directDebit.Frequency?.MapToFrequency6()
                 ?? new OBFrequency6
                 {
-                    Type = OBFrequency6Code.NONE,
+                    Type = OBFrequency6Code.NONE.ToString(),
                     CountPerPeriod = null,
                     PointInTime = null // not in v3
                     //AdditionalProperties
@@ -358,7 +358,7 @@ public static class Mappings
         new()
         {
             // decision: use mappings to Type shown and CountPerPeriod = 1
-            Type = frequency switch
+            Type = (frequency switch
             {
                 "UK.OBIE.Monthly" => OBFrequency6Code.MNTH,
                 "UK.OBIE.Quarterly" => OBFrequency6Code.QURT,
@@ -375,7 +375,7 @@ public static class Mappings
                 "UK.UBN.BiMonthly" => OBFrequency6Code.TWMH,
                 "UK.UBN.FourMonthly" => OBFrequency6Code.FOMH,
                 _ => throw new ArgumentOutOfRangeException(nameof(frequency), frequency, null)
-            },
+            }).ToString(),
             CountPerPeriod = 1,
             PointInTime = null // not in v3
             //AdditionalProperties
@@ -569,6 +569,10 @@ public static class Mappings
             Amount = balance.Amount.MapToAmount3(),
             CreditDebitIndicator = balance.CreditDebitIndicator.MapToCreditDebitIndicator2(),
             Type = balance.Type.MapToBalanceType(),
+            V3IsClearedBalanceType = // decision: return extra property to avoid lossy mapping
+                balance.Type is AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.ClosingCleared
+                    or AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.InterimCleared
+                    or AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.OpeningCleared,
             DateTime = balance.DateTime,
             CreditLine = balance.CreditLine?
                 .Select(c => c.MapToCreditLine())
@@ -709,7 +713,11 @@ public static class Mappings
         {
             Amount = balance.Amount?.MapToAmount8(),
             CreditDebitIndicator = balance.CreditDebitIndicator.MapToCreditDebitIndicator2(),
-            Type = balance.Type.MapToBalanceType()
+            Type = balance.Type.MapToBalanceType(), // decision: return extra property to avoid lossy mapping
+            V3IsClearedBalanceType =
+                balance.Type is AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.ClosingCleared
+                    or AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.InterimCleared
+                    or AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.OpeningCleared
         };
 
     private static Amount MapToAmount8(
@@ -786,7 +794,8 @@ public static class Mappings
             StatusUpdateDateTime = account.StatusUpdateDateTime,
             Currency = account.Currency,
             AccountCategory = account.AccountType?.MapToAccountCategory(),
-            AccountTypeCode = account.AccountSubType?.MapToAccountTypeCode(),
+            AccountTypeCode = null, // decision use V3AccountSubType as otherwise mapping is lossy
+            V3AccountSubType = account.AccountSubType,
             Description = account.Description,
             Nickname = account.Nickname,
             OpeningDate = account.OpeningDate,
@@ -885,30 +894,6 @@ public static class Mappings
             AccountAndTransactionModelsV3p1p11.OBExternalAccountType1Code.Personal => OBInternalAccountType1Code
                 .Personal,
             _ => throw new ArgumentOutOfRangeException(nameof(accountType), accountType, null)
-        };
-
-    private static OBExternalAccountSubType1Code MapToAccountTypeCode(
-        this AccountAndTransactionModelsV3p1p11.OBExternalAccountSubType1Code accountSubType) =>
-        accountSubType switch
-        {
-            AccountAndTransactionModelsV3p1p11.OBExternalAccountSubType1Code.ChargeCard => OBExternalAccountSubType1Code
-                .CARD, // decision: use CARD ("account used for credit card payments")
-            AccountAndTransactionModelsV3p1p11.OBExternalAccountSubType1Code.CreditCard => OBExternalAccountSubType1Code
-                .CARD,
-            AccountAndTransactionModelsV3p1p11.OBExternalAccountSubType1Code.CurrentAccount =>
-                OBExternalAccountSubType1Code.CACC,
-            AccountAndTransactionModelsV3p1p11.OBExternalAccountSubType1Code.EMoney => OBExternalAccountSubType1Code
-                .OTHR, // decision: use OTHR (OtherAccount)
-            AccountAndTransactionModelsV3p1p11.OBExternalAccountSubType1Code.Loan => OBExternalAccountSubType1Code.LOAN,
-            AccountAndTransactionModelsV3p1p11.OBExternalAccountSubType1Code.Mortgage => OBExternalAccountSubType1Code
-                .MORT,
-            AccountAndTransactionModelsV3p1p11.OBExternalAccountSubType1Code.PrePaidCard =>
-                OBExternalAccountSubType1Code.OTHR, // decision: use OTHR (OtherAccount)
-            AccountAndTransactionModelsV3p1p11.OBExternalAccountSubType1Code.Savings => OBExternalAccountSubType1Code
-                .SVGS,
-            AccountAndTransactionModelsV3p1p11.OBExternalAccountSubType1Code.Wallet => OBExternalAccountSubType1Code
-                .WALT,
-            _ => throw new ArgumentOutOfRangeException(nameof(accountSubType), accountSubType, null)
         };
 
     private static OBInternalAccountStatus1Code MapToStatus(
@@ -1057,18 +1042,11 @@ public static class Mappings
             CreditorAccount = standingOrder.CreditorAccount?.MapToCreditorAccount(),
             SupplementaryData = MapToSupplementaryData(
                 standingOrder.SupplementaryData,
-                new KeyValuePair<string, object>("V3Frequency", standingOrder.Frequency),
-                standingOrder.NumberOfPayments is not null
-                    ? new KeyValuePair<string, object>("V3NumberOfPayments", standingOrder.NumberOfPayments)
+                standingOrder.Reference is not null
+                    ? new KeyValuePair<string, object>("V3Reference", standingOrder.Reference)
                     : null),
             MandateRelatedInformation = standingOrder.MapToMandateRelatedInformation(),
-            RemittanceInformation = standingOrder.Reference is not null // decision: map Reference to Unstructured
-                ? new OBRemittanceInformation2
-                {
-                    Structured = null,
-                    Unstructured = [$"{standingOrder.Reference}"]
-                }
-                : null
+            RemittanceInformation = null // not in v3
         };
 
     private static OBMandateRelatedInformation1 MapToMandateRelatedInformation(
@@ -1081,10 +1059,10 @@ public static class Mappings
             FirstPaymentDateTime = standingOrder.FirstPaymentDateTime,
             RecurringPaymentDateTime = null, // not in v3
             FinalPaymentDateTime = standingOrder.FinalPaymentDateTime,
-            Frequency = new OBFrequency6 // decision: v3 frequency provided in SupplementaryData
+            Frequency = new OBFrequency6
             {
-                Type = OBFrequency6Code.NONE,
-                CountPerPeriod = null,
+                Type = standingOrder.Frequency,
+                CountPerPeriod = null, // not in v3
                 PointInTime = null // not in v3
                 //AdditionalProperties
             },
