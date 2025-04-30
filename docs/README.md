@@ -54,12 +54,4 @@ existing ones updated by the community, perhaps even by the banks themselves.
 The product is fully free-to-use but we ask customers to fund new features and bank integrations either by direct code
 contributions (please contact us) or by contracting us (Finnovation Labs) to do the work.
 
-Finnovation Labs also offers paid support, training and consultancy services.
-
-## Documentation
-
-This documentation is published on the [docs website](https://docs.openbankingconnector.io/) based on Markdown source
-code in the [docs directory of the GitHub repo](https://github.com/finlabsuk/open-banking-connector/tree/master/docs).
-
-Please raise a [GitHub issue](https://github.com/finlabsuk/open-banking-connector/issues) if you experience any problems
-or have any feedback.
+We also offer a support and maintenance product for customers running Open Banking Connector in production as well as a sponsorship programme for those wishing to further support Open Banking Connector.

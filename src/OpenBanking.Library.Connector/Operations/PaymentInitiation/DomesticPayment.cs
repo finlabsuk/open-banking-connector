@@ -28,8 +28,6 @@ using FluentValidation.Results;
 using Newtonsoft.Json;
 using DomesticPaymentConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsent;
-using PaymentInitiationModelsV3p1p4 =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p4.Pisp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 
@@ -126,12 +124,6 @@ internal class DomesticPayment :
                 bankProfile.BankProfileEnum);
 
         // Read object from external API
-        JsonSerializerSettings? responseJsonSerializerSettings = null;
-        IApiGetRequests<PaymentInitiationModelsPublic.OBWritePaymentDetailsResponse1> apiRequests =
-            ApiRequestsPaymentDetails(
-                paymentInitiationApi.ApiVersion,
-                bankFinancialId,
-                ccGrantAccessToken);
         var externalApiUrl = new Uri(
             paymentInitiationApi.BaseUrl + RelativePathBeforeId + $"/{externalApiId}/payment-details");
         var tppReportingRequestInfo = new TppReportingRequestInfo
@@ -142,16 +134,49 @@ internal class DomesticPayment :
                   """,
             BankProfile = bankProfile.BankProfileEnum
         };
-
-        (PaymentInitiationModelsPublic.OBWritePaymentDetailsResponse1 externalApiResponse, string? xFapiInteractionId,
-                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
-            await apiRequests.GetAsync(
-                externalApiUrl,
-                readParams.ExtraHeaders,
-                tppReportingRequestInfo,
-                responseJsonSerializerSettings,
-                apiClient,
-                _mapper);
+        JsonSerializerSettings? responseJsonSerializerSettings = null;
+        PaymentInitiationModelsPublic.OBWritePaymentDetailsResponse1 externalApiResponse;
+        string? xFapiInteractionId;
+        IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
+        switch (paymentInitiationApi.ApiVersion)
+        {
+            case PaymentInitiationApiVersion.Version3p1p11:
+                var apiRequestsV3 =
+                    new ApiGetRequests<PaymentInitiationModelsV3p1p11.OBWritePaymentDetailsResponse1,
+                        PaymentInitiationModelsV3p1p11.OBWritePaymentDetailsResponse1>(
+                        new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken));
+                (PaymentInitiationModelsV3p1p11.OBWritePaymentDetailsResponse1 externalApiResponseV3,
+                        xFapiInteractionId,
+                        newNonErrorMessages) =
+                    await apiRequestsV3.GetAsync(
+                        externalApiUrl,
+                        readParams.ExtraHeaders,
+                        tppReportingRequestInfo,
+                        responseJsonSerializerSettings,
+                        apiClient,
+                        _mapper);
+                externalApiResponse =
+                    PaymentInitiationModelsPublic.Mappings.MapToOBWritePaymentDetailsResponse1(externalApiResponseV3);
+                break;
+            case PaymentInitiationApiVersion.VersionPublic:
+                var apiRequests =
+                    new ApiGetRequests<PaymentInitiationModelsPublic.OBWritePaymentDetailsResponse1,
+                        PaymentInitiationModelsPublic.OBWritePaymentDetailsResponse1>(
+                        new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken));
+                (externalApiResponse, xFapiInteractionId,
+                        newNonErrorMessages) =
+                    await apiRequests.GetAsync(
+                        externalApiUrl,
+                        readParams.ExtraHeaders,
+                        tppReportingRequestInfo,
+                        responseJsonSerializerSettings,
+                        apiClient,
+                        _mapper);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    $"PISP API version {paymentInitiationApi.ApiVersion} not supported.");
+        }
         nonErrorMessages.AddRange(newNonErrorMessages);
         var externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
 
@@ -282,16 +307,6 @@ internal class DomesticPayment :
                 request.ModifiedBy);
 
         // Create new object at external API
-        JsonSerializerSettings? requestJsonSerializerSettings = null;
-        JsonSerializerSettings? responseJsonSerializerSettings = null;
-        IApiPostRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5> apiRequests =
-            ApiRequests(
-                paymentInitiationApi.ApiVersion,
-                bankFinancialId,
-                accessToken,
-                softwareStatement,
-                obSealKey);
         var externalApiUrl = new Uri(paymentInitiationApi.BaseUrl + RelativePathBeforeId);
         PaymentInitiationModelsPublic.OBWriteDomestic2 externalApiRequest = request.ExternalApiRequest;
         externalApiRequest = bankProfile.PaymentInitiationApiSettings
@@ -307,17 +322,70 @@ internal class DomesticPayment :
                   """,
             BankProfile = bankProfile.BankProfileEnum
         };
-        (PaymentInitiationModelsPublic.OBWriteDomesticResponse5 externalApiResponse, string? xFapiInteractionId,
-                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
-            await apiRequests.PostAsync(
-                externalApiUrl,
-                createParams.ExtraHeaders,
-                externalApiRequest,
-                tppReportingRequestInfo,
-                requestJsonSerializerSettings,
-                responseJsonSerializerSettings,
-                apiClient,
-                _mapper);
+        JsonSerializerSettings? requestJsonSerializerSettings = null;
+        JsonSerializerSettings? responseJsonSerializerSettings = null;
+        PaymentInitiationModelsPublic.OBWriteDomesticResponse5 externalApiResponse;
+        string? xFapiInteractionId;
+        IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
+        switch (paymentInitiationApi.ApiVersion)
+        {
+            case PaymentInitiationApiVersion.Version3p1p11:
+                PaymentInitiationModelsV3p1p11.OBWriteDomestic2 externalApiRequestV3 =
+                    PaymentInitiationModelsPublic.Mappings.MapFromOBWriteDomestic2(externalApiRequest);
+                var apiRequestsV3 =
+                    new ApiRequests<PaymentInitiationModelsV3p1p11.OBWriteDomestic2,
+                        PaymentInitiationModelsV3p1p11.OBWriteDomesticResponse5,
+                        PaymentInitiationModelsV3p1p11.OBWriteDomestic2,
+                        PaymentInitiationModelsV3p1p11.OBWriteDomesticResponse5>(
+                        new ApiGetRequestProcessor(bankFinancialId, accessToken),
+                        new PaymentInitiationPostRequestProcessor<PaymentInitiationModelsV3p1p11.OBWriteDomestic2>(
+                            bankFinancialId,
+                            accessToken,
+                            _instrumentationClient,
+                            softwareStatement,
+                            obSealKey));
+                (PaymentInitiationModelsV3p1p11.OBWriteDomesticResponse5 externalApiResponseV3, xFapiInteractionId,
+                        newNonErrorMessages) =
+                    await apiRequestsV3.PostAsync(
+                        externalApiUrl,
+                        createParams.ExtraHeaders,
+                        externalApiRequestV3,
+                        tppReportingRequestInfo,
+                        requestJsonSerializerSettings,
+                        responseJsonSerializerSettings,
+                        apiClient,
+                        _mapper);
+                externalApiResponse =
+                    PaymentInitiationModelsPublic.Mappings.MapToOBWriteDomesticResponse5(externalApiResponseV3);
+                break;
+            case PaymentInitiationApiVersion.VersionPublic:
+                var apiRequests =
+                    new ApiRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,
+                        PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
+                        PaymentInitiationModelsPublic.OBWriteDomestic2,
+                        PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
+                        new ApiGetRequestProcessor(bankFinancialId, accessToken),
+                        new PaymentInitiationPostRequestProcessor<PaymentInitiationModelsPublic.OBWriteDomestic2>(
+                            bankFinancialId,
+                            accessToken,
+                            _instrumentationClient,
+                            softwareStatement,
+                            obSealKey));
+                (externalApiResponse, xFapiInteractionId, newNonErrorMessages) =
+                    await apiRequests.PostAsync(
+                        externalApiUrl,
+                        createParams.ExtraHeaders,
+                        externalApiRequest,
+                        tppReportingRequestInfo,
+                        requestJsonSerializerSettings,
+                        responseJsonSerializerSettings,
+                        apiClient,
+                        _mapper);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    $"Payment Initiation API version {paymentInitiationApi.ApiVersion} not supported.");
+        }
         nonErrorMessages.AddRange(newNonErrorMessages);
         var externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
         string externalApiId = externalApiResponse.Data.DomesticPaymentId;
@@ -413,14 +481,6 @@ internal class DomesticPayment :
                 bankProfile.BankProfileEnum);
 
         // Read object from external API
-        JsonSerializerSettings? responseJsonSerializerSettings = null;
-        IApiGetRequests<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> apiRequests =
-            ApiRequests(
-                paymentInitiationApi.ApiVersion,
-                bankFinancialId,
-                ccGrantAccessToken,
-                softwareStatement,
-                obSealKey);
         var externalApiUrl = new Uri(paymentInitiationApi.BaseUrl + RelativePathBeforeId + $"/{externalApiId}");
         var tppReportingRequestInfo = new TppReportingRequestInfo
         {
@@ -430,15 +490,63 @@ internal class DomesticPayment :
                   """,
             BankProfile = bankProfile.BankProfileEnum
         };
-        (PaymentInitiationModelsPublic.OBWriteDomesticResponse5 externalApiResponse, string? xFapiInteractionId,
-                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
-            await apiRequests.GetAsync(
-                externalApiUrl,
-                readParams.ExtraHeaders,
-                tppReportingRequestInfo,
-                responseJsonSerializerSettings,
-                apiClient,
-                _mapper);
+        JsonSerializerSettings? responseJsonSerializerSettings = null;
+        PaymentInitiationModelsPublic.OBWriteDomesticResponse5 externalApiResponse;
+        string? xFapiInteractionId;
+        IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
+        switch (paymentInitiationApi.ApiVersion)
+        {
+            case PaymentInitiationApiVersion.Version3p1p11:
+                var apiRequestsV3 =
+                    new ApiRequests<PaymentInitiationModelsV3p1p11.OBWriteDomestic2,
+                        PaymentInitiationModelsV3p1p11.OBWriteDomesticResponse5,
+                        PaymentInitiationModelsV3p1p11.OBWriteDomestic2,
+                        PaymentInitiationModelsV3p1p11.OBWriteDomesticResponse5>(
+                        new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken),
+                        new PaymentInitiationPostRequestProcessor<PaymentInitiationModelsV3p1p11.OBWriteDomestic2>(
+                            bankFinancialId,
+                            ccGrantAccessToken,
+                            _instrumentationClient,
+                            softwareStatement,
+                            obSealKey));
+                (PaymentInitiationModelsV3p1p11.OBWriteDomesticResponse5 externalApiResponseV3, xFapiInteractionId,
+                        newNonErrorMessages) =
+                    await apiRequestsV3.GetAsync(
+                        externalApiUrl,
+                        readParams.ExtraHeaders,
+                        tppReportingRequestInfo,
+                        responseJsonSerializerSettings,
+                        apiClient,
+                        _mapper);
+                externalApiResponse =
+                    PaymentInitiationModelsPublic.Mappings.MapToOBWriteDomesticResponse5(externalApiResponseV3);
+                break;
+            case PaymentInitiationApiVersion.VersionPublic:
+                var apiRequests =
+                    new ApiRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,
+                        PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
+                        PaymentInitiationModelsPublic.OBWriteDomestic2,
+                        PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
+                        new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken),
+                        new PaymentInitiationPostRequestProcessor<PaymentInitiationModelsPublic.OBWriteDomestic2>(
+                            bankFinancialId,
+                            ccGrantAccessToken,
+                            _instrumentationClient,
+                            softwareStatement,
+                            obSealKey));
+                (externalApiResponse, xFapiInteractionId, newNonErrorMessages) =
+                    await apiRequests.GetAsync(
+                        externalApiUrl,
+                        readParams.ExtraHeaders,
+                        tppReportingRequestInfo,
+                        responseJsonSerializerSettings,
+                        apiClient,
+                        _mapper);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    $"Payment Initiation API version {paymentInitiationApi.ApiVersion} not supported.");
+        }
         nonErrorMessages.AddRange(newNonErrorMessages);
         var externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
 
@@ -486,60 +594,4 @@ internal class DomesticPayment :
         };
         return response;
     }
-
-    private
-        IApiRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiRequests(
-            PaymentInitiationApiVersion paymentInitiationApiVersion,
-            string bankFinancialId,
-            string accessToken,
-            SoftwareStatementEntity softwareStatement,
-            OBSealKey obSealKey) =>
-        paymentInitiationApiVersion switch
-        {
-            PaymentInitiationApiVersion.Version3p1p4 => new ApiRequests<
-                PaymentInitiationModelsPublic.OBWriteDomestic2,
-                PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
-                PaymentInitiationModelsV3p1p4.OBWriteDomestic2,
-                PaymentInitiationModelsV3p1p4.OBWriteDomesticResponse4>(
-                new ApiGetRequestProcessor(bankFinancialId, accessToken),
-                new PaymentInitiationPostRequestProcessor<
-                    PaymentInitiationModelsV3p1p4.OBWriteDomestic2>(
-                    bankFinancialId,
-                    accessToken,
-                    _instrumentationClient,
-                    softwareStatement,
-                    obSealKey)),
-            PaymentInitiationApiVersion.VersionPublic => new ApiRequests<
-                PaymentInitiationModelsPublic.OBWriteDomestic2,
-                PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
-                PaymentInitiationModelsPublic.OBWriteDomestic2,
-                PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
-                new ApiGetRequestProcessor(bankFinancialId, accessToken),
-                new PaymentInitiationPostRequestProcessor<
-                    PaymentInitiationModelsPublic.OBWriteDomestic2>(
-                    bankFinancialId,
-                    accessToken,
-                    _instrumentationClient,
-                    softwareStatement,
-                    obSealKey)),
-            _ => throw new ArgumentOutOfRangeException(
-                $"Payment Initiation API version {paymentInitiationApiVersion} not supported.")
-        };
-
-    private IApiGetRequests<PaymentInitiationModelsPublic.OBWritePaymentDetailsResponse1>
-        ApiRequestsPaymentDetails(
-            PaymentInitiationApiVersion paymentInitiationApiVersion,
-            string bankFinancialId,
-            string accessToken) =>
-        paymentInitiationApiVersion switch
-        {
-            PaymentInitiationApiVersion.VersionPublic => new ApiGetRequests<
-                PaymentInitiationModelsPublic.OBWritePaymentDetailsResponse1,
-                PaymentInitiationModelsPublic.OBWritePaymentDetailsResponse1>(
-                new ApiGetRequestProcessor(
-                    bankFinancialId,
-                    accessToken)),
-            _ => throw new ArgumentOutOfRangeException($"PISP API version {paymentInitiationApiVersion} not supported.")
-        };
 }

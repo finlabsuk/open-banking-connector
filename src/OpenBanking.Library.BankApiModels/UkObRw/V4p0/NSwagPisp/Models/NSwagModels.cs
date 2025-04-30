@@ -2521,7 +2521,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
 
     }
 
-    [SourceApiEquivalent(typeof(OBWriteDomesticConsent4))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record OBWriteDomestic2
     {
@@ -3011,6 +3010,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
             set { _additionalProperties = value; }
         }
 
+        [Newtonsoft.Json.JsonProperty("V3Status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public V3p1p11.NSwagPisp.Models.PaymentStatusStatus? V3Status { get; set; } = default!;
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -3124,21 +3126,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
 
     }
 
-    [SourceApiEquivalent(
-        typeof(Data2),
-        ValueMappingSourceMembers = new[]
-        {
-            (string?) null
-        },
-        ValueMappingDestinationMembers = new[]
-        {
-            "ConsentId"
-        },
-        ValueMappings = new[]
-        {
-            ValueMapping.SetNull
-        })
-    ]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record Data
     {
@@ -4840,9 +4827,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
             set { _additionalProperties = value; }
         }
 
+        [Newtonsoft.Json.JsonProperty("V3Status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string? V3Status { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("V3StatusReason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public V3p1p11.NSwagPisp.Models.StatusDetailStatusReason? V3StatusReason { get; set; } = default!;
     }
 
-    [SourceApiEquivalent(typeof(Initiation2))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record Initiation
     {
@@ -9093,7 +9085,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
 
     }
 
-    [SourceApiEquivalent(typeof(InstructedAmount2))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record InstructedAmount
     {
@@ -9109,7 +9100,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
 
     }
 
-    [SourceApiEquivalent(typeof(DebtorAccount2))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record DebtorAccount
     {
@@ -9163,7 +9153,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
 
     }
 
-    [SourceApiEquivalent(typeof(CreditorAccount2))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record CreditorAccount
     {

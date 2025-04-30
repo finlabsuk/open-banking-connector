@@ -3134,9 +3134,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagVrp
         /// Only included in the response if `Data.ReadRefundAccount` is set to `Yes` in the consent.
         /// <br/>
         /// </summary>
-        [Newtonsoft.Json.JsonConverter(
-            typeof(DomesticVrpRefundConverter),
-            JsonConverterLabel.DomesticVrpRefund)]
         [Newtonsoft.Json.JsonProperty("Refund", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBCashAccountDebtorWithName? Refund { get; set; } = default!;
 
@@ -3163,6 +3160,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagVrp
             set { _additionalProperties = value; }
         }
 
+        [Newtonsoft.Json.JsonProperty("V3StatusReason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string? V3StatusReason { get; set; } = default!;
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -3529,7 +3528,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagVrp
         [Newtonsoft.Json.JsonProperty("Status", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required PaymentStatusStatus Status { get; set; }
+        public required PaymentStatusStatusV4 Status { get; set; }
 
         /// <summary>
         /// Date and time at which the status was assigned to the transfer.
@@ -3551,10 +3550,13 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagVrp
             set { _additionalProperties = value; }
         }
 
+        [Newtonsoft.Json.JsonProperty("V3Status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public V3p1p11.NSwagVrp.Models.PaymentStatusStatus? V3Status { get; set; } = default!;
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum PaymentStatusStatus
+    public enum PaymentStatusStatusV4
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"RCVD")]
@@ -3634,6 +3636,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagVrp
             set { _additionalProperties = value; }
         }
 
+        [Newtonsoft.Json.JsonProperty("V3Status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string? V3Status { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("V3StatusReason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public V3p1p11.NSwagVrp.Models.StatusDetailStatusReason? V3StatusReason { get; set; } = default!;
     }
 
 

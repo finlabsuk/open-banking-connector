@@ -175,10 +175,15 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
         {
             response.ExternalApiResponse.Data.Status.Should()
                 .BeOneOf(
-                    VariableRecurringPaymentsModelsPublic.Data4Status.AcceptedCreditSettlementCompleted,
-                    VariableRecurringPaymentsModelsPublic.Data4Status.AcceptedSettlementCompleted,
-                    VariableRecurringPaymentsModelsPublic.Data4Status.AcceptedWithoutPosting,
-                    VariableRecurringPaymentsModelsPublic.Data4Status.AcceptedSettlementInProcess);
+                    VariableRecurringPaymentsModelsPublic.Data4Status.ACCC,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.ACCP,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.ACFC,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.ACSC,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.ACSP,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.ACTC,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.ACWC,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.ACWP,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.PDNG);
         }
 
         // Check refund account

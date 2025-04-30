@@ -173,10 +173,15 @@ public class PaymentInitiationApiClient(WebAppClient client)
         {
             response.ExternalApiResponse.Data.Status.Should()
                 .BeOneOf(
-                    PaymentInitiationModelsPublic.Data4Status.AcceptedCreditSettlementCompleted,
-                    PaymentInitiationModelsPublic.Data4Status.AcceptedSettlementCompleted,
-                    PaymentInitiationModelsPublic.Data4Status.AcceptedWithoutPosting,
-                    PaymentInitiationModelsPublic.Data4Status.AcceptedSettlementInProcess);
+                    PaymentInitiationModelsPublic.Data4Status.ACCC,
+                    PaymentInitiationModelsPublic.Data4Status.ACCP,
+                    PaymentInitiationModelsPublic.Data4Status.ACFC,
+                    PaymentInitiationModelsPublic.Data4Status.ACSC,
+                    PaymentInitiationModelsPublic.Data4Status.ACSP,
+                    PaymentInitiationModelsPublic.Data4Status.ACTC,
+                    PaymentInitiationModelsPublic.Data4Status.ACWC,
+                    PaymentInitiationModelsPublic.Data4Status.ACWP,
+                    PaymentInitiationModelsPublic.Data4Status.PDNG);
         }
 
         // Check refund account

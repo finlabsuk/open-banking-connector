@@ -159,6 +159,21 @@ internal class DomesticVrp :
                 request.ModifiedBy);
 
         // Create new object at external API
+        var externalApiUrl = new Uri(variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId);
+        VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest externalApiRequest = request.ExternalApiRequest;
+        externalApiRequest = bankProfile.VariableRecurringPaymentsApiSettings
+            .DomesticVrpExternalApiRequestAdjustments(externalApiRequest);
+        bool preferMisspeltContractPresentIndicator =
+            domesticVrpPostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
+        externalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
+        var tppReportingRequestInfo = new TppReportingRequestInfo
+        {
+            EndpointDescription =
+                $$"""
+                  POST {VrpBaseUrl}{{RelativePathBeforeId}}
+                  """,
+            BankProfile = bankProfile.BankProfileEnum
+        };
         JsonSerializerSettings? requestJsonSerializerSettings = null;
         JsonSerializerSettings responseJsonSerializerSettings = ApiClient.GetDefaultJsonSerializerSettings;
         DomesticVrpRefundConverterOptions? refundResponseJsonConverter =
@@ -176,41 +191,72 @@ internal class DomesticVrp :
                     optionsDict);
 #pragma warning restore SYSLIB0050
         }
-
-        IApiPostRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> apiRequests =
-            ApiRequests(
-                variableRecurringPaymentsApi.ApiVersion,
-                bankFinancialId,
-                accessToken,
-                softwareStatement,
-                obSealKey);
-        var externalApiUrl = new Uri(variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId);
-        VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest externalApiRequest = request.ExternalApiRequest;
-        externalApiRequest = bankProfile.VariableRecurringPaymentsApiSettings
-            .DomesticVrpExternalApiRequestAdjustments(externalApiRequest);
-        bool preferMisspeltContractPresentIndicator =
-            domesticVrpPostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
-        externalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
-        var tppReportingRequestInfo = new TppReportingRequestInfo
+        VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse externalApiResponse;
+        string? xFapiInteractionId;
+        IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
+        switch (variableRecurringPaymentsApi.ApiVersion)
         {
-            EndpointDescription =
-                $$"""
-                  POST {VrpBaseUrl}{{RelativePathBeforeId}}
-                  """,
-            BankProfile = bankProfile.BankProfileEnum
-        };
-        (VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse externalApiResponse, string? xFapiInteractionId,
-                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
-            await apiRequests.PostAsync(
-                externalApiUrl,
-                createParams.ExtraHeaders,
-                externalApiRequest,
-                tppReportingRequestInfo,
-                requestJsonSerializerSettings,
-                responseJsonSerializerSettings,
-                apiClient,
-                _mapper);
+            case VariableRecurringPaymentsApiVersion.Version3p1p11:
+                VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPRequest externalApiRequestV3 =
+                    VariableRecurringPaymentsModelsPublic.Mappings.MapFromOBDomesticVRPRequest(externalApiRequest);
+                var apiRequestsV3 =
+                    new ApiRequests<VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPRequest,
+                        VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPResponse,
+                        VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPRequest,
+                        VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPResponse>(
+                        new ApiGetRequestProcessor(bankFinancialId, accessToken),
+                        new PaymentInitiationPostRequestProcessor<
+                            VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPRequest>(
+                            bankFinancialId,
+                            accessToken,
+                            _instrumentationClient,
+                            softwareStatement,
+                            obSealKey));
+                (VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPResponse externalApiResponseV3, xFapiInteractionId,
+                        newNonErrorMessages) =
+                    await apiRequestsV3.PostAsync(
+                        externalApiUrl,
+                        createParams.ExtraHeaders,
+                        externalApiRequestV3,
+                        tppReportingRequestInfo,
+                        requestJsonSerializerSettings,
+                        responseJsonSerializerSettings,
+                        apiClient,
+                        _mapper);
+                externalApiResponse =
+                    VariableRecurringPaymentsModelsPublic.Mappings.MapToOBDomesticVRPResponse(externalApiResponseV3);
+
+                break;
+            case VariableRecurringPaymentsApiVersion.VersionPublic:
+                var apiRequests =
+                    new ApiRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
+                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse,
+                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
+                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>(
+                        new ApiGetRequestProcessor(bankFinancialId, accessToken),
+                        new PaymentInitiationPostRequestProcessor<
+                            VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest>(
+                            bankFinancialId,
+                            accessToken,
+                            _instrumentationClient,
+                            softwareStatement,
+                            obSealKey));
+                (externalApiResponse, xFapiInteractionId,
+                        newNonErrorMessages) =
+                    await apiRequests.PostAsync(
+                        externalApiUrl,
+                        createParams.ExtraHeaders,
+                        externalApiRequest,
+                        tppReportingRequestInfo,
+                        requestJsonSerializerSettings,
+                        responseJsonSerializerSettings,
+                        apiClient,
+                        _mapper);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    $"Variable Recurring Payments API version {variableRecurringPaymentsApi.ApiVersion} not supported.");
+        }
         nonErrorMessages.AddRange(newNonErrorMessages);
         var externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
         string externalApiId = externalApiResponse.Data.DomesticVRPId;
@@ -305,6 +351,18 @@ internal class DomesticVrp :
                 bankProfile.BankProfileEnum);
 
         // Read object from external API
+        var externalApiUrl =
+            new Uri(
+                variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId +
+                $"/{externalApiId}");
+        var tppReportingRequestInfo = new TppReportingRequestInfo
+        {
+            EndpointDescription =
+                $$"""
+                  GET {VrpBaseUrl}{{RelativePathBeforeId}}/{DomesticVrpId}
+                  """,
+            BankProfile = bankProfile.BankProfileEnum
+        };
         JsonSerializerSettings? responseJsonSerializerSettings = ApiClient.GetDefaultJsonSerializerSettings;
         DomesticVrpRefundConverterOptions? refundResponseJsonConverter =
             domesticVrpGetCustomBehaviour?.RefundResponseJsonConverter;
@@ -321,35 +379,64 @@ internal class DomesticVrp :
 #pragma warning restore SYSLIB0050
                     optionsDict);
         }
-
-        IApiGetRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> apiRequests =
-            ApiRequests(
-                variableRecurringPaymentsApi.ApiVersion,
-                bankFinancialId,
-                ccGrantAccessToken,
-                softwareStatement,
-                obSealKey);
-        var externalApiUrl =
-            new Uri(
-                variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId +
-                $"/{externalApiId}");
-        var tppReportingRequestInfo = new TppReportingRequestInfo
+        VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse externalApiResponse;
+        string? xFapiInteractionId;
+        IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
+        switch (variableRecurringPaymentsApi.ApiVersion)
         {
-            EndpointDescription =
-                $$"""
-                  GET {VrpBaseUrl}{{RelativePathBeforeId}}/{DomesticVrpId}
-                  """,
-            BankProfile = bankProfile.BankProfileEnum
-        };
-        (VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse externalApiResponse, string? xFapiInteractionId,
-                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
-            await apiRequests.GetAsync(
-                externalApiUrl,
-                readParams.ExtraHeaders,
-                tppReportingRequestInfo,
-                responseJsonSerializerSettings,
-                apiClient,
-                _mapper);
+            case VariableRecurringPaymentsApiVersion.Version3p1p11:
+                var apiRequestsV3 =
+                    new ApiRequests<VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPRequest,
+                        VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPResponse,
+                        VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPRequest,
+                        VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPResponse>(
+                        new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken),
+                        new PaymentInitiationPostRequestProcessor<
+                            VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPRequest>(
+                            bankFinancialId,
+                            ccGrantAccessToken,
+                            _instrumentationClient,
+                            softwareStatement,
+                            obSealKey));
+                (VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPResponse externalApiResponseV3, xFapiInteractionId,
+                        newNonErrorMessages) =
+                    await apiRequestsV3.GetAsync(
+                        externalApiUrl,
+                        readParams.ExtraHeaders,
+                        tppReportingRequestInfo,
+                        responseJsonSerializerSettings,
+                        apiClient,
+                        _mapper);
+                externalApiResponse =
+                    VariableRecurringPaymentsModelsPublic.Mappings.MapToOBDomesticVRPResponse(externalApiResponseV3);
+                break;
+            case VariableRecurringPaymentsApiVersion.VersionPublic:
+                var apiRequests =
+                    new ApiRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
+                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse,
+                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
+                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>(
+                        new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken),
+                        new PaymentInitiationPostRequestProcessor<
+                            VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest>(
+                            bankFinancialId,
+                            ccGrantAccessToken,
+                            _instrumentationClient,
+                            softwareStatement,
+                            obSealKey));
+                (externalApiResponse, xFapiInteractionId, newNonErrorMessages) =
+                    await apiRequests.GetAsync(
+                        externalApiUrl,
+                        readParams.ExtraHeaders,
+                        tppReportingRequestInfo,
+                        responseJsonSerializerSettings,
+                        apiClient,
+                        _mapper);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    $"Variable Recurring Payments API version {variableRecurringPaymentsApi.ApiVersion} not supported.");
+        }
         nonErrorMessages.AddRange(newNonErrorMessages);
         var externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
         externalApiResponse.Risk.AdjustAfterReceiveFromBank();
@@ -446,12 +533,6 @@ internal class DomesticVrp :
                 bankProfile.BankProfileEnum);
 
         // Read object from external API
-        JsonSerializerSettings? responseJsonSerializerSettings = null;
-        IApiGetRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPDetails> apiRequests =
-            ApiRequestsPaymentDetails(
-                variableRecurringPaymentsApi.ApiVersion,
-                bankFinancialId,
-                ccGrantAccessToken);
         var externalApiUrl =
             new Uri(
                 variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId +
@@ -464,15 +545,47 @@ internal class DomesticVrp :
                   """,
             BankProfile = bankProfile.BankProfileEnum
         };
-        (VariableRecurringPaymentsModelsPublic.OBDomesticVRPDetails externalApiResponse, string? xFapiInteractionId,
-                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
-            await apiRequests.GetAsync(
-                externalApiUrl,
-                readParams.ExtraHeaders,
-                tppReportingRequestInfo,
-                responseJsonSerializerSettings,
-                apiClient,
-                _mapper);
+        JsonSerializerSettings? responseJsonSerializerSettings = null;
+        VariableRecurringPaymentsModelsPublic.OBDomesticVRPDetails externalApiResponse;
+        string? xFapiInteractionId;
+        IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
+        switch (variableRecurringPaymentsApi.ApiVersion)
+        {
+            case VariableRecurringPaymentsApiVersion.Version3p1p11:
+                var apiRequestsV3 =
+                    new ApiGetRequests<VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPDetails,
+                        VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPDetails>(
+                        new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken));
+                (VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPDetails externalApiResponseV3, xFapiInteractionId,
+                        newNonErrorMessages) =
+                    await apiRequestsV3.GetAsync(
+                        externalApiUrl,
+                        readParams.ExtraHeaders,
+                        tppReportingRequestInfo,
+                        responseJsonSerializerSettings,
+                        apiClient,
+                        _mapper);
+                externalApiResponse =
+                    VariableRecurringPaymentsModelsPublic.Mappings.MapToOBDomesticVRPDetails(externalApiResponseV3);
+                break;
+            case VariableRecurringPaymentsApiVersion.VersionPublic:
+                var apiRequests =
+                    new ApiGetRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPDetails,
+                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPDetails>(
+                        new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken));
+                (externalApiResponse, xFapiInteractionId, newNonErrorMessages) =
+                    await apiRequests.GetAsync(
+                        externalApiUrl,
+                        readParams.ExtraHeaders,
+                        tppReportingRequestInfo,
+                        responseJsonSerializerSettings,
+                        apiClient,
+                        _mapper);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    $"Variable Recurring Payments API version {variableRecurringPaymentsApi.ApiVersion} not supported.");
+        }
         nonErrorMessages.AddRange(newNonErrorMessages);
         var externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
 
@@ -486,46 +599,4 @@ internal class DomesticVrp :
         };
         return response;
     }
-
-    private
-        IApiRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> ApiRequests(
-            VariableRecurringPaymentsApiVersion variableRecurringPaymentsApiVersion,
-            string bankFinancialId,
-            string accessToken,
-            SoftwareStatementEntity softwareStatement,
-            OBSealKey obSealKey) =>
-        variableRecurringPaymentsApiVersion switch
-        {
-            VariableRecurringPaymentsApiVersion.VersionPublic => new ApiRequests<
-                VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
-                VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse,
-                VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
-                VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>(
-                new ApiGetRequestProcessor(bankFinancialId, accessToken),
-                new PaymentInitiationPostRequestProcessor<
-                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest>(
-                    bankFinancialId,
-                    accessToken,
-                    _instrumentationClient,
-                    softwareStatement,
-                    obSealKey)),
-            _ => throw new ArgumentOutOfRangeException(
-                $"Variable Recurring Payments API version {variableRecurringPaymentsApiVersion} not supported.")
-        };
-
-    private
-        IApiGetRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPDetails> ApiRequestsPaymentDetails(
-            VariableRecurringPaymentsApiVersion variableRecurringPaymentsApiVersion,
-            string bankFinancialId,
-            string accessToken) =>
-        variableRecurringPaymentsApiVersion switch
-        {
-            VariableRecurringPaymentsApiVersion.VersionPublic => new ApiGetRequests<
-                VariableRecurringPaymentsModelsPublic.OBDomesticVRPDetails,
-                VariableRecurringPaymentsModelsPublic.OBDomesticVRPDetails>(
-                new ApiGetRequestProcessor(bankFinancialId, accessToken)),
-            _ => throw new ArgumentOutOfRangeException(
-                $"Variable Recurring Payments API version {variableRecurringPaymentsApiVersion} not supported.")
-        };
 }
