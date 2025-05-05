@@ -323,9 +323,9 @@ public class ApiClient(
         }
         Counter<int>? count = statusCodeInt switch
         {
-            (>= 200) and (<= 299) => tppReportingMetrics.Request2xxResponseCount,
-            (>= 400) and (<= 499) => tppReportingMetrics.Request4xxResponseCount,
-            (>= 500) and (<= 599) => tppReportingMetrics.Request5xxResponseCount,
+            >= 200 and <= 299 => tppReportingMetrics.Request2xxResponseCount,
+            >= 400 and <= 499 => tppReportingMetrics.Request4xxResponseCount,
+            >= 500 and <= 599 => tppReportingMetrics.Request5xxResponseCount,
             _ => null
         };
         count?.Add(
