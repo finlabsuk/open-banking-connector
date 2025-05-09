@@ -17,6 +17,8 @@ You can use the bank profile and software statement ID to create a new bank regi
 Upon creation, Open Banking Connector will provide you with an ID for the bank registration which you can then use to
 create consents.
 
+If you receive SSL errors and are running Open banking connector in your localhost, you will need to [install open banking root certificates](../../contributor-info/developer-setup/install-obuk-root-certs/) .  
+
 ## Example with Postman and OBIE Modelo model bank
 
 ![Alt text](bank_reg.png)
