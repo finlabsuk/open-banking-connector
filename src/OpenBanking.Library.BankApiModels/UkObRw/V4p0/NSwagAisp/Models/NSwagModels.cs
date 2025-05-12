@@ -8057,9 +8057,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
             set { _additionalProperties = value; }
         }
 
-        [Newtonsoft.Json.JsonProperty("V3IsClearedBalanceType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool? V3IsClearedBalanceType { get; set; } = default!;
-        
+        [Newtonsoft.Json.JsonProperty("V3Type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public V3p1p11.NSwagAisp.Models.OBBalanceType1Code? V3Type { get; set; } = default!;
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]

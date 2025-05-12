@@ -2,8 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using AccountAndTransactionModelsV3p1p11 =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagAisp.Models;
+// using AccountAndTransactionModelsV3p1p11 =
+//     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagAisp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAisp.Models;
 
@@ -569,10 +569,7 @@ public static class Mappings
             Amount = balance.Amount.MapToAmount3(),
             CreditDebitIndicator = balance.CreditDebitIndicator.MapToCreditDebitIndicator2(),
             Type = balance.Type.MapToBalanceType(),
-            V3IsClearedBalanceType = // decision: return extra property to avoid lossy mapping
-                balance.Type is AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.ClosingCleared
-                    or AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.InterimCleared
-                    or AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.OpeningCleared,
+            V3Type = balance.Type, // decision: map Type to V3Type to avoid lossy mapping
             DateTime = balance.DateTime,
             CreditLine = balance.CreditLine?
                 .Select(c => c.MapToCreditLine())
@@ -1040,13 +1037,23 @@ public static class Mappings
             FinalPaymentAmount = standingOrder.FinalPaymentAmount?.MapToFinalPaymentAmount(),
             CreditorAgent = standingOrder.CreditorAgent?.MapToCreditorAgent(),
             CreditorAccount = standingOrder.CreditorAccount?.MapToCreditorAccount(),
-            SupplementaryData = MapToSupplementaryData(
-                standingOrder.SupplementaryData,
-                standingOrder.Reference is not null
-                    ? new KeyValuePair<string, object>("V3Reference", standingOrder.Reference)
-                    : null),
+            SupplementaryData = MapToSupplementaryData(standingOrder.SupplementaryData),
             MandateRelatedInformation = standingOrder.MapToMandateRelatedInformation(),
-            RemittanceInformation = null // not in v3
+            RemittanceInformation = standingOrder.Reference is not null
+                ? new OBRemittanceInformation2
+                {
+                    Structured =
+                    [
+                        new OBRemittanceInformationStructured
+                        {
+                            CreditorReferenceInformation = new CreditorReferenceInformation
+                            {
+                                Reference = standingOrder.Reference
+                            }
+                        }
+                    ]
+                }
+                : null
         };
 
     private static OBMandateRelatedInformation1 MapToMandateRelatedInformation(
