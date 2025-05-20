@@ -115,6 +115,7 @@ internal class
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(createParams.ConsentId, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
+        bool vrpUseV4 = bankRegistration.VrpUseV4;
 
         // Validate consent ID
         VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationRequest externalApiRequest =
@@ -133,7 +134,7 @@ internal class
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         VariableRecurringPaymentsApi variableRecurringPaymentsApi =
-            bankProfile.GetRequiredVariableRecurringPaymentsApi();
+            bankProfile.GetRequiredVariableRecurringPaymentsApi(vrpUseV4);
         bool supportsSca = bankProfile.SupportsSca;
         string bankFinancialId =
             bankProfile.VariableRecurringPaymentsApiSettings.FinancialId ?? bankProfile.FinancialId;
@@ -288,17 +289,19 @@ internal class
         VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? externalApiResponse;
         ExternalApiResponseInfo? externalApiResponseInfo;
         string externalApiId;
+        bool vrpUseV4;
         if (request.ExternalApiObject is null)
         {
             // Load BankRegistration and related
             (BankRegistrationEntity bankRegistration, string tokenEndpoint,
                     SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
+            vrpUseV4 = bankRegistration.VrpUseV4;
 
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             VariableRecurringPaymentsApi variableRecurringPaymentsApi =
-                bankProfile.GetRequiredVariableRecurringPaymentsApi();
+                bankProfile.GetRequiredVariableRecurringPaymentsApi(vrpUseV4);
             string bankFinancialId =
                 bankProfile.VariableRecurringPaymentsApiSettings.FinancialId ?? bankProfile.FinancialId;
             ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
@@ -334,9 +337,17 @@ internal class
                     "ExternalApiRequest specified as null so not possible to create external API request.");
             externalApiRequest = bankProfile.VariableRecurringPaymentsApiSettings
                 .DomesticVrpConsentExternalApiRequestAdjustments(externalApiRequest);
-            bool preferMisspeltContractPresentIndicator =
-                domesticVrpConsentPostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
-            externalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
+            if (externalApiRequest.Risk.ContractPresentInidicator is not null)
+            {
+                throw new ArgumentException(
+                    "ExternalApiRequest contains mis-spelt field Risk/ContractPresentInidicator.");
+            }
+            if (!vrpUseV4)
+            {
+                bool preferMisspeltContractPresentIndicator =
+                    domesticVrpConsentPostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
+                externalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
+            }
             var tppReportingRequestInfo = new TppReportingRequestInfo
             {
                 EndpointDescription =
@@ -415,7 +426,10 @@ internal class
             nonErrorMessages.AddRange(newNonErrorMessages);
             externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
             externalApiId = externalApiResponse.Data.ConsentId;
-            externalApiResponse.Risk.AdjustAfterReceiveFromBank();
+            if (!vrpUseV4)
+            {
+                externalApiResponse.Risk.AdjustAfterReceiveFromBank();
+            }
 
             // Transform links
             string? transformedLinkUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery is { } x
@@ -456,6 +470,7 @@ internal class
             externalApiResponse = null;
             externalApiResponseInfo = null;
             externalApiId = request.ExternalApiObject.ExternalApiId;
+            vrpUseV4 = false;
         }
 
         // Create persisted entity and return response
@@ -483,7 +498,7 @@ internal class
             request.CreatedBy,
             request.BankRegistrationId,
             externalApiId,
-            false);
+            vrpUseV4);
 
         AuthContextRequest? authContext = request.ExternalApiObject?.AuthContext;
         if (authContext is not null)
@@ -535,6 +550,7 @@ internal class
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id, false);
         string externalApiConsentId = persistedConsent.ExternalApiId;
+        bool vrpUseV4 = bankRegistration.VrpUseV4;
 
         bool excludeExternalApiOperation =
             readParams.ExcludeExternalApiOperation;
@@ -545,7 +561,7 @@ internal class
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             VariableRecurringPaymentsApi variableRecurringPaymentsApi =
-                bankProfile.GetRequiredVariableRecurringPaymentsApi();
+                bankProfile.GetRequiredVariableRecurringPaymentsApi(vrpUseV4);
             string bankFinancialId =
                 bankProfile.VariableRecurringPaymentsApiSettings.FinancialId ?? bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
@@ -642,7 +658,10 @@ internal class
             }
             nonErrorMessages.AddRange(newNonErrorMessages);
             externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
-            externalApiResponse.Risk.AdjustAfterReceiveFromBank();
+            if (!vrpUseV4)
+            {
+                externalApiResponse.Risk.AdjustAfterReceiveFromBank();
+            }
 
             // Transform links 
             DomesticVrpConsentCustomBehaviour? readWriteGetCustomBehaviour =

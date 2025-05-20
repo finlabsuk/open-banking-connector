@@ -38,6 +38,8 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
                     "https://sandbox-obp-api.danskebank.com/sandbox-open-banking/v3.1/pisp" //from https://developers.danskebank.com/api_products/danske_bank_apis/pi?view=reference
             },
             null,
+            null,
+            null,
             false,
             instrumentationClient)
         {

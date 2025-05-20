@@ -31,6 +31,8 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
             null,
             null,
             null,
+            null,
+            null,
             true,
             instrumentationClient)
         {

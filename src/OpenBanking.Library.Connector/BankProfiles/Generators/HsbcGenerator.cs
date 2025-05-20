@@ -58,7 +58,9 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
             GetAccountAndTransactionApi(bank),
             GetAccountAndTransactionV4Api(bank),
             GetPaymentInitiationApi(bank),
+            null,
             GetVariableRecurringPaymentsApi(bank),
+            null,
             bank is not HsbcBank.Sandbox,
             instrumentationClient)
         {

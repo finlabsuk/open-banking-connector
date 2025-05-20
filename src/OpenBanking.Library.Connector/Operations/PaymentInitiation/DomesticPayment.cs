@@ -86,10 +86,11 @@ internal class DomesticPayment :
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.ConsentId, false);
         string externalApiId = readParams.ExternalApiId;
+        bool pispUseV4 = bankRegistration.PispUseV4;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-        PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
+        PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi(pispUseV4);
         string bankFinancialId = bankProfile.PaymentInitiationApiSettings.FinancialId ?? bankProfile.FinancialId;
         DomesticPaymentCustomBehaviour? domesticPaymentGetCustomBehaviour =
             bankProfile.CustomBehaviour?.DomesticPayment;
@@ -246,6 +247,7 @@ internal class DomesticPayment :
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(request.DomesticPaymentConsentId, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
+        bool pispUseV4 = bankRegistration.PispUseV4;
 
         // Validate consent ID
         if (string.IsNullOrEmpty(request.ExternalApiRequest.Data.ConsentId))
@@ -261,7 +263,7 @@ internal class DomesticPayment :
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-        PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
+        PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi(pispUseV4);
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
         string bankFinancialId = bankProfile.PaymentInitiationApiSettings.FinancialId ?? bankProfile.FinancialId;
@@ -311,9 +313,16 @@ internal class DomesticPayment :
         PaymentInitiationModelsPublic.OBWriteDomestic2 externalApiRequest = request.ExternalApiRequest;
         externalApiRequest = bankProfile.PaymentInitiationApiSettings
             .DomesticPaymentExternalApiRequestAdjustments(externalApiRequest);
-        bool preferMisspeltContractPresentIndicator =
-            readWritePostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
-        externalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
+        if (externalApiRequest.Risk.ContractPresentInidicator is not null)
+        {
+            throw new ArgumentException("ExternalApiRequest contains mis-spelt field Risk/ContractPresentInidicator.");
+        }
+        if (!pispUseV4)
+        {
+            bool preferMisspeltContractPresentIndicator =
+                readWritePostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
+            externalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
+        }
         var tppReportingRequestInfo = new TppReportingRequestInfo
         {
             EndpointDescription =
@@ -449,10 +458,11 @@ internal class DomesticPayment :
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.ConsentId, false);
         string externalApiId = readParams.ExternalApiId;
+        bool pispUseV4 = bankRegistration.PispUseV4;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-        PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
+        PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi(pispUseV4);
         string bankFinancialId = bankProfile.PaymentInitiationApiSettings.FinancialId ?? bankProfile.FinancialId;
         DomesticPaymentCustomBehaviour? domesticPaymentGetCustomBehaviour =
             bankProfile.CustomBehaviour?.DomesticPayment;

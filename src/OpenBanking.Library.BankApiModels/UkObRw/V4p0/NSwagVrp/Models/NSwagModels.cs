@@ -2787,16 +2787,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagVrp
         
         public void AdjustBeforeSendToBank(bool preferMisspelt)
         {
-            if (ContractPresentInidicator is not null)
-            {
-                throw new Exception("ContractPresentInidicator should be null.");
-            }
             if (preferMisspelt)
             {
                 ContractPresentInidicator = ContractPresentIndicator;
                 ContractPresentIndicator = null;
             }
-            
         }
 
         public void AdjustAfterReceiveFromBank()

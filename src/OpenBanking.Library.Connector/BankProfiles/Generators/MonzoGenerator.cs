@@ -63,7 +63,9 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
             GetAccountAndTransactionApi(bank),
             null,
             GetPaymentInitiationApi(bank),
+            null,
             GetVariableRecurringPaymentsApi(bank),
+            null,
             bank is not MonzoBank.Sandbox,
             instrumentationClient)
         {

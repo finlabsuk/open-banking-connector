@@ -110,16 +110,18 @@ internal class
         PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? externalApiResponse;
         ExternalApiResponseInfo? externalApiResponseInfo;
         string externalApiId;
+        bool pispUseV4;
         if (request.ExternalApiObject is null)
         {
             // Load BankRegistration and related
             (BankRegistrationEntity bankRegistration, string tokenEndpoint,
                     SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
+            pispUseV4 = bankRegistration.PispUseV4;
 
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-            PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
+            PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi(pispUseV4);
             string bankFinancialId = bankProfile.PaymentInitiationApiSettings.FinancialId ?? bankProfile.FinancialId;
             ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour =
                 bankProfile.CustomBehaviour?.ClientCredentialsGrantPost;
@@ -152,9 +154,17 @@ internal class
                     "ExternalApiRequest specified as null so not possible to create external API request.");
             externalApiRequest = bankProfile.PaymentInitiationApiSettings
                 .DomesticPaymentConsentExternalApiRequestAdjustments(externalApiRequest);
-            bool preferMisspeltContractPresentIndicator =
-                readWritePostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
-            externalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
+            if (externalApiRequest.Risk.ContractPresentInidicator is not null)
+            {
+                throw new ArgumentException(
+                    "ExternalApiRequest contains mis-spelt field Risk/ContractPresentInidicator.");
+            }
+            if (!pispUseV4)
+            {
+                bool preferMisspeltContractPresentIndicator =
+                    readWritePostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
+                externalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
+            }
             var tppReportingRequestInfo = new TppReportingRequestInfo
             {
                 EndpointDescription =
@@ -232,7 +242,10 @@ internal class
             nonErrorMessages.AddRange(newNonErrorMessages);
             externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
             externalApiId = externalApiResponse.Data.ConsentId;
-            externalApiResponse.Risk.AdjustAfterReceiveFromBank();
+            if (!pispUseV4)
+            {
+                externalApiResponse.Risk.AdjustAfterReceiveFromBank();
+            }
 
             // Transform links
             if (externalApiResponse.Links is not null)
@@ -277,6 +290,7 @@ internal class
             externalApiResponse = null;
             externalApiResponseInfo = null;
             externalApiId = request.ExternalApiObject.ExternalApiId;
+            pispUseV4 = false;
         }
 
         // Create persisted entity and return response
@@ -304,7 +318,7 @@ internal class
             request.CreatedBy,
             request.BankRegistrationId,
             externalApiId,
-            false);
+            pispUseV4);
 
         AuthContextRequest? authContext = request.ExternalApiObject?.AuthContext;
         if (authContext is not null)
@@ -357,6 +371,7 @@ internal class
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id, false);
         string externalApiConsentId = persistedConsent.ExternalApiId;
+        bool pispUseV4 = bankRegistration.PispUseV4;
 
         bool excludeExternalApiOperation =
             readParams.ExcludeExternalApiOperation;
@@ -366,7 +381,7 @@ internal class
         {
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-            PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
+            PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi(pispUseV4);
             string bankFinancialId = bankProfile.PaymentInitiationApiSettings.FinancialId ?? bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
             DomesticPaymentConsentCustomBehaviour? readWriteGetCustomBehaviour =
@@ -465,7 +480,10 @@ internal class
             }
             nonErrorMessages.AddRange(newNonErrorMessages);
             externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
-            externalApiResponse.Risk.AdjustAfterReceiveFromBank();
+            if (!pispUseV4)
+            {
+                externalApiResponse.Risk.AdjustAfterReceiveFromBank();
+            }
 
             // Transform links 
             if (externalApiResponse.Links is not null)
@@ -542,10 +560,11 @@ internal class
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
+        bool pispUseV4 = bankRegistration.PispUseV4;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-        PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
+        PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi(pispUseV4);
         bool supportsSca = bankProfile.SupportsSca;
         string bankFinancialId = bankProfile.PaymentInitiationApiSettings.FinancialId ?? bankProfile.FinancialId;
         string issuerUrl = bankProfile.IssuerUrl;

@@ -167,7 +167,21 @@ public class VariableRecurringPaymentsApiSettings
 /// </summary>
 public class BankProfile
 {
+    /// <summary>
+    ///     Payment Initiation (PISP) API version. May be null where API not supported or used/tested.
+    /// </summary>
+    private readonly PaymentInitiationApi? _paymentInitiationApi;
+
+    private readonly PaymentInitiationApi? _paymentInitiationV4Api;
+
     private readonly OAuth2ResponseMode? _specifiedDefaultResponseMode;
+
+    /// <summary>
+    ///     Variable Recurring Payments (VRP) API version. May be null where API not supported or used/tested.
+    /// </summary>
+    private readonly VariableRecurringPaymentsApi? _variableRecurringPaymentsApi;
+
+    private readonly VariableRecurringPaymentsApi? _variableRecurringPaymentsV4Api;
 
     public BankProfile(
         BankProfileEnum bankProfileEnum,
@@ -176,7 +190,9 @@ public class BankProfile
         AccountAndTransactionApi? accountAndTransactionApi,
         AccountAndTransactionApi? accountAndTransactionV4Api,
         PaymentInitiationApi? paymentInitiationApi,
+        PaymentInitiationApi? paymentInitiationV4Api,
         VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
+        VariableRecurringPaymentsApi? variableRecurringPaymentsV4Api,
         bool supportsSca,
         IInstrumentationClient instrumentationClient)
     {
@@ -185,8 +201,10 @@ public class BankProfile
         FinancialId = financialId ?? throw new ArgumentNullException(nameof(financialId));
         AccountAndTransactionApi = accountAndTransactionApi;
         AccountAndTransactionV4Api = accountAndTransactionV4Api;
-        PaymentInitiationApi = paymentInitiationApi;
-        VariableRecurringPaymentsApi = variableRecurringPaymentsApi;
+        _paymentInitiationApi = paymentInitiationApi;
+        _paymentInitiationV4Api = paymentInitiationV4Api;
+        _variableRecurringPaymentsApi = variableRecurringPaymentsApi;
+        _variableRecurringPaymentsV4Api = variableRecurringPaymentsV4Api;
         SupportsSca = supportsSca;
         ReplayApiClient = new ApiClient(new ReplayClient(this), instrumentationClient, null);
     }
@@ -218,16 +236,6 @@ public class BankProfile
     public AccountAndTransactionApi? AccountAndTransactionApi { get; }
 
     public AccountAndTransactionApi? AccountAndTransactionV4Api { get; }
-
-    /// <summary>
-    ///     Payment Initiation (PISP) API version. May be null where API not supported or used/tested.
-    /// </summary>
-    public PaymentInitiationApi? PaymentInitiationApi { get; }
-
-    /// <summary>
-    ///     Variable Recurring Payments (VRP) API version. May be null where API not supported or used/tested.
-    /// </summary>
-    public VariableRecurringPaymentsApi? VariableRecurringPaymentsApi { get; }
 
     public OAuth2ResponseMode DefaultResponseMode
     {
@@ -281,23 +289,40 @@ public class BankProfile
     public AccountAndTransactionApi GetRequiredAccountAndTransactionApi(bool useV4) =>
         useV4 switch
         {
-            false =>
-                AccountAndTransactionApi
-                ?? throw new InvalidOperationException(
-                    $"No Open Banking Account and Transaction (AISP) v3.1.11 API associated with BankProfile ${BankProfileEnum}."),
             true =>
                 AccountAndTransactionV4Api
                 ?? throw new InvalidOperationException(
-                    $"No Open Banking Account and Transaction (AISP) v4.0 API associated with BankProfile ${BankProfileEnum}.")
+                    $"No Open Banking Account and Transaction (AISP) v4.0 API associated with BankProfile ${BankProfileEnum}."),
+            false =>
+                AccountAndTransactionApi
+                ?? throw new InvalidOperationException(
+                    $"No Open Banking Account and Transaction (AISP) v3.1.11 API associated with BankProfile ${BankProfileEnum}.")
         };
 
-    public PaymentInitiationApi GetRequiredPaymentInitiationApi() =>
-        PaymentInitiationApi ??
-        throw new InvalidOperationException(
-            $"No Open Banking Payment Initiation (PISP) API associated with BankProfile ${BankProfileEnum}.");
+    public PaymentInitiationApi GetRequiredPaymentInitiationApi(bool useV4) =>
+        useV4 switch
+        {
+            true =>
+                _paymentInitiationV4Api ??
+                throw new InvalidOperationException(
+                    $"No Open Banking Payment Initiation (PISP) v4.0 API associated with BankProfile ${BankProfileEnum}."),
+            false =>
+                _paymentInitiationApi ??
+                throw new InvalidOperationException(
+                    $"No Open Banking Payment Initiation (PISP) v3.1.11 API associated with BankProfile ${BankProfileEnum}.")
+        };
 
-    public VariableRecurringPaymentsApi GetRequiredVariableRecurringPaymentsApi() =>
-        VariableRecurringPaymentsApi ??
-        throw new InvalidOperationException(
-            $"No Open Banking Variable Recurring Payments (VRP) API associated with BankProfile ${BankProfileEnum}.");
+
+    public VariableRecurringPaymentsApi GetRequiredVariableRecurringPaymentsApi(bool useV4) =>
+        useV4 switch
+        {
+            true =>
+                _variableRecurringPaymentsV4Api ??
+                throw new InvalidOperationException(
+                    $"No Open Banking Variable Recurring Payments (VRP) v4.0 API associated with BankProfile ${BankProfileEnum}."),
+            false =>
+                _variableRecurringPaymentsApi ??
+                throw new InvalidOperationException(
+                    $"No Open Banking Variable Recurring Payments (VRP) v3.1.11 API associated with BankProfile ${BankProfileEnum}.")
+        };
 }

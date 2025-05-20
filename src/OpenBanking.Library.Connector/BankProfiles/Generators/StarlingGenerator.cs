@@ -32,6 +32,8 @@ public class StarlingGenerator : BankProfileGeneratorBase<StarlingBank>
             null,
             null,
             null,
+            null,
+            null,
             true,
             instrumentationClient)
         {

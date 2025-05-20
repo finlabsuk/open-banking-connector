@@ -71,6 +71,7 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
         if (!deleteParams.ExcludeExternalApiOperation)
         {
             BankRegistrationEntity bankRegistration = persistedObject.BankRegistrationNavigation;
+            bool vrpUseV4 = bankRegistration.VrpUseV4;
             string bankApiId = persistedObject.ExternalApiId;
             SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
             ExternalApiSecretEntity? externalApiSecret =
@@ -81,7 +82,7 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
             BankProfile bankProfile =
                 _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             VariableRecurringPaymentsApi variableRecurringPaymentsApi =
-                bankProfile.GetRequiredVariableRecurringPaymentsApi();
+                bankProfile.GetRequiredVariableRecurringPaymentsApi(vrpUseV4);
             string bankFinancialId =
                 bankProfile.VariableRecurringPaymentsApiSettings.FinancialId ?? bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;

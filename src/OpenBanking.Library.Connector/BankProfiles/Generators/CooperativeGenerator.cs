@@ -31,6 +31,8 @@ public class CooperativeGenerator : BankProfileGeneratorBase<CooperativeBank>
             null,
             null,
             null,
+            null,
+            null,
             bank is not CooperativeBank.CooperativeSandbox,
             instrumentationClient)
         {

@@ -75,7 +75,9 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
             bank is not LloydsBank.Sandbox ? GetAccountAndTransactionApi(bank) : null,
             null,
             GetPaymentInitiationApi(bank),
+            null,
             GetVariableRecurringPaymentsApi(bank),
+            null,
             bank is not LloydsBank.Sandbox,
             instrumentationClient)
         {

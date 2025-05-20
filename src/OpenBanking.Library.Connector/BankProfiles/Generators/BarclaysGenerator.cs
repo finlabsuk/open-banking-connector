@@ -56,7 +56,9 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             GetAccountAndTransactionApi(bank),
             null,
             GetPaymentInitiationApi(bank),
+            null,
             GetVariableRecurringPaymentsApi(bank),
+            null,
             bank is not BarclaysBank.Sandbox,
             instrumentationClient)
         {

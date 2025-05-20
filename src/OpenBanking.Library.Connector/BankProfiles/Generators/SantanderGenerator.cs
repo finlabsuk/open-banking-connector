@@ -33,7 +33,9 @@ public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistration
             GetAccountAndTransactionApi(bank),
             null,
             GetPaymentInitiationApi(bank),
+            null,
             GetVariableRecurringPaymentsApi(bank),
+            null,
             true,
             instrumentationClient)
         {

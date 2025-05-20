@@ -94,7 +94,9 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
             GetAccountAndTransactionApi(bank),
             null,
             GetPaymentInitiationApi(bank),
+            null,
             GetVariableRecurringPaymentsApi(bank),
+            null,
             bank is not (NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox),
             instrumentationClient)
         {

@@ -36,7 +36,9 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
             GetAccountAndTransactionApi(bank),
             null,
             GetPaymentInitiationApi(bank),
+            null,
             GetVariableRecurringPaymentsApi(bank),
+            null,
             true,
             instrumentationClient)
         {

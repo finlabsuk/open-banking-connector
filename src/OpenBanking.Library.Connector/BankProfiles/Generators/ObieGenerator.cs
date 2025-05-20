@@ -39,7 +39,9 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
             },
             null,
             GetPaymentInitiationApi(bank),
+            null,
             GetVariableRecurringPaymentsApi(bank),
+            null,
             false,
             instrumentationClient)
         {
