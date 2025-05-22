@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Text.Json.Serialization;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
@@ -16,11 +17,19 @@ public class SoftwareStatementEnv
     [JsonPropertyName("obSealAssociatedKeyId")]
     public required string ObSealAssociatedKeyId { get; init; }
 
+    [JsonConverter(typeof(JsonStringEnumConverter<SecretSource>))]
+    [JsonPropertyName("obSealAssociatedKeySource")]
+    public required SecretSource ObSealAssociatedKeySource { get; init; }
+
     [JsonPropertyName("obSealAssociatedKeyName")]
     public required string ObSealAssociatedKeyName { get; init; }
 
     [JsonPropertyName("obSealCertificate")]
     public required string ObSealCertificate { get; init; }
+
+    [JsonConverter(typeof(JsonStringEnumConverter<SecretSource>))]
+    [JsonPropertyName("obWacAssociatedKeySource")]
+    public required SecretSource ObWacAssociatedKeySource { get; init; }
 
     [JsonPropertyName("obWacAssociatedKeyName")]
     public required string ObWacAssociatedKeyName { get; init; }

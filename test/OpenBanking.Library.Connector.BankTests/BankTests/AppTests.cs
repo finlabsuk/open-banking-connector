@@ -636,7 +636,11 @@ public class AppTests
         {
             Reference = reference,
             CreatedBy = createdBy,
-            AssociatedKey = new SecretDescription { Name = softwareStatementEnv.ObWacAssociatedKeyName },
+            AssociatedKey = new SecretDescription
+            {
+                Name = softwareStatementEnv.ObWacAssociatedKeyName,
+                Source = softwareStatementEnv.ObWacAssociatedKeySource
+            },
             Certificate = softwareStatementEnv.ObWacCertificate
         };
         ObWacCertificateResponse obWacCertificateResponse =
@@ -651,7 +655,11 @@ public class AppTests
             Reference = reference,
             CreatedBy = createdBy,
             AssociatedKeyId = softwareStatementEnv.ObSealAssociatedKeyId,
-            AssociatedKey = new SecretDescription { Name = softwareStatementEnv.ObSealAssociatedKeyName },
+            AssociatedKey = new SecretDescription
+            {
+                Name = softwareStatementEnv.ObSealAssociatedKeyName,
+                Source = softwareStatementEnv.ObSealAssociatedKeySource
+            },
             Certificate = softwareStatementEnv.ObSealCertificate
         };
         ObSealCertificateResponse obSealCertificateResponse =
