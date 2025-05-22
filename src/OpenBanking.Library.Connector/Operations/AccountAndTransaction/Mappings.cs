@@ -946,27 +946,27 @@ public static class Mappings
             _ => throw new ArgumentOutOfRangeException(nameof(indicator), indicator, null)
         };
 
-    private static OBBalanceType1Code MapToBalanceType(
+    private static OBBalanceType1CodeV4 MapToBalanceType(
         this AccountAndTransactionModelsV3p1p11.OBBalanceType1Code type) =>
         type switch
         {
-            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.ClosingAvailable => OBBalanceType1Code.CLAV,
-            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.ClosingBooked => OBBalanceType1Code.CLBD,
+            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.ClosingAvailable => OBBalanceType1CodeV4.CLAV,
+            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.ClosingBooked => OBBalanceType1CodeV4.CLBD,
             AccountAndTransactionModelsV3p1p11.OBBalanceType1Code
-                .ClosingCleared => OBBalanceType1Code.CLAV, // decision: use available for cleared
-            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.Expected => OBBalanceType1Code.XPCD,
-            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.ForwardAvailable => OBBalanceType1Code.FWAV,
-            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.Information => OBBalanceType1Code.INFO,
-            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.InterimAvailable => OBBalanceType1Code.ITAV,
-            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.InterimBooked => OBBalanceType1Code.ITBD,
+                .ClosingCleared => OBBalanceType1CodeV4.CLAV, // decision: use available for cleared
+            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.Expected => OBBalanceType1CodeV4.XPCD,
+            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.ForwardAvailable => OBBalanceType1CodeV4.FWAV,
+            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.Information => OBBalanceType1CodeV4.INFO,
+            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.InterimAvailable => OBBalanceType1CodeV4.ITAV,
+            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.InterimBooked => OBBalanceType1CodeV4.ITBD,
             AccountAndTransactionModelsV3p1p11.OBBalanceType1Code
-                .InterimCleared => OBBalanceType1Code.ITAV, // decision: use available for cleared
-            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.OpeningAvailable => OBBalanceType1Code.OPAV,
-            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.OpeningBooked => OBBalanceType1Code.OPBD,
+                .InterimCleared => OBBalanceType1CodeV4.ITAV, // decision: use available for cleared
+            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.OpeningAvailable => OBBalanceType1CodeV4.OPAV,
+            AccountAndTransactionModelsV3p1p11.OBBalanceType1Code.OpeningBooked => OBBalanceType1CodeV4.OPBD,
             AccountAndTransactionModelsV3p1p11.OBBalanceType1Code
-                .OpeningCleared => OBBalanceType1Code.OPAV, // decision: use available for cleared
+                .OpeningCleared => OBBalanceType1CodeV4.OPAV, // decision: use available for cleared
             AccountAndTransactionModelsV3p1p11.OBBalanceType1Code
-                .PreviouslyClosedBooked => OBBalanceType1Code.PRCD,
+                .PreviouslyClosedBooked => OBBalanceType1CodeV4.PRCD,
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 

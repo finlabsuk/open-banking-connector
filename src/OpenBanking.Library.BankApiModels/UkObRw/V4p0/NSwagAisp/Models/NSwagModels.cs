@@ -1194,7 +1194,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
     /// Balance type, in a coded form. &lt;br /&gt; For a full list of enumeration values refer to `ExternalBalanceType1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets).
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OBBalanceType1Code
+    public enum OBBalanceType1CodeV4
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"CLAV")]
@@ -4809,7 +4809,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required OBBalanceType1Code Type { get; set; }
+        public required OBBalanceType1CodeV4 Type { get; set; }
 
         /// <summary>
         /// Amount of money of the cash balance after a transaction entry is applied to the account..
@@ -8021,7 +8021,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required OBBalanceType1Code Type { get; set; }
+        public required OBBalanceType1CodeV4 Type { get; set; }
 
         /// <summary>
         /// Indicates the date (and time) of the balance. All dates in the JSON payloads are represented in ISO 8601 date-time format. 
