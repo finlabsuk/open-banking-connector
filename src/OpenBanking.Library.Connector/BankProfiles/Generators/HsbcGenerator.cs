@@ -58,10 +58,18 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
             GetFinancialId(bank),
             GetAccountAndTransactionApi(bank),
             GetAccountAndTransactionV4Api(bank),
-            GetPaymentInitiationApi(bank),
-            null,
-            GetVariableRecurringPaymentsApi(bank),
-            null,
+            new PaymentInitiationApi { BaseUrl = GetPaymentsBaseUrl(bank, "v3.1") },
+            new PaymentInitiationApi
+            {
+                BaseUrl = GetPaymentsBaseUrl(bank, "v4.0"),
+                ApiVersion = PaymentInitiationApiVersion.Version4p0
+            },
+            new VariableRecurringPaymentsApi { BaseUrl = GetPaymentsBaseUrl(bank, "v3.1") },
+            new VariableRecurringPaymentsApi
+            {
+                BaseUrl = GetPaymentsBaseUrl(bank, "v4.0"),
+                ApiVersion = VariableRecurringPaymentsApiVersion.Version4p0
+            },
             bank is not HsbcBank.Sandbox,
             instrumentationClient)
         {
@@ -202,35 +210,27 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
         }
     };
 
-    private PaymentInitiationApi GetPaymentInitiationApi(HsbcBank bank) => new() { BaseUrl = GetPaymentsBaseUrl(bank) };
-
-    private VariableRecurringPaymentsApi GetVariableRecurringPaymentsApi(HsbcBank bank) => new()
-    {
-        BaseUrl = GetPaymentsBaseUrl(bank)
-    };
-
-    private string GetPaymentsBaseUrl(HsbcBank bank)
-    {
-        return bank switch
+    private string GetPaymentsBaseUrl(HsbcBank bank, string version) =>
+        bank switch
         {
+            // v4.0 URLs from https://develop.hsbc.com/sites/default/files/open_banking/HSBC%20UK%20Open%20Banking%20Implementation%20Guide%20(v4).pdf
             HsbcBank.FirstDirect =>
                 // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/915047304/Implementation+Guide+first+direct
-                "https://api.ob.firstdirect.com/obie/open-banking/v3.1/pisp",
+                $"https://api.ob.firstdirect.com/obie/open-banking/{version}/pisp",
             HsbcBank.Sandbox =>
                 GetPaymentInitiationApiBaseUrl(bank),
             HsbcBank.UkBusiness =>
                 // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/1059489023/Implementation+Guide+HSBC+Business
-                "https://api.ob.business.hsbc.co.uk/obie/open-banking/v3.1/pisp",
+                $"https://api.ob.business.hsbc.co.uk/obie/open-banking/{version}/pisp",
             HsbcBank.UkKinetic =>
                 // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/1387201093/Implementation+Guide+HSBC+-+Kinetic
-                "https://api.ob.hsbckinetic.co.uk/obie/open-banking/v3.1/pisp",
+                $"https://api.ob.hsbckinetic.co.uk/obie/open-banking/{version}/pisp",
             HsbcBank.UkPersonal =>
                 // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/108266712/Implementation+Guide+HSBC+Personal
-                "https://api.ob.hsbc.co.uk/obie/open-banking/v3.1/pisp",
+                $"https://api.ob.hsbc.co.uk/obie/open-banking/{version}/pisp",
             HsbcBank.HsbcNetUk =>
                 // from: https://develop.hsbc.com/sites/default/files/open_banking/HSBC%20Open%20Banking%20TPP%20Implementation%20Guide%20(v3.1).pdf
-                "https://api.ob.hsbcnet.com/obie/open-banking/v3.1/pisp",
+                $"https://api.ob.hsbcnet.com/obie/open-banking/{version}/pisp",
             _ => throw new ArgumentOutOfRangeException()
         };
-    }
 }
