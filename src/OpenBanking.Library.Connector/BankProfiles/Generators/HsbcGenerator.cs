@@ -14,6 +14,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 
@@ -74,7 +75,28 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                     AudClaim = issuerUrl,
                     UseApplicationJoseNotApplicationJwtContentTypeHeader = true
                 },
-                BankRegistrationPut = new BankRegistrationPutCustomBehaviour { CustomTokenScope = "accounts" },
+                BankRegistrationPut = new BankRegistrationPutCustomBehaviour
+                {
+                    GetCustomTokenScope = registrationScope =>
+                    {
+                        if ((registrationScope & RegistrationScopeEnum.AccountAndTransaction) ==
+                            RegistrationScopeEnum.AccountAndTransaction)
+                        {
+                            return "accounts";
+                        }
+                        if ((registrationScope & RegistrationScopeEnum.PaymentInitiation) ==
+                            RegistrationScopeEnum.PaymentInitiation)
+                        {
+                            return "payments";
+                        }
+                        if ((registrationScope & RegistrationScopeEnum.FundsConfirmation) ==
+                            RegistrationScopeEnum.FundsConfirmation)
+                        {
+                            return "fundsconfirmations";
+                        }
+                        throw new Exception("Cannot determine custom token scope.");
+                    }
+                },
                 AccountAccessConsentRefreshTokenGrantPost =
                     new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
                 DomesticPaymentConsentAuthCodeGrantPost =

@@ -552,7 +552,11 @@ internal class
             }
             else
             {
-                string? scope = customBehaviour?.BankRegistrationPut?.CustomTokenScope;
+                string? scope = null;
+                if (customBehaviour?.BankRegistrationPut?.GetCustomTokenScope is not null)
+                {
+                    scope = customBehaviour.BankRegistrationPut.GetCustomTokenScope(entity.RegistrationScope);
+                }
                 accessToken =
                     await _clientAccessTokenGet.GetAccessToken(
                         scope,

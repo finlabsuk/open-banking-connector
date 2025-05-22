@@ -114,7 +114,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                     },
                 BankRegistrationPut = bank is LloydsBank.Sandbox
                     ? null
-                    : new BankRegistrationPutCustomBehaviour { CustomTokenScope = "openid" },
+                    : new BankRegistrationPutCustomBehaviour { GetCustomTokenScope = _ => "openid" },
                 OpenIdConfigurationGet = new OpenIdConfigurationGetCustomBehaviour
                 {
                     ResponseModesSupportedResponse = new List<OAuth2ResponseMode>
