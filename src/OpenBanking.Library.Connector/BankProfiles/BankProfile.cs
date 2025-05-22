@@ -168,6 +168,13 @@ public class VariableRecurringPaymentsApiSettings
 public class BankProfile
 {
     /// <summary>
+    ///     Account and Transaction (AISP) API version. May be null where API not supported or used/tested.
+    /// </summary>
+    private readonly AccountAndTransactionApi? _accountAndTransactionApi;
+
+    private readonly AccountAndTransactionApi? _accountAndTransactionV4Api;
+
+    /// <summary>
     ///     Payment Initiation (PISP) API version. May be null where API not supported or used/tested.
     /// </summary>
     private readonly PaymentInitiationApi? _paymentInitiationApi;
@@ -199,8 +206,8 @@ public class BankProfile
         BankProfileEnum = bankProfileEnum;
         IssuerUrl = issuerUrl;
         FinancialId = financialId ?? throw new ArgumentNullException(nameof(financialId));
-        AccountAndTransactionApi = accountAndTransactionApi;
-        AccountAndTransactionV4Api = accountAndTransactionV4Api;
+        _accountAndTransactionApi = accountAndTransactionApi;
+        _accountAndTransactionV4Api = accountAndTransactionV4Api;
         _paymentInitiationApi = paymentInitiationApi;
         _paymentInitiationV4Api = paymentInitiationV4Api;
         _variableRecurringPaymentsApi = variableRecurringPaymentsApi;
@@ -229,13 +236,6 @@ public class BankProfile
     /// </summary>
     public DynamicClientRegistrationApiVersion DynamicClientRegistrationApiVersion { get; init; } =
         DynamicClientRegistrationApiVersion.Version3p2;
-
-    /// <summary>
-    ///     Account and Transaction (AISP) API version. May be null where API not supported or used/tested.
-    /// </summary>
-    public AccountAndTransactionApi? AccountAndTransactionApi { get; }
-
-    public AccountAndTransactionApi? AccountAndTransactionV4Api { get; }
 
     public OAuth2ResponseMode DefaultResponseMode
     {
@@ -290,11 +290,11 @@ public class BankProfile
         useV4 switch
         {
             true =>
-                AccountAndTransactionV4Api
+                _accountAndTransactionV4Api
                 ?? throw new InvalidOperationException(
                     $"No Open Banking Account and Transaction (AISP) v4.0 API associated with BankProfile ${BankProfileEnum}."),
             false =>
-                AccountAndTransactionApi
+                _accountAndTransactionApi
                 ?? throw new InvalidOperationException(
                     $"No Open Banking Account and Transaction (AISP) v3.1.11 API associated with BankProfile ${BankProfileEnum}.")
         };
