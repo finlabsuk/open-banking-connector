@@ -468,13 +468,6 @@ public class AppTests
                     "Cannot test AccountAndTransaction API due to missing registration scope.");
             }
 
-            // TODO: Review when adding v4.0 tests
-            if (bankProfile.AccountAndTransactionApi is null)
-            {
-                throw new InvalidOperationException(
-                    "Cannot test AccountAndTransaction API as no API specified in bank profile.");
-            }
-
             foreach (AccountAccessConsentSubtestEnum subTest in
                      AccountAccessConsentSubtest.AccountAccessConsentSubtestsSupported(bankProfile))
             {
@@ -527,12 +520,6 @@ public class AppTests
                         "Cannot test PaymentInitiation API due to missing registration scope.");
                 }
 
-                if (bankProfile.PaymentInitiationApi is null)
-                {
-                    throw new InvalidOperationException(
-                        "Cannot test PaymentInitiation API as no API specified in bank profile.");
-                }
-
                 foreach (DomesticPaymentSubtestEnum subTest in
                          DomesticPaymentConsentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
                 {
@@ -562,12 +549,6 @@ public class AppTests
                 {
                     throw new InvalidOperationException(
                         "Cannot test VariableRecurringPayments API due to missing registration scope.");
-                }
-
-                if (bankProfile.VariableRecurringPaymentsApi is null)
-                {
-                    throw new InvalidOperationException(
-                        "Cannot test VariableRecurringPayments API as no API specified in bank profile.");
                 }
 
                 foreach (DomesticVrpSubtestEnum subTest in
