@@ -11,13 +11,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
 [JsonConverter(typeof(StringEnumConverter))]
 public enum VariableRecurringPaymentsApiVersion
 {
-    // Support not currently required
-    // [EnumMember(Value = "Version3p1p8")]
-    // Version3p1p8,
-
     [EnumMember(Value = "Version3p1p11")]
     Version3p1p11,
 
+    [EnumMember(Value = "Version4p0")]
+    Version4p0,
+
     [EnumMember(Value = "VersionPublic")]
-    VersionPublic = Version3p1p11
+    VersionPublic = Version4p0
 }

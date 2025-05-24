@@ -5,6 +5,7 @@
 using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FsCheck;
+using FsCheck.Fluent;
 using FsCheck.Xunit;
 using Newtonsoft.Json;
 
@@ -77,7 +78,9 @@ public class DateTimeOffsetUnixConverterTests
             };
             var jsonSerializerSettings = new JsonSerializerSettings
             {
+#pragma warning disable SYSLIB0050 // see https://github.com/JamesNK/Newtonsoft.Json/issues/2953
                 Context = new StreamingContext(StreamingContextStates.All, optionsDict)
+#pragma warning restore SYSLIB0050
             };
 
             var stringWriter = new StringWriter();

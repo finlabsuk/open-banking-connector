@@ -26,6 +26,8 @@ internal class BaseConsentConfig<TEntity> : BaseConfig<TEntity>
         builder.Property(e => e.BankRegistrationId)
             .HasColumnOrder(1)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.CreatedWithV4)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
 
         builder.Property(e => e.ExternalApiId)
             .HasColumnOrder(100)

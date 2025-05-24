@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Val
 using FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
 using FluentValidation.Results;
 using FsCheck;
+using FsCheck.Fluent;
 using FsCheck.Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validation;

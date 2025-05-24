@@ -174,6 +174,7 @@ public class BankProfile
         string issuerUrl,
         string financialId,
         AccountAndTransactionApi? accountAndTransactionApi,
+        AccountAndTransactionApi? accountAndTransactionV4Api,
         PaymentInitiationApi? paymentInitiationApi,
         VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
         bool supportsSca,
@@ -183,6 +184,7 @@ public class BankProfile
         IssuerUrl = issuerUrl;
         FinancialId = financialId ?? throw new ArgumentNullException(nameof(financialId));
         AccountAndTransactionApi = accountAndTransactionApi;
+        AccountAndTransactionV4Api = accountAndTransactionV4Api;
         PaymentInitiationApi = paymentInitiationApi;
         VariableRecurringPaymentsApi = variableRecurringPaymentsApi;
         SupportsSca = supportsSca;
@@ -214,6 +216,8 @@ public class BankProfile
     ///     Account and Transaction (AISP) API version. May be null where API not supported or used/tested.
     /// </summary>
     public AccountAndTransactionApi? AccountAndTransactionApi { get; }
+
+    public AccountAndTransactionApi? AccountAndTransactionV4Api { get; }
 
     /// <summary>
     ///     Payment Initiation (PISP) API version. May be null where API not supported or used/tested.
@@ -274,10 +278,18 @@ public class BankProfile
 
     public required int AspspBrandId { get; init; }
 
-    public AccountAndTransactionApi GetRequiredAccountAndTransactionApi() =>
-        AccountAndTransactionApi ??
-        throw new InvalidOperationException(
-            $"No Open Banking Account and Transaction (AISP) API associated with BankProfile ${BankProfileEnum}.");
+    public AccountAndTransactionApi GetRequiredAccountAndTransactionApi(bool useV4) =>
+        useV4 switch
+        {
+            false =>
+                AccountAndTransactionApi
+                ?? throw new InvalidOperationException(
+                    $"No Open Banking Account and Transaction (AISP) v3.1.11 API associated with BankProfile ${BankProfileEnum}."),
+            true =>
+                AccountAndTransactionV4Api
+                ?? throw new InvalidOperationException(
+                    $"No Open Banking Account and Transaction (AISP) v4.0 API associated with BankProfile ${BankProfileEnum}.")
+        };
 
     public PaymentInitiationApi GetRequiredPaymentInitiationApi() =>
         PaymentInitiationApi ??

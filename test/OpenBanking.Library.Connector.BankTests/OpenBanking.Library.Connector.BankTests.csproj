@@ -14,11 +14,11 @@
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
         <PackageReference Include="FluentAssertions" Version="7.2.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.3"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.3"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.3"/>
-        <PackageReference Include="Microsoft.Playwright" Version="1.51.0"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.3"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.4"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.4"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.4"/>
+        <PackageReference Include="Microsoft.Playwright" Version="1.52.0"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.4"/>
     </ItemGroup>
 
     <ItemGroup>

@@ -87,14 +87,8 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
         DateTimeOffset externalApiUserIdModified,
         string? externalApiUserIdModifiedBy,
         Guid bankRegistrationId,
-        string externalApiId) : base(
-        id,
-        reference,
-        isDeleted,
-        isDeletedModified,
-        isDeletedModifiedBy,
-        created,
-        createdBy)
+        string externalApiId,
+        bool createdWithV4) : base(id, reference, isDeleted, isDeletedModified, isDeletedModifiedBy, created, createdBy)
     {
         _accessTokenAccessToken = accessTokenAccessToken;
         _accessTokenExpiresIn = accessTokenExpiresIn;
@@ -111,6 +105,7 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
         ExternalApiUserIdModifiedBy = externalApiUserIdModifiedBy;
         BankRegistrationId = bankRegistrationId;
         ExternalApiId = externalApiId ?? throw new ArgumentNullException(nameof(externalApiId));
+        CreatedWithV4 = createdWithV4;
     }
 
     [ForeignKey(nameof(BankRegistrationId))]
@@ -148,6 +143,8 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
         _accessTokenRefreshToken,
         _accessTokenModified,
         _accessTokenModifiedBy);
+
+    public bool CreatedWithV4 { get; }
 
     /// <summary>
     ///     Associated BankRegistration object

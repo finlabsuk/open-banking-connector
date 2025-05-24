@@ -30,7 +30,11 @@ global using AccountAndTransactionModelsV3p1p11 =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagAisp.Models;
 global using AccountAndTransactionModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAisp.Models;
-global using PaymentInitiationModelsPublic =
+global using PaymentInitiationModelsV3p1p11 =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagPisp.Models;
-global using VariableRecurringPaymentsModelsPublic =
+global using PaymentInitiationModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPisp.Models;
+global using VariableRecurringPaymentsModelsV3p1p11 =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagVrp.Models;
+global using VariableRecurringPaymentsModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagVrp.Models;

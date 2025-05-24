@@ -29,12 +29,12 @@ internal class BankRegistrationEntity :
         string? createdBy,
         string? externalApiSecret,
         string? registrationAccessToken,
-        OAuth2ResponseMode? defaultResponseModeOverride,
-        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         BankGroup bankGroup,
         Guid? softwareStatementId,
         string softwareStatementProfileId,
         string? softwareStatementProfileOverride,
+        OAuth2ResponseMode? defaultResponseModeOverride,
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         bool useSimulatedBank,
         string externalApiId,
         BankProfileEnum bankProfile,
@@ -42,6 +42,9 @@ internal class BankRegistrationEntity :
         string? registrationEndpoint,
         string tokenEndpoint,
         string authorizationEndpoint,
+        bool aispUseV4,
+        bool pispUseV4,
+        bool vrpUseV4,
         string defaultFragmentRedirectUri,
         string defaultQueryRedirectUri,
         IList<string> redirectUris,
@@ -56,13 +59,13 @@ internal class BankRegistrationEntity :
     {
         ExternalApiSecret = externalApiSecret;
         RegistrationAccessToken = registrationAccessToken;
-        DefaultResponseModeOverride = defaultResponseModeOverride;
-        TokenEndpointAuthMethod = tokenEndpointAuthMethod;
         BankGroup = bankGroup;
         SoftwareStatementId = softwareStatementId;
         SoftwareStatementProfileId = softwareStatementProfileId ??
                                      throw new ArgumentNullException(nameof(softwareStatementProfileId));
         SoftwareStatementProfileOverride = softwareStatementProfileOverride;
+        DefaultResponseModeOverride = defaultResponseModeOverride;
+        TokenEndpointAuthMethod = tokenEndpointAuthMethod;
         UseSimulatedBank = useSimulatedBank;
         ExternalApiId = externalApiId ?? throw new ArgumentNullException(nameof(externalApiId));
         BankProfile = bankProfile;
@@ -70,8 +73,12 @@ internal class BankRegistrationEntity :
         RegistrationEndpoint = registrationEndpoint;
         TokenEndpoint = tokenEndpoint ?? throw new ArgumentNullException(nameof(tokenEndpoint));
         AuthorizationEndpoint = authorizationEndpoint ?? throw new ArgumentNullException(nameof(authorizationEndpoint));
-        DefaultFragmentRedirectUri = defaultFragmentRedirectUri ??
-                                     throw new ArgumentNullException(nameof(defaultFragmentRedirectUri));
+        AispUseV4 = aispUseV4;
+        PispUseV4 = pispUseV4;
+        VrpUseV4 = vrpUseV4;
+        DefaultFragmentRedirectUri =
+            defaultFragmentRedirectUri ??
+            throw new ArgumentNullException(nameof(defaultFragmentRedirectUri));
         DefaultQueryRedirectUri =
             defaultQueryRedirectUri ?? throw new ArgumentNullException(nameof(defaultQueryRedirectUri));
         RedirectUris = redirectUris ?? throw new ArgumentNullException(nameof(redirectUris));
@@ -116,6 +123,12 @@ internal class BankRegistrationEntity :
     public string SoftwareStatementProfileId { get; }
 
     public string? SoftwareStatementProfileOverride { get; }
+
+    public bool AispUseV4 { get; }
+
+    public bool PispUseV4 { get; }
+
+    public bool VrpUseV4 { get; }
 
     /// <summary>
     ///     Default OAuth2 response_mode override.

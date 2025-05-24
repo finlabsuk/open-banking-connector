@@ -249,9 +249,19 @@ public class DomesticPaymentConsentSubtest(
                         Name = "placeholder" // logging placeholder
                     },
                     RemittanceInformation =
-                        new PaymentInitiationModelsPublic.RemittanceInformation
+                        new PaymentInitiationModelsPublic.OBRemittanceInformation2
                         {
-                            Reference = "placeholder" // logging placeholder 
+                            Structured =
+                            [
+                                new PaymentInitiationModelsPublic.OBRemittanceInformationStructured
+                                {
+                                    CreditorReferenceInformation =
+                                        new PaymentInitiationModelsPublic.CreditorReferenceInformation
+                                        {
+                                            Reference = "placeholder" // logging placeholder 
+                                        }
+                                }
+                            ]
                         }
                 }
             },
@@ -287,8 +297,17 @@ public class DomesticPaymentConsentSubtest(
             paymentsEnv.BankAccountId; // replace logging placeholder
         domesticPaymentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
             paymentsEnv.BankAccountName; // replace logging placeholder
-        domesticPaymentRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Reference =
-            "DP " + referenceName; // replace logging placeholder
+        domesticPaymentRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Structured =
+        [
+            new PaymentInitiationModelsPublic.OBRemittanceInformationStructured
+            {
+                CreditorReferenceInformation =
+                    new PaymentInitiationModelsPublic.CreditorReferenceInformation
+                    {
+                        Reference = "DP " + referenceName // replace logging placeholder
+                    }
+            }
+        ];
         domesticPaymentRequest.ModifiedBy = modifiedBy;
 
         return domesticPaymentRequest;
@@ -327,9 +346,19 @@ public class DomesticPaymentConsentSubtest(
                         Name = "placeholder" // logging placeholder
                     },
                     RemittanceInformation =
-                        new PaymentInitiationModelsPublic.RemittanceInformation2
+                        new PaymentInitiationModelsPublic.OBRemittanceInformation2
                         {
-                            Reference = "placeholder" // logging placeholder 
+                            Structured =
+                            [
+                                new PaymentInitiationModelsPublic.OBRemittanceInformationStructured
+                                {
+                                    CreditorReferenceInformation =
+                                        new PaymentInitiationModelsPublic.CreditorReferenceInformation
+                                        {
+                                            Reference = "placeholder" // logging placeholder 
+                                        }
+                                }
+                            ]
                         }
                 }
             },
@@ -368,8 +397,17 @@ public class DomesticPaymentConsentSubtest(
             paymentsEnv.BankAccountId; // replace logging placeholder
         domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
             paymentsEnv.BankAccountName; // replace logging placeholder
-        domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Reference =
-            "DP " + referenceName; // replace logging placeholder
+        domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Structured =
+        [
+            new PaymentInitiationModelsPublic.OBRemittanceInformationStructured
+            {
+                CreditorReferenceInformation =
+                    new PaymentInitiationModelsPublic.CreditorReferenceInformation
+                    {
+                        Reference = "DP " + referenceName // replace logging placeholder
+                    }
+            }
+        ];
         domesticPaymentConsentRequest.Reference = testNameUnique; // replace logging placeholder
         domesticPaymentConsentRequest.CreatedBy = modifiedBy; // replace logging placeholder
 

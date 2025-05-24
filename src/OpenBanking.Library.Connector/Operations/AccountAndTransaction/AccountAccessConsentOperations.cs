@@ -104,6 +104,7 @@ internal class
         AccountAndTransactionModelsPublic.OBReadConsentResponse1? externalApiResponse;
         ExternalApiResponseInfo? externalApiResponseInfo;
         string externalApiId;
+        bool aispUseV4;
         if (request.ExternalApiObject is null)
         {
             // Load BankRegistration and related
@@ -113,7 +114,9 @@ internal class
 
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-            AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
+            aispUseV4 = bankRegistration.AispUseV4;
+            AccountAndTransactionApi accountAndTransactionApi =
+                bankProfile.GetRequiredAccountAndTransactionApi(aispUseV4);
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
             string bankFinancialId = bankProfile.FinancialId;
 
@@ -268,6 +271,7 @@ internal class
             externalApiResponse = null;
             externalApiResponseInfo = null;
             externalApiId = request.ExternalApiObject.ExternalApiId;
+            aispUseV4 = false;
         }
 
         // Create persisted entity and return response
@@ -294,7 +298,8 @@ internal class
             utcNow,
             request.CreatedBy,
             request.BankRegistrationId,
-            externalApiId);
+            externalApiId,
+            aispUseV4);
 
         AuthContextRequest? authContext = request.ExternalApiObject?.AuthContext;
         if (authContext is not null)
@@ -355,7 +360,9 @@ internal class
         {
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-            AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
+            bool aispUseV4 = bankRegistration.AispUseV4;
+            AccountAndTransactionApi accountAndTransactionApi =
+                bankProfile.GetRequiredAccountAndTransactionApi(aispUseV4);
             string bankFinancialId = bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 

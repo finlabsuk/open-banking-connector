@@ -9,7 +9,7 @@ public class VariableRecurringPaymentsApi
     private readonly string _baseUrl = null!;
 
     public VariableRecurringPaymentsApiVersion ApiVersion { get; init; } =
-        VariableRecurringPaymentsApiVersion.VersionPublic;
+        VariableRecurringPaymentsApiVersion.Version3p1p11;
 
     public required string BaseUrl
     {

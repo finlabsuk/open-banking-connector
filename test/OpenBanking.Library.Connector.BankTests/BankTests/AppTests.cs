@@ -468,6 +468,7 @@ public class AppTests
                     "Cannot test AccountAndTransaction API due to missing registration scope.");
             }
 
+            // TODO: Review when adding v4.0 tests
             if (bankProfile.AccountAndTransactionApi is null)
             {
                 throw new InvalidOperationException(

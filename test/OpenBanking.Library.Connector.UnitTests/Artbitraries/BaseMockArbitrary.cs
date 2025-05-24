@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FsCheck;
+using FsCheck.Fluent;
 using NSubstitute;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;

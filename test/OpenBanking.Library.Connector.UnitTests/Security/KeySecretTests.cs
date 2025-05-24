@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FluentAssertions;
 using FsCheck;
+using FsCheck.Fluent;
 using FsCheck.Xunit;
 using Xunit;
 

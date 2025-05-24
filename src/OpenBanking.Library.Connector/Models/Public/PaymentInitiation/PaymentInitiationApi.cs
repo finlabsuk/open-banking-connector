@@ -7,7 +7,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
 public class PaymentInitiationApi
 {
     private readonly string _baseUrl = null!;
-    public PaymentInitiationApiVersion ApiVersion { get; init; } = PaymentInitiationApiVersion.VersionPublic;
+    public PaymentInitiationApiVersion ApiVersion { get; init; } = PaymentInitiationApiVersion.Version3p1p11;
 
     public required string BaseUrl
     {

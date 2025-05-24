@@ -73,7 +73,7 @@ public class ConsentAuth
 
             // Perform automated auth
             TimeSpan timeOut =
-                Debugger.IsAttached ? TimeSpan.FromMinutes(10) : TimeSpan.FromSeconds(20);
+                Debugger.IsAttached ? TimeSpan.FromMinutes(10) : TimeSpan.FromSeconds(30);
             waitForRedirect = redirectObserver.WaitForRedirect(timeOut);
             await AutomatedAuthAsync(
                 authUrl,

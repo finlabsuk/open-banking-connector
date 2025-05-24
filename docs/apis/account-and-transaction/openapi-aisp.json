@@ -1609,6 +1609,10 @@
           },
           "LocalAmount": {
             "$ref": "#/components/schemas/LocalAmount3"
+          },
+          "V3IsClearedBalanceType": {
+            "type": "boolean",
+            "nullable": true
           }
         },
         "additionalProperties": { },
@@ -2338,7 +2342,7 @@
             "$ref": "#/components/schemas/OBInternalAccountType1Code"
           },
           "AccountTypeCode": {
-            "$ref": "#/components/schemas/OBExternalAccountSubType1Code"
+            "$ref": "#/components/schemas/OBExternalAccountSubType1CodeV4"
           },
           "Description": {
             "maxLength": 35,
@@ -2382,6 +2386,9 @@
           },
           "Servicer": {
             "$ref": "#/components/schemas/OBBranchAndFinancialInstitutionIdentification5_0"
+          },
+          "V3AccountSubType": {
+            "$ref": "#/components/schemas/OBExternalAccountSubType1Code"
           }
         },
         "additionalProperties": false,
@@ -2902,6 +2909,21 @@
       },
       "OBExternalAccountSubType1Code": {
         "enum": [
+          "ChargeCard",
+          "CreditCard",
+          "CurrentAccount",
+          "EMoney",
+          "Loan",
+          "Mortgage",
+          "PrePaidCard",
+          "Savings",
+          "Wallet"
+        ],
+        "type": "string",
+        "description": "Specifies the sub type of account (product family group)."
+      },
+      "OBExternalAccountSubType1CodeV4": {
+        "enum": [
           "CACC",
           "CARD",
           "CASH",
@@ -3307,7 +3329,7 @@
         "type": "object",
         "properties": {
           "Type": {
-            "$ref": "#/components/schemas/OBFrequency6Code"
+            "type": "string"
           },
           "CountPerPeriod": {
             "type": "integer",
@@ -3324,28 +3346,6 @@
         },
         "additionalProperties": { },
         "description": "Regularity with which credit transfer instructions are to be created and processed"
-      },
-      "OBFrequency6Code": {
-        "enum": [
-          "ADHO",
-          "YEAR",
-          "DAIL",
-          "FRTN",
-          "INDA",
-          "MNTH",
-          "QURT",
-          "MIAN",
-          "WEEK",
-          "WODL",
-          "FOWK",
-          "TWMH",
-          "FOMH",
-          "FIMH",
-          "ALMH",
-          "NONE"
-        ],
-        "type": "string",
-        "description": "For a full list of values see `OBFrequency6Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)"
       },
       "OBInternalAccountStatus1Code": {
         "enum": [
@@ -4265,6 +4265,10 @@
           },
           "Amount": {
             "$ref": "#/components/schemas/Amount"
+          },
+          "V3IsClearedBalanceType": {
+            "type": "boolean",
+            "nullable": true
           }
         },
         "additionalProperties": false,

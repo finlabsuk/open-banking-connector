@@ -324,8 +324,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
     {
         [Newtonsoft.Json.JsonProperty("Type", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required OBFrequency6Code Type { get; set; }
+        public required string Type { get; set; }
 
         /// <summary>
         /// Number of instructions to be created and processed during the specified period. Specifies a frequency in terms of a count per period within a specified frequency type. Note: should not be used alongside `PointInTime`
@@ -604,7 +603,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
 
         [Newtonsoft.Json.JsonProperty("AccountTypeCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalAccountSubType1Code? AccountTypeCode { get; set; } = default!;
+        public OBExternalAccountSubType1CodeV4? AccountTypeCode { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -632,6 +631,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
         [Newtonsoft.Json.JsonProperty("Servicer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBBranchAndFinancialInstitutionIdentification5_0? Servicer { get; set; } = default!;
 
+        [Newtonsoft.Json.JsonProperty("V3AccountSubType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public V3p1p11.NSwagAisp.Models.OBExternalAccountSubType1Code? V3AccountSubType { get; set; }
     }
 
     /// <summary>
@@ -662,7 +664,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
 
         [Newtonsoft.Json.JsonProperty("AccountTypeCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalAccountSubType1Code? AccountTypeCode { get; set; } = default!;
+        public OBExternalAccountSubType1CodeV4? AccountTypeCode { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -711,7 +713,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
 
         [Newtonsoft.Json.JsonProperty("AccountTypeCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBExternalAccountSubType1Code? AccountTypeCode { get; set; } = default!;
+        public OBExternalAccountSubType1CodeV4? AccountTypeCode { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
@@ -2078,7 +2080,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
     /// Specifies the sub type of account (product family group) &lt;br /&gt; For a full list of enumeration values refer to `OBExternalCashAccountType1Code` *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OBExternalAccountSubType1Code
+    public enum OBExternalAccountSubType1CodeV4
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"CACC")]
@@ -4814,6 +4816,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
         /// </summary>
         [Newtonsoft.Json.JsonProperty("Amount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Amount? Amount { get; set; } = default!;
+
+        [Newtonsoft.Json.JsonProperty("V3IsClearedBalanceType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? V3IsClearedBalanceType { get; set; } = default!;
 
     }
 
@@ -8052,6 +8057,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
             set { _additionalProperties = value; }
         }
 
+        [Newtonsoft.Json.JsonProperty("V3Type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public V3p1p11.NSwagAisp.Models.OBBalanceType1Code? V3Type { get; set; } = default!;
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]

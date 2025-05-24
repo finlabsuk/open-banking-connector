@@ -34,6 +34,7 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
             "https://obonline.nationwide.co.uk/open-banking/", // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
             "0015800000jf8aKAAQ", // from https://developer.nationwide.co.uk/open-banking/how-to?page=1
             GetAccountAndTransactionApi(bank),
+            null,
             GetPaymentInitiationApi(bank),
             GetVariableRecurringPaymentsApi(bank),
             true,

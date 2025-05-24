@@ -80,8 +80,9 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
             // Get bank profile
             BankProfile bankProfile =
                 _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+            bool aispUseV4 = bankRegistration.AispUseV4;
             AccountAndTransactionApi accountAndTransactionApi =
-                bankProfile.GetRequiredAccountAndTransactionApi();
+                bankProfile.GetRequiredAccountAndTransactionApi(aispUseV4);
             string bankFinancialId = bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 

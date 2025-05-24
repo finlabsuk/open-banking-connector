@@ -374,9 +374,19 @@ public class DomesticVrpConsentSubtest(
                         Name = "placeholder" // logging placeholder
                     },
                     RemittanceInformation =
-                        new VariableRecurringPaymentsModelsPublic.RemittanceInformation
+                        new VariableRecurringPaymentsModelsPublic.OBRemittanceInformation2
                         {
-                            Reference = "placeholder" // logging placeholder 
+                            Structured =
+                            [
+                                new VariableRecurringPaymentsModelsPublic.OBRemittanceInformationStructured
+                                {
+                                    CreditorReferenceInformation =
+                                        new VariableRecurringPaymentsModelsPublic.CreditorReferenceInformation
+                                        {
+                                            Reference = "placeholder" // logging placeholder 
+                                        }
+                                }
+                            ]
                         }
                 },
                 Instruction = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInstruction
@@ -384,9 +394,19 @@ public class DomesticVrpConsentSubtest(
                     InstructionIdentification = "placeholder", // logging placeholder
                     EndToEndIdentification = "placeholder", // logging placeholder
                     RemittanceInformation =
-                        new VariableRecurringPaymentsModelsPublic.OBVRPRemittanceInformation
+                        new VariableRecurringPaymentsModelsPublic.OBRemittanceInformation2
                         {
-                            Reference = "placeholder" // logging placeholder 
+                            Structured =
+                            [
+                                new VariableRecurringPaymentsModelsPublic.OBRemittanceInformationStructured
+                                {
+                                    CreditorReferenceInformation =
+                                        new VariableRecurringPaymentsModelsPublic.CreditorReferenceInformation
+                                        {
+                                            Reference = "placeholder" // logging placeholder 
+                                        }
+                                }
+                            ]
                         },
                     InstructedAmount = new VariableRecurringPaymentsModelsPublic.OBActiveOrHistoricCurrencyAndAmount
                     {
@@ -431,14 +451,32 @@ public class DomesticVrpConsentSubtest(
             paymentsEnv.BankAccountId; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
             paymentsEnv.BankAccountName; // replace logging placeholder
-        domesticVrpRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Reference =
-            "DV " + referenceName; // replace logging placeholder
+        domesticVrpRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Structured =
+        [
+            new VariableRecurringPaymentsModelsPublic.OBRemittanceInformationStructured
+            {
+                CreditorReferenceInformation =
+                    new VariableRecurringPaymentsModelsPublic.CreditorReferenceInformation
+                    {
+                        Reference = "DV " + referenceName // replace logging placeholder
+                    }
+            }
+        ];
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.InstructionIdentification =
             instructionIdentification; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.EndToEndIdentification =
             endToEndIdentification; // replace logging placeholder
-        domesticVrpRequest.ExternalApiRequest.Data.Instruction.RemittanceInformation!.Reference =
-            "DV " + referenceName; // replace logging placeholder
+        domesticVrpRequest.ExternalApiRequest.Data.Instruction.RemittanceInformation!.Structured =
+        [
+            new VariableRecurringPaymentsModelsPublic.OBRemittanceInformationStructured
+            {
+                CreditorReferenceInformation =
+                    new VariableRecurringPaymentsModelsPublic.CreditorReferenceInformation
+                    {
+                        Reference = "DV " + referenceName // replace logging placeholder
+                    }
+            }
+        ];
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.InstructedAmount.Amount =
             amount; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.CreditorAccount.SchemeName =
@@ -502,11 +540,20 @@ public class DomesticVrpConsentSubtest(
                             Identification = "placeholder", // logging placeholder
                             Name = "placeholder" // logging placeholder
                         },
-                        RemittanceInformation =
-                            new VariableRecurringPaymentsModelsPublic.RemittanceInformation
-                            {
-                                Reference = "placeholder" // logging placeholder 
-                            }
+                        RemittanceInformation = new VariableRecurringPaymentsModelsPublic.OBRemittanceInformation2
+                        {
+                            Structured =
+                            [
+                                new VariableRecurringPaymentsModelsPublic.OBRemittanceInformationStructured
+                                {
+                                    CreditorReferenceInformation =
+                                        new VariableRecurringPaymentsModelsPublic.CreditorReferenceInformation
+                                        {
+                                            Reference = "placeholder" // logging placeholder 
+                                        }
+                                }
+                            ]
+                        }
                     }
                 },
                 Risk = new VariableRecurringPaymentsModelsPublic.OBRisk1
@@ -540,8 +587,18 @@ public class DomesticVrpConsentSubtest(
             paymentsEnv.BankAccountId; // replace logging placeholder
         domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
             paymentsEnv.BankAccountName; // replace logging placeholder
-        domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Reference =
-            "DV " + referenceName; // replace logging placeholder
+        domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Structured =
+        [
+            new VariableRecurringPaymentsModelsPublic.OBRemittanceInformationStructured
+            {
+                CreditorReferenceInformation =
+                    new VariableRecurringPaymentsModelsPublic.CreditorReferenceInformation
+                    {
+                        Reference = "DV " + referenceName // replace logging placeholder
+                    }
+            }
+        ];
+
 
         domesticVrpConsentRequest.Reference = testNameUnique; // replace logging placeholder
         domesticVrpConsentRequest.CreatedBy = modifiedBy; // replace logging placeholder

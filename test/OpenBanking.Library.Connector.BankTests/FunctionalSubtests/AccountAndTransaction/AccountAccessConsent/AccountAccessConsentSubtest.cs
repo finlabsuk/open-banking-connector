@@ -236,8 +236,13 @@ public class AccountAccessConsentSubtest(
                         ExtraHeaders = null,
                         PublicRequestUrlWithoutQuery = null
                     };
-                    AccountAndTransactionModelsPublic.OBExternalAccountSubType1Code? accountSubType =
-                        account.AccountTypeCode;
+                    bool accountIsCreditCardType =
+                        (account.V3AccountSubType is not null &&
+                         account.V3AccountSubType is AccountAndTransactionModelsV3p1p11.OBExternalAccountSubType1Code
+                             .CreditCard) ||
+                        (account.AccountTypeCode is not null &&
+                         account.AccountTypeCode is AccountAndTransactionModelsPublic.OBExternalAccountSubType1CodeV4
+                             .CARD);
 
                     // GET /accounts/{accountId}
                     AccountsResponse accountsResp2 =
@@ -321,7 +326,7 @@ public class AccountAccessConsentSubtest(
                     // GET /accounts/{AccountId}/direct-debits
                     bool testGetDirectDebits =
                         requestedPermissions.Contains(AccountAndTransactionModelsPublic.Permissions.ReadDirectDebits) &&
-                        accountSubType is not AccountAndTransactionModelsPublic.OBExternalAccountSubType1Code.CARD;
+                        !accountIsCreditCardType;
                     if (testGetDirectDebits)
                     {
                         DirectDebitsResponse directDebitsResp =
@@ -334,8 +339,7 @@ public class AccountAccessConsentSubtest(
                              AccountAndTransactionModelsPublic.Permissions.ReadStandingOrdersBasic) ||
                          requestedPermissions.Contains(
                              AccountAndTransactionModelsPublic.Permissions.ReadStandingOrdersDetail)) &&
-                        accountSubType is not AccountAndTransactionModelsPublic.OBExternalAccountSubType1Code
-                            .CARD;
+                        !accountIsCreditCardType;
                     if (testGetStandingOrders)
                     {
                         StandingOrdersResponse standingOrdersResp =
