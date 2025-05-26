@@ -1,6 +1,4 @@
-# Open Banking Connector
-
-__With special thanks to Gold Sponsor Acquired.com__
+![Logo](./obc-logo.svg)
 
 Open Banking Connector is a *fully open-source*,
 *free-to-use* UK Open Banking client (connection layer) that simplifies connections to UK Open Banking APIs.
