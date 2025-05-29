@@ -1,4 +1,7 @@
-![Logo](./obc-logo.svg)
+<div align="center">
+  <img src="obc-logo.svg" width="600" alt="Logo"/>
+</div>
+<br>
 
 Open Banking Connector is a *fully open-source*,
 *free-to-use* UK Open Banking client (connection layer) that simplifies connections to UK Open Banking APIs.
