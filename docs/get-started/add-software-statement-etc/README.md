@@ -105,8 +105,8 @@ Content-Type: application/json
 
 {
   "Key": {
-    "Source": "Configuration", # can alternatively use "AwsSsmParameterStore"
-    "Name": "{{EncryptionKeyName}}" # can specify environment variable if "Source" is "Configuration"
+    "Source": "Configuration", # can alternatively use "AwsSsmParameterStore" or "GoogleCloudSecretManagerV1"
+    "Name": "{{EncryptionKeyName}}" # can specify environment variable if "Source" is "Configuration". Must be in format projects/{project_id}/secrets/{secret_id}/versions/{secret_version} if "Source" is "GoogleCloudSecretManagerV1"
   }
 }
 ```
