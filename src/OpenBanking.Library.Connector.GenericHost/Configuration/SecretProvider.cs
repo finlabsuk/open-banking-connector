@@ -20,8 +20,8 @@ public class SecretProvider(IConfiguration configuration) : ISecretProvider
         return secretDescription.Source switch
         {
             SecretSource.AwsSsmParameterStore => await GetSecretFromAwsParameterStore(secretDescription.Name),
-            SecretSource.GoogleCloudSecretManager     => await GetSecretFromGoogleCloudSecretManager(secretDescription.Name),
-            SecretSource.Configuration or _   => GetSecretFromEnvironmentVariables(secretDescription.Name)
+            SecretSource.GoogleCloudSecretManagerV1     => await GetSecretFromGoogleCloudSecretManagerV1(secretDescription.Name),
+            SecretSource.Configuration or _   => GetSecretFromConfiguration(secretDescription.Name)
         };
     }
 
@@ -61,7 +61,7 @@ public class SecretProvider(IConfiguration configuration) : ISecretProvider
         }
     }
 
-    private async Task<SecretResult> GetSecretFromGoogleCloudSecretManager(string name)
+    private async Task<SecretResult> GetSecretFromGoogleCloudSecretManagerV1(string name)
     {
         try
         {
@@ -86,7 +86,7 @@ public class SecretProvider(IConfiguration configuration) : ISecretProvider
         }
     }
     
-    private SecretResult GetSecretFromEnvironmentVariables(string name)
+    private SecretResult GetSecretFromConfiguration(string name)
     {
         var tmp = configuration.GetValue<string>(name, "");
         return string.IsNullOrEmpty(tmp)

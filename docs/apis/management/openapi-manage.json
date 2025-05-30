@@ -1411,8 +1411,7 @@
       "SecretSource": {
         "enum": [
           "Configuration",
-          "AwsSsmParameterStore",
-          "GoogleCloudSecretManager"
+          "AwsSsmParameterStore"
         ],
         "type": "string"
       },
