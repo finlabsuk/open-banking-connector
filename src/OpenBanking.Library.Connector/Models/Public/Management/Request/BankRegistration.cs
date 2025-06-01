@@ -96,6 +96,21 @@ public class BankRegistration : EntityBase, ISupportsValidation
     /// </summary>
     public bool UseSimulatedBank { get; init; }
 
+    /// <summary>
+    ///     Use v4 external (bank) API for AISP.
+    /// </summary>
+    public bool AispUseV4 { get; init; }
+
+    /// <summary>
+    ///     Use v4 external (bank) API for new PISP consent creation.
+    /// </summary>
+    public bool PispUseV4 { get; init; }
+
+    /// <summary>
+    ///     Use v4 external (bank) API for new VRP consent creation.
+    /// </summary>
+    public bool VrpUseV4 { get; init; }
+
     public async Task<ValidationResult> ValidateAsync() =>
         await new BankRegistrationValidator()
             .ValidateAsync(this);
