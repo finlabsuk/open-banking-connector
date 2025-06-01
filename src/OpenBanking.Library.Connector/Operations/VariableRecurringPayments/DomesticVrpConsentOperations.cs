@@ -115,7 +115,7 @@ internal class
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(createParams.ConsentId, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
-        bool vrpUseV4 = bankRegistration.VrpUseV4;
+        bool vrpUseV4 = persistedConsent.CreatedWithV4;
 
         // Validate consent ID
         VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationRequest externalApiRequest =
@@ -550,7 +550,7 @@ internal class
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id, false);
         string externalApiConsentId = persistedConsent.ExternalApiId;
-        bool vrpUseV4 = bankRegistration.VrpUseV4;
+        bool vrpUseV4 = persistedConsent.CreatedWithV4;
 
         bool excludeExternalApiOperation =
             readParams.ExcludeExternalApiOperation;

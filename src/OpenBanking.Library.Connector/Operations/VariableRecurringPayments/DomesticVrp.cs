@@ -97,7 +97,7 @@ internal class DomesticVrp :
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(request.DomesticVrpConsentId, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
-        bool vrpUseV4 = bankRegistration.VrpUseV4;
+        bool vrpUseV4 = persistedConsent.CreatedWithV4;
 
         // Validate consent ID
         if (string.IsNullOrEmpty(request.ExternalApiRequest.Data.ConsentId))
@@ -324,11 +324,11 @@ internal class DomesticVrp :
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticVrpConsent and related
-        (_, BankRegistrationEntity bankRegistration,
+        (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.ConsentId, false);
         string externalApiId = readParams.ExternalApiId;
-        bool vrpUseV4 = bankRegistration.VrpUseV4;
+        bool vrpUseV4 = persistedConsent.CreatedWithV4;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
@@ -504,10 +504,10 @@ internal class DomesticVrp :
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticVrpConsent and related
-        (_, BankRegistrationEntity bankRegistration,
+        (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.ConsentId, false);
-        bool vrpUseV4 = bankRegistration.VrpUseV4;
+        bool vrpUseV4 = persistedConsent.CreatedWithV4;
         string externalApiId = readParams.ExternalApiId;
 
         // Get bank profile

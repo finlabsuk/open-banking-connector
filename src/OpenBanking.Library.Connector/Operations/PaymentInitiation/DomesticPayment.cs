@@ -82,11 +82,11 @@ internal class DomesticPayment :
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticPaymentConsent and related
-        (_, BankRegistrationEntity bankRegistration,
+        (DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.ConsentId, false);
         string externalApiId = readParams.ExternalApiId;
-        bool pispUseV4 = bankRegistration.PispUseV4;
+        bool pispUseV4 = persistedConsent.CreatedWithV4;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
@@ -247,7 +247,7 @@ internal class DomesticPayment :
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(request.DomesticPaymentConsentId, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
-        bool pispUseV4 = bankRegistration.PispUseV4;
+        bool pispUseV4 = persistedConsent.CreatedWithV4;
 
         // Validate consent ID
         if (string.IsNullOrEmpty(request.ExternalApiRequest.Data.ConsentId))
@@ -454,11 +454,11 @@ internal class DomesticPayment :
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticPaymentConsent and related
-        (_, BankRegistrationEntity bankRegistration,
+        (DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.ConsentId, false);
         string externalApiId = readParams.ExternalApiId;
-        bool pispUseV4 = bankRegistration.PispUseV4;
+        bool pispUseV4 = persistedConsent.CreatedWithV4;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
