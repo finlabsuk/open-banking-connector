@@ -1590,7 +1590,7 @@
             "$ref": "#/components/schemas/OBCreditDebitCode_2"
           },
           "Type": {
-            "$ref": "#/components/schemas/OBBalanceType1Code"
+            "$ref": "#/components/schemas/OBBalanceType1CodeV4"
           },
           "DateTime": {
             "type": "string",
@@ -1610,9 +1610,8 @@
           "LocalAmount": {
             "$ref": "#/components/schemas/LocalAmount3"
           },
-          "V3IsClearedBalanceType": {
-            "type": "boolean",
-            "nullable": true
+          "V3Type": {
+            "$ref": "#/components/schemas/OBBalanceType1Code"
           }
         },
         "additionalProperties": { },
@@ -2542,6 +2541,25 @@
         "description": "Identifies the nature of the postal address. <br /> For a full set of codes see `OBAddressType2Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)."
       },
       "OBBalanceType1Code": {
+        "enum": [
+          "ClosingAvailable",
+          "ClosingBooked",
+          "ClosingCleared",
+          "Expected",
+          "ForwardAvailable",
+          "Information",
+          "InterimAvailable",
+          "InterimBooked",
+          "InterimCleared",
+          "OpeningAvailable",
+          "OpeningBooked",
+          "OpeningCleared",
+          "PreviouslyClosedBooked"
+        ],
+        "type": "string",
+        "description": "Balance type, in a coded form."
+      },
+      "OBBalanceType1CodeV4": {
         "enum": [
           "CLAV",
           "CLBD",
@@ -4261,7 +4279,7 @@
             "$ref": "#/components/schemas/OBCreditDebitCode_2"
           },
           "Type": {
-            "$ref": "#/components/schemas/OBBalanceType1Code"
+            "$ref": "#/components/schemas/OBBalanceType1CodeV4"
           },
           "Amount": {
             "$ref": "#/components/schemas/Amount"
