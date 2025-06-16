@@ -108,7 +108,7 @@ public class AppTests
             new JsonSerializerOptions()).GetAwaiter().GetResult();
 
         // Loop through test groups
-        foreach (BankRegistrationEnv bankRegistrationEnv in bankRegistrationEnvs.Values)
+        foreach ((string bankRegistrationEnvName, BankRegistrationEnv bankRegistrationEnv) in bankRegistrationEnvs)
         {
             bool testConsent = testType switch
             {
@@ -252,9 +252,7 @@ public class AppTests
                         SoftwareStatement = softwareStatement,
                         BankProfile = bankProfile,
                         BankRegistrationExternalApiId = bankRegistrationExternalApiId,
-                        BankRegistrationExternalApiSecretName = bankRegistrationExternalApiSecretName,
-                        BankRegistrationRegistrationAccessTokenName =
-                            bankRegistrationRegistrationAccessTokenName,
+                        BankRegistrationEnvName = bankRegistrationEnvName,
                         AccountAccessConsentExternalApiId = accountAccessConsentExternalApiId,
                         AccountAccessConsentAuthContextNonce = null,
                         RegistrationScope = registrationScope,
@@ -403,11 +401,28 @@ public class AppTests
         Guid softwareStatementId = softwareStatementResponse.Id;
 
         // Create BankRegistrationRequest
+        string bankRegistrationEnvFile = Path.Combine(
+            AppConfiguration.RequestsDirectory,
+            "BankRegistration",
+            "http-client.private.env.json");
+        var bankRegistrationEnvs = await DataFile.ReadFile<BankRegistrationEnvFile>(
+            bankRegistrationEnvFile,
+            new JsonSerializerOptions());
+        if (!bankRegistrationEnvs.TryGetValue(
+                testData.BankRegistrationEnvName,
+                out BankRegistrationEnv? bankRegistrationEnv))
+        {
+            throw new InvalidOperationException(
+                $"Bank registration test environment {testData.BankRegistrationEnvName} specified but not found.");
+        }
         var bankRegistrationRequest = new BankRegistration
         {
             BankProfile = bankProfile.BankProfileEnum,
             SoftwareStatementId = softwareStatementId,
             RegistrationScope = testData.RegistrationScope,
+            AispUseV4 = bankRegistrationEnv.AispUseV4,
+            PispUseV4 = bankRegistrationEnv.PispUseV4,
+            VrpUseV4 = bankRegistrationEnv.VrpUseV4,
             Reference = testNameUnique,
             CreatedBy = modifiedBy
         };
@@ -431,15 +446,23 @@ public class AppTests
         bankRegistrationRequest.ExternalApiId =
             testData.BankRegistrationExternalApiId ??
             throw new InvalidOperationException("No external API BankRegistration ID provided.");
-        if (testData.BankRegistrationExternalApiSecretName is not null)
+        if (bankRegistrationEnv.ExternalApiClientSecretName is not null)
         {
             bankRegistrationRequest.ExternalApiSecretFromSecrets =
-                new SecretDescription { Name = testData.BankRegistrationExternalApiSecretName };
+                new SecretDescription
+                {
+                    Name = bankRegistrationEnv.ExternalApiClientSecretName,
+                    Source = bankRegistrationEnv.ExternalApiClientSecretSource
+                };
         }
-        if (testData.BankRegistrationRegistrationAccessTokenName is not null)
+        if (bankRegistrationEnv.ExternalApiRegistrationAccessTokenName is not null)
         {
             bankRegistrationRequest.RegistrationAccessTokenFromSecrets =
-                new SecretDescription { Name = testData.BankRegistrationRegistrationAccessTokenName };
+                new SecretDescription
+                {
+                    Name = bankRegistrationEnv.ExternalApiRegistrationAccessTokenName,
+                    Source = bankRegistrationEnv.ExternalApiRegistrationAccessTokenSource
+                };
         }
         BankRegistrationResponse bankRegistrationCreateResponse =
             await BankRegistrationCreate(

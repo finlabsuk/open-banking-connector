@@ -19,7 +19,7 @@ public class SoftwareStatementEnv
 
     [JsonConverter(typeof(JsonStringEnumConverter<SecretSource>))]
     [JsonPropertyName("obSealAssociatedKeySource")]
-    public required SecretSource ObSealAssociatedKeySource { get; init; }
+    public SecretSource ObSealAssociatedKeySource { get; init; } = SecretSource.Configuration;
 
     [JsonPropertyName("obSealAssociatedKeyName")]
     public required string ObSealAssociatedKeyName { get; init; }
@@ -29,7 +29,7 @@ public class SoftwareStatementEnv
 
     [JsonConverter(typeof(JsonStringEnumConverter<SecretSource>))]
     [JsonPropertyName("obWacAssociatedKeySource")]
-    public required SecretSource ObWacAssociatedKeySource { get; init; }
+    public SecretSource ObWacAssociatedKeySource { get; init; } = SecretSource.Configuration;
 
     [JsonPropertyName("obWacAssociatedKeyName")]
     public required string ObWacAssociatedKeyName { get; init; }
