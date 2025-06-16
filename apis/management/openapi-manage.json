@@ -685,6 +685,23 @@
   },
   "components": {
     "schemas": {
+      "BankGroup": {
+        "enum": [
+          "Barclays",
+          "Cooperative",
+          "Danske",
+          "Hsbc",
+          "Lloyds",
+          "Monzo",
+          "Nationwide",
+          "NatWest",
+          "Obie",
+          "Revolut",
+          "Santander",
+          "Starling"
+        ],
+        "type": "string"
+      },
       "BankProfileEnum": {
         "enum": [
           "Barclays_Sandbox",
@@ -803,15 +820,18 @@
           },
           "AispUseV4": {
             "type": "boolean",
-            "description": "Use v4 external (bank) API for AISP."
+            "description": "Use v4 external (bank) API for AISP (when not specified default setting for bank profile is used).",
+            "nullable": true
           },
           "PispUseV4": {
             "type": "boolean",
-            "description": "Use v4 external (bank) API for new PISP consent creation."
+            "description": "Use v4 external (bank) API for new PISP consent creation (when not specified default setting for bank profile is\r\nused).",
+            "nullable": true
           },
           "VrpUseV4": {
             "type": "boolean",
-            "description": "Use v4 external (bank) API for new VRP consent creation."
+            "description": "Use v4 external (bank) API for new VRP consent creation (when not specified default setting for bank profile is\r\nused).",
+            "nullable": true
           },
           "Reference": {
             "type": "string",
@@ -828,7 +848,9 @@
       },
       "BankRegistrationResponse": {
         "required": [
+          "AispUseV4",
           "AuthorizationEndpoint",
+          "BankGroup",
           "BankProfile",
           "Created",
           "DefaultFragmentRedirectUri",
@@ -837,13 +859,15 @@
           "ExternalApiId",
           "Id",
           "JwksUri",
+          "PispUseV4",
           "RedirectUris",
           "RegistrationEndpoint",
           "RegistrationScope",
           "SoftwareStatementId",
           "TokenEndpoint",
           "TokenEndpointAuthMethod",
-          "UseSimulatedBank"
+          "UseSimulatedBank",
+          "VrpUseV4"
         ],
         "type": "object",
         "properties": {
@@ -863,6 +887,9 @@
           },
           "BankProfile": {
             "$ref": "#/components/schemas/BankProfileEnum"
+          },
+          "BankGroup": {
+            "$ref": "#/components/schemas/BankGroup"
           },
           "JwksUri": {
             "type": "string",
@@ -911,6 +938,18 @@
           "UseSimulatedBank": {
             "type": "boolean",
             "description": "Use simulated bank (only supported for some bank profiles)."
+          },
+          "AispUseV4": {
+            "type": "boolean",
+            "description": "Use v4 external (bank) API for AISP."
+          },
+          "PispUseV4": {
+            "type": "boolean",
+            "description": "Use v4 external (bank) API for new PISP consent creation."
+          },
+          "VrpUseV4": {
+            "type": "boolean",
+            "description": "Use v4 external (bank) API for new VRP consent creation."
           },
           "Id": {
             "type": "string",
