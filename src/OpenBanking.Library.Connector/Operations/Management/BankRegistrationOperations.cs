@@ -391,9 +391,9 @@ internal class
             registrationEndpoint,
             tokenEndpoint,
             authorizationEndpoint,
-            request.AispUseV4,
-            request.PispUseV4,
-            request.VrpUseV4,
+            request.AispUseV4 ?? bankProfile.AispUseV4ByDefault,
+            request.PispUseV4 ?? bankProfile.PispUseV4ByDefault,
+            request.VrpUseV4 ?? bankProfile.VrpUseV4ByDefault,
             defaultFragmentRedirectUri,
             defaultQueryRedirectUri,
             redirectUris,
@@ -463,6 +463,7 @@ internal class
             ExternalApiResponse = externalApiResponse,
             SoftwareStatementId = entity.SoftwareStatementId!.Value,
             BankProfile = entity.BankProfile,
+            BankGroup = entity.BankGroup,
             JwksUri = entity.JwksUri,
             RegistrationEndpoint = entity.RegistrationEndpoint,
             TokenEndpoint = entity.TokenEndpoint,
@@ -474,7 +475,10 @@ internal class
             ExternalApiId = entity.ExternalApiId,
             UseSimulatedBank = entity.UseSimulatedBank,
             DefaultResponseModeOverride = entity.DefaultResponseModeOverride,
-            TokenEndpointAuthMethod = entity.TokenEndpointAuthMethod
+            TokenEndpointAuthMethod = entity.TokenEndpointAuthMethod,
+            AispUseV4 = entity.AispUseV4,
+            PispUseV4 = entity.PispUseV4,
+            VrpUseV4 = entity.VrpUseV4
         };
 
         return (response, nonErrorMessages);
@@ -616,6 +620,7 @@ internal class
             ExternalApiResponse = externalApiResponse,
             SoftwareStatementId = entity.SoftwareStatementId!.Value,
             BankProfile = entity.BankProfile,
+            BankGroup = entity.BankGroup,
             JwksUri = entity.JwksUri,
             RegistrationEndpoint = entity.RegistrationEndpoint,
             TokenEndpoint = entity.TokenEndpoint,
@@ -627,7 +632,10 @@ internal class
             ExternalApiId = entity.ExternalApiId,
             UseSimulatedBank = entity.UseSimulatedBank,
             DefaultResponseModeOverride = entity.DefaultResponseModeOverride,
-            TokenEndpointAuthMethod = entity.TokenEndpointAuthMethod
+            TokenEndpointAuthMethod = entity.TokenEndpointAuthMethod,
+            AispUseV4 = entity.AispUseV4,
+            PispUseV4 = entity.PispUseV4,
+            VrpUseV4 = entity.VrpUseV4
         };
 
         return (response, nonErrorMessages);

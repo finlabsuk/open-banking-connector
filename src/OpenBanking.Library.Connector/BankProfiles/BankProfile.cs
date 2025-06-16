@@ -286,6 +286,12 @@ public class BankProfile
 
     public required int AspspBrandId { get; init; }
 
+    public bool AispUseV4ByDefault { get; init; } = false;
+
+    public bool PispUseV4ByDefault { get; init; } = false;
+
+    public bool VrpUseV4ByDefault { get; init; } = false;
+
     public AccountAndTransactionApi GetRequiredAccountAndTransactionApi(bool useV4) =>
         useV4 switch
         {
