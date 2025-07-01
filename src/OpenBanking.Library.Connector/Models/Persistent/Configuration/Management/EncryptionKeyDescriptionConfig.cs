@@ -32,8 +32,5 @@ internal class EncryptionKeyDescriptionConfig : BaseConfig<EncryptionKeyDescript
                         new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
                 v => JsonConvert.DeserializeObject<SecretDescription>(v)!)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-
-        builder.Property(e => e.LegacyName)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
     }
 }

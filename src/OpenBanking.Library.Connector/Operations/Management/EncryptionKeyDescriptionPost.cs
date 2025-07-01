@@ -61,8 +61,7 @@ internal class EncryptionKeyDescriptionPost :
             request.CreatedBy,
             utcNow,
             request.CreatedBy,
-            request.Key,
-            null);
+            request.Key);
 
         // Try to create cache object
         SecretResult keyResult = await _secretProvider.GetSecretAsync(entity.Key);

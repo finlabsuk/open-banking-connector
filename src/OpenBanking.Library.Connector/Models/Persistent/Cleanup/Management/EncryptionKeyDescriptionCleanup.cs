@@ -6,7 +6,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -33,66 +32,41 @@ public class EncryptionKeyDescriptionCleanup
             postgreSqlDbContext
                 .EncryptionKeyDescription;
 
-        var createdBy = "Database cleanup";
+        //var createdBy = "Database cleanup";
         DateTimeOffset utcNow = timeProvider.GetUtcNow();
 
         encryptionSettings.SetDisableEncryption(keysSettings.DisableEncryption);
 
-        // Check current key has description record in database if encryption enabled
+        // Check specified current key has description record in database if encryption enabled
         if (!keysSettings.DisableEncryption)
         {
             string currentEncryptionKeyId = keysSettings.CurrentEncryptionKeyId;
 
-            // If no current key specified, warn and continue
+            // Check current key not empty string
             if (currentEncryptionKeyId == "")
             {
-                instrumentationClient.Warning(
-                    "Configuration or key secrets warning: " +
+                throw new ArgumentException(
+                    "Configuration or key secrets error: " +
                     "No encryption key specified by CurrentEncryptionKeyId.");
             }
-            // If no key descriptions in database, create description from legacy settings
-            else if (!encryptionKeyDescriptions.Any())
-            {
-                // Get current key ID and check key present
-                if (!keysSettings.Encryption.TryGetValue(currentEncryptionKeyId, out EncryptionKey? encryptionKey))
-                {
-                    throw new ArgumentException(
-                        "Configuration or key secrets error: " +
-                        $"Encryption key with ID {currentEncryptionKeyId} as specified by CurrentEncryptionKeyId not found.");
-                }
 
-                // Create entity
-                var entity = new EncryptionKeyDescriptionEntity(
-                    Guid.NewGuid(),
-                    null,
-                    false,
-                    utcNow,
-                    createdBy,
-                    utcNow,
-                    createdBy,
-                    new SecretDescription
-                    {
-                        Name = $"OpenBankingConnector:Keys:Encryption:{currentEncryptionKeyId}:Value"
-                    },
-                    currentEncryptionKeyId);
-                encryptionKeyDescriptions.Add(entity);
-                encryptionSettings.SetCurrentKeyId(entity.Id);
-            }
-            // Check current key has description in database
-            else
+            // Check current key is valid Guid
+            if (!Guid.TryParse(currentEncryptionKeyId, out Guid guidKey))
             {
-                EncryptionKeyDescriptionEntity? currentKeyEntity =
-                    Guid.TryParse(currentEncryptionKeyId, out Guid guidKey)
-                        ? encryptionKeyDescriptions.SingleOrDefault(x => x.Id == guidKey)
-                        : encryptionKeyDescriptions.SingleOrDefault(x => x.LegacyName == currentEncryptionKeyId);
-                if (currentKeyEntity is null)
-                {
-                    throw new ArgumentException(
-                        "Configuration or key secrets error: " +
-                        $"EncryptionKeyDescription with ID {currentEncryptionKeyId} as specified by CurrentEncryptionKeyId not found.");
-                }
-                encryptionSettings.SetCurrentKeyId(currentKeyEntity.Id);
+                throw new ArgumentException(
+                    "Configuration or key secrets error: " +
+                    "Encryption key specified by CurrentEncryptionKeyId is not valid ID (GUID). " +
+                    "It probably needs updating as legacy key names are no longer supported.");
             }
+
+            // Check current key has description in database
+            EncryptionKeyDescriptionEntity currentKeyEntity =
+                encryptionKeyDescriptions.SingleOrDefault(x => x.Id == guidKey) ??
+                throw new ArgumentException(
+                    "Configuration or key secrets error: " +
+                    $"EncryptionKeyDescription with ID {guidKey} as specified by CurrentEncryptionKeyId not found.");
+
+            encryptionSettings.SetCurrentKeyId(guidKey);
         }
 
         // Check and cache encryption keys
