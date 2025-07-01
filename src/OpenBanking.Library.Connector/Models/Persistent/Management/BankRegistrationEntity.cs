@@ -27,12 +27,8 @@ internal class BankRegistrationEntity :
         string? isDeletedModifiedBy,
         DateTimeOffset created,
         string? createdBy,
-        string? externalApiSecret,
-        string? registrationAccessToken,
         BankGroup bankGroup,
         Guid? softwareStatementId,
-        string softwareStatementProfileId,
-        string? softwareStatementProfileOverride,
         OAuth2ResponseMode? defaultResponseModeOverride,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         bool useSimulatedBank,
@@ -57,13 +53,8 @@ internal class BankRegistrationEntity :
         created,
         createdBy)
     {
-        ExternalApiSecret = externalApiSecret;
-        RegistrationAccessToken = registrationAccessToken;
         BankGroup = bankGroup;
         SoftwareStatementId = softwareStatementId;
-        SoftwareStatementProfileId = softwareStatementProfileId ??
-                                     throw new ArgumentNullException(nameof(softwareStatementProfileId));
-        SoftwareStatementProfileOverride = softwareStatementProfileOverride;
         DefaultResponseModeOverride = defaultResponseModeOverride;
         TokenEndpointAuthMethod = tokenEndpointAuthMethod;
         UseSimulatedBank = useSimulatedBank;
@@ -97,32 +88,15 @@ internal class BankRegistrationEntity :
     public IList<RegistrationAccessTokenEntity> RegistrationAccessTokensNavigation { get; } =
         new List<RegistrationAccessTokenEntity>();
 
-    /// <summary>
-    ///     External API secret. Present to allow use of legacy token auth method "client_secret_basic" in sandboxes etc.
-    /// </summary>
-    public string? ExternalApiSecret { get; set; }
-
-    /// <summary>
-    ///     External API registration access token. Sometimes used to support registration adjustments etc.
-    /// </summary>
-    public string? RegistrationAccessToken { get; set; }
-
-    /// <summary>
-    ///     Bank group
-    /// </summary>
-    public BankGroup BankGroup { get; set; }
-
     [ForeignKey(nameof(SoftwareStatementId))]
     public SoftwareStatementEntity? SoftwareStatementNavigation { get; private set; }
 
     public Guid? SoftwareStatementId { get; set; }
 
     /// <summary>
-    ///     ID of SoftwareStatementProfile to use in association with BankRegistration
+    ///     Bank group
     /// </summary>
-    public string SoftwareStatementProfileId { get; }
-
-    public string? SoftwareStatementProfileOverride { get; }
+    public BankGroup BankGroup { get; set; }
 
     public bool AispUseV4 { get; }
 

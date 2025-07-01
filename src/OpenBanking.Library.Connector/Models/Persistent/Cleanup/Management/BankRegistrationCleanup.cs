@@ -10,7 +10,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanu
 
 public class BankRegistrationCleanup
 {
-    public async Task Cleanup(
+    public Task Cleanup(
         PostgreSqlDbContext postgreSqlDbContext,
         ILogger logger)
     {
@@ -19,7 +19,7 @@ public class BankRegistrationCleanup
                 .BankRegistration
                 .ToList();
 
-        var createdBy = "Database cleanup";
+        //var createdBy = "Database cleanup";
 
         var externalApiSecretEntityMethods =
             new DbEntityMethods<ExternalApiSecretEntity>(postgreSqlDbContext);
@@ -74,59 +74,7 @@ public class BankRegistrationCleanup
                     $"DefaultQueryRedirectUri not included " +
                     $"in RedirectUris for BankRegistration with ID {bankRegistration.Id}.");
             }
-
-            // Transfer client secret
-            DateTimeOffset created = bankRegistration.Created;
-            if (bankRegistration.ExternalApiSecret is not null)
-            {
-                var externalApiSecretEntity = new ExternalApiSecretEntity(
-                    Guid.NewGuid(),
-                    null,
-                    false,
-                    created,
-                    createdBy,
-                    created,
-                    createdBy,
-                    bankRegistration.Id);
-
-                externalApiSecretEntity.UpdateClientSecret(
-                    bankRegistration.ExternalApiSecret,
-                    string.Empty,
-                    Array.Empty<byte>(),
-                    created,
-                    createdBy,
-                    null);
-
-                await externalApiSecretEntityMethods.AddAsync(externalApiSecretEntity);
-
-                bankRegistration.ExternalApiSecret = null;
-            }
-
-            // Transfer registration access token
-            if (bankRegistration.RegistrationAccessToken is not null)
-            {
-                var registrationAccessTokenEntity = new RegistrationAccessTokenEntity(
-                    Guid.NewGuid(),
-                    null,
-                    false,
-                    created,
-                    createdBy,
-                    created,
-                    createdBy,
-                    bankRegistration.Id);
-
-                registrationAccessTokenEntity.UpdateRegistrationAccessToken(
-                    bankRegistration.RegistrationAccessToken,
-                    string.Empty,
-                    Array.Empty<byte>(),
-                    created,
-                    createdBy,
-                    null);
-
-                await registrationAccessTokenEntityMethods.AddAsync(registrationAccessTokenEntity);
-
-                bankRegistration.RegistrationAccessToken = null;
-            }
         }
+        return Task.CompletedTask;
     }
 }

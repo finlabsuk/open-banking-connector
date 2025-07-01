@@ -31,8 +31,6 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistrationEntity>
             .HasColumnOrder(1);
         builder.Property(e => e.ExternalApiId)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property(e => e.ExternalApiSecret);
-        builder.Property(e => e.RegistrationAccessToken);
         builder.Property(e => e.DefaultResponseModeOverride)
             .HasConversion(new EnumToStringConverter<OAuth2ResponseMode>())
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
@@ -50,10 +48,6 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistrationEntity>
                     (c1, c2) => c1!.SequenceEqual(c2!),
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                     c => c.ToList()));
-        builder.Property(e => e.SoftwareStatementProfileId)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property(e => e.SoftwareStatementProfileOverride)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.SoftwareStatementId);
         builder.Property(e => e.RegistrationScope)
             .HasConversion(new EnumToStringConverter<RegistrationScopeEnum>())
