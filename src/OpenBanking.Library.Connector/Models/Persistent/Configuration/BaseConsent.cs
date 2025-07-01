@@ -41,16 +41,6 @@ internal class BaseConsentConfig<TEntity> : BaseConfig<TEntity>
         builder.Property(e => e.AuthContextModifiedBy)
             .HasColumnOrder(104);
         builder.Property(e => e.AuthContextCodeVerifier);
-        builder.Property("_accessTokenAccessToken")
-            .HasColumnOrder(105);
-        builder.Property("_accessTokenExpiresIn")
-            .HasColumnOrder(106);
-        builder.Property("_accessTokenRefreshToken")
-            .HasColumnOrder(107);
-        builder.Property("_accessTokenModified")
-            .HasColumnOrder(108);
-        builder.Property("_accessTokenModifiedBy")
-            .HasColumnOrder(109);
         builder.Property(e => e.ExternalApiUserId);
         builder.Property(e => e.ExternalApiUserIdModified);
         builder.Property(e => e.ExternalApiUserIdModifiedBy);

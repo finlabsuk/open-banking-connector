@@ -10,7 +10,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanu
 
 public class AccountAccessConsentCleanup
 {
-    public async Task Cleanup(
+    public Task Cleanup(
         PostgreSqlDbContext postgreSqlDbContext,
         ILogger logger)
     {
@@ -43,60 +43,7 @@ public class AccountAccessConsentCleanup
                     "and has been fixed as part of database cleanup.";
                 logger.LogInformation(message);
             }
-
-            // Transfer tokens to other table
-            ConsentAccessToken consentAccessToken = accountAccessConsent.ConsentAccessToken;
-            if (consentAccessToken.Token is not null)
-            {
-                DateTimeOffset created = consentAccessToken.Modified;
-                var createdBy = "Database cleanup";
-
-                // Transfer access token
-                var accountAccessConsentAccessToken = new AccountAccessConsentAccessToken(
-                    Guid.NewGuid(),
-                    null,
-                    false,
-                    created,
-                    createdBy,
-                    created,
-                    createdBy,
-                    accountAccessConsent.Id);
-
-                var accessToken = new AccessToken(consentAccessToken.Token, consentAccessToken.ExpiresIn);
-                accountAccessConsentAccessToken.UpdateAccessToken(
-                    accessToken,
-                    string.Empty,
-                    Array.Empty<byte>(),
-                    created,
-                    createdBy,
-                    null);
-                await accessTokenEntityMethods.AddAsync(accountAccessConsentAccessToken);
-
-                // Transfer refresh token
-                if (consentAccessToken.RefreshToken is not null)
-                {
-                    var accountAccessConsentRefreshToken = new AccountAccessConsentRefreshToken(
-                        Guid.NewGuid(),
-                        null,
-                        false,
-                        created,
-                        createdBy,
-                        created,
-                        createdBy,
-                        accountAccessConsent.Id);
-
-                    accountAccessConsentRefreshToken.UpdateRefreshToken(
-                        consentAccessToken.RefreshToken,
-                        string.Empty,
-                        Array.Empty<byte>(),
-                        created,
-                        createdBy,
-                        null);
-                    await refreshTokenEntityMethods.AddAsync(accountAccessConsentRefreshToken);
-                }
-
-                accountAccessConsent.UpdateAccessToken(null, 0, null, DateTimeOffset.UtcNow, createdBy);
-            }
         }
+        return Task.CompletedTask;
     }
 }
