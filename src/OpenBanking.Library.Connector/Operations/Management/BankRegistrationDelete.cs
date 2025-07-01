@@ -67,7 +67,7 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
                 .AsSplitQuery()
                 .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
             throw new KeyNotFoundException($"No record found for Bank Registration with ID {deleteParams.Id}.");
-        SoftwareStatementEntity softwareStatement = entity.SoftwareStatementNavigation!;
+        SoftwareStatementEntity softwareStatement = entity.SoftwareStatementNavigation;
         ExternalApiSecretEntity? externalApiSecret =
             entity.ExternalApiSecretsNavigation
                 .SingleOrDefault(x => !x.IsDeleted);

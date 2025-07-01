@@ -45,7 +45,7 @@ internal class
             throw new KeyNotFoundException(
                 $"No record found for BankRegistrationId {bankRegistrationId} specified by request.");
         string tokenEndpoint = bankRegistration.TokenEndpoint;
-        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
+        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation;
         ExternalApiSecretEntity? externalApiSecret =
             bankRegistration.ExternalApiSecretsNavigation
                 .SingleOrDefault(x => !x.IsDeleted);

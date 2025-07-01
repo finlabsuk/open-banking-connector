@@ -53,7 +53,7 @@ internal class AccountAccessConsentCommon
             throw new KeyNotFoundException($"No record found for Account Access Consent with ID {consentId}.");
         BankRegistrationEntity bankRegistration = persistedConsent.BankRegistrationNavigation;
 
-        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
+        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation;
 
         ExternalApiSecretEntity? externalApiSecret =
             bankRegistration.ExternalApiSecretsNavigation

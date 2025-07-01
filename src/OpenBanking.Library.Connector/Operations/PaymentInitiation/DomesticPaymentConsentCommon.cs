@@ -53,7 +53,7 @@ internal class DomesticPaymentConsentCommon
             throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {consentId}.");
         BankRegistrationEntity bankRegistration = persistedConsent.BankRegistrationNavigation;
         SoftwareStatementEntity softwareStatementEntity =
-            persistedConsent.BankRegistrationNavigation.SoftwareStatementNavigation!;
+            persistedConsent.BankRegistrationNavigation.SoftwareStatementNavigation;
         ExternalApiSecretEntity? externalApiSecret =
             bankRegistration.ExternalApiSecretsNavigation
                 .SingleOrDefault(x => !x.IsDeleted);

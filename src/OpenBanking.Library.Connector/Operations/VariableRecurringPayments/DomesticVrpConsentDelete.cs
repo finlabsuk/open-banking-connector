@@ -73,7 +73,7 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
             BankRegistrationEntity bankRegistration = persistedObject.BankRegistrationNavigation;
             bool vrpUseV4 = persistedObject.CreatedWithV4;
             string bankApiId = persistedObject.ExternalApiId;
-            SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
+            SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation;
             ExternalApiSecretEntity? externalApiSecret =
                 bankRegistration.ExternalApiSecretsNavigation
                     .SingleOrDefault(x => !x.IsDeleted);

@@ -29,15 +29,6 @@ public class BankRegistrationCleanup
 
         foreach (BankRegistrationEntity bankRegistration in entityList)
         {
-            // Check for un-migrated registrations (should no longer exist)
-            if (bankRegistration.SoftwareStatementId is null)
-            {
-                string message =
-                    $"In its database record, BankRegistration with ID {bankRegistration.Id} specifies " +
-                    $"use of software statement with null ID.";
-                throw new Exception(message);
-            }
-
             // Check for empty RedirectUris
             if (!bankRegistration.RedirectUris.Any())
             {

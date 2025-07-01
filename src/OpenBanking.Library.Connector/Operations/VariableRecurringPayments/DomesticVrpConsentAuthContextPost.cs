@@ -68,7 +68,7 @@ internal class
         BankRegistrationEntity bankRegistration = domesticVrpConsent.BankRegistrationNavigation;
         string authorizationEndpoint =
             bankRegistration.AuthorizationEndpoint;
-        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
+        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);

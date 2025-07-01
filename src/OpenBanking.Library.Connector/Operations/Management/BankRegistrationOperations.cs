@@ -457,7 +457,7 @@ internal class
             CreatedBy = entity.CreatedBy,
             Reference = entity.Reference,
             ExternalApiResponse = externalApiResponse,
-            SoftwareStatementId = entity.SoftwareStatementId!.Value,
+            SoftwareStatementId = entity.SoftwareStatementId,
             BankProfile = entity.BankProfile,
             BankGroup = entity.BankGroup,
             JwksUri = entity.JwksUri,
@@ -499,7 +499,7 @@ internal class
                 .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
             throw new KeyNotFoundException($"No record found for BankRegistration with ID {readParams.Id}.");
         string externalApiId = entity.ExternalApiId;
-        SoftwareStatementEntity softwareStatement = entity.SoftwareStatementNavigation!;
+        SoftwareStatementEntity softwareStatement = entity.SoftwareStatementNavigation;
         ExternalApiSecretEntity? externalApiSecret =
             entity.ExternalApiSecretsNavigation
                 .SingleOrDefault(x => !x.IsDeleted);
@@ -614,7 +614,7 @@ internal class
             CreatedBy = entity.CreatedBy,
             Reference = entity.Reference,
             ExternalApiResponse = externalApiResponse,
-            SoftwareStatementId = entity.SoftwareStatementId!.Value,
+            SoftwareStatementId = entity.SoftwareStatementId,
             BankProfile = entity.BankProfile,
             BankGroup = entity.BankGroup,
             JwksUri = entity.JwksUri,

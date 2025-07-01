@@ -211,7 +211,7 @@ internal class AuthContextUpdate :
         string externalApiClientId = bankRegistration.ExternalApiId;
         string jwksUri = bankRegistration.JwksUri;
         string consentAssociatedData = consent.GetAssociatedData(bankRegistration);
-        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
+        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation;
         ExternalApiSecretEntity? externalApiSecretEntity =
             bankRegistration.ExternalApiSecretsNavigation
                 .SingleOrDefault(x => !x.IsDeleted);

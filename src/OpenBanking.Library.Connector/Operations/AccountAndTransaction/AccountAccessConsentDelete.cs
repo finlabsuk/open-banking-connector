@@ -72,7 +72,7 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
         {
             BankRegistrationEntity bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankApiId = persistedObject.ExternalApiId;
-            SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
+            SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation;
             ExternalApiSecretEntity? externalApiSecret =
                 bankRegistration.ExternalApiSecretsNavigation
                     .SingleOrDefault(x => !x.IsDeleted);

@@ -28,7 +28,7 @@ internal class BankRegistrationEntity :
         DateTimeOffset created,
         string? createdBy,
         BankGroup bankGroup,
-        Guid? softwareStatementId,
+        Guid softwareStatementId,
         OAuth2ResponseMode? defaultResponseModeOverride,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         bool useSimulatedBank,
@@ -89,14 +89,14 @@ internal class BankRegistrationEntity :
         new List<RegistrationAccessTokenEntity>();
 
     [ForeignKey(nameof(SoftwareStatementId))]
-    public SoftwareStatementEntity? SoftwareStatementNavigation { get; private set; }
+    public SoftwareStatementEntity SoftwareStatementNavigation { get; private set; } = null!;
 
-    public Guid? SoftwareStatementId { get; set; }
+    public Guid SoftwareStatementId { get; }
 
     /// <summary>
     ///     Bank group
     /// </summary>
-    public BankGroup BankGroup { get; set; }
+    public BankGroup BankGroup { get; }
 
     public bool AispUseV4 { get; }
 

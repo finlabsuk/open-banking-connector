@@ -51,7 +51,7 @@ internal class DomesticVrpConsentCommon
             throw new KeyNotFoundException($"No record found for Domestic VRP Consent with ID {consentId}.");
         BankRegistrationEntity bankRegistration = persistedConsent.BankRegistrationNavigation;
         SoftwareStatementEntity softwareStatementEntity =
-            persistedConsent.BankRegistrationNavigation.SoftwareStatementNavigation!;
+            persistedConsent.BankRegistrationNavigation.SoftwareStatementNavigation;
         ExternalApiSecretEntity? externalApiSecret =
             bankRegistration.ExternalApiSecretsNavigation
                 .SingleOrDefault(x => !x.IsDeleted);
