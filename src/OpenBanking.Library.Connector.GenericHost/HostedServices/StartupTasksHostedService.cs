@@ -203,6 +203,7 @@ public class StartupTasksHostedService : IHostedService
             await new EncryptedObjectCleanup()
                 .Cleanup(
                     postgreSqlDbContext,
+                    _keySettings,
                     _instrumentationClient,
                     _timeProvider,
                     cancellationToken);

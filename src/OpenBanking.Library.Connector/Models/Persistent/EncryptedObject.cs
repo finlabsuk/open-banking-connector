@@ -66,11 +66,6 @@ internal class EncryptedObject : BaseEntity
 
     public string? ModifiedBy { get; private set; }
 
-    /// <summary>
-    ///     Encryption key ID.
-    /// </summary>
-    public string? KeyId { get; private set; }
-
     [ForeignKey(nameof(EncryptionKeyDescriptionId))]
     public EncryptionKeyDescriptionEntity? EncryptionKeyDescriptionNavigation { get; private set; }
 

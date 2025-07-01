@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -12,8 +13,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanu
 
 public class EncryptedObjectCleanup
 {
-    public async Task Cleanup(
+    public Task Cleanup(
         PostgreSqlDbContext postgreSqlDbContext,
+        KeysSettings keysSettings,
         IInstrumentationClient instrumentationClient,
         ITimeProvider timeProvider,
         CancellationToken cancellationToken)
@@ -26,21 +28,15 @@ public class EncryptedObjectCleanup
             postgreSqlDbContext
                 .EncryptedObject;
 
-        // Check encrypted objects
-        foreach (EncryptedObject encryptedObject in encryptedObjects)
+        // Warn if database contains unencrypted objects
+        if (!keysSettings.DisableEncryption &&
+            encryptedObjects.Any(r => r.EncryptionKeyDescriptionId == null))
         {
-            if (encryptedObject.KeyId is not null &&
-                encryptedObject.EncryptionKeyDescriptionId is null)
-            {
-                EncryptionKeyDescriptionEntity keyEntity =
-                    encryptionKeyDescriptions.SingleOrDefault(x => x.LegacyName == encryptedObject.KeyId) ??
-                    throw new ArgumentException(
-                        "Database clean-up error: " +
-                        $"EncryptionKeyDescription with legacy name {encryptedObject.KeyId} specified by EncryptedObject with ID {encryptedObject.Id} not found.");
-                encryptedObject.EncryptionKeyDescriptionId = keyEntity.Id;
-            }
+            string fullMessage =
+                "Database clean-up warning: " +
+                "Encryption is enabled yet at least one EncryptedObject is not encrypted (has null EncryptionKeyDescriptionId).";
+            instrumentationClient.Warning(fullMessage);
         }
-
-        await postgreSqlDbContext.SaveChangesAsync(cancellationToken);
+        return Task.CompletedTask;
     }
 }
