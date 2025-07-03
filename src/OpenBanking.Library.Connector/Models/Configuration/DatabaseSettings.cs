@@ -28,7 +28,19 @@ public class DatabaseSettings : ISettings<DatabaseSettings>
         new()
         {
             [DbProvider.Sqlite] = string.Empty,
-            [DbProvider.PostgreSql] = string.Empty
+            [DbProvider.PostgreSql] = string.Empty,
+            [DbProvider.MongoDb] = string.Empty
+        };
+
+    /// <summary>
+    ///     Database names (currently supported for MongoDB only).
+    /// </summary>
+    public Dictionary<DbProvider, string> Names { get; set; } =
+        new()
+        {
+            [DbProvider.Sqlite] = string.Empty,
+            [DbProvider.PostgreSql] = string.Empty,
+            [DbProvider.MongoDb] = string.Empty
         };
 
     public Dictionary<DbProvider, string> PasswordSettingNames { get; set; } =
@@ -55,6 +67,16 @@ public class DatabaseSettings : ISettings<DatabaseSettings>
             throw new ArgumentException(
                 "Configuration or key secrets error: " +
                 $"No non-empty connection string provided for DB provider {Provider}.");
+        }
+
+        if (Provider is DbProvider.MongoDb)
+        {
+            if (string.IsNullOrEmpty(Names[Provider]))
+            {
+                throw new ArgumentException(
+                    "Configuration or key secrets error: " +
+                    $"No non-empty database name provided for DB provider {Provider}.");
+            }
         }
 
         return this;

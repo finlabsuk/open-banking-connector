@@ -153,6 +153,28 @@ public class StartupTasksHostedService : IHostedService
                     }
 
                     break;
+                case DbProvider.MongoDb:
+                    var mongoDbContext = scope.ServiceProvider.GetRequiredService<MongoDbDbContext>();
+
+                    if (!await mongoDbContext.Database.CanConnectAsync())
+                    {
+                        throw new ApplicationException();
+                    }
+
+                    if (true)
+                    {
+                        if (databaseSettings.EnsureDatabaseCreated)
+                        {
+                            // Create database
+                            await mongoDbContext.Database.EnsureCreatedAsync();
+                        }
+                        else
+                        {
+                            throw new ApplicationException(
+                                "No database found. Note: set \"Database:EnsureDatabaseCreated\" to \"true\" to create database at application start-up.");
+                        }
+                    }
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

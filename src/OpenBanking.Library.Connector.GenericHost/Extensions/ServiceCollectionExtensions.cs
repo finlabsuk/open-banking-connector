@@ -18,6 +18,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
 using TimeProvider = FinnovationLabs.OpenBanking.Library.Connector.Services.TimeProvider;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
@@ -67,6 +68,22 @@ public static class ServiceCollectionExtensions
                     optionsBuilder =>
                     {
                         optionsBuilder.UseNpgsql(connectionString, options => options.EnableRetryOnFailure());
+                    });
+                break;
+            case DbProvider.MongoDb:
+                string databaseName = databaseSettings.Names[DbProvider.MongoDb];
+                services.AddSingleton<IMongoClient>(_ => new MongoClient(connectionString));
+                services.AddSingleton<IMongoDatabase>(
+                    sp =>
+                    {
+                        var mongoClient = sp.GetRequiredService<IMongoClient>();
+                        return mongoClient.GetDatabase(databaseName);
+                    });
+                services.AddDbContext<BaseDbContext, MongoDbDbContext>(
+                    (sp, optionsBuilder) =>
+                    {
+                        var mongoClient = sp.GetRequiredService<IMongoClient>();
+                        optionsBuilder.UseMongoDB(mongoClient, databaseName);
                     });
                 break;
             default:
@@ -153,6 +170,7 @@ public static class ServiceCollectionExtensions
         {
             DbProvider.Sqlite => connectionString,
             DbProvider.PostgreSql => connectionString + (password is not null ? $";Password={password}" : ""),
+            DbProvider.MongoDb => connectionString,
             _ => throw new ArgumentOutOfRangeException(nameof(settings.Provider), settings.Provider, null)
         };
     }
