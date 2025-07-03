@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
 
@@ -24,7 +23,15 @@ internal class
         base.Configure(builder);
 
         // Top-level property info: read-only, JSON conversion, etc
-        builder.Property(e => e.AccountAccessConsentId)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.AccountAccessConsentId); // shared column
+
+        if (_dbProvider is DbProvider.PostgreSql or DbProvider.Sqlite)
+        {
+            builder
+                .HasOne(e => e.AccountAccessConsentNavigation)
+                .WithMany()
+                .HasForeignKey(e => e.AccountAccessConsentId)
+                .IsRequired();
+        }
     }
 }

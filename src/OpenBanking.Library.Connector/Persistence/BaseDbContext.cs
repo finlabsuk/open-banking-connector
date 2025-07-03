@@ -14,6 +14,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentIni
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using MongoDB.Bson;
 using Newtonsoft.Json;
 using DomesticPaymentConsentAuthContextConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation.
@@ -101,6 +102,20 @@ public abstract class BaseDbContext : DbContext
 
     internal DbSet<RegistrationAccessTokenEntity> RegistrationAccessToken =>
         Set<RegistrationAccessTokenEntity>();
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        base.ConfigureConventions(configurationBuilder);
+
+        if (DbProvider is DbProvider.MongoDb)
+        {
+            configurationBuilder
+                .IgnoreAny(typeof(IList<>));
+            configurationBuilder.Properties<DateTimeOffset>().HaveBsonRepresentation(BsonType.DateTime);
+
+            //configurationBuilder.Conventions.Remove<RelationshipDiscoveryConvention>();
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 
 /// <summary>
@@ -47,8 +45,7 @@ internal class DomesticPaymentConsentRefreshToken :
     }
 
     // Parent consent
-    [ForeignKey(nameof(DomesticPaymentConsentId))]
-    public DomesticPaymentConsent DomesticPaymentConsentNavigation { get; private set; } = null!;
+    public DomesticPaymentConsent DomesticPaymentConsentNavigation { get; } = null!;
 
     public Guid DomesticPaymentConsentId { get; }
 }

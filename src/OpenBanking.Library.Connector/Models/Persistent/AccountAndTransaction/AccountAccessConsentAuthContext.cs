@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
@@ -44,8 +43,7 @@ internal partial class AccountAccessConsentAuthContext :
     }
 
     // Parent consent
-    [ForeignKey("AccountAccessConsentId")]
-    public AccountAccessConsent AccountAccessConsentNavigation { get; set; } = null!;
+    public AccountAccessConsent AccountAccessConsentNavigation { get; } = null!;
 
     public Guid AccountAccessConsentId { get; }
 }

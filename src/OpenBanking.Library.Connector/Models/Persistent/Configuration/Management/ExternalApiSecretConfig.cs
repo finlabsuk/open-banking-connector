@@ -4,8 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
 
@@ -25,8 +23,15 @@ internal class
         base.Configure(builder);
 
         // Top-level property info: read-only, JSON conversion, etc
-        builder.Property(e => e.BankRegistrationId)
-            .HasColumnName("bank_registration_id") // shared column
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.BankRegistrationId); // shared column
+
+        if (_dbProvider is DbProvider.PostgreSql or DbProvider.Sqlite)
+        {
+            builder
+                .HasOne(e => e.BankRegistrationNavigation)
+                .WithMany(e => e.ExternalApiSecretsNavigation)
+                .HasForeignKey(e => e.BankRegistrationId)
+                .IsRequired();
+        }
     }
 }

@@ -23,5 +23,14 @@ internal class EncryptedObjectConfig<TEntity> : BaseConfig<TEntity>
         builder.Property("_text");
         builder.Property("_tag");
         builder.Property("_text2");
+
+        if (_dbProvider is DbProvider.PostgreSql or DbProvider.Sqlite)
+        {
+            builder
+                .HasOne(e => e.EncryptionKeyDescriptionNavigation)
+                .WithMany()
+                .HasForeignKey(e => e.EncryptionKeyDescriptionId)
+                .IsRequired();
+        }
     }
 }

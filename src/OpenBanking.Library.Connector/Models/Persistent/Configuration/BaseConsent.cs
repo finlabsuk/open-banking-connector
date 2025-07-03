@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
@@ -21,36 +20,30 @@ internal class BaseConsentConfig<TEntity> : BaseConfig<TEntity>
         base.Configure(builder);
 
         // Top-level property info: read-only, JSON conversion, etc
-        builder.Property(e => e.Id)
-            .HasColumnOrder(0);
+        builder.Property(e => e.Id);
         builder.Property(e => e.BankRegistrationId)
-            .HasColumnOrder(1)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.CreatedWithV4)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
 
         builder.Property(e => e.ExternalApiId)
-            .HasColumnOrder(100)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property(e => e.AuthContextState)
-            .HasColumnOrder(101);
-        builder.Property(e => e.AuthContextNonce)
-            .HasColumnOrder(102);
-        builder.Property(e => e.AuthContextModified)
-            .HasColumnOrder(103);
-        builder.Property(e => e.AuthContextModifiedBy)
-            .HasColumnOrder(104);
+        builder.Property(e => e.AuthContextState);
+        builder.Property(e => e.AuthContextNonce);
+        builder.Property(e => e.AuthContextModified);
+        builder.Property(e => e.AuthContextModifiedBy);
         builder.Property(e => e.AuthContextCodeVerifier);
         builder.Property(e => e.ExternalApiUserId);
         builder.Property(e => e.ExternalApiUserIdModified);
         builder.Property(e => e.ExternalApiUserIdModifiedBy);
 
-        // Note: we specify column order above and in parent classes to solve two problems:
-        // (1) Auto-ordering with two base classes seems to put columns from "middle" class at end of table.
-        // (2) Field-sourced columns jump to start of table with auto-ordering and their ordering w.r.t. one
-        // another seems fixed as alphabetical.
-        // We group columns above into two blocks:
-        // 0-99: for keys (primary and foreign)
-        // 100+: for "middle" class columns including those sourced from fields. 
+        if (_dbProvider is DbProvider.PostgreSql or DbProvider.Sqlite)
+        {
+            builder
+                .HasOne(e => e.BankRegistrationNavigation)
+                .WithMany()
+                .HasForeignKey(e => e.BankRegistrationId)
+                .IsRequired();
+        }
     }
 }

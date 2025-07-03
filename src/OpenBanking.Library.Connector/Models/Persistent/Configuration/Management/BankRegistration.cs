@@ -34,8 +34,10 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistrationEntity>
         builder.Property(e => e.DefaultResponseModeOverride)
             .HasConversion(new EnumToStringConverter<OAuth2ResponseMode>())
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property(e => e.DefaultFragmentRedirectUri);
-        builder.Property(e => e.DefaultQueryRedirectUri);
+        builder.Property(e => e.DefaultFragmentRedirectUri)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.DefaultQueryRedirectUri)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.RedirectUris)
             .HasConversion(
                 v =>
@@ -47,7 +49,8 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistrationEntity>
                 new ValueComparer<IList<string>>(
                     (c1, c2) => c1!.SequenceEqual(c2!),
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                    c => c.ToList()));
+                    c => c.ToList()))
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.SoftwareStatementId);
         builder.Property(e => e.RegistrationScope)
             .HasConversion(new EnumToStringConverter<RegistrationScopeEnum>())
@@ -66,7 +69,8 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistrationEntity>
         builder.Property(e => e.VrpUseV4)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.BankProfile)
-            .HasConversion(new EnumToStringConverter<BankProfileEnum>());
+            .HasConversion(new EnumToStringConverter<BankProfileEnum>())
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.JwksUri)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.RegistrationEndpoint)
@@ -84,6 +88,15 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistrationEntity>
         if (_dbProvider is DbProvider.Sqlite)
         {
             builder.Property(e => e.Created).HasConversion(new DateTimeOffsetToBinaryConverter());
+        }
+
+        if (_dbProvider is DbProvider.PostgreSql or DbProvider.Sqlite)
+        {
+            builder
+                .HasOne(e => e.SoftwareStatementNavigation)
+                .WithMany()
+                .HasForeignKey(e => e.SoftwareStatementId)
+                .IsRequired();
         }
     }
 }

@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
@@ -88,8 +87,7 @@ internal class BankRegistrationEntity :
     public IList<RegistrationAccessTokenEntity> RegistrationAccessTokensNavigation { get; } =
         new List<RegistrationAccessTokenEntity>();
 
-    [ForeignKey(nameof(SoftwareStatementId))]
-    public SoftwareStatementEntity SoftwareStatementNavigation { get; private set; } = null!;
+    public SoftwareStatementEntity SoftwareStatementNavigation { get; } = null!;
 
     public Guid SoftwareStatementId { get; }
 
@@ -128,7 +126,7 @@ internal class BankRegistrationEntity :
     /// <summary>
     ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
     /// </summary>
-    public BankProfileEnum BankProfile { get; set; }
+    public BankProfileEnum BankProfile { get; }
 
     /// <summary>
     ///     JWK Set URI (normally supplied from OpenID Configuration)
@@ -153,17 +151,17 @@ internal class BankRegistrationEntity :
     /// <summary>
     ///     Default fragment redirect URI used for this registration.
     /// </summary>
-    public string DefaultFragmentRedirectUri { get; set; }
+    public string DefaultFragmentRedirectUri { get; }
 
     /// <summary>
     ///     Default query redirect URI used for this registration.
     /// </summary>
-    public string DefaultQueryRedirectUri { get; set; }
+    public string DefaultQueryRedirectUri { get; }
 
     /// <summary>
     ///     Redirect URIs used for registration.
     /// </summary>
-    public IList<string> RedirectUris { get; set; }
+    public IList<string> RedirectUris { get; }
 
     /// <summary>
     ///     Functional APIs used for bank registration.

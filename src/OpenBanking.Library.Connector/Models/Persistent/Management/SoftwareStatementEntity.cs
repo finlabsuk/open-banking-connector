@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -33,11 +32,9 @@ internal partial class SoftwareStatementEntity :
         created,
         createdBy) { }
 
-    [ForeignKey(nameof(DefaultObWacCertificateId))]
-    public ObWacCertificateEntity DefaultObWacCertificateNavigation { get; private set; } = null!;
+    public ObWacCertificateEntity DefaultObWacCertificateNavigation { get; } = null!;
 
-    [ForeignKey(nameof(DefaultObSealCertificateId))]
-    public ObSealCertificateEntity DefaultObSealCertificateNavigation { get; private set; } = null!;
+    public ObSealCertificateEntity DefaultObSealCertificateNavigation { get; } = null!;
 
     public required DateTimeOffset Modified { get; set; }
 

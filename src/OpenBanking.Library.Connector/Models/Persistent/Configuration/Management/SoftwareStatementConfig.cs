@@ -28,5 +28,20 @@ internal class SoftwareStatementConfig : BaseConfig<SoftwareStatementEntity>
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.SandboxEnvironment)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+
+        if (_dbProvider is DbProvider.PostgreSql or DbProvider.Sqlite)
+        {
+            builder
+                .HasOne(e => e.DefaultObSealCertificateNavigation)
+                .WithMany()
+                .HasForeignKey(e => e.DefaultObSealCertificateId)
+                .IsRequired();
+
+            builder
+                .HasOne(e => e.DefaultObWacCertificateNavigation)
+                .WithMany()
+                .HasForeignKey(e => e.DefaultObWacCertificateId)
+                .IsRequired();
+        }
     }
 }

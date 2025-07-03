@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -48,8 +47,7 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
         CreatedWithV4 = createdWithV4;
     }
 
-    [ForeignKey(nameof(BankRegistrationId))]
-    public BankRegistrationEntity BankRegistrationNavigation { get; private set; } = null!;
+    public BankRegistrationEntity BankRegistrationNavigation { get; } = null!;
 
     /// <summary>
     ///     OAuth2 "state". This is mutable as re-auth will generate a new value.
