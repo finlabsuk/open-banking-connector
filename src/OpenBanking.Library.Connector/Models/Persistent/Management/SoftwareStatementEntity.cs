@@ -23,55 +23,75 @@ internal partial class SoftwareStatementEntity :
         DateTimeOffset isDeletedModified,
         string? isDeletedModifiedBy,
         DateTimeOffset created,
-        string? createdBy) : base(
+        string? createdBy,
+        DateTimeOffset modified,
+        string organisationId,
+        string softwareId,
+        bool sandboxEnvironment,
+        Guid defaultObWacCertificateId,
+        Guid defaultObSealCertificateId,
+        string defaultQueryRedirectUrl,
+        string defaultFragmentRedirectUrl) : base(
         id,
         reference,
         isDeleted,
         isDeletedModified,
         isDeletedModifiedBy,
         created,
-        createdBy) { }
+        createdBy)
+    {
+        Modified = modified;
+        OrganisationId = organisationId ?? throw new ArgumentNullException(nameof(organisationId));
+        SoftwareId = softwareId ?? throw new ArgumentNullException(nameof(softwareId));
+        SandboxEnvironment = sandboxEnvironment;
+        DefaultObWacCertificateId = defaultObWacCertificateId;
+        DefaultObSealCertificateId = defaultObSealCertificateId;
+        DefaultQueryRedirectUrl =
+            defaultQueryRedirectUrl ?? throw new ArgumentNullException(nameof(defaultQueryRedirectUrl));
+        DefaultFragmentRedirectUrl = defaultFragmentRedirectUrl ??
+                                     throw new ArgumentNullException(nameof(defaultFragmentRedirectUrl));
+    }
 
     public ObWacCertificateEntity DefaultObWacCertificateNavigation { get; } = null!;
 
     public ObSealCertificateEntity DefaultObSealCertificateNavigation { get; } = null!;
 
-    public required DateTimeOffset Modified { get; set; }
+    public DateTimeOffset Modified { get; private set; }
 
     /// <summary>
     ///     Organisation ID from UK Open Banking directory as string.
     /// </summary>
-    public required string OrganisationId { get; init; }
+    public string OrganisationId { get; }
 
     /// <summary>
     ///     Software statement ID from UK Open Banking directory as string.
     /// </summary>
-    public required string SoftwareId { get; init; }
+    public string SoftwareId { get; }
 
     /// <summary>
     ///     When true, denotes software statement is defined in UK OB directory sandbox (not production) environment.
     /// </summary>
-    public required bool SandboxEnvironment { get; init; }
+    public bool SandboxEnvironment { get; }
 
     /// <summary>
     ///     ID of default <see cref="ObWacCertificateEntity" /> to use for mutual TLS with this software statement.
     /// </summary>
-    public required Guid DefaultObWacCertificateId { get; set; }
+    public Guid DefaultObWacCertificateId { get; private set; }
 
     /// <summary>
     ///     ID of default <see cref="ObSealCertificateEntity" /> to use for signing JWTs etc with this software statement.
     /// </summary>
-    public required Guid DefaultObSealCertificateId { get; set; }
+    public Guid DefaultObSealCertificateId { get; private set; }
 
     /// <summary>
     ///     Default redirect URL for consent authorisation when OAuth2 response_mode = query.
     /// </summary>
-    public required string DefaultQueryRedirectUrl { get; set; }
+    public string DefaultQueryRedirectUrl { get; private set; }
 
     /// <summary>
     ///     Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.
     /// </summary>
-    public required string DefaultFragmentRedirectUrl { get; set; }
+    public string DefaultFragmentRedirectUrl { get; private set; }
 
     public string GetRedirectUri(
         OAuth2ResponseMode responseMode,
@@ -84,6 +104,32 @@ internal partial class SoftwareStatementEntity :
             //OAuth2ResponseMode.FormPost => expr,
             _ => throw new ArgumentOutOfRangeException(nameof(responseMode), responseMode, null)
         };
+
+    public void Update(
+        string? defaultFragmentRedirectUrl,
+        string? defaultQueryRedirectUrl,
+        Guid? defaultObSealCertificateId,
+        Guid? defaultObWacCertificateId,
+        DateTimeOffset utcNow)
+    {
+        if (defaultFragmentRedirectUrl is not null)
+        {
+            DefaultFragmentRedirectUrl = defaultFragmentRedirectUrl;
+        }
+        if (defaultQueryRedirectUrl is not null)
+        {
+            DefaultQueryRedirectUrl = defaultQueryRedirectUrl;
+        }
+        if (defaultObSealCertificateId is not null)
+        {
+            DefaultObSealCertificateId = defaultObSealCertificateId.Value;
+        }
+        if (defaultObWacCertificateId is not null)
+        {
+            DefaultObWacCertificateId = defaultObWacCertificateId.Value;
+        }
+        Modified = utcNow;
+    }
 }
 
 internal partial class SoftwareStatementEntity :

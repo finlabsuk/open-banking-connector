@@ -41,17 +41,15 @@ internal class SoftwareStatementOperations(
             utcNow,
             request.CreatedBy,
             utcNow,
-            request.CreatedBy)
-        {
-            OrganisationId = request.OrganisationId,
-            SoftwareId = request.SoftwareId,
-            SandboxEnvironment = request.SandboxEnvironment,
-            DefaultObWacCertificateId = request.DefaultObWacCertificateId,
-            DefaultObSealCertificateId = request.DefaultObSealCertificateId,
-            DefaultQueryRedirectUrl = request.DefaultQueryRedirectUrl,
-            DefaultFragmentRedirectUrl = request.DefaultFragmentRedirectUrl,
-            Modified = utcNow
-        };
+            request.CreatedBy,
+            utcNow,
+            request.OrganisationId,
+            request.SoftwareId,
+            request.SandboxEnvironment,
+            request.DefaultObWacCertificateId,
+            request.DefaultObSealCertificateId,
+            request.DefaultQueryRedirectUrl,
+            request.DefaultFragmentRedirectUrl);
 
         // Add entity
         await entityMethods.AddAsync(entity);
@@ -91,24 +89,13 @@ internal class SoftwareStatementOperations(
         }
 
         // Update entity
-        if (request.DefaultFragmentRedirectUrl is not null)
-        {
-            entity.DefaultFragmentRedirectUrl = request.DefaultFragmentRedirectUrl;
-        }
-        if (request.DefaultQueryRedirectUrl is not null)
-        {
-            entity.DefaultQueryRedirectUrl = request.DefaultQueryRedirectUrl;
-        }
-        if (request.DefaultObSealCertificateId is not null)
-        {
-            entity.DefaultObSealCertificateId = request.DefaultObSealCertificateId.Value;
-        }
-        if (request.DefaultObWacCertificateId is not null)
-        {
-            entity.DefaultObWacCertificateId = request.DefaultObWacCertificateId.Value;
-        }
         DateTimeOffset utcNow = timeProvider.GetUtcNow();
-        entity.Modified = utcNow;
+        entity.Update(
+            request.DefaultFragmentRedirectUrl,
+            request.DefaultQueryRedirectUrl,
+            request.DefaultObSealCertificateId,
+            request.DefaultObWacCertificateId,
+            utcNow);
 
         // Create response
         SoftwareStatementResponse response = entity.PublicGetLocalResponse;
