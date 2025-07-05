@@ -17,19 +17,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 internal class AccountAccessConsentCommon
 {
     private readonly IDbEntityMethods<AccountAccessConsentAccessToken> _accessTokenEntityMethods;
+    private readonly IDbReadOnlyEntityMethods<BankRegistrationEntity> _bankRegistrationMethods;
+    private readonly IDbReadOnlyMethods _dbMethods;
     private readonly IDbEntityMethods<AccountAccessConsentPersisted> _entityMethods;
+    private readonly IDbReadOnlyEntityMethods<ExternalApiSecretEntity> _externalApiSecretMethods;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IDbEntityMethods<AccountAccessConsentRefreshToken> _refreshTokenEntityMethods;
+    private readonly IDbReadOnlyEntityMethods<SoftwareStatementEntity> _softwareStatementMethods;
 
     public AccountAccessConsentCommon(
         IDbEntityMethods<AccountAccessConsentPersisted> entityMethods,
         IDbEntityMethods<AccountAccessConsentAccessToken> accessTokenEntityMethods,
         IDbEntityMethods<AccountAccessConsentRefreshToken> refreshTokenEntityMethods,
-        IInstrumentationClient instrumentationClient)
+        IInstrumentationClient instrumentationClient,
+        IDbReadOnlyEntityMethods<SoftwareStatementEntity> softwareStatementMethods,
+        IDbReadOnlyEntityMethods<ExternalApiSecretEntity> externalApiSecretMethods,
+        IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
+        IDbReadOnlyMethods dbMethods)
     {
         _entityMethods = entityMethods;
         _accessTokenEntityMethods = accessTokenEntityMethods;
         _instrumentationClient = instrumentationClient;
+        _softwareStatementMethods = softwareStatementMethods;
+        _externalApiSecretMethods = externalApiSecretMethods;
+        _bankRegistrationMethods = bankRegistrationMethods;
+        _dbMethods = dbMethods;
         _refreshTokenEntityMethods = refreshTokenEntityMethods;
     }
 
@@ -44,21 +56,42 @@ internal class AccountAccessConsentCommon
             ? _entityMethods.DbSet
             : _entityMethods.DbSetNoTracking;
 
-        AccountAccessConsentPersisted persistedConsent =
-            await db
-                .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
-                .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
-                .AsSplitQuery() // Load collections in separate SQL queries
-                .SingleOrDefaultAsync(x => x.Id == consentId) ??
-            throw new KeyNotFoundException($"No record found for Account Access Consent with ID {consentId}.");
-        BankRegistrationEntity bankRegistration = persistedConsent.BankRegistrationNavigation;
+        AccountAccessConsentPersisted persistedConsent;
+        BankRegistrationEntity bankRegistration;
+        SoftwareStatementEntity softwareStatement;
+        ExternalApiSecretEntity? externalApiSecret;
+        if (_dbMethods.DbProvider is not DbProvider.MongoDb)
+        {
+            persistedConsent =
+                await db
+                    .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
+                    .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
+                    .AsSplitQuery() // Load collections in separate SQL queries
+                    .SingleOrDefaultAsync(x => x.Id == consentId) ??
+                throw new KeyNotFoundException($"No record found for Account Access Consent with ID {consentId}.");
+            bankRegistration = persistedConsent.BankRegistrationNavigation;
 
-        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation;
+            softwareStatement = bankRegistration.SoftwareStatementNavigation;
 
-        ExternalApiSecretEntity? externalApiSecret =
-            bankRegistration.ExternalApiSecretsNavigation
+            externalApiSecret = bankRegistration.ExternalApiSecretsNavigation
                 .SingleOrDefault(x => !x.IsDeleted);
-
+        }
+        else
+        {
+            persistedConsent =
+                await db
+                    .SingleOrDefaultAsync(x => x.Id == consentId) ??
+                throw new KeyNotFoundException($"No record found for Account Access Consent with ID {consentId}.");
+            bankRegistration = await _bankRegistrationMethods
+                .DbSetNoTracking
+                .SingleAsync(x => x.Id == persistedConsent.BankRegistrationId);
+            softwareStatement = await _softwareStatementMethods
+                .DbSetNoTracking
+                .SingleAsync(x => x.Id == bankRegistration.SoftwareStatementId);
+            externalApiSecret = await _externalApiSecretMethods
+                .DbSetNoTracking
+                .SingleOrDefaultAsync(x => x.BankRegistrationId == bankRegistration.Id && !x.IsDeleted);
+        }
         return (persistedConsent, bankRegistration, softwareStatement, externalApiSecret);
     }
 

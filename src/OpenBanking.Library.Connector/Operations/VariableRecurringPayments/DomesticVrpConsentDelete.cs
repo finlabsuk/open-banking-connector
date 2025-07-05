@@ -16,7 +16,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
 
@@ -24,6 +23,7 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
 {
     private readonly IBankProfileService _bankProfileService;
     private readonly ClientAccessTokenGet _clientAccessTokenGet;
+    private readonly DomesticVrpConsentCommon _domesticVrpConsentCommon;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
 
@@ -35,7 +35,8 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
         IBankProfileService bankProfileService,
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
-        ClientAccessTokenGet clientAccessTokenGet) : base(
+        ClientAccessTokenGet clientAccessTokenGet,
+        DomesticVrpConsentCommon domesticVrpConsentCommon) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
@@ -44,6 +45,7 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
         _obWacCertificateMethods = obWacCertificateMethods;
         _obSealCertificateMethods = obSealCertificateMethods;
         _clientAccessTokenGet = clientAccessTokenGet;
+        _domesticVrpConsentCommon = domesticVrpConsentCommon;
         _bankProfileService = bankProfileService;
     }
 
@@ -60,23 +62,14 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load object
-        DomesticVrpConsent persistedObject =
-            await _entityMethods
-                .DbSet
-                .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
-                .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
-                .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
-            throw new KeyNotFoundException($"No record found for Domestic VRP Consent with ID {deleteParams.Id}.");
+        (DomesticVrpConsent persistedObject, BankRegistrationEntity bankRegistration,
+                SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
+            await _domesticVrpConsentCommon.GetDomesticVrpConsent(deleteParams.Id, true);
 
         if (!deleteParams.ExcludeExternalApiOperation)
         {
-            BankRegistrationEntity bankRegistration = persistedObject.BankRegistrationNavigation;
             bool vrpUseV4 = persistedObject.CreatedWithV4;
             string bankApiId = persistedObject.ExternalApiId;
-            SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation;
-            ExternalApiSecretEntity? externalApiSecret =
-                bankRegistration.ExternalApiSecretsNavigation
-                    .SingleOrDefault(x => !x.IsDeleted);
 
             // Get bank profile
             BankProfile bankProfile =
@@ -105,7 +98,7 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
                 await _clientAccessTokenGet.GetAccessToken(
                     "payments",
                     obSealKey,
-                    persistedObject.BankRegistrationNavigation,
+                    bankRegistration,
                     externalApiSecret,
                     customBehaviour?.ClientCredentialsGrantPost,
                     apiClient,

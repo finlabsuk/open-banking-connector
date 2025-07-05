@@ -65,6 +65,8 @@ internal class
         IBankProfileService bankProfileService,
         ConsentAccessTokenGet consentAccessTokenGet,
         IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
+        IDbReadOnlyEntityMethods<ExternalApiSecretEntity> externalApiSecretMethods,
+        IDbReadOnlyEntityMethods<SoftwareStatementEntity> softwareStatementMethods,
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
         ClientAccessTokenGet clientAccessTokenGet,
@@ -87,7 +89,10 @@ internal class
                 PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
                 PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
                 bankRegistrationMethods,
-                instrumentationClient);
+                instrumentationClient,
+                dbSaveChangesMethod,
+                externalApiSecretMethods,
+                softwareStatementMethods);
     }
 
     private string ClientCredentialsGrantScope => "payments";
@@ -593,7 +598,6 @@ internal class
                 _domesticPaymentConsentCommon.GetAccessToken,
                 _domesticPaymentConsentCommon.GetRefreshToken,
                 externalApiSecret,
-                bankRegistration.TokenEndpoint,
                 bankProfile.UseOpenIdConnect,
                 apiClient,
                 obSealKey,

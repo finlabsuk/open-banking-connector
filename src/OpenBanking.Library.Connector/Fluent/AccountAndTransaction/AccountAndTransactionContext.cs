@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
@@ -93,7 +94,11 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
-                    _sharedContext.Instrumentation),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                    _sharedContext.DbService.GetDbMethods()),
                 _sharedContext.BankProfileService,
                 _sharedContext.ObWacCertificateMethods,
                 _sharedContext.ObSealCertificateMethods));
@@ -118,7 +123,11 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
-                    _sharedContext.Instrumentation),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                    _sharedContext.DbService.GetDbMethods()),
                 _sharedContext.BankProfileService,
                 _sharedContext.ObWacCertificateMethods,
                 _sharedContext.ObSealCertificateMethods));
@@ -143,7 +152,11 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
-                    _sharedContext.Instrumentation),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                    _sharedContext.DbService.GetDbMethods()),
                 _sharedContext.BankProfileService,
                 _sharedContext.ObWacCertificateMethods,
                 _sharedContext.ObSealCertificateMethods));
@@ -168,7 +181,11 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
-                    _sharedContext.Instrumentation),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                    _sharedContext.DbService.GetDbMethods()),
                 _sharedContext.BankProfileService,
                 _sharedContext.ObWacCertificateMethods,
                 _sharedContext.ObSealCertificateMethods));
@@ -194,7 +211,11 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
-                    _sharedContext.Instrumentation),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                    _sharedContext.DbService.GetDbMethods()),
                 _sharedContext.BankProfileService,
                 _sharedContext.ObWacCertificateMethods,
                 _sharedContext.ObSealCertificateMethods));
@@ -219,7 +240,11 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
-                    _sharedContext.Instrumentation),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                    _sharedContext.DbService.GetDbMethods()),
                 _sharedContext.BankProfileService,
                 _sharedContext.ObWacCertificateMethods,
                 _sharedContext.ObSealCertificateMethods));
@@ -244,7 +269,11 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
-                    _sharedContext.Instrumentation),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                    _sharedContext.DbService.GetDbMethods()),
                 _sharedContext.BankProfileService,
                 _sharedContext.ObWacCertificateMethods,
                 _sharedContext.ObSealCertificateMethods));
@@ -269,7 +298,11 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
                     _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
-                    _sharedContext.Instrumentation),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                    _sharedContext.DbService.GetDbMethods()),
                 _sharedContext.BankProfileService,
                 _sharedContext.ObWacCertificateMethods,
                 _sharedContext.ObSealCertificateMethods));

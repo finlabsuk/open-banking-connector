@@ -8,16 +8,14 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using Microsoft.EntityFrameworkCore;
 using DomesticVrpConsentAuthContextRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.
     DomesticVrpConsentAuthContext;
-using DomesticVrpConsentPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent;
 using DomesticVrpConsentAuthContextPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.
     DomesticVrpConsentAuthContext;
@@ -31,7 +29,7 @@ internal class
     DomesticVrpConsentAuthContextCreateResponse>
 {
     private readonly IBankProfileService _bankProfileService;
-    protected readonly IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> _domesticVrpConsentMethods;
+    private readonly DomesticVrpConsentCommon _domesticVrpConsentCommon;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
 
     public DomesticVrpConsentAuthContextPost(
@@ -39,18 +37,18 @@ internal class
             entityMethods,
         IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
-        IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> domesticVrpConsentMethods,
         IInstrumentationClient instrumentationClient,
         IBankProfileService bankProfileService,
-        ObSealCertificateMethods obSealCertificateMethods) : base(
+        ObSealCertificateMethods obSealCertificateMethods,
+        DomesticVrpConsentCommon domesticVrpConsentCommon) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
         instrumentationClient)
     {
-        _domesticVrpConsentMethods = domesticVrpConsentMethods;
         _bankProfileService = bankProfileService;
         _obSealCertificateMethods = obSealCertificateMethods;
+        _domesticVrpConsentCommon = domesticVrpConsentCommon;
     }
 
     protected override async Task<DomesticVrpConsentAuthContextCreateResponse> AddEntity(
@@ -58,17 +56,11 @@ internal class
         ITimeProvider timeProvider)
     {
         // Load relevant data objects
-        DomesticVrpConsentPersisted domesticVrpConsent =
-            _domesticVrpConsentMethods
-                .DbSetNoTracking
-                .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
-                .SingleOrDefault(x => x.Id == request.DomesticVrpConsentId) ??
-            throw new KeyNotFoundException(
-                $"No record found for Domestic Payment Consent with ID {request.DomesticVrpConsentId}.");
-        BankRegistrationEntity bankRegistration = domesticVrpConsent.BankRegistrationNavigation;
+        (DomesticVrpConsent domesticVrpConsent, BankRegistrationEntity bankRegistration,
+                SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? _) =
+            await _domesticVrpConsentCommon.GetDomesticVrpConsent(request.DomesticVrpConsentId, false);
         string authorizationEndpoint =
             bankRegistration.AuthorizationEndpoint;
-        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);

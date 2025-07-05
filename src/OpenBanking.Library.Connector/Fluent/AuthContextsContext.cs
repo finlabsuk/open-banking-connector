@@ -2,10 +2,17 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
 using FluentValidation;
 using FluentValidation.Results;
 using AuthContextPersisted =
@@ -42,7 +49,34 @@ internal class AuthContextsContext : IAuthContextsContext
             sharedContext.MemoryCache,
             sharedContext.EncryptionKeyInfo,
             sharedContext.ObWacCertificateMethods,
-            sharedContext.ObSealCertificateMethods);
+            sharedContext.ObSealCertificateMethods,
+            new AccountAccessConsentCommon(
+                sharedContext.DbService.GetDbEntityMethods<AccountAccessConsent>(),
+                sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
+                sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
+                sharedContext.Instrumentation,
+                sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                sharedContext.DbService.GetDbMethods()),
+            new DomesticPaymentConsentCommon(
+                sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsent>(),
+                sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentAccessToken>(),
+                sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentRefreshToken>(),
+                sharedContext.Instrumentation,
+                sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                sharedContext.DbService.GetDbMethods()),
+            new DomesticVrpConsentCommon(
+                sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsent>(),
+                sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentAccessToken>(),
+                sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentRefreshToken>(),
+                sharedContext.Instrumentation,
+                sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                sharedContext.DbService.GetDbMethods()));
     }
 
     public IObjectUpdate<AuthResult, AuthContextUpdateAuthResultResponse> UpdateLocalObject { get; }

@@ -233,34 +233,65 @@ public class DomesticVrpConsentSubtest(
 
                     // Get consent
                     IDbService dbService = serviceScopeContainer.DbService;
+                    IDbMethods dbMethods = dbService.GetDbMethods();
                     IDbEntityMethods<Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent>
                         consentEntityMethods =
                             dbService
                                 .GetDbEntityMethods<
                                     Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent>();
-                    Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent consent =
-                        consentEntityMethods
-                            .DbSet
-                            .Include(o => o.DomesticVrpConsentAccessTokensNavigation)
-                            .Include(o => o.DomesticVrpConsentRefreshTokensNavigation)
-                            .AsSplitQuery()
-                            .SingleOrDefault(x => x.Id == domesticVrpConsentId) ??
-                        throw new KeyNotFoundException();
+                    IDbEntityMethods<DomesticVrpConsentAccessToken> accessTokenMethods =
+                        dbService.GetDbEntityMethods<DomesticVrpConsentAccessToken>();
+                    IDbEntityMethods<DomesticVrpConsentRefreshToken> refreshTokenMethods =
+                        dbService.GetDbEntityMethods<DomesticVrpConsentRefreshToken>();
+                    Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent consent;
+                    DomesticVrpConsentAccessToken? storedAccessToken;
+                    if (dbMethods.DbProvider is not DbProvider.MongoDb)
+                    {
+                        consent =
+                            consentEntityMethods
+                                .DbSet
+                                .Include(o => o.DomesticVrpConsentAccessTokensNavigation)
+                                .Include(o => o.DomesticVrpConsentRefreshTokensNavigation)
+                                .AsSplitQuery()
+                                .SingleOrDefault(x => x.Id == domesticVrpConsentId) ??
+                            throw new KeyNotFoundException();
 
-                    // Ensure refresh token available
-                    DomesticVrpConsentRefreshToken unused =
-                        consent
-                            .DomesticVrpConsentRefreshTokensNavigation
-                            .SingleOrDefault(x => !x.IsDeleted) ??
-                        throw new Exception("Refresh token not found.");
+                        // Ensure refresh token available
+                        DomesticVrpConsentRefreshToken unused =
+                            consent
+                                .DomesticVrpConsentRefreshTokensNavigation
+                                .SingleOrDefault(x => !x.IsDeleted) ??
+                            throw new Exception("Refresh token not found.");
+
+                        storedAccessToken = consent
+                            .DomesticVrpConsentAccessTokensNavigation.SingleOrDefault(x => !x.IsDeleted);
+                    }
+                    else
+                    {
+                        consent =
+                            consentEntityMethods
+                                .DbSetNoTracking
+                                .SingleOrDefault(x => x.Id == domesticVrpConsentId) ??
+                            throw new KeyNotFoundException();
+
+
+                        // Ensure refresh token available
+                        DomesticVrpConsentRefreshToken unused2 =
+                            await refreshTokenMethods
+                                .DbSetNoTracking
+                                .SingleOrDefaultAsync(x => x.DomesticVrpConsentId == consent.Id && !x.IsDeleted) ??
+                            throw new Exception("Refresh token not found.");
+
+                        storedAccessToken =
+                            await accessTokenMethods
+                                .DbSet
+                                .SingleOrDefaultAsync(x => x.DomesticVrpConsentId == consent.Id && !x.IsDeleted);
+                    }
 
                     // If available, delete cached access token (to force use of refresh token)
                     memoryCache.Remove(consent.GetCacheKey());
 
                     // If available, delete stored access token (to force use of refresh token) 
-                    DomesticVrpConsentAccessToken? storedAccessToken =
-                        consent
-                            .DomesticVrpConsentAccessTokensNavigation.SingleOrDefault(x => !x.IsDeleted);
                     if (storedAccessToken is not null)
                     {
                         storedAccessToken.UpdateIsDeleted(true, DateTimeOffset.UtcNow, modifiedBy);

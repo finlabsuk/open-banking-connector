@@ -67,6 +67,8 @@ internal class
         IBankProfileService bankProfileService,
         ConsentAccessTokenGet consentAccessTokenGet,
         IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
+        IDbReadOnlyEntityMethods<ExternalApiSecretEntity> externalApiSecretMethods,
+        IDbReadOnlyEntityMethods<SoftwareStatementEntity> softwareStatementMethods,
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
         ClientAccessTokenGet clientAccessTokenGet,
@@ -88,7 +90,10 @@ internal class
                 VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
                 VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>(
                 bankRegistrationMethods,
-                instrumentationClient);
+                instrumentationClient,
+                dbSaveChangesMethod,
+                externalApiSecretMethods,
+                softwareStatementMethods);
     }
 
     private string ClientCredentialsGrantScope => "payments";
@@ -169,7 +174,6 @@ internal class
                 _domesticVrpConsentCommon.GetAccessToken,
                 _domesticVrpConsentCommon.GetRefreshToken,
                 externalApiSecret,
-                bankRegistration.TokenEndpoint,
                 bankProfile.UseOpenIdConnect,
                 apiClient,
                 obSealKey,

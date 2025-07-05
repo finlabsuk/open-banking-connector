@@ -148,7 +148,6 @@ internal class DomesticVrp :
                 _domesticVrpConsentCommon.GetAccessToken,
                 _domesticVrpConsentCommon.GetRefreshToken,
                 externalApiSecret,
-                bankRegistration.TokenEndpoint,
                 bankProfile.UseOpenIdConnect,
                 apiClient,
                 obSealKey,

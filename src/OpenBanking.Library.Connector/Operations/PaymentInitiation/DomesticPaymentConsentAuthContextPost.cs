@@ -12,7 +12,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using Microsoft.EntityFrameworkCore;
 using DomesticPaymentConsentAuthContextRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.
     DomesticPaymentConsentAuthContext;
@@ -30,7 +29,7 @@ internal class
     DomesticPaymentConsentAuthContextCreateResponse>
 {
     private readonly IBankProfileService _bankProfileService;
-    protected readonly IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> _domesticPaymentConsentMethods;
+    private readonly DomesticPaymentConsentCommon _domesticPaymentConsentCommon;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
 
     public DomesticPaymentConsentAuthContextPost(
@@ -38,18 +37,18 @@ internal class
             entityMethods,
         IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
-        IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> domesticPaymentConsentMethods,
         IInstrumentationClient instrumentationClient,
         IBankProfileService bankProfileService,
-        ObSealCertificateMethods obSealCertificateMethods) : base(
+        ObSealCertificateMethods obSealCertificateMethods,
+        DomesticPaymentConsentCommon domesticPaymentConsentCommon) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
         instrumentationClient)
     {
-        _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
         _bankProfileService = bankProfileService;
         _obSealCertificateMethods = obSealCertificateMethods;
+        _domesticPaymentConsentCommon = domesticPaymentConsentCommon;
     }
 
     protected override async Task<DomesticPaymentConsentAuthContextCreateResponse> AddEntity(
@@ -57,17 +56,11 @@ internal class
         ITimeProvider timeProvider)
     {
         // Load relevant data objects
-        DomesticPaymentConsentPersisted domesticPaymentConsent =
-            _domesticPaymentConsentMethods
-                .DbSetNoTracking
-                .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
-                .SingleOrDefault(x => x.Id == request.DomesticPaymentConsentId) ??
-            throw new KeyNotFoundException(
-                $"No record found for Domestic Payment Consent with ID {request.DomesticPaymentConsentId}.");
-        BankRegistrationEntity bankRegistration = domesticPaymentConsent.BankRegistrationNavigation;
+        (DomesticPaymentConsentPersisted domesticPaymentConsent, BankRegistrationEntity bankRegistration,
+                SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? _) =
+            await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(request.DomesticPaymentConsentId, false);
         string authorizationEndpoint =
             bankRegistration.AuthorizationEndpoint;
-        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);

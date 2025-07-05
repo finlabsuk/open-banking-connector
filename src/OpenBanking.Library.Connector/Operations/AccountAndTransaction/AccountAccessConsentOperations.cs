@@ -59,6 +59,8 @@ internal class
         IApiVariantMapper mapper,
         IBankProfileService bankProfileService,
         IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
+        IDbReadOnlyEntityMethods<ExternalApiSecretEntity> externalApiSecretMethods,
+        IDbReadOnlyEntityMethods<SoftwareStatementEntity> softwareStatementMethods,
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
         ClientAccessTokenGet clientAccessTokenGet,
@@ -80,7 +82,10 @@ internal class
                 AccountAndTransactionModelsPublic.OBReadConsent1,
                 AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
                 bankRegistrationMethods,
-                instrumentationClient);
+                instrumentationClient,
+                dbSaveChangesMethod,
+                externalApiSecretMethods,
+                softwareStatementMethods);
     }
 
     public static string ClientCredentialsGrantScope => "accounts";

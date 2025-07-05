@@ -20,14 +20,24 @@ internal class
     where TApiResponse : class, ISupportsValidation
 {
     private readonly IDbReadOnlyEntityMethods<BankRegistrationEntity> _bankRegistrationMethods;
+    private readonly IDbReadOnlyMethods _dbMethods;
+    private readonly IDbReadOnlyEntityMethods<ExternalApiSecretEntity> _externalApiSecretMethods;
     private readonly IInstrumentationClient _instrumentationClient;
+    private readonly IDbReadOnlyEntityMethods<SoftwareStatementEntity> _softwareStatementMethods;
+
 
     public ConsentCommon(
         IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
-        IInstrumentationClient instrumentationClient)
+        IInstrumentationClient instrumentationClient,
+        IDbReadOnlyMethods dbMethods,
+        IDbReadOnlyEntityMethods<ExternalApiSecretEntity> externalApiSecretMethods,
+        IDbReadOnlyEntityMethods<SoftwareStatementEntity> softwareStatementMethods)
     {
         _bankRegistrationMethods = bankRegistrationMethods;
         _instrumentationClient = instrumentationClient;
+        _dbMethods = dbMethods;
+        _externalApiSecretMethods = externalApiSecretMethods;
+        _softwareStatementMethods = softwareStatementMethods;
     }
 
     public async
@@ -36,19 +46,39 @@ internal class
             Guid bankRegistrationId)
     {
         // Load BankRegistration
-        BankRegistrationEntity bankRegistration =
-            await _bankRegistrationMethods
-                .DbSetNoTracking
-                .Include(o => o.SoftwareStatementNavigation)
-                .Include(o => o.ExternalApiSecretsNavigation)
-                .SingleOrDefaultAsync(x => x.Id == bankRegistrationId) ??
-            throw new KeyNotFoundException(
-                $"No record found for BankRegistrationId {bankRegistrationId} specified by request.");
-        string tokenEndpoint = bankRegistration.TokenEndpoint;
-        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation;
-        ExternalApiSecretEntity? externalApiSecret =
-            bankRegistration.ExternalApiSecretsNavigation
+        BankRegistrationEntity bankRegistration;
+        SoftwareStatementEntity softwareStatement;
+        ExternalApiSecretEntity? externalApiSecret;
+        if (_dbMethods.DbProvider is not DbProvider.MongoDb)
+        {
+            bankRegistration =
+                await _bankRegistrationMethods
+                    .DbSetNoTracking
+                    .Include(o => o.SoftwareStatementNavigation)
+                    .Include(o => o.ExternalApiSecretsNavigation)
+                    .SingleOrDefaultAsync(x => x.Id == bankRegistrationId) ??
+                throw new KeyNotFoundException(
+                    $"No record found for BankRegistrationId {bankRegistrationId} specified by request.");
+            softwareStatement = bankRegistration.SoftwareStatementNavigation;
+            externalApiSecret = bankRegistration.ExternalApiSecretsNavigation
                 .SingleOrDefault(x => !x.IsDeleted);
+        }
+        else
+        {
+            bankRegistration =
+                await _bankRegistrationMethods
+                    .DbSetNoTracking
+                    .SingleOrDefaultAsync(x => x.Id == bankRegistrationId) ??
+                throw new KeyNotFoundException(
+                    $"No record found for BankRegistrationId {bankRegistrationId} specified by request.");
+            softwareStatement = await _softwareStatementMethods
+                .DbSetNoTracking
+                .SingleAsync(x => x.Id == bankRegistration.SoftwareStatementId);
+            externalApiSecret = await _externalApiSecretMethods
+                .DbSetNoTracking
+                .SingleOrDefaultAsync(x => x.BankRegistrationId == bankRegistration.Id && !x.IsDeleted);
+        }
+        string tokenEndpoint = bankRegistration.TokenEndpoint;
 
         return (bankRegistration, tokenEndpoint, softwareStatement, externalApiSecret);
     }

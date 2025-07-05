@@ -204,7 +204,6 @@ internal class
                 _accountAccessConsentCommon.GetAccessToken,
                 _accountAccessConsentCommon.GetRefreshToken,
                 externalApiSecret,
-                persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 bankProfile.UseOpenIdConnect,
                 apiClient,
                 obSealKey,

@@ -297,7 +297,6 @@ internal class DomesticPayment :
                 _domesticPaymentConsentCommon.GetAccessToken,
                 _domesticPaymentConsentCommon.GetRefreshToken,
                 externalApiSecret,
-                bankRegistration.TokenEndpoint,
                 bankProfile.UseOpenIdConnect,
                 apiClient,
                 obSealKey,

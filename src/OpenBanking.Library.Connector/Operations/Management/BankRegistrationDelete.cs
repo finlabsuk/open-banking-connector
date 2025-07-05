@@ -24,8 +24,11 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
     private readonly IBankProfileService _bankProfileService;
     private readonly ClientAccessTokenGet _clientAccessTokenGet;
     private readonly IEncryptionKeyDescription _encryptionKeyInfo;
+    private readonly IDbReadOnlyEntityMethods<ExternalApiSecretEntity> _externalApiSecretMethods;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
+    private readonly IDbReadOnlyEntityMethods<RegistrationAccessTokenEntity> _registrationAccessTokenMethods;
+    private readonly IDbReadOnlyEntityMethods<SoftwareStatementEntity> _softwareStatementEntityMethods;
 
     public BankRegistrationDelete(
         IDbEntityMethods<BankRegistrationEntity> entityMethods,
@@ -36,7 +39,10 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
         ClientAccessTokenGet clientAccessTokenGet,
-        IEncryptionKeyDescription encryptionKeyInfo) : base(
+        IEncryptionKeyDescription encryptionKeyInfo,
+        IDbReadOnlyEntityMethods<SoftwareStatementEntity> softwareStatementEntityMethods,
+        IDbReadOnlyEntityMethods<ExternalApiSecretEntity> externalApiSecretMethods,
+        IDbReadOnlyEntityMethods<RegistrationAccessTokenEntity> registrationAccessTokenMethods) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
@@ -47,6 +53,9 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
         _obSealCertificateMethods = obSealCertificateMethods;
         _clientAccessTokenGet = clientAccessTokenGet;
         _encryptionKeyInfo = encryptionKeyInfo;
+        _softwareStatementEntityMethods = softwareStatementEntityMethods;
+        _externalApiSecretMethods = externalApiSecretMethods;
+        _registrationAccessTokenMethods = registrationAccessTokenMethods;
     }
 
     protected override async
@@ -58,21 +67,44 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load BankRegistration
-        BankRegistrationEntity entity =
-            await _entityMethods
-                .DbSet
-                .Include(o => o.SoftwareStatementNavigation)
-                .Include(o => o.ExternalApiSecretsNavigation)
-                .Include(o => o.RegistrationAccessTokensNavigation)
-                .AsSplitQuery()
-                .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
-            throw new KeyNotFoundException($"No record found for Bank Registration with ID {deleteParams.Id}.");
-        SoftwareStatementEntity softwareStatement = entity.SoftwareStatementNavigation;
-        ExternalApiSecretEntity? externalApiSecret =
-            entity.ExternalApiSecretsNavigation
+        BankRegistrationEntity entity;
+        SoftwareStatementEntity softwareStatement;
+        ExternalApiSecretEntity? externalApiSecret;
+        RegistrationAccessTokenEntity? registrationAccessTokenEntity;
+        if (_dbSaveChangesMethod.DbProvider is not DbProvider.MongoDb)
+        {
+            entity =
+                await _entityMethods
+                    .DbSet
+                    .Include(o => o.SoftwareStatementNavigation)
+                    .Include(o => o.ExternalApiSecretsNavigation)
+                    .Include(o => o.RegistrationAccessTokensNavigation)
+                    .AsSplitQuery()
+                    .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
+                throw new KeyNotFoundException($"No record found for Bank Registration with ID {deleteParams.Id}.");
+            softwareStatement = entity.SoftwareStatementNavigation;
+            externalApiSecret = entity.ExternalApiSecretsNavigation
                 .SingleOrDefault(x => !x.IsDeleted);
-        RegistrationAccessTokenEntity? registrationAccessTokenEntity = entity.RegistrationAccessTokensNavigation
-            .SingleOrDefault(x => !x.IsDeleted);
+            registrationAccessTokenEntity = entity.RegistrationAccessTokensNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
+        }
+        else
+        {
+            entity =
+                await _entityMethods
+                    .DbSet
+                    .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
+                throw new KeyNotFoundException($"No record found for Bank Registration with ID {deleteParams.Id}.");
+            softwareStatement = await _softwareStatementEntityMethods
+                .DbSetNoTracking
+                .SingleAsync(x => x.Id == entity.SoftwareStatementId);
+            externalApiSecret = await _externalApiSecretMethods
+                .DbSetNoTracking
+                .SingleOrDefaultAsync(x => x.BankRegistrationId == entity.Id && !x.IsDeleted);
+            registrationAccessTokenEntity = await _registrationAccessTokenMethods
+                .DbSetNoTracking
+                .SingleOrDefaultAsync(x => x.BankRegistrationId == entity.Id && !x.IsDeleted);
+        }
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);

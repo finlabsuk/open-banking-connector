@@ -60,7 +60,6 @@ internal class ConsentAccessTokenGet
         GetAccessTokenDelegate getAccessToken,
         GetRefreshTokenDelegate getRefreshToken,
         ExternalApiSecretEntity? externalApiSecretEntity,
-        string tokenEndpoint,
         bool useOpenIdConnect,
         IApiClient apiClient,
         OBSealKey obSealKey,
@@ -74,6 +73,7 @@ internal class ConsentAccessTokenGet
     {
         string consentAssociatedData = consent.GetAssociatedData(bankRegistration);
         string bankRegistrationAssociatedData = bankRegistration.GetAssociatedData();
+        string tokenEndpoint = bankRegistration.TokenEndpoint;
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod = bankRegistration.TokenEndpointAuthMethod;
 
         // Check nonce available

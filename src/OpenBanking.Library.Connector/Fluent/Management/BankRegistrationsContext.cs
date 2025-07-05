@@ -60,7 +60,10 @@ internal class BankRegistrationsContext :
             sharedContext.ObWacCertificateMethods,
             sharedContext.ObSealCertificateMethods,
             clientAccessTokenGet,
-            sharedContext.EncryptionKeyInfo);
+            sharedContext.EncryptionKeyInfo,
+            sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+            sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+            sharedContext.DbService.GetDbEntityMethods<RegistrationAccessTokenEntity>());
         CreateObject = bankRegistrationOperations;
     }
 

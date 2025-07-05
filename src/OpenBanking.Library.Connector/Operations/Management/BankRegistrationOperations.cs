@@ -61,7 +61,7 @@ internal class
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
     private readonly IDbEntityMethods<RegistrationAccessTokenEntity> _registrationAccessTokenMethods;
     private readonly ISecretProvider _secretProvider;
-    private readonly IDbEntityMethods<SoftwareStatementEntity> _softwareStatementEntityMethods;
+    private readonly IDbReadOnlyEntityMethods<SoftwareStatementEntity> _softwareStatementEntityMethods;
     private readonly ITimeProvider _timeProvider;
 
     public BankRegistrationOperations(
@@ -72,7 +72,7 @@ internal class
         IApiVariantMapper mapper,
         IOpenIdConfigurationRead configurationRead,
         IBankProfileService bankProfileService,
-        IDbEntityMethods<SoftwareStatementEntity> softwareStatementEntityMethods,
+        IDbReadOnlyEntityMethods<SoftwareStatementEntity> softwareStatementEntityMethods,
         IDbEntityMethods<ExternalApiSecretEntity> externalApiSecretMethods,
         IDbEntityMethods<RegistrationAccessTokenEntity> registrationAccessTokenMethods,
         ObWacCertificateMethods obWacCertificateMethods,
@@ -498,22 +498,45 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load BankRegistration
-        BankRegistrationEntity entity =
-            await _entityMethods
-                .DbSetNoTracking
-                .Include(o => o.SoftwareStatementNavigation)
-                .Include(o => o.ExternalApiSecretsNavigation)
-                .Include(o => o.RegistrationAccessTokensNavigation)
-                .AsSplitQuery()
-                .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
-            throw new KeyNotFoundException($"No record found for BankRegistration with ID {readParams.Id}.");
-        string externalApiId = entity.ExternalApiId;
-        SoftwareStatementEntity softwareStatement = entity.SoftwareStatementNavigation;
-        ExternalApiSecretEntity? externalApiSecret =
-            entity.ExternalApiSecretsNavigation
+        BankRegistrationEntity entity;
+        SoftwareStatementEntity softwareStatement;
+        ExternalApiSecretEntity? externalApiSecret;
+        RegistrationAccessTokenEntity? registrationAccessTokenEntity;
+        if (_dbSaveChangesMethod.DbProvider is not DbProvider.MongoDb)
+        {
+            entity =
+                await _entityMethods
+                    .DbSetNoTracking
+                    .Include(o => o.SoftwareStatementNavigation)
+                    .Include(o => o.ExternalApiSecretsNavigation)
+                    .Include(o => o.RegistrationAccessTokensNavigation)
+                    .AsSplitQuery()
+                    .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
+                throw new KeyNotFoundException($"No record found for BankRegistration with ID {readParams.Id}.");
+            softwareStatement = entity.SoftwareStatementNavigation;
+            externalApiSecret = entity.ExternalApiSecretsNavigation
                 .SingleOrDefault(x => !x.IsDeleted);
-        RegistrationAccessTokenEntity? registrationAccessTokenEntity = entity.RegistrationAccessTokensNavigation
-            .SingleOrDefault(x => !x.IsDeleted);
+            registrationAccessTokenEntity = entity.RegistrationAccessTokensNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
+        }
+        else
+        {
+            entity =
+                await _entityMethods
+                    .DbSetNoTracking
+                    .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
+                throw new KeyNotFoundException($"No record found for BankRegistration with ID {readParams.Id}.");
+            softwareStatement = await _softwareStatementEntityMethods
+                .DbSetNoTracking
+                .SingleAsync(x => x.Id == entity.SoftwareStatementId);
+            externalApiSecret = await _externalApiSecretMethods
+                .DbSetNoTracking
+                .SingleOrDefaultAsync(x => x.BankRegistrationId == entity.Id && !x.IsDeleted);
+            registrationAccessTokenEntity = await _registrationAccessTokenMethods
+                .DbSetNoTracking
+                .SingleOrDefaultAsync(x => x.BankRegistrationId == entity.Id && !x.IsDeleted);
+        }
+        string externalApiId = entity.ExternalApiId;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
@@ -672,8 +695,11 @@ internal class
         var registrationGroupString = registrationGroup.ToString()!;
 
         // Get existing registrations with same software statement, bank group, and bank registration group
-        IEnumerable<BankRegistrationEntity> existingRegistrationsFirstPass =
-            _entityMethods
+        IEnumerable<BankRegistrationEntity>
+            existingRegistrationsFirstPass; // force next where clause to run client-side as cannot be translated
+        if (_dbSaveChangesMethod.DbProvider is not DbProvider.MongoDb)
+        {
+            existingRegistrationsFirstPass = _entityMethods
                 .DbSetNoTracking
                 .Include(x => x.ExternalApiSecretsNavigation)
                 .Include(x => x.RegistrationAccessTokensNavigation)
@@ -682,7 +708,18 @@ internal class
                     x => x.SoftwareStatementId == softwareStatementId &&
                          x.BankGroup == bankGroupEnum)
                 .OrderByDescending(x => x.Created) // most recent first
-                .AsEnumerable(); // force next where clause to run client-side as cannot be translated
+                .AsEnumerable();
+        }
+        else
+        {
+            existingRegistrationsFirstPass = _entityMethods
+                .DbSetNoTracking
+                .Where(
+                    x => x.SoftwareStatementId == softwareStatementId &&
+                         x.BankGroup == bankGroupEnum)
+                .OrderByDescending(x => x.Created) // most recent first
+                .AsEnumerable();
+        }
         List<BankRegistrationEntity> existingRegistrations = existingRegistrationsFirstPass
             .Where(
                 x => EqualityComparer<TRegistrationGroup>.Default.Equals(
@@ -695,12 +732,25 @@ internal class
         if (existingRegistrations.Any())
         {
             existingRegistration = existingRegistrations.First();
-            ExternalApiSecretEntity? externalApiSecretEntity =
-                existingRegistration.ExternalApiSecretsNavigation
+            ExternalApiSecretEntity? externalApiSecretEntity;
+            RegistrationAccessTokenEntity? registrationAccessTokenEntity;
+            if (_dbSaveChangesMethod.DbProvider is not DbProvider.MongoDb)
+            {
+                externalApiSecretEntity = existingRegistration.ExternalApiSecretsNavigation
                     .SingleOrDefault(x => !x.IsDeleted);
-            RegistrationAccessTokenEntity? registrationAccessTokenEntity = existingRegistration
-                .RegistrationAccessTokensNavigation
-                .SingleOrDefault(x => !x.IsDeleted);
+                registrationAccessTokenEntity = existingRegistration
+                    .RegistrationAccessTokensNavigation
+                    .SingleOrDefault(x => !x.IsDeleted);
+            }
+            else
+            {
+                externalApiSecretEntity = await _externalApiSecretMethods
+                    .DbSetNoTracking
+                    .SingleOrDefaultAsync(x => x.BankRegistrationId == existingRegistration.Id && !x.IsDeleted);
+                registrationAccessTokenEntity = await _registrationAccessTokenMethods
+                    .DbSetNoTracking
+                    .SingleOrDefaultAsync(x => x.BankRegistrationId == existingRegistration.Id && !x.IsDeleted);
+            }
 
             IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2 =
                 await CheckExistingRegistrationCompatible(

@@ -16,18 +16,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 internal class DomesticPaymentConsentCommon
 {
     private readonly IDbEntityMethods<DomesticPaymentConsentAccessToken> _accessTokenEntityMethods;
+    private readonly IDbReadOnlyEntityMethods<BankRegistrationEntity> _bankRegistrationMethods;
+    private readonly IDbReadOnlyMethods _dbMethods;
     private readonly IDbEntityMethods<DomesticPaymentConsentPersisted> _entityMethods;
+    private readonly IDbReadOnlyEntityMethods<ExternalApiSecretEntity> _externalApiSecretMethods;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IDbEntityMethods<DomesticPaymentConsentRefreshToken> _refreshTokenEntityMethods;
+    private readonly IDbReadOnlyEntityMethods<SoftwareStatementEntity> _softwareStatementMethods;
 
     public DomesticPaymentConsentCommon(
         IDbEntityMethods<DomesticPaymentConsentPersisted> entityMethods,
         IDbEntityMethods<DomesticPaymentConsentAccessToken> accessTokenEntityMethods,
         IDbEntityMethods<DomesticPaymentConsentRefreshToken> refreshTokenEntityMethods,
-        IInstrumentationClient instrumentationClient)
+        IInstrumentationClient instrumentationClient,
+        IDbReadOnlyEntityMethods<SoftwareStatementEntity> softwareStatementMethods,
+        IDbReadOnlyEntityMethods<ExternalApiSecretEntity> externalApiSecretMethods,
+        IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
+        IDbReadOnlyMethods dbMethods)
     {
         _entityMethods = entityMethods;
         _instrumentationClient = instrumentationClient;
+        _softwareStatementMethods = softwareStatementMethods;
+        _externalApiSecretMethods = externalApiSecretMethods;
+        _bankRegistrationMethods = bankRegistrationMethods;
+        _dbMethods = dbMethods;
         _refreshTokenEntityMethods = refreshTokenEntityMethods;
         _accessTokenEntityMethods = accessTokenEntityMethods;
     }
@@ -44,21 +56,41 @@ internal class DomesticPaymentConsentCommon
             : _entityMethods.DbSetNoTracking;
 
         // Load DomesticPaymentConsent and related
-        DomesticPaymentConsentPersisted persistedConsent =
-            await db
-                .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
-                .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
-                .AsSplitQuery() // Load collections in separate SQL queries
-                .SingleOrDefaultAsync(x => x.Id == consentId) ??
-            throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {consentId}.");
-        BankRegistrationEntity bankRegistration = persistedConsent.BankRegistrationNavigation;
-        SoftwareStatementEntity softwareStatementEntity =
-            persistedConsent.BankRegistrationNavigation.SoftwareStatementNavigation;
-        ExternalApiSecretEntity? externalApiSecret =
-            bankRegistration.ExternalApiSecretsNavigation
+        DomesticPaymentConsentPersisted persistedConsent;
+        BankRegistrationEntity bankRegistration;
+        SoftwareStatementEntity softwareStatement;
+        ExternalApiSecretEntity? externalApiSecret;
+        if (_dbMethods.DbProvider is not DbProvider.MongoDb)
+        {
+            persistedConsent =
+                await db
+                    .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
+                    .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
+                    .AsSplitQuery() // Load collections in separate SQL queries
+                    .SingleOrDefaultAsync(x => x.Id == consentId) ??
+                throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {consentId}.");
+            bankRegistration = persistedConsent.BankRegistrationNavigation;
+            softwareStatement = persistedConsent.BankRegistrationNavigation.SoftwareStatementNavigation;
+            externalApiSecret = bankRegistration.ExternalApiSecretsNavigation
                 .SingleOrDefault(x => !x.IsDeleted);
-
-        return (persistedConsent, bankRegistration, softwareStatementEntity, externalApiSecret);
+        }
+        else
+        {
+            persistedConsent =
+                await db
+                    .SingleOrDefaultAsync(x => x.Id == consentId) ??
+                throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {consentId}.");
+            bankRegistration = await _bankRegistrationMethods
+                .DbSetNoTracking
+                .SingleAsync(x => x.Id == persistedConsent.BankRegistrationId);
+            softwareStatement = await _softwareStatementMethods
+                .DbSetNoTracking
+                .SingleAsync(x => x.Id == bankRegistration.SoftwareStatementId);
+            externalApiSecret = await _externalApiSecretMethods
+                .DbSetNoTracking
+                .SingleOrDefaultAsync(x => x.BankRegistrationId == bankRegistration.Id && !x.IsDeleted);
+        }
+        return (persistedConsent, bankRegistration, softwareStatement, externalApiSecret);
     }
 
     public async Task<AccessTokenEntity?> GetAccessToken(Guid consentId, bool dbTracking)

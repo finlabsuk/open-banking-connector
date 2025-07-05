@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
@@ -76,7 +77,11 @@ internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsCont
                 _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentPersisted>(),
                 _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentAccessToken>(),
                 _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentRefreshToken>(),
-                _sharedContext.Instrumentation));
+                _sharedContext.Instrumentation,
+                _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                _sharedContext.DbService.GetDbMethods()));
     }
 
     public IDomesticVrpConsentsContext DomesticVrpConsents =>

@@ -97,7 +97,6 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, A
                 _accountAccessConsentCommon.GetAccessToken,
                 _accountAccessConsentCommon.GetRefreshToken,
                 externalApiSecret,
-                persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 bankProfile.UseOpenIdConnect,
                 apiClient,
                 obSealKey,

@@ -15,7 +15,7 @@ internal abstract class BaseDelete<TEntity, TDeleteParams> :
     where TEntity : class, IEntity
     where TDeleteParams : LocalDeleteParams
 {
-    private readonly IDbMethods _dbSaveChangesMethod;
+    protected readonly IDbMethods _dbSaveChangesMethod;
     protected readonly IDbEntityMethods<TEntity> _entityMethods;
     protected readonly IInstrumentationClient _instrumentationClient;
     private readonly ITimeProvider _timeProvider;
