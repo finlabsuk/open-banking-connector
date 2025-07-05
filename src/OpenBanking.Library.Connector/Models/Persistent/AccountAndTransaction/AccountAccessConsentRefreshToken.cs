@@ -44,8 +44,5 @@ internal class AccountAccessConsentRefreshToken :
         AccountAccessConsentId = accountAccessConsentId;
     }
 
-    // Parent consent
-    public AccountAccessConsent AccountAccessConsentNavigation { get; } = null!;
-
     public Guid AccountAccessConsentId { get; }
 }

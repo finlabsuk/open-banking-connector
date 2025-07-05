@@ -44,8 +44,5 @@ internal class DomesticVrpConsentAccessToken :
         DomesticVrpConsentId = domesticVrpConsentId;
     }
 
-    // Parent consent
-    public DomesticVrpConsent DomesticVrpConsentNavigation { get; } = null!;
-
     public Guid DomesticVrpConsentId { get; }
 }

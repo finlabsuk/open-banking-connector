@@ -28,7 +28,7 @@ internal class
         if (_dbProvider is DbProvider.PostgreSql or DbProvider.Sqlite)
         {
             builder
-                .HasOne(e => e.DomesticVrpConsentNavigation)
+                .HasOne<DomesticVrpConsent>()
                 .WithMany(e => e.DomesticVrpConsentRefreshTokensNavigation)
                 .HasForeignKey(e => e.DomesticVrpConsentId)
                 .IsRequired();

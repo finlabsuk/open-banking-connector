@@ -44,8 +44,5 @@ internal class DomesticPaymentConsentRefreshToken :
         DomesticPaymentConsentId = domesticPaymentConsentId;
     }
 
-    // Parent consent
-    public DomesticPaymentConsent DomesticPaymentConsentNavigation { get; } = null!;
-
     public Guid DomesticPaymentConsentId { get; }
 }

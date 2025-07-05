@@ -28,7 +28,7 @@ internal class
         if (_dbProvider is DbProvider.PostgreSql or DbProvider.Sqlite)
         {
             builder
-                .HasOne(e => e.DomesticPaymentConsentNavigation)
+                .HasOne<DomesticPaymentConsent>()
                 .WithMany(e => e.DomesticPaymentConsentRefreshTokensNavigation)
                 .HasForeignKey(e => e.DomesticPaymentConsentId)
                 .IsRequired();
