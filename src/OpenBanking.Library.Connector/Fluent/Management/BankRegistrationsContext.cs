@@ -42,6 +42,8 @@ internal class BankRegistrationsContext :
             new OpenIdConfigurationRead(sharedContext.ApiClient),
             sharedContext.BankProfileService,
             sharedContext.DbService.GetDbEntityMethodsClass<SoftwareStatementEntity>(),
+            sharedContext.DbService.GetDbEntityMethodsClass<ExternalApiSecretEntity>(),
+            sharedContext.DbService.GetDbEntityMethodsClass<RegistrationAccessTokenEntity>(),
             sharedContext.ObWacCertificateMethods,
             sharedContext.ObSealCertificateMethods,
             clientAccessTokenGet,

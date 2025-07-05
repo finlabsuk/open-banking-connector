@@ -53,11 +53,13 @@ internal class
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly IEncryptionKeyDescription _encryptionKeyInfo;
     private readonly IDbReadWriteEntityMethods<BankRegistrationEntity> _entityMethods;
+    private readonly IDbReadWriteEntityMethods<ExternalApiSecretEntity> _externalApiSecretMethods;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
+    private readonly IDbReadWriteEntityMethods<RegistrationAccessTokenEntity> _registrationAccessTokenMethods;
     private readonly ISecretProvider _secretProvider;
     private readonly IDbReadWriteEntityMethods<SoftwareStatementEntity> _softwareStatementEntityMethods;
     private readonly ITimeProvider _timeProvider;
@@ -71,6 +73,8 @@ internal class
         IOpenIdConfigurationRead configurationRead,
         IBankProfileService bankProfileService,
         IDbReadWriteEntityMethods<SoftwareStatementEntity> softwareStatementEntityMethods,
+        IDbReadWriteEntityMethods<ExternalApiSecretEntity> externalApiSecretMethods,
+        IDbReadWriteEntityMethods<RegistrationAccessTokenEntity> registrationAccessTokenMethods,
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
         ClientAccessTokenGet clientAccessTokenGet,
@@ -88,6 +92,8 @@ internal class
         _secretProvider = secretProvider;
         _configurationRead = configurationRead;
         _entityMethods = entityMethods;
+        _externalApiSecretMethods = externalApiSecretMethods;
+        _registrationAccessTokenMethods = registrationAccessTokenMethods;
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
         _instrumentationClient = instrumentationClient;
@@ -366,7 +372,7 @@ internal class
             registrationAccessToken = externalApiResponse.RegistrationAccessToken;
         }
 
-        // Create persisted entity
+        // Add persisted entity
         DateTimeOffset utcNow = _timeProvider.GetUtcNow();
         var entity = new BankRegistrationEntity(
             Guid.NewGuid(),
@@ -394,40 +400,45 @@ internal class
             defaultQueryRedirectUri,
             redirectUris,
             registrationScope);
+        await _entityMethods.AddAsync(entity);
 
-        // Add client secret
+        // Add external API secret
+        Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
         if (externalApiSecret is not null)
         {
-            ExternalApiSecretEntity clientSecretEntity = entity.AddNewClientSecret(
-                Guid.NewGuid(),
-                request.Reference,
-                false,
-                utcNow,
-                request.CreatedBy,
-                utcNow,
-                request.CreatedBy);
-            Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
-            clientSecretEntity.UpdateClientSecret(
+            var externalApiSecretEntity =
+                new ExternalApiSecretEntity(
+                    Guid.NewGuid(),
+                    request.Reference,
+                    false,
+                    utcNow,
+                    request.CreatedBy,
+                    utcNow,
+                    request.CreatedBy,
+                    entity.Id);
+            externalApiSecretEntity.UpdateClientSecret(
                 externalApiSecret,
                 entity.GetAssociatedData(),
                 await _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
                 utcNow,
                 request.CreatedBy,
                 currentKeyId);
+            await _externalApiSecretMethods.AddAsync(externalApiSecretEntity);
         }
 
         // Add registration access token
         if (registrationAccessToken is not null)
         {
-            RegistrationAccessTokenEntity registrationAccessTokenEntity = entity.AddNewRegistrationAccessToken(
-                Guid.NewGuid(),
-                request.Reference,
-                false,
-                utcNow,
-                request.CreatedBy,
-                utcNow,
-                request.CreatedBy);
-            Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
+            var registrationAccessTokenEntity =
+                new RegistrationAccessTokenEntity(
+                    Guid.NewGuid(),
+                    request.Reference,
+                    false,
+                    utcNow,
+                    request.CreatedBy,
+                    utcNow,
+                    request.CreatedBy,
+                    entity.Id);
             registrationAccessTokenEntity.UpdateRegistrationAccessToken(
                 registrationAccessToken,
                 entity.GetAssociatedData(),
@@ -435,10 +446,8 @@ internal class
                 utcNow,
                 request.CreatedBy,
                 currentKeyId);
+            await _registrationAccessTokenMethods.AddAsync(registrationAccessTokenEntity);
         }
-
-        // Save entity
-        await _entityMethods.AddAsync(entity);
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
         await _dbSaveChangesMethod.SaveChangesAsync();
