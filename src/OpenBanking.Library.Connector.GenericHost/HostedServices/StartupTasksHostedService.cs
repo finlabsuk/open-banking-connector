@@ -181,55 +181,53 @@ public class StartupTasksHostedService : IHostedService
         }
 
         // Database checks and cleanup
-        if (databaseSettings.Provider is DbProvider.PostgreSql)
-        {
-            // Get scope
-            using IServiceScope scope2 = _serviceScopeFactory.CreateScope();
 
-            var postgreSqlDbContext = scope2.ServiceProvider.GetRequiredService<PostgreSqlDbContext>();
+        // Get scope
+        using IServiceScope scope2 = _serviceScopeFactory.CreateScope();
 
-            await new EncryptionKeyDescriptionCleanup()
-                .Cleanup(
-                    postgreSqlDbContext,
-                    _secretProvider,
-                    _keySettings,
-                    _encryptionSettings,
-                    _memoryCache,
-                    _instrumentationClient,
-                    _timeProvider,
-                    cancellationToken);
+        var dbContext = scope2.ServiceProvider.GetRequiredService<BaseDbContext>();
 
-            await new SoftwareStatementCleanup()
-                .Cleanup(
-                    postgreSqlDbContext,
-                    _secretProvider,
-                    _httpClientSettings,
-                    _memoryCache,
-                    _instrumentationClient,
-                    _tppReportingMetrics);
+        await new EncryptionKeyDescriptionCleanup()
+            .Cleanup(
+                dbContext,
+                _secretProvider,
+                _keySettings,
+                _encryptionSettings,
+                _memoryCache,
+                _instrumentationClient,
+                _timeProvider,
+                cancellationToken);
 
-            await new BankRegistrationCleanup()
-                .Cleanup(
-                    postgreSqlDbContext,
-                    _logger);
+        await new SoftwareStatementCleanup()
+            .Cleanup(
+                dbContext,
+                _secretProvider,
+                _httpClientSettings,
+                _memoryCache,
+                _instrumentationClient,
+                _tppReportingMetrics);
 
-            await new AccountAccessConsentCleanup()
-                .Cleanup(
-                    postgreSqlDbContext,
-                    _logger);
+        await new BankRegistrationCleanup()
+            .Cleanup(
+                dbContext,
+                _logger);
 
-            //postgreSqlDbContext.ChangeTracker.DetectChanges();
+        await new AccountAccessConsentCleanup()
+            .Cleanup(
+                dbContext,
+                _logger);
 
-            await postgreSqlDbContext.SaveChangesAsync(cancellationToken);
+        //postgreSqlDbContext.ChangeTracker.DetectChanges();
 
-            await new EncryptedObjectCleanup()
-                .Cleanup(
-                    postgreSqlDbContext,
-                    _keySettings,
-                    _instrumentationClient,
-                    _timeProvider,
-                    cancellationToken);
-        }
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        await new EncryptedObjectCleanup()
+            .Cleanup(
+                dbContext,
+                _keySettings,
+                _instrumentationClient,
+                _timeProvider,
+                cancellationToken);
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

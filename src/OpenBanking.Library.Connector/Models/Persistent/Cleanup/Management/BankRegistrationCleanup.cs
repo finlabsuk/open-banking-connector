@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanu
 public class BankRegistrationCleanup
 {
     public Task Cleanup(
-        PostgreSqlDbContext postgreSqlDbContext,
+        BaseDbContext postgreSqlDbContext,
         ILogger logger)
     {
         List<BankRegistrationEntity> entityList =

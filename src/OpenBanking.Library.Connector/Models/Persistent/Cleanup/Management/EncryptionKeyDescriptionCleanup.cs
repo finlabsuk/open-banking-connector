@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanu
 public class EncryptionKeyDescriptionCleanup
 {
     public async Task Cleanup(
-        PostgreSqlDbContext postgreSqlDbContext,
+        BaseDbContext postgreSqlDbContext,
         ISecretProvider secretProvider,
         KeysSettings keysSettings,
         EncryptionSettings encryptionSettings,

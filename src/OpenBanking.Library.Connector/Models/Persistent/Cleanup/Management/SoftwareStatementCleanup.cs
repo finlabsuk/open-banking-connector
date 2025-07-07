@@ -18,7 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanu
 public class SoftwareStatementCleanup
 {
     public async Task Cleanup(
-        PostgreSqlDbContext postgreSqlDbContext,
+        BaseDbContext postgreSqlDbContext,
         ISecretProvider secretProvider,
         HttpClientSettings httpClientSettings,
         IMemoryCache memoryCache,

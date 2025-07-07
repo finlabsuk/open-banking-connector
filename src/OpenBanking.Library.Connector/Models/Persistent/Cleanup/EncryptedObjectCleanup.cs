@@ -14,7 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanu
 public class EncryptedObjectCleanup
 {
     public Task Cleanup(
-        PostgreSqlDbContext postgreSqlDbContext,
+        BaseDbContext postgreSqlDbContext,
         KeysSettings keysSettings,
         IInstrumentationClient instrumentationClient,
         ITimeProvider timeProvider,
