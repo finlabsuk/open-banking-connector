@@ -583,7 +583,8 @@ internal class GrantPost : IGrantPost
             }
         }
 
-        if (!string.Equals(idToken.Issuer, bankIssuerUrl))
+        string issClaim = idTokenProcessingCustomBehaviour?.IssClaim ?? bankIssuerUrl;
+        if (!string.Equals(idToken.Issuer, issClaim))
         {
             throw new Exception("Issuer from ID token does not match expected issuer.");
         }
