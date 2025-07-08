@@ -47,7 +47,13 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                     {
                         AddRedundantOAuth2NonceRequestParameter = true,
                         IdTokenProcessingCustomBehaviour =
-                            new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
+                            new IdTokenProcessingCustomBehaviour
+                            {
+                                IdTokenMayNotHaveAuthTimeClaim = true,
+                                IssClaim = "https://oba.revolut.com"
+                            },
+                        AudClaim =
+                            "https://oba-auth.revolut.com" // from https://developer.revolut.com/updates/2025-03-04-open-banking-fapi1-advanced#new-requirements-for-request-jwts
                     },
                 AccountAccessConsentAuthCodeGrantPost =
                     new AuthCodeGrantPostCustomBehaviour
@@ -60,9 +66,12 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                                 IdTokenMayNotHaveConsentIdClaim = true,
                                 IdTokenMayNotHaveAcrClaim = true,
                                 IdTokenExpirationTimeClaimJsonConverter =
-                                    DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
+                                    DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat,
+                                IssClaim = "https://oba.revolut.com"
                             }
-                    }
+                    },
+                AccountAccessConsentRefreshTokenGrantPost =
+                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings { UseRegistrationDeleteEndpoint = true },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
@@ -98,6 +107,6 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
         new()
         {
             BaseUrl =
-                "https://oba.revolut.com" // from https://developer.revolut.com/docs/open-banking/create-account-access-consents
+                "https://oba-auth.revolut.com" // from https://developer.revolut.com/docs/open-banking/create-account-access-consents
         };
 }
