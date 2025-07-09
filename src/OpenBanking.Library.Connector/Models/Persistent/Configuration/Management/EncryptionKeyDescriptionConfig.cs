@@ -11,13 +11,17 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.Management;
 
-internal class EncryptionKeyDescriptionConfig : BaseConfig<EncryptionKeyDescriptionEntity>
+internal class EncryptionKeyDescriptionConfig(
+    bool supportsGlobalQueryFilter,
+    DbProvider dbProvider,
+    bool isRelationalDatabase,
+    Formatting jsonFormatting)
+    : BaseConfig<EncryptionKeyDescriptionEntity>(
+        supportsGlobalQueryFilter,
+        dbProvider,
+        isRelationalDatabase,
+        jsonFormatting)
 {
-    public EncryptionKeyDescriptionConfig(
-        DbProvider dbProvider,
-        bool supportsGlobalQueryFilter,
-        Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
-
     public override void Configure(EntityTypeBuilder<EncryptionKeyDescriptionEntity> builder)
     {
         base.Configure(builder);

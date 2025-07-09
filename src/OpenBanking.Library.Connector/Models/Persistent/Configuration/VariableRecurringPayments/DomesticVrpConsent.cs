@@ -9,11 +9,13 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments;
 
-internal class DomesticVrpConsentConfig : BaseConsentConfig<DomesticVrpConsent>
+internal class DomesticVrpConsentConfig(
+    bool supportsGlobalQueryFilter,
+    DbProvider dbProvider,
+    bool isRelationalDatabase,
+    Formatting jsonFormatting)
+    : BaseConsentConfig<DomesticVrpConsent>(supportsGlobalQueryFilter, dbProvider, isRelationalDatabase, jsonFormatting)
 {
-    public DomesticVrpConsentConfig(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
-        base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
-
     public override void Configure(EntityTypeBuilder<DomesticVrpConsent> builder)
     {
         base.Configure(builder);

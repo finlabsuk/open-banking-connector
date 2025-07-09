@@ -8,12 +8,14 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration;
 
-internal class EncryptedObjectConfig<TEntity> : BaseConfig<TEntity>
+internal class EncryptedObjectConfig<TEntity>(
+    bool supportsGlobalQueryFilter,
+    DbProvider dbProvider,
+    bool isRelationalDatabase,
+    Formatting jsonFormatting)
+    : BaseConfig<TEntity>(supportsGlobalQueryFilter, dbProvider, isRelationalDatabase, jsonFormatting)
     where TEntity : EncryptedObject
 {
-    public EncryptedObjectConfig(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
-        base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
-
     public override void Configure(EntityTypeBuilder<TEntity> builder)
     {
         base.Configure(builder);
@@ -24,7 +26,8 @@ internal class EncryptedObjectConfig<TEntity> : BaseConfig<TEntity>
         builder.Property("_tag");
         builder.Property("_text2");
 
-        if (_dbProvider is DbProvider.PostgreSql or DbProvider.Sqlite)
+        // Only set up relationships (foreign keys and navigations) if not MongoDB
+        if (_dbProvider is not DbProvider.MongoDb)
         {
             builder
                 .HasOne(e => e.EncryptionKeyDescriptionNavigation)

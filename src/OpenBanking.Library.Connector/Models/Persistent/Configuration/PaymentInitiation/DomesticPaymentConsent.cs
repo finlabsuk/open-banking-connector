@@ -9,14 +9,17 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation;
 
-internal class DomesticPaymentConsentConfig : BaseConsentConfig<DomesticPaymentConsent>
+internal class DomesticPaymentConsentConfig(
+    bool supportsGlobalQueryFilter,
+    DbProvider dbProvider,
+    bool isRelationalDatabase,
+    Formatting jsonFormatting)
+    : BaseConsentConfig<DomesticPaymentConsent>(
+        supportsGlobalQueryFilter,
+        dbProvider,
+        isRelationalDatabase,
+        jsonFormatting)
 {
-    public DomesticPaymentConsentConfig(
-        DbProvider dbProvider,
-        bool supportsGlobalQueryFilter,
-        Formatting jsonFormatting)
-        : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
-
     public override void Configure(EntityTypeBuilder<DomesticPaymentConsent> builder)
     {
         base.Configure(builder);

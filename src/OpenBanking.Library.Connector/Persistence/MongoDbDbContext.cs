@@ -3,10 +3,15 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
-public class MongoDbDbContext(DbContextOptions<MongoDbDbContext> options) : BaseDbContext(options)
-{
-    protected override DbProvider DbProvider => DbProvider.MongoDb;
-}
+/// <summary>
+///     MongoDB DB context.
+/// </summary>
+/// <param name="options"></param>
+/// <param name="mongoDatabase"></param>
+public class MongoDbDbContext(DbContextOptions<MongoDbDbContext> options, IMongoDatabase mongoDatabase)
+    : BaseDbContext(options, DbProvider.MongoDb, false, Formatting.None, mongoDatabase) { }

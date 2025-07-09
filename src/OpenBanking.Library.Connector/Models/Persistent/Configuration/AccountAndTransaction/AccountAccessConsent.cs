@@ -9,14 +9,17 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AccountAndTransaction;
 
-internal class AccountAccessConsentConfig : BaseConsentConfig<AccountAccessConsent>
+internal class AccountAccessConsentConfig(
+    bool supportsGlobalQueryFilter,
+    DbProvider dbProvider,
+    bool isRelationalDatabase,
+    Formatting jsonFormatting)
+    : BaseConsentConfig<AccountAccessConsent>(
+        supportsGlobalQueryFilter,
+        dbProvider,
+        isRelationalDatabase,
+        jsonFormatting)
 {
-    public AccountAccessConsentConfig(
-        DbProvider dbProvider,
-        bool supportsGlobalQueryFilter,
-        Formatting jsonFormatting) :
-        base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
-
     public override void Configure(EntityTypeBuilder<AccountAccessConsent> builder)
     {
         base.Configure(builder);

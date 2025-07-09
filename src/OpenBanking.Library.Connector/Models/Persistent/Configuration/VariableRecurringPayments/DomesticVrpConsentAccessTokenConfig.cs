@@ -10,14 +10,14 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments;
 
 internal class
-    DomesticVrpConsentAccessTokenConfig : EncryptedObjectConfig<
-        DomesticVrpConsentAccessToken>
-{
-    public DomesticVrpConsentAccessTokenConfig(
-        DbProvider dbProvider,
+    DomesticVrpConsentAccessTokenConfig(
         bool supportsGlobalQueryFilter,
-        Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
-
+        DbProvider dbProvider,
+        bool isRelationalDatabase,
+        Formatting jsonFormatting)
+    : EncryptedObjectConfig<
+        DomesticVrpConsentAccessToken>(supportsGlobalQueryFilter, dbProvider, isRelationalDatabase, jsonFormatting)
+{
     public override void Configure(EntityTypeBuilder<DomesticVrpConsentAccessToken> builder)
     {
         base.Configure(builder);
@@ -25,7 +25,8 @@ internal class
         // Top-level property info: read-only, JSON conversion, etc
         builder.Property(e => e.DomesticVrpConsentId); // shared column
 
-        if (_dbProvider is DbProvider.PostgreSql or DbProvider.Sqlite)
+        // Only set up relationships (foreign keys and navigations) if not MongoDB
+        if (_dbProvider is not DbProvider.MongoDb)
         {
             builder
                 .HasOne<DomesticVrpConsent>()

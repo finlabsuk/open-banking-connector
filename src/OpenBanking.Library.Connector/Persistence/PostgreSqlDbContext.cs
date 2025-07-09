@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
-public abstract class RelationalDbContext(DbContextOptions options) : BaseDbContext(options);
-
-public class PostgreSqlDbContext(DbContextOptions<PostgreSqlDbContext> options) : RelationalDbContext(options)
-{
-    protected override DbProvider DbProvider => DbProvider.PostgreSql;
-}
+/// <summary>
+///     PostgreSQL DB context.
+/// </summary>
+/// <param name="options"></param>
+public class PostgreSqlDbContext(DbContextOptions<PostgreSqlDbContext> options)
+    : BaseDbContext(options, DbProvider.PostgreSql, true) { }

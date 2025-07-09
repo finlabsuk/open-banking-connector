@@ -12,13 +12,13 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.Management;
 
-internal class ObWacCertificateConfig : BaseConfig<ObWacCertificateEntity>
+internal class ObWacCertificateConfig(
+    bool supportsGlobalQueryFilter,
+    DbProvider dbProvider,
+    bool isRelationalDatabase,
+    Formatting jsonFormatting)
+    : BaseConfig<ObWacCertificateEntity>(supportsGlobalQueryFilter, dbProvider, isRelationalDatabase, jsonFormatting)
 {
-    public ObWacCertificateConfig(
-        DbProvider dbProvider,
-        bool supportsGlobalQueryFilter,
-        Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
-
     public override void Configure(EntityTypeBuilder<ObWacCertificateEntity> builder)
     {
         base.Configure(builder);

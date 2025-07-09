@@ -10,14 +10,14 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.Management;
 
 internal class
-    RegistrationAccessTokenConfig : EncryptedObjectConfig<
-    RegistrationAccessTokenEntity>
-{
-    public RegistrationAccessTokenConfig(
-        DbProvider dbProvider,
+    RegistrationAccessTokenConfig(
         bool supportsGlobalQueryFilter,
-        Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
-
+        DbProvider dbProvider,
+        bool isRelationalDatabase,
+        Formatting jsonFormatting)
+    : EncryptedObjectConfig<
+        RegistrationAccessTokenEntity>(supportsGlobalQueryFilter, dbProvider, isRelationalDatabase, jsonFormatting)
+{
     public override void Configure(EntityTypeBuilder<RegistrationAccessTokenEntity> builder)
     {
         base.Configure(builder);
@@ -25,7 +25,8 @@ internal class
         // Top-level property info: read-only, JSON conversion, etc
         builder.Property(e => e.BankRegistrationId); // shared column
 
-        if (_dbProvider is DbProvider.PostgreSql or DbProvider.Sqlite)
+        // Only set up relationships (foreign keys and navigations) if not MongoDB
+        if (_dbProvider is not DbProvider.MongoDb)
         {
             builder
                 .HasOne(e => e.BankRegistrationNavigation)
