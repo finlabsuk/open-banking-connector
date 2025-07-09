@@ -79,7 +79,7 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                 _sharedContext.Instrumentation,
                 _sharedContext.ApiVariantMapper,
                 new ConsentAccessTokenGet(
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    _sharedContext.DbService.GetDbMethods(),
                     _sharedContext.TimeProvider,
                     new GrantPost(
                         _sharedContext.ApiClient,
@@ -90,9 +90,9 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.MemoryCache,
                     _sharedContext.EncryptionKeyInfo),
                 new AccountAccessConsentCommon(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
                     _sharedContext.Instrumentation),
                 _sharedContext.BankProfileService,
                 _sharedContext.ObWacCertificateMethods,
@@ -104,7 +104,7 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                 _sharedContext.Instrumentation,
                 _sharedContext.ApiVariantMapper,
                 new ConsentAccessTokenGet(
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    _sharedContext.DbService.GetDbMethods(),
                     _sharedContext.TimeProvider,
                     new GrantPost(
                         _sharedContext.ApiClient,
@@ -115,9 +115,9 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.MemoryCache,
                     _sharedContext.EncryptionKeyInfo),
                 new AccountAccessConsentCommon(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
                     _sharedContext.Instrumentation),
                 _sharedContext.BankProfileService,
                 _sharedContext.ObWacCertificateMethods,
@@ -129,7 +129,7 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                 _sharedContext.Instrumentation,
                 _sharedContext.ApiVariantMapper,
                 new ConsentAccessTokenGet(
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    _sharedContext.DbService.GetDbMethods(),
                     _sharedContext.TimeProvider,
                     new GrantPost(
                         _sharedContext.ApiClient,
@@ -140,9 +140,9 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.MemoryCache,
                     _sharedContext.EncryptionKeyInfo),
                 new AccountAccessConsentCommon(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
                     _sharedContext.Instrumentation),
                 _sharedContext.BankProfileService,
                 _sharedContext.ObWacCertificateMethods,
@@ -154,7 +154,7 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                 _sharedContext.Instrumentation,
                 _sharedContext.ApiVariantMapper,
                 new ConsentAccessTokenGet(
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    _sharedContext.DbService.GetDbMethods(),
                     _sharedContext.TimeProvider,
                     new GrantPost(
                         _sharedContext.ApiClient,
@@ -165,9 +165,9 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.MemoryCache,
                     _sharedContext.EncryptionKeyInfo),
                 new AccountAccessConsentCommon(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
                     _sharedContext.Instrumentation),
                 _sharedContext.BankProfileService,
                 _sharedContext.ObWacCertificateMethods,
@@ -180,7 +180,7 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                 _sharedContext.Instrumentation,
                 _sharedContext.ApiVariantMapper,
                 new ConsentAccessTokenGet(
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    _sharedContext.DbService.GetDbMethods(),
                     _sharedContext.TimeProvider,
                     new GrantPost(
                         _sharedContext.ApiClient,
@@ -191,9 +191,9 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.MemoryCache,
                     _sharedContext.EncryptionKeyInfo),
                 new AccountAccessConsentCommon(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
                     _sharedContext.Instrumentation),
                 _sharedContext.BankProfileService,
                 _sharedContext.ObWacCertificateMethods,
@@ -205,7 +205,7 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                 _sharedContext.Instrumentation,
                 _sharedContext.ApiVariantMapper,
                 new ConsentAccessTokenGet(
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    _sharedContext.DbService.GetDbMethods(),
                     _sharedContext.TimeProvider,
                     new GrantPost(
                         _sharedContext.ApiClient,
@@ -216,9 +216,9 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.MemoryCache,
                     _sharedContext.EncryptionKeyInfo),
                 new AccountAccessConsentCommon(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
                     _sharedContext.Instrumentation),
                 _sharedContext.BankProfileService,
                 _sharedContext.ObWacCertificateMethods,
@@ -230,7 +230,7 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                 _sharedContext.Instrumentation,
                 _sharedContext.ApiVariantMapper,
                 new ConsentAccessTokenGet(
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    _sharedContext.DbService.GetDbMethods(),
                     _sharedContext.TimeProvider,
                     new GrantPost(
                         _sharedContext.ApiClient,
@@ -241,9 +241,9 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.MemoryCache,
                     _sharedContext.EncryptionKeyInfo),
                 new AccountAccessConsentCommon(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
                     _sharedContext.Instrumentation),
                 _sharedContext.BankProfileService,
                 _sharedContext.ObWacCertificateMethods,
@@ -255,7 +255,7 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                 _sharedContext.Instrumentation,
                 _sharedContext.ApiVariantMapper,
                 new ConsentAccessTokenGet(
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    _sharedContext.DbService.GetDbMethods(),
                     _sharedContext.TimeProvider,
                     new GrantPost(
                         _sharedContext.ApiClient,
@@ -266,9 +266,9 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.MemoryCache,
                     _sharedContext.EncryptionKeyInfo),
                 new AccountAccessConsentCommon(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
                     _sharedContext.Instrumentation),
                 _sharedContext.BankProfileService,
                 _sharedContext.ObWacCertificateMethods,

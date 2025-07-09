@@ -28,8 +28,8 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
 
     public AccountAccessConsentDelete(
-        IDbReadWriteEntityMethods<AccountAccessConsent> entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<AccountAccessConsent> entityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IBankProfileService bankProfileService,

@@ -19,16 +19,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Management;
 internal class EncryptionKeyDescriptionPost :
     IObjectCreate<EncryptionKeyDescription, EncryptionKeyDescriptionResponse, LocalCreateParams>
 {
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly IDbMethods _dbSaveChangesMethod;
     private readonly IEncryptionKeyDescription _encryptionKeyDescriptionMethods;
-    private readonly IDbReadWriteEntityMethods<EncryptionKeyDescriptionEntity> _entityMethods;
+    private readonly IDbEntityMethods<EncryptionKeyDescriptionEntity> _entityMethods;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly ISecretProvider _secretProvider;
     private readonly ITimeProvider _timeProvider;
 
     public EncryptionKeyDescriptionPost(
-        IDbReadWriteEntityMethods<EncryptionKeyDescriptionEntity> entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<EncryptionKeyDescriptionEntity> entityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         ISecretProvider secretProvider,

@@ -50,31 +50,31 @@ internal class
     private readonly IBankProfileService _bankProfileService;
     private readonly ClientAccessTokenGet _clientAccessTokenGet;
     private readonly IOpenIdConfigurationRead _configurationRead;
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly IDbMethods _dbSaveChangesMethod;
     private readonly IEncryptionKeyDescription _encryptionKeyInfo;
-    private readonly IDbReadWriteEntityMethods<BankRegistrationEntity> _entityMethods;
-    private readonly IDbReadWriteEntityMethods<ExternalApiSecretEntity> _externalApiSecretMethods;
+    private readonly IDbEntityMethods<BankRegistrationEntity> _entityMethods;
+    private readonly IDbEntityMethods<ExternalApiSecretEntity> _externalApiSecretMethods;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
-    private readonly IDbReadWriteEntityMethods<RegistrationAccessTokenEntity> _registrationAccessTokenMethods;
+    private readonly IDbEntityMethods<RegistrationAccessTokenEntity> _registrationAccessTokenMethods;
     private readonly ISecretProvider _secretProvider;
-    private readonly IDbReadWriteEntityMethods<SoftwareStatementEntity> _softwareStatementEntityMethods;
+    private readonly IDbEntityMethods<SoftwareStatementEntity> _softwareStatementEntityMethods;
     private readonly ITimeProvider _timeProvider;
 
     public BankRegistrationOperations(
-        IDbReadWriteEntityMethods<BankRegistrationEntity> entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<BankRegistrationEntity> entityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         IOpenIdConfigurationRead configurationRead,
         IBankProfileService bankProfileService,
-        IDbReadWriteEntityMethods<SoftwareStatementEntity> softwareStatementEntityMethods,
-        IDbReadWriteEntityMethods<ExternalApiSecretEntity> externalApiSecretMethods,
-        IDbReadWriteEntityMethods<RegistrationAccessTokenEntity> registrationAccessTokenMethods,
+        IDbEntityMethods<SoftwareStatementEntity> softwareStatementEntityMethods,
+        IDbEntityMethods<ExternalApiSecretEntity> externalApiSecretMethods,
+        IDbEntityMethods<RegistrationAccessTokenEntity> registrationAccessTokenMethods,
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
         ClientAccessTokenGet clientAccessTokenGet,

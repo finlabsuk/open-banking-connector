@@ -371,7 +371,7 @@ public class AccountAccessConsentSubtest(
                     IDbEntityMethods<Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent>
                         consentEntityMethods =
                             dbService
-                                .GetDbEntityMethodsClass<
+                                .GetDbEntityMethods<
                                     Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent>();
                     Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent consent =
                         consentEntityMethods
@@ -398,7 +398,7 @@ public class AccountAccessConsentSubtest(
                     if (storedAccessToken is not null)
                     {
                         storedAccessToken.UpdateIsDeleted(true, DateTimeOffset.UtcNow, modifiedBy);
-                        await dbService.GetDbSaveChangesMethodClass().SaveChangesAsync();
+                        await dbService.GetDbMethods().SaveChangesAsync();
                     }
                 }
 

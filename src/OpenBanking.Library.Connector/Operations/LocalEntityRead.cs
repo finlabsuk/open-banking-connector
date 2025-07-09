@@ -18,8 +18,8 @@ internal class
     where TEntity : class, ISupportsFluentLocalEntityGet<TPublicResponse>, IEntity
 {
     public LocalEntityRead(
-        IDbReadWriteEntityMethods<TEntity> entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<TEntity> entityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient) : base(
         entityMethods,

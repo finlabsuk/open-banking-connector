@@ -28,8 +28,8 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
 
     public DomesticVrpConsentDelete(
-        IDbReadWriteEntityMethods<DomesticVrpConsent> entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<DomesticVrpConsent> entityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IBankProfileService bankProfileService,

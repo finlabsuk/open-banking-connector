@@ -55,12 +55,12 @@ internal class PaymentInitiationContext : IPaymentInitiationContext
             sharedContext.MemoryCache,
             sharedContext.EncryptionKeyInfo);
         _domesticPayments = new DomesticPaymentOperations(
-            _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentPersisted>(),
+            _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentPersisted>(),
             _sharedContext.Instrumentation,
             _sharedContext.ApiVariantMapper,
             _sharedContext.TimeProvider,
             new ConsentAccessTokenGet(
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.DbService.GetDbMethods(),
                 _sharedContext.TimeProvider,
                 grantPost,
                 _sharedContext.Instrumentation,
@@ -71,9 +71,9 @@ internal class PaymentInitiationContext : IPaymentInitiationContext
             _sharedContext.ObSealCertificateMethods,
             clientAccessTokenGet,
             new DomesticPaymentConsentCommon(
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentPersisted>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentAccessToken>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentRefreshToken>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentPersisted>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentAccessToken>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentRefreshToken>(),
                 _sharedContext.Instrumentation));
     }
 

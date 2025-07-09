@@ -28,8 +28,8 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
 
     public BankRegistrationDelete(
-        IDbReadWriteEntityMethods<BankRegistrationEntity> entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<BankRegistrationEntity> entityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IBankProfileService bankProfileService,

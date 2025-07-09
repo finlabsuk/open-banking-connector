@@ -16,15 +16,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
 internal class AccountAccessConsentCommon
 {
-    private readonly IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> _accessTokenEntityMethods;
-    private readonly IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _entityMethods;
+    private readonly IDbEntityMethods<AccountAccessConsentAccessToken> _accessTokenEntityMethods;
+    private readonly IDbEntityMethods<AccountAccessConsentPersisted> _entityMethods;
     private readonly IInstrumentationClient _instrumentationClient;
-    private readonly IDbReadWriteEntityMethods<AccountAccessConsentRefreshToken> _refreshTokenEntityMethods;
+    private readonly IDbEntityMethods<AccountAccessConsentRefreshToken> _refreshTokenEntityMethods;
 
     public AccountAccessConsentCommon(
-        IDbReadWriteEntityMethods<AccountAccessConsentPersisted> entityMethods,
-        IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> accessTokenEntityMethods,
-        IDbReadWriteEntityMethods<AccountAccessConsentRefreshToken> refreshTokenEntityMethods,
+        IDbEntityMethods<AccountAccessConsentPersisted> entityMethods,
+        IDbEntityMethods<AccountAccessConsentAccessToken> accessTokenEntityMethods,
+        IDbEntityMethods<AccountAccessConsentRefreshToken> refreshTokenEntityMethods,
         IInstrumentationClient instrumentationClient)
     {
         _entityMethods = entityMethods;

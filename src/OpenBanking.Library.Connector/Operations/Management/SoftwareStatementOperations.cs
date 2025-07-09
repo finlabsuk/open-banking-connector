@@ -14,8 +14,8 @@ using Microsoft.EntityFrameworkCore;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Management;
 
 internal class SoftwareStatementOperations(
-    IDbReadWriteEntityMethods<SoftwareStatementEntity> entityMethods,
-    IDbSaveChangesMethod dbSaveChangesMethod,
+    IDbEntityMethods<SoftwareStatementEntity> entityMethods,
+    IDbMethods dbSaveChangesMethod,
     ITimeProvider timeProvider,
     IInstrumentationClient instrumentationClient)
     : IObjectCreate<SoftwareStatement, SoftwareStatementResponse, LocalCreateParams>,

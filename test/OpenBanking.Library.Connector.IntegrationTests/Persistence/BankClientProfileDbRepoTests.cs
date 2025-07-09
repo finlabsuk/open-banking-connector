@@ -13,14 +13,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
 
 public class BankClientProfileDbRepoTests : DbTest
 {
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly IDbMethods _dbSaveChangesMethod;
     private readonly ITestOutputHelper _output;
     private readonly IDbEntityMethods<BankRegistrationEntity> _repo;
 
     public BankClientProfileDbRepoTests(ITestOutputHelper output)
     {
         _repo = new DbEntityMethods<BankRegistrationEntity>(_dB);
-        _dbSaveChangesMethod = new DbSaveChangesMethod(_dB);
+        _dbSaveChangesMethod = new DbMethods(_dB);
         _output = output;
     }
 

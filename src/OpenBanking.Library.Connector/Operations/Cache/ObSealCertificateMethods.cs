@@ -16,7 +16,7 @@ public class ObSealCertificateMethods(
     IMemoryCache memoryCache,
     ISecretProvider secretProvider,
     IInstrumentationClient instrumentationClient,
-    IDbReadWriteEntityMethods<ObSealCertificateEntity> entityMethods)
+    IDbEntityMethods<ObSealCertificateEntity> entityMethods)
 {
     public async Task<ObSealCertificate> GetValue(
         Guid obSealId) =>

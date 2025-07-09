@@ -21,15 +21,15 @@ internal abstract class BaseRead<TEntity, TPublicResponse, TReadParams> :
     where TEntity : class, IEntity
     where TReadParams : LocalReadParams
 {
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
-    protected readonly IDbReadWriteEntityMethods<TEntity> _entityMethods;
+    private readonly IDbMethods _dbSaveChangesMethod;
+    protected readonly IDbEntityMethods<TEntity> _entityMethods;
     protected readonly IInstrumentationClient _instrumentationClient;
     protected readonly ITimeProvider _timeProvider;
 
 
     public BaseRead(
-        IDbReadWriteEntityMethods<TEntity> entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<TEntity> entityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient)
     {

@@ -21,13 +21,13 @@ internal abstract class BaseCreate<TPublicRequest, TPublicResponse, TCreateParam
     where TPublicRequest : EntityBase
     where TCreateParams : LocalCreateParams
 {
-    protected readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    protected readonly IDbMethods _dbSaveChangesMethod;
     protected readonly IInstrumentationClient _instrumentationClient;
     protected readonly ITimeProvider _timeProvider;
 
 
     public BaseCreate(
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient)
     {

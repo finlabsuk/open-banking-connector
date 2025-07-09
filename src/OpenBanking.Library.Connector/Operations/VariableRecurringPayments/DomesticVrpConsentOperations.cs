@@ -49,8 +49,8 @@ internal class
         VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
         VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> _consentCommon;
 
-    private readonly IDbReadWriteEntityMethods<DomesticVrpConsentPersisted> _consentEntityMethods;
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly IDbEntityMethods<DomesticVrpConsentPersisted> _consentEntityMethods;
+    private readonly IDbMethods _dbSaveChangesMethod;
     private readonly DomesticVrpConsentCommon _domesticVrpConsentCommon;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
@@ -59,8 +59,8 @@ internal class
     private readonly ITimeProvider _timeProvider;
 
     public DomesticVrpConsentOperations(
-        IDbReadWriteEntityMethods<DomesticVrpConsentPersisted> entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<DomesticVrpConsentPersisted> entityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,

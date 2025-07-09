@@ -17,11 +17,11 @@ internal abstract class
     where TEntity : class, IEntity
     where TPublicRequest : EntityBase
 {
-    protected readonly IDbReadWriteEntityMethods<TEntity> _entityMethods;
+    protected readonly IDbEntityMethods<TEntity> _entityMethods;
 
     public LocalEntityCreate(
-        IDbReadWriteEntityMethods<TEntity> entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<TEntity> entityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient) : base(
         dbSaveChangesMethod,

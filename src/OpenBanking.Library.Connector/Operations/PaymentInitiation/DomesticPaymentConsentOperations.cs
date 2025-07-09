@@ -47,8 +47,8 @@ internal class
         PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
         PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> _consentCommon;
 
-    private readonly IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> _consentEntityMethods;
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly IDbEntityMethods<DomesticPaymentConsentPersisted> _consentEntityMethods;
+    private readonly IDbMethods _dbSaveChangesMethod;
     private readonly DomesticPaymentConsentCommon _domesticPaymentConsentCommon;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
@@ -57,8 +57,8 @@ internal class
     private readonly ITimeProvider _timeProvider;
 
     public DomesticPaymentConsentOperations(
-        IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> consentEntityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<DomesticPaymentConsentPersisted> consentEntityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,

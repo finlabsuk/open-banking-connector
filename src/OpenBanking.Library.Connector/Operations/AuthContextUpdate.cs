@@ -30,9 +30,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 internal class AuthContextUpdate :
     IObjectUpdate<AuthResult, AuthContextUpdateAuthResultResponse>
 {
-    private readonly IDbReadWriteEntityMethods<AuthContext> _authContextMethods;
+    private readonly IDbEntityMethods<AuthContext> _authContextMethods;
     private readonly IBankProfileService _bankProfileService;
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly IDbMethods _dbSaveChangesMethod;
     private readonly IEncryptionKeyDescription _encryptionKeyInfo;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
@@ -42,9 +42,9 @@ internal class AuthContextUpdate :
     private readonly ITimeProvider _timeProvider;
 
     public AuthContextUpdate(
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
-        IDbReadWriteEntityMethods<AuthContext>
+        IDbEntityMethods<AuthContext>
             authContextMethods,
         IInstrumentationClient instrumentationClient,
         IGrantPost grantPost,

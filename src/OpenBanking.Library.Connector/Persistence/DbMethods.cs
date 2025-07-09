@@ -5,16 +5,18 @@
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 /// <summary>
-///     Non entity- (type-) specific DB methods
+///     Non-entity-specific database methods.
 /// </summary>
-public class DbSaveChangesMethod : IDbSaveChangesMethod
+public class DbMethods : IDbMethods
 {
     private readonly BaseDbContext _db;
 
-    public DbSaveChangesMethod(BaseDbContext db)
+    public DbMethods(BaseDbContext db)
     {
         _db = db;
     }
+
+    public DbProvider DbProvider => _db.DbProvider;
 
     public async Task<int> SaveChangesAsync() => await _db.SaveChangesAsync();
 }

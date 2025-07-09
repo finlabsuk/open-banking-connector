@@ -10,14 +10,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
 
 public class DomesticConsentRepoTests : DbTest
 {
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly IDbMethods _dbSaveChangesMethod;
     private readonly ITestOutputHelper _output;
     private readonly IDbEntityMethods<DomesticPaymentConsent> _repo;
 
     public DomesticConsentRepoTests(ITestOutputHelper output)
     {
         _repo = new DbEntityMethods<DomesticPaymentConsent>(_dB);
-        _dbSaveChangesMethod = new DbSaveChangesMethod(_dB);
+        _dbSaveChangesMethod = new DbMethods(_dB);
         _output = output;
     }
 

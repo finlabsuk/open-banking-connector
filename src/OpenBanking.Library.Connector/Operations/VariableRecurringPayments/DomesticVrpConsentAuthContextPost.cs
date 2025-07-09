@@ -35,9 +35,9 @@ internal class
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
 
     public DomesticVrpConsentAuthContextPost(
-        IDbReadWriteEntityMethods<DomesticVrpConsentAuthContextPersisted>
+        IDbEntityMethods<DomesticVrpConsentAuthContextPersisted>
             entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> domesticVrpConsentMethods,
         IInstrumentationClient instrumentationClient,

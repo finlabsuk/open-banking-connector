@@ -236,7 +236,7 @@ public class DomesticVrpConsentSubtest(
                     IDbEntityMethods<Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent>
                         consentEntityMethods =
                             dbService
-                                .GetDbEntityMethodsClass<
+                                .GetDbEntityMethods<
                                     Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent>();
                     Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent consent =
                         consentEntityMethods
@@ -264,7 +264,7 @@ public class DomesticVrpConsentSubtest(
                     if (storedAccessToken is not null)
                     {
                         storedAccessToken.UpdateIsDeleted(true, DateTimeOffset.UtcNow, modifiedBy);
-                        await dbService.GetDbSaveChangesMethodClass().SaveChangesAsync();
+                        await dbService.GetDbMethods().SaveChangesAsync();
                     }
                 }
 

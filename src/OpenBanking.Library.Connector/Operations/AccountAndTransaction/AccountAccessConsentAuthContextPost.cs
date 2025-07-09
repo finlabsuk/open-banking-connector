@@ -45,9 +45,9 @@ internal class
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
 
     public AccountAccessConsentAuthContextPost(
-        IDbReadWriteEntityMethods<AccountAccessConsentAuthContextPersisted>
+        IDbEntityMethods<AccountAccessConsentAuthContextPersisted>
             entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IBankProfileService bankProfileService,

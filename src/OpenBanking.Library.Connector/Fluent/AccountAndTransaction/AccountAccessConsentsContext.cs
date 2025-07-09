@@ -58,27 +58,27 @@ internal class AccountAccessConsentsConsentContext :
             sharedContext.MemoryCache,
             sharedContext.EncryptionKeyInfo);
         var accountAccessConsentOperations = new AccountAccessConsentOperations(
-            sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-            sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
+            sharedContext.DbService.GetDbMethods(),
             sharedContext.TimeProvider,
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
             sharedContext.BankProfileService,
-            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
+            sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
             _sharedContext.ObWacCertificateMethods,
             _sharedContext.ObSealCertificateMethods,
             clientAccessTokenGet,
             new AccountAccessConsentCommon(
-                _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>(),
+                _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
+                _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
+                _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
                 _sharedContext.Instrumentation));
         CreateObject = accountAccessConsentOperations;
         ReadObject = accountAccessConsentOperations;
         DeleteObject =
             new AccountAccessConsentDelete(
-                sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
+                sharedContext.DbService.GetDbMethods(),
                 sharedContext.TimeProvider,
                 sharedContext.Instrumentation,
                 _sharedContext.BankProfileService,
@@ -92,8 +92,8 @@ internal class AccountAccessConsentsConsentContext :
             AccountAccessConsentAuthContextReadResponse>(
             _sharedContext,
             new AccountAccessConsentAuthContext(
-                _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAuthContextPersisted>(),
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAuthContextPersisted>(),
+                _sharedContext.DbService.GetDbMethods(),
                 _sharedContext.TimeProvider,
                 _sharedContext.Instrumentation,
                 _sharedContext.BankProfileService,
@@ -101,9 +101,9 @@ internal class AccountAccessConsentsConsentContext :
                 _sharedContext.ObSealCertificateMethods,
                 clientAccessTokenGet,
                 new AccountAccessConsentCommon(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
                     _sharedContext.Instrumentation),
                 _sharedContext.ApiVariantMapper));
     }

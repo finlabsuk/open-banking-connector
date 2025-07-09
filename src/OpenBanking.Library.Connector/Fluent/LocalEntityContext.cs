@@ -28,13 +28,13 @@ internal class
         CreateLocalObject = postObject;
         ReadLocalObject =
             new LocalEntityRead<TEntity, TPublicQuery, TPublicReadLocalResponse>(
-                sharedContext.DbService.GetDbEntityMethodsClass<TEntity>(),
-                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.DbService.GetDbEntityMethods<TEntity>(),
+                sharedContext.DbService.GetDbMethods(),
                 sharedContext.TimeProvider,
                 sharedContext.Instrumentation);
         DeleteLocalObject = new LocalEntityDelete<TEntity, LocalDeleteParams>(
-            sharedContext.DbService.GetDbEntityMethodsClass<TEntity>(),
-            sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            sharedContext.DbService.GetDbEntityMethods<TEntity>(),
+            sharedContext.DbService.GetDbMethods(),
             sharedContext.TimeProvider,
             sharedContext.Instrumentation);
     }

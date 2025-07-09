@@ -4,7 +4,7 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
-public interface IDbSaveChangesMethod
+public interface IDbMethods : IDbReadOnlyMethods
 {
     Task<int> SaveChangesAsync();
 }

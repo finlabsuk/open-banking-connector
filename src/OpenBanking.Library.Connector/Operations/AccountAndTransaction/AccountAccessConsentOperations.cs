@@ -43,8 +43,8 @@ internal class
         AccountAndTransactionModelsPublic.OBReadConsent1,
         AccountAndTransactionModelsPublic.OBReadConsentResponse1> _consentCommon;
 
-    private readonly IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _consentEntityMethods;
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly IDbEntityMethods<AccountAccessConsentPersisted> _consentEntityMethods;
+    private readonly IDbMethods _dbSaveChangesMethod;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
@@ -52,8 +52,8 @@ internal class
     private readonly ITimeProvider _timeProvider;
 
     public AccountAccessConsentOperations(
-        IDbReadWriteEntityMethods<AccountAccessConsentPersisted> consentEntityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<AccountAccessConsentPersisted> consentEntityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,

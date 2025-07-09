@@ -15,14 +15,14 @@ internal abstract class BaseDelete<TEntity, TDeleteParams> :
     where TEntity : class, IEntity
     where TDeleteParams : LocalDeleteParams
 {
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
-    protected readonly IDbReadWriteEntityMethods<TEntity> _entityMethods;
+    private readonly IDbMethods _dbSaveChangesMethod;
+    protected readonly IDbEntityMethods<TEntity> _entityMethods;
     protected readonly IInstrumentationClient _instrumentationClient;
     private readonly ITimeProvider _timeProvider;
 
     public BaseDelete(
-        IDbReadWriteEntityMethods<TEntity> entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<TEntity> entityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient)
     {

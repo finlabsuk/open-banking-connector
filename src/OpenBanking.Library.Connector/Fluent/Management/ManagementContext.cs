@@ -57,8 +57,8 @@ internal class ManagementContext : IManagementContext
             ObWacCertificateResponse, ObWacCertificateResponse>(
             _sharedContext,
             new ObWacCertificatePost(
-                _sharedContext.DbService.GetDbEntityMethodsClass<ObWacCertificateEntity>(),
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.DbService.GetDbEntityMethods<ObWacCertificateEntity>(),
+                _sharedContext.DbService.GetDbMethods(),
                 _sharedContext.TimeProvider,
                 _sharedContext.Instrumentation,
                 _sharedContext.HttpClientSettingsProvider,
@@ -72,8 +72,8 @@ internal class ManagementContext : IManagementContext
             ObSealCertificateResponse, ObSealCertificateResponse>(
             _sharedContext,
             new ObSealCertificatePost(
-                _sharedContext.DbService.GetDbEntityMethodsClass<ObSealCertificateEntity>(),
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.DbService.GetDbEntityMethods<ObSealCertificateEntity>(),
+                _sharedContext.DbService.GetDbMethods(),
                 _sharedContext.TimeProvider,
                 _sharedContext.Instrumentation,
                 _sharedContext.MemoryCache,
@@ -85,8 +85,8 @@ internal class ManagementContext : IManagementContext
             IEncryptionKeyDescriptionPublicQuery, EncryptionKeyDescriptionResponse, EncryptionKeyDescriptionResponse>(
             _sharedContext,
             new EncryptionKeyDescriptionPost(
-                _sharedContext.DbService.GetDbEntityMethodsClass<EncryptionKeyDescriptionEntity>(),
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.DbService.GetDbEntityMethods<EncryptionKeyDescriptionEntity>(),
+                _sharedContext.DbService.GetDbMethods(),
                 _sharedContext.TimeProvider,
                 _sharedContext.Instrumentation,
                 _sharedContext.SecretProvider,
@@ -97,8 +97,8 @@ internal class ManagementContext : IManagementContext
         get
         {
             var softwareStatementOperations = new SoftwareStatementOperations(
-                _sharedContext.DbService.GetDbEntityMethodsClass<SoftwareStatementEntity>(),
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                _sharedContext.DbService.GetDbMethods(),
                 _sharedContext.TimeProvider,
                 _sharedContext.Instrumentation);
             return new SoftwareStatementsContext(

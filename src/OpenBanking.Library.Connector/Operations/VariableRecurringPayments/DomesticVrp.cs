@@ -52,10 +52,10 @@ internal class DomesticVrp :
     private readonly ITimeProvider _timeProvider;
 
     public DomesticVrp(
-        IDbReadWriteEntityMethods<DomesticVrpConsentPersisted> entityMethods,
+        IDbEntityMethods<DomesticVrpConsentPersisted> entityMethods,
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         ConsentAccessTokenGet consentAccessTokenGet,
         IBankProfileService bankProfileService,

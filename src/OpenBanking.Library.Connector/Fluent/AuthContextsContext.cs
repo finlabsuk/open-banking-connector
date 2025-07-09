@@ -29,9 +29,9 @@ internal class AuthContextsContext : IAuthContextsContext
     public AuthContextsContext(ISharedContext sharedContext)
     {
         UpdateLocalObject = new AuthContextUpdate(
-            sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            sharedContext.DbService.GetDbMethods(),
             sharedContext.TimeProvider,
-            sharedContext.DbService.GetDbEntityMethodsClass<AuthContextPersisted>(),
+            sharedContext.DbService.GetDbEntityMethods<AuthContextPersisted>(),
             sharedContext.Instrumentation,
             new GrantPost(
                 sharedContext.ApiClient,

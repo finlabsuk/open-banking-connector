@@ -15,15 +15,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
 internal class DomesticVrpConsentCommon
 {
-    private readonly IDbReadWriteEntityMethods<DomesticVrpConsentAccessToken> _accessTokenEntityMethods;
-    private readonly IDbReadWriteEntityMethods<DomesticVrpConsentPersisted> _entityMethods;
+    private readonly IDbEntityMethods<DomesticVrpConsentAccessToken> _accessTokenEntityMethods;
+    private readonly IDbEntityMethods<DomesticVrpConsentPersisted> _entityMethods;
     private readonly IInstrumentationClient _instrumentationClient;
-    private readonly IDbReadWriteEntityMethods<DomesticVrpConsentRefreshToken> _refreshTokenEntityMethods;
+    private readonly IDbEntityMethods<DomesticVrpConsentRefreshToken> _refreshTokenEntityMethods;
 
     public DomesticVrpConsentCommon(
-        IDbReadWriteEntityMethods<DomesticVrpConsentPersisted> entityMethods,
-        IDbReadWriteEntityMethods<DomesticVrpConsentAccessToken> accessTokenEntityMethods,
-        IDbReadWriteEntityMethods<DomesticVrpConsentRefreshToken> refreshTokenEntityMethods,
+        IDbEntityMethods<DomesticVrpConsentPersisted> entityMethods,
+        IDbEntityMethods<DomesticVrpConsentAccessToken> accessTokenEntityMethods,
+        IDbEntityMethods<DomesticVrpConsentRefreshToken> refreshTokenEntityMethods,
         IInstrumentationClient instrumentationClient)
     {
         _entityMethods = entityMethods;

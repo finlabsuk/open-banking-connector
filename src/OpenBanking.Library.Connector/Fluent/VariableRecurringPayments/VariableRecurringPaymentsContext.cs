@@ -56,13 +56,13 @@ internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsCont
             sharedContext.MemoryCache,
             sharedContext.EncryptionKeyInfo);
         _domesticVrp = new DomesticVrpOperations(
-            _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
+            _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentPersisted>(),
             _sharedContext.Instrumentation,
             _sharedContext.ApiVariantMapper,
-            _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            _sharedContext.DbService.GetDbMethods(),
             _sharedContext.TimeProvider,
             new ConsentAccessTokenGet(
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.DbService.GetDbMethods(),
                 _sharedContext.TimeProvider,
                 grantPost,
                 _sharedContext.Instrumentation,
@@ -73,9 +73,9 @@ internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsCont
             _sharedContext.ObSealCertificateMethods,
             clientAccessTokenGet,
             new DomesticVrpConsentCommon(
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentAccessToken>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentRefreshToken>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentPersisted>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentAccessToken>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentRefreshToken>(),
                 _sharedContext.Instrumentation));
     }
 

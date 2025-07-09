@@ -102,20 +102,20 @@ public class RequestBuilder : IRequestBuilder
             memoryCache,
             secretProvider,
             _logger,
-            dbService.GetDbEntityMethodsClass<ObSealCertificateEntity>());
+            dbService.GetDbEntityMethods<ObSealCertificateEntity>());
         _obWacCertificateMethods = new ObWacCertificateMethods(
             httpClientSettingsProvider.GetSettings(),
             memoryCache,
             secretProvider,
             logger,
             tppReportingMetrics,
-            dbService.GetDbEntityMethodsClass<ObWacCertificateEntity>());
+            dbService.GetDbEntityMethods<ObWacCertificateEntity>());
         _encryptionKeyInfo = new EncryptionKeyDescriptionMethods(
             memoryCache,
             secretProvider,
             encryptionSettings,
             logger,
-            dbService.GetDbEntityMethodsClass<EncryptionKeyDescriptionEntity>());
+            dbService.GetDbEntityMethods<EncryptionKeyDescriptionEntity>());
     }
 
     public IManagementContext Management =>

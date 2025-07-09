@@ -34,9 +34,9 @@ internal class
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
 
     public DomesticPaymentConsentAuthContextPost(
-        IDbReadWriteEntityMethods<DomesticPaymentConsentAuthContextPersisted>
+        IDbEntityMethods<DomesticPaymentConsentAuthContextPersisted>
             entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> domesticPaymentConsentMethods,
         IInstrumentationClient instrumentationClient,

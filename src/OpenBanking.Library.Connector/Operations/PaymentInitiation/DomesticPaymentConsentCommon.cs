@@ -15,15 +15,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
 internal class DomesticPaymentConsentCommon
 {
-    private readonly IDbReadWriteEntityMethods<DomesticPaymentConsentAccessToken> _accessTokenEntityMethods;
-    private readonly IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> _entityMethods;
+    private readonly IDbEntityMethods<DomesticPaymentConsentAccessToken> _accessTokenEntityMethods;
+    private readonly IDbEntityMethods<DomesticPaymentConsentPersisted> _entityMethods;
     private readonly IInstrumentationClient _instrumentationClient;
-    private readonly IDbReadWriteEntityMethods<DomesticPaymentConsentRefreshToken> _refreshTokenEntityMethods;
+    private readonly IDbEntityMethods<DomesticPaymentConsentRefreshToken> _refreshTokenEntityMethods;
 
     public DomesticPaymentConsentCommon(
-        IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> entityMethods,
-        IDbReadWriteEntityMethods<DomesticPaymentConsentAccessToken> accessTokenEntityMethods,
-        IDbReadWriteEntityMethods<DomesticPaymentConsentRefreshToken> refreshTokenEntityMethods,
+        IDbEntityMethods<DomesticPaymentConsentPersisted> entityMethods,
+        IDbEntityMethods<DomesticPaymentConsentAccessToken> accessTokenEntityMethods,
+        IDbEntityMethods<DomesticPaymentConsentRefreshToken> refreshTokenEntityMethods,
         IInstrumentationClient instrumentationClient)
     {
         _entityMethods = entityMethods;

@@ -49,7 +49,7 @@ internal class DomesticPayment :
     private readonly ITimeProvider _timeProvider;
 
     public DomesticPayment(
-        IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> entityMethods,
+        IDbEntityMethods<DomesticPaymentConsentPersisted> entityMethods,
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         ITimeProvider timeProvider,

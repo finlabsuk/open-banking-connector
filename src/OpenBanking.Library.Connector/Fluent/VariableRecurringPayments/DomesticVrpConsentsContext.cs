@@ -59,14 +59,14 @@ internal class DomesticVrpConsentsContext :
             sharedContext.MemoryCache,
             sharedContext.EncryptionKeyInfo);
         _domesticVrpConsentOperations = new DomesticVrpConsentOperations(
-            sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
-            sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentPersisted>(),
+            sharedContext.DbService.GetDbMethods(),
             sharedContext.TimeProvider,
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
             sharedContext.BankProfileService,
             new ConsentAccessTokenGet(
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.DbService.GetDbMethods(),
                 _sharedContext.TimeProvider,
                 new GrantPost(
                     _sharedContext.ApiClient,
@@ -76,21 +76,21 @@ internal class DomesticVrpConsentsContext :
                 _sharedContext.Instrumentation,
                 _sharedContext.MemoryCache,
                 _sharedContext.EncryptionKeyInfo),
-            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
+            sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
             _sharedContext.ObWacCertificateMethods,
             _sharedContext.ObSealCertificateMethods,
             clientAccessTokenGet,
             new DomesticVrpConsentCommon(
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentAccessToken>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentRefreshToken>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentPersisted>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentAccessToken>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentRefreshToken>(),
                 _sharedContext.Instrumentation));
         CreateObject = _domesticVrpConsentOperations;
         ReadObject = _domesticVrpConsentOperations;
         DeleteObject =
             new DomesticVrpConsentDelete(
-                sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
-                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentPersisted>(),
+                sharedContext.DbService.GetDbMethods(),
                 sharedContext.TimeProvider,
                 sharedContext.Instrumentation,
                 sharedContext.BankProfileService,
@@ -112,10 +112,10 @@ internal class DomesticVrpConsentsContext :
             DomesticVrpConsentAuthContextReadResponse>(
             _sharedContext,
             new DomesticVrpConsentAuthContextPost(
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentAuthContextPersisted>(),
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentAuthContextPersisted>(),
+                _sharedContext.DbService.GetDbMethods(),
                 _sharedContext.TimeProvider,
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentPersisted>(),
                 _sharedContext.Instrumentation,
                 _sharedContext.BankProfileService,
                 _sharedContext.ObSealCertificateMethods));

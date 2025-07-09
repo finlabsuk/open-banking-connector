@@ -29,7 +29,7 @@ internal class ConsentAccessTokenGet
 {
     private static readonly ConcurrentDictionary<string, SemaphoreSlim> LockDictionary = new();
 
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly IDbMethods _dbSaveChangesMethod;
     private readonly IEncryptionKeyDescription _encryptionKeyInfo;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
@@ -37,7 +37,7 @@ internal class ConsentAccessTokenGet
     private readonly ITimeProvider _timeProvider;
 
     public ConsentAccessTokenGet(
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IGrantPost grantPost,
         IInstrumentationClient instrumentationClient,
