@@ -99,9 +99,18 @@ internal class DomesticPaymentConsentCommon
             ? _accessTokenEntityMethods.DbSet
             : _accessTokenEntityMethods.DbSetNoTracking;
 
-        DomesticPaymentConsentAccessToken? accessToken =
-            await db
+        DomesticPaymentConsentAccessToken? accessToken;
+        if (_dbMethods.DbProvider is not DbProvider.MongoDb)
+        {
+            accessToken = await db
                 .SingleOrDefaultAsync(x => x.DomesticPaymentConsentId == consentId && !x.IsDeleted);
+        }
+        else
+        {
+            accessToken = await db
+                .Where(x => EF.Property<string>(x, "_t") == "DomesticPaymentConsentAccessToken")
+                .SingleOrDefaultAsync(x => x.DomesticPaymentConsentId == consentId && !x.IsDeleted);
+        }
 
         return accessToken;
     }
@@ -112,9 +121,20 @@ internal class DomesticPaymentConsentCommon
             ? _refreshTokenEntityMethods.DbSet
             : _refreshTokenEntityMethods.DbSetNoTracking;
 
-        DomesticPaymentConsentRefreshToken? refreshToken =
-            await db
-                .SingleOrDefaultAsync(x => x.DomesticPaymentConsentId == consentId && !x.IsDeleted);
+        DomesticPaymentConsentRefreshToken? refreshToken;
+        if (_dbMethods.DbProvider is not DbProvider.MongoDb)
+        {
+            refreshToken =
+                await db
+                    .SingleOrDefaultAsync(x => x.DomesticPaymentConsentId == consentId && !x.IsDeleted);
+        }
+        else
+        {
+            refreshToken =
+                await db
+                    .Where(x => EF.Property<string>(x, "_t") == "DomesticPaymentConsentRefreshToken")
+                    .SingleOrDefaultAsync(x => x.DomesticPaymentConsentId == consentId && !x.IsDeleted);
+        }
 
         return refreshToken;
     }

@@ -112,7 +112,7 @@ public abstract class BaseDbContext(
 
     // Settings
     internal DbSet<SettingsEntity> Settings => Set<SettingsEntity>();
-    
+
     public IMongoDatabase GetMongoDatabase()
     {
         if (DbProvider is not DbProvider.MongoDb)
@@ -237,6 +237,18 @@ public abstract class BaseDbContext(
 
         modelBuilder.ApplyConfiguration(
             new SettingsConfig(DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
+
+        modelBuilder.Entity<EncryptedObject>()
+            .HasDiscriminator<string>("_t")
+            .HasValue<AccountAccessConsentAccessToken>("AccountAccessConsentAccessToken")
+            .HasValue<AccountAccessConsentRefreshToken>("AccountAccessConsentRefreshToken")
+            .HasValue<DomesticVrpConsentAccessToken>("DomesticVrpConsentAccessToken")
+            .HasValue<DomesticVrpConsentRefreshToken>("DomesticVrpConsentRefreshToken")
+            .HasValue<DomesticPaymentConsentAccessToken>("DomesticPaymentConsentAccessToken")
+            .HasValue<DomesticPaymentConsentRefreshToken>("DomesticPaymentConsentRefreshToken")
+            .HasValue<ExternalApiSecretEntity>("ExternalApiSecretEntity")
+            .HasValue<RegistrationAccessTokenEntity>("RegistrationAccessTokenEntity")
+            .IsComplete(false);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

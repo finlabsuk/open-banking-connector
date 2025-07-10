@@ -368,33 +368,66 @@ public class AccountAccessConsentSubtest(
 
                     // Get consent
                     IDbService dbService = serviceScopeContainer.DbService;
+                    IDbMethods dbMethods = dbService.GetDbMethods();
                     IDbEntityMethods<Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent>
                         consentEntityMethods =
                             dbService
                                 .GetDbEntityMethods<
                                     Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent>();
-                    Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent consent =
-                        consentEntityMethods
-                            .DbSet
-                            .Include(o => o.AccountAccessConsentAccessTokensNavigation)
-                            .Include(o => o.AccountAccessConsentRefreshTokensNavigation)
-                            .AsSplitQuery()
-                            .SingleOrDefault(x => x.Id == accountAccessConsentId) ??
-                        throw new KeyNotFoundException();
+                    IDbEntityMethods<AccountAccessConsentAccessToken> accessTokenMethods =
+                        dbService.GetDbEntityMethods<AccountAccessConsentAccessToken>();
+                    IDbEntityMethods<AccountAccessConsentRefreshToken> refreshTokenMethods =
+                        dbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>();
 
-                    // Ensure refresh token available
-                    AccountAccessConsentRefreshToken _ =
-                        consent
-                            .AccountAccessConsentRefreshTokensNavigation.SingleOrDefault(x => !x.IsDeleted) ??
-                        throw new Exception("Refresh token not found.");
+                    Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent consent;
+                    AccountAccessConsentAccessToken? storedAccessToken;
+                    if (dbMethods.DbProvider is not DbProvider.MongoDb)
+                    {
+                        consent =
+                            consentEntityMethods
+                                .DbSet
+                                .Include(o => o.AccountAccessConsentAccessTokensNavigation)
+                                .Include(o => o.AccountAccessConsentRefreshTokensNavigation)
+                                .AsSplitQuery()
+                                .SingleOrDefault(x => x.Id == accountAccessConsentId) ??
+                            throw new KeyNotFoundException();
+
+                        // Ensure refresh token available
+                        AccountAccessConsentRefreshToken _ =
+                            consent
+                                .AccountAccessConsentRefreshTokensNavigation.SingleOrDefault(x => !x.IsDeleted) ??
+                            throw new Exception("Refresh token not found.");
+
+                        storedAccessToken = consent
+                            .AccountAccessConsentAccessTokensNavigation.SingleOrDefault(x => !x.IsDeleted);
+                    }
+                    else
+                    {
+                        consent =
+                            consentEntityMethods
+                                .DbSet
+                                .SingleOrDefault(x => x.Id == accountAccessConsentId) ??
+                            throw new KeyNotFoundException();
+
+                        // Ensure refresh token available
+                        AccountAccessConsentRefreshToken unused2 =
+                            await refreshTokenMethods
+                                .DbSetNoTracking
+                                .Where(x => EF.Property<string>(x, "_t") == "AccountAccessConsentRefreshToken")
+                                .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consent.Id && !x.IsDeleted) ??
+                            throw new Exception("Refresh token not found.");
+
+                        storedAccessToken =
+                            await accessTokenMethods
+                                .DbSet
+                                .Where(x => EF.Property<string>(x, "_t") == "AccountAccessConsentAccessToken")
+                                .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consent.Id && !x.IsDeleted);
+                    }
 
                     // If available, delete cached access token (to force use of refresh token)
                     memoryCache.Remove(consent.GetCacheKey());
 
                     // If available, delete stored access token (to force use of refresh token) 
-                    AccountAccessConsentAccessToken? storedAccessToken =
-                        consent
-                            .AccountAccessConsentAccessTokensNavigation.SingleOrDefault(x => !x.IsDeleted);
                     if (storedAccessToken is not null)
                     {
                         storedAccessToken.UpdateIsDeleted(true, DateTimeOffset.UtcNow, modifiedBy);

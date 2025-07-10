@@ -97,9 +97,20 @@ internal class DomesticVrpConsentCommon
             ? _accessTokenEntityMethods.DbSet
             : _accessTokenEntityMethods.DbSetNoTracking;
 
-        DomesticVrpConsentAccessToken? accessToken =
-            await db
-                .SingleOrDefaultAsync(x => x.DomesticVrpConsentId == consentId && !x.IsDeleted);
+        DomesticVrpConsentAccessToken? accessToken;
+        if (_dbMethods.DbProvider is not DbProvider.MongoDb)
+        {
+            accessToken =
+                await db
+                    .SingleOrDefaultAsync(x => x.DomesticVrpConsentId == consentId && !x.IsDeleted);
+        }
+        else
+        {
+            accessToken =
+                await db
+                    .Where(x => EF.Property<string>(x, "_t") == "DomesticVrpConsentAccessToken")
+                    .SingleOrDefaultAsync(x => x.DomesticVrpConsentId == consentId && !x.IsDeleted);
+        }
 
         return accessToken;
     }
@@ -110,9 +121,20 @@ internal class DomesticVrpConsentCommon
             ? _refreshTokenEntityMethods.DbSet
             : _refreshTokenEntityMethods.DbSetNoTracking;
 
-        DomesticVrpConsentRefreshToken? refreshToken =
-            await db
-                .SingleOrDefaultAsync(x => x.DomesticVrpConsentId == consentId && !x.IsDeleted);
+        DomesticVrpConsentRefreshToken? refreshToken;
+        if (_dbMethods.DbProvider is not DbProvider.MongoDb)
+        {
+            refreshToken =
+                await db
+                    .SingleOrDefaultAsync(x => x.DomesticVrpConsentId == consentId && !x.IsDeleted);
+        }
+        else
+        {
+            refreshToken =
+                await db
+                    .Where(x => EF.Property<string>(x, "_t") == "DomesticVrpConsentRefreshToken")
+                    .SingleOrDefaultAsync(x => x.DomesticVrpConsentId == consentId && !x.IsDeleted);
+        }
 
         return refreshToken;
     }

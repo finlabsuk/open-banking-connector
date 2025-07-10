@@ -101,9 +101,20 @@ internal class AccountAccessConsentCommon
             ? _accessTokenEntityMethods.DbSet
             : _accessTokenEntityMethods.DbSetNoTracking;
 
-        AccountAccessConsentAccessToken? accessToken =
-            await db
-                .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consentId && !x.IsDeleted);
+        AccountAccessConsentAccessToken? accessToken;
+        if (_dbMethods.DbProvider is not DbProvider.MongoDb)
+        {
+            accessToken =
+                await db
+                    .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consentId && !x.IsDeleted);
+        }
+        else
+        {
+            accessToken =
+                await db
+                    .Where(x => EF.Property<string>(x, "_t") == "AccountAccessConsentAccessToken")
+                    .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consentId && !x.IsDeleted);
+        }
 
         return accessToken;
     }
@@ -162,10 +173,19 @@ internal class AccountAccessConsentCommon
             ? _refreshTokenEntityMethods.DbSet
             : _refreshTokenEntityMethods.DbSetNoTracking;
 
-        AccountAccessConsentRefreshToken? refreshToken =
-            await db
+        AccountAccessConsentRefreshToken? refreshToken;
+        if (_dbMethods.DbProvider is not DbProvider.MongoDb)
+        {
+            refreshToken = await db
                 .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consentId && !x.IsDeleted);
-
+        }
+        else
+        {
+            refreshToken =
+                await db
+                    .Where(x => EF.Property<string>(x, "_t") == "AccountAccessConsentRefreshToken")
+                    .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consentId && !x.IsDeleted);
+        }
         return refreshToken;
     }
 
