@@ -108,6 +108,54 @@ internal class AccountAccessConsentCommon
         return accessToken;
     }
 
+    public AccessTokenEntity AddNewAccessToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy,
+        Guid accountAccessConsentId)
+    {
+        var accountAccessConsentAccessToken =
+            new AccountAccessConsentAccessToken(
+                id,
+                reference,
+                isDeleted,
+                isDeletedModified,
+                isDeletedModifiedBy,
+                created,
+                createdBy,
+                accountAccessConsentId);
+        _accessTokenEntityMethods.DbSet.AddAsync(accountAccessConsentAccessToken);
+        return accountAccessConsentAccessToken;
+    }
+
+    public RefreshTokenEntity AddNewRefreshToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy,
+        Guid accountAccessConsentId)
+    {
+        var accountAccessConsentRefreshToken =
+            new AccountAccessConsentRefreshToken(
+                Guid.NewGuid(),
+                null,
+                false,
+                isDeletedModified,
+                isDeletedModifiedBy,
+                created,
+                createdBy,
+                accountAccessConsentId);
+        _refreshTokenEntityMethods.DbSet.AddAsync(accountAccessConsentRefreshToken);
+        return accountAccessConsentRefreshToken;
+    }
+
     public async Task<RefreshTokenEntity?> GetRefreshToken(Guid consentId, bool dbTracking)
     {
         IQueryable<AccountAccessConsentRefreshToken> db = dbTracking

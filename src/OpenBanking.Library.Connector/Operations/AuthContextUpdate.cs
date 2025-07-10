@@ -536,14 +536,37 @@ internal class AuthContextUpdate :
                     tokenEndpointResponse.AccessToken,
                     //11,
                     tokenEndpointResponse.ExpiresIn);
-                AccessTokenEntity newAccessTokenObject = consent.AddNewAccessToken(
-                    Guid.NewGuid(),
-                    null,
-                    false,
-                    modified,
-                    modifiedBy,
-                    modified,
-                    modifiedBy);
+                AccessTokenEntity newAccessTokenObject = consent switch
+                {
+                    AccountAccessConsent accountAccessConsent => _accountAccessConsentCommon.AddNewAccessToken(
+                        Guid.NewGuid(),
+                        null,
+                        false,
+                        modified,
+                        modifiedBy,
+                        modified,
+                        modifiedBy,
+                        accountAccessConsent.Id),
+                    DomesticPaymentConsent domesticPaymentConsent => _domesticPaymentConsentCommon.AddNewAccessToken(
+                        Guid.NewGuid(),
+                        null,
+                        false,
+                        modified,
+                        modifiedBy,
+                        modified,
+                        modifiedBy,
+                        domesticPaymentConsent.Id),
+                    DomesticVrpConsent domesticVrpConsent => _domesticVrpConsentCommon.AddNewAccessToken(
+                        Guid.NewGuid(),
+                        null,
+                        false,
+                        modified,
+                        modifiedBy,
+                        modified,
+                        modifiedBy,
+                        domesticVrpConsent.Id),
+                    _ => throw new ArgumentOutOfRangeException(nameof(consent))
+                };
                 Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newAccessTokenObject.UpdateAccessToken(
                     newAccessToken,
@@ -558,14 +581,37 @@ internal class AuthContextUpdate :
             if (tokenEndpointResponse.RefreshToken is not null)
             {
                 // Store new refresh token
-                RefreshTokenEntity newRefreshTokenObject = consent.AddNewRefreshToken(
-                    Guid.NewGuid(),
-                    null,
-                    false,
-                    modified,
-                    modifiedBy,
-                    modified,
-                    modifiedBy);
+                RefreshTokenEntity newRefreshTokenObject = consent switch
+                {
+                    AccountAccessConsent accountAccessConsent => _accountAccessConsentCommon.AddNewRefreshToken(
+                        Guid.NewGuid(),
+                        null,
+                        false,
+                        modified,
+                        modifiedBy,
+                        modified,
+                        modifiedBy,
+                        accountAccessConsent.Id),
+                    DomesticPaymentConsent domesticPaymentConsent => _domesticPaymentConsentCommon.AddNewRefreshToken(
+                        Guid.NewGuid(),
+                        null,
+                        false,
+                        modified,
+                        modifiedBy,
+                        modified,
+                        modifiedBy,
+                        domesticPaymentConsent.Id),
+                    DomesticVrpConsent domesticVrpConsent => _domesticVrpConsentCommon.AddNewRefreshToken(
+                        Guid.NewGuid(),
+                        null,
+                        false,
+                        modified,
+                        modifiedBy,
+                        modified,
+                        modifiedBy,
+                        domesticVrpConsent.Id),
+                    _ => throw new ArgumentOutOfRangeException(nameof(consent))
+                };
                 Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newRefreshTokenObject.UpdateRefreshToken(
                     tokenEndpointResponse.RefreshToken,

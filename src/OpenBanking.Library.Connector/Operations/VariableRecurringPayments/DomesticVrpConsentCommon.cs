@@ -116,4 +116,52 @@ internal class DomesticVrpConsentCommon
 
         return refreshToken;
     }
+
+    public AccessTokenEntity AddNewAccessToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy,
+        Guid domesticVrpConsentId)
+    {
+        var domesticVrpConsentAccessToken =
+            new DomesticVrpConsentAccessToken(
+                id,
+                reference,
+                isDeleted,
+                isDeletedModified,
+                isDeletedModifiedBy,
+                created,
+                createdBy,
+                domesticVrpConsentId);
+        _accessTokenEntityMethods.DbSet.AddAsync(domesticVrpConsentAccessToken);
+        return domesticVrpConsentAccessToken;
+    }
+
+    public RefreshTokenEntity AddNewRefreshToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy,
+        Guid domesticVrpConsentId)
+    {
+        var domesticVrpConsentRefreshToken =
+            new DomesticVrpConsentRefreshToken(
+                Guid.NewGuid(),
+                null,
+                false,
+                isDeletedModified,
+                isDeletedModifiedBy,
+                created,
+                createdBy,
+                domesticVrpConsentId);
+        _refreshTokenEntityMethods.DbSet.AddAsync(domesticVrpConsentRefreshToken);
+        return domesticVrpConsentRefreshToken;
+    }
 }

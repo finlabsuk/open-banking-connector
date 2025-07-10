@@ -118,4 +118,52 @@ internal class DomesticPaymentConsentCommon
 
         return refreshToken;
     }
+
+    public AccessTokenEntity AddNewAccessToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy,
+        Guid domesticPaymentConsentId)
+    {
+        var domesticPaymentConsentAccessToken =
+            new DomesticPaymentConsentAccessToken(
+                id,
+                reference,
+                isDeleted,
+                isDeletedModified,
+                isDeletedModifiedBy,
+                created,
+                createdBy,
+                domesticPaymentConsentId);
+        _accessTokenEntityMethods.DbSet.AddAsync(domesticPaymentConsentAccessToken);
+        return domesticPaymentConsentAccessToken;
+    }
+
+    public RefreshTokenEntity AddNewRefreshToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy,
+        Guid domesticPaymentConsentId)
+    {
+        var domesticPaymentConsentRefreshToken =
+            new DomesticPaymentConsentRefreshToken(
+                Guid.NewGuid(),
+                null,
+                false,
+                isDeletedModified,
+                isDeletedModifiedBy,
+                created,
+                createdBy,
+                domesticPaymentConsentId);
+        _refreshTokenEntityMethods.DbSet.AddAsync(domesticPaymentConsentRefreshToken);
+        return domesticPaymentConsentRefreshToken;
+    }
 }

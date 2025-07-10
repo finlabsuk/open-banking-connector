@@ -123,24 +123,6 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
         bankRegistration.ExternalApiId,
         bankRegistration.BankProfile.ToString());
 
-    public abstract AccessTokenEntity AddNewAccessToken(
-        Guid id,
-        string? reference,
-        bool isDeleted,
-        DateTimeOffset isDeletedModified,
-        string? isDeletedModifiedBy,
-        DateTimeOffset created,
-        string? createdBy);
-
-    public abstract RefreshTokenEntity AddNewRefreshToken(
-        Guid id,
-        string? reference,
-        bool isDeleted,
-        DateTimeOffset isDeletedModified,
-        string? isDeletedModifiedBy,
-        DateTimeOffset created,
-        string? createdBy);
-
     public void UpdateExternalApiUserId(
         string? externalApiUserId,
         DateTimeOffset externalApiUserIdModified,

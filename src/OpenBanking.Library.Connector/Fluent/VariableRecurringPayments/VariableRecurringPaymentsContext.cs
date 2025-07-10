@@ -3,17 +3,23 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
 using DomesticVrpConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent;
 using DomesticVrpOperations =
     FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments.DomesticVrp;
+using AccountAccessConsentPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurringPayments;
@@ -68,7 +74,34 @@ internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsCont
                 grantPost,
                 _sharedContext.Instrumentation,
                 _sharedContext.MemoryCache,
-                _sharedContext.EncryptionKeyInfo),
+                _sharedContext.EncryptionKeyInfo,
+                new AccountAccessConsentCommon(
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentPersisted>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>(),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                    _sharedContext.DbService.GetDbMethods()),
+                new DomesticPaymentConsentCommon(
+                    _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsent>(),
+                    _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentRefreshToken>(),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                    _sharedContext.DbService.GetDbMethods()),
+                new DomesticVrpConsentCommon(
+                    _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentPersisted>(),
+                    _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentRefreshToken>(),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                    _sharedContext.DbService.GetDbMethods())),
             _sharedContext.BankProfileService,
             _sharedContext.ObWacCertificateMethods,
             _sharedContext.ObSealCertificateMethods,
