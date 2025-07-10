@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
 
@@ -33,6 +34,12 @@ internal class
                 .WithMany(e => e.ExternalApiSecretsNavigation)
                 .HasForeignKey(e => e.BankRegistrationId)
                 .IsRequired();
+        }
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.Property(p => p.BankRegistrationId).HasElementName("bankRegistrationId");
         }
     }
 }

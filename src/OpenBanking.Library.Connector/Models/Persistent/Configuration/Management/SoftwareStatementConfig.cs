@@ -4,8 +4,10 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MongoDB.EntityFrameworkCore.Extensions;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.Management;
@@ -43,6 +45,20 @@ internal class SoftwareStatementConfig(
                 .WithMany()
                 .HasForeignKey(e => e.DefaultObWacCertificateId)
                 .IsRequired();
+        }
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.ToCollection("softwareStatement");
+            builder.Property(p => p.DefaultFragmentRedirectUrl).HasElementName("defaultFragmentRedirectUrl");
+            builder.Property(p => p.DefaultObSealCertificateId).HasElementName("defaultObSealCertificateId");
+            builder.Property(p => p.DefaultObWacCertificateId).HasElementName("defaultObWacCertificateId");
+            builder.Property(p => p.DefaultQueryRedirectUrl).HasElementName("defaultQueryRedirectUrl");
+            builder.Property(p => p.Modified).HasElementName("modified");
+            builder.Property(p => p.OrganisationId).HasElementName("organisationId");
+            builder.Property(p => p.SandboxEnvironment).HasElementName("sandboxEnvironment");
+            builder.Property(p => p.SoftwareId).HasElementName("softwareId");
         }
     }
 }

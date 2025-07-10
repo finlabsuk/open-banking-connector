@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MongoDB.EntityFrameworkCore.Extensions;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration;
@@ -38,6 +39,16 @@ internal class SettingsConfig(
                 .WithMany()
                 .HasForeignKey(e => e.CurrentEncryptionKeyDescriptionId)
                 .IsRequired();
+        }
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.ToCollection("settings");
+            builder.Property(p => p.Created).HasElementName("created");
+            builder.Property(p => p.CurrentEncryptionKeyDescriptionId)
+                .HasElementName("currentEncryptionKeyDescriptionId");
+            builder.Property(p => p.Modified).HasElementName("modified");
         }
     }
 }

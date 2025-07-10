@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MongoDB.EntityFrameworkCore.Extensions;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments;
@@ -19,5 +20,11 @@ internal class DomesticVrpConsentConfig(
     public override void Configure(EntityTypeBuilder<DomesticVrpConsent> builder)
     {
         base.Configure(builder);
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.ToCollection("domesticVrpConsent");
+        }
     }
 }

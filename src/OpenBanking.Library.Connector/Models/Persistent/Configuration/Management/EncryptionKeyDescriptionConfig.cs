@@ -5,8 +5,10 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MongoDB.EntityFrameworkCore.Extensions;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.Management;
@@ -36,5 +38,12 @@ internal class EncryptionKeyDescriptionConfig(
                         new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
                 v => JsonConvert.DeserializeObject<SecretDescription>(v)!)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.ToCollection("encryptionKeyDescription");
+            builder.Property(p => p.Key).HasElementName("key");
+        }
     }
 }

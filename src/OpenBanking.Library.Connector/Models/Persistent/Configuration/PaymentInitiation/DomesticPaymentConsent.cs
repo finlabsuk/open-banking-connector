@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MongoDB.EntityFrameworkCore.Extensions;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation;
@@ -23,5 +24,11 @@ internal class DomesticPaymentConsentConfig(
     public override void Configure(EntityTypeBuilder<DomesticPaymentConsent> builder)
     {
         base.Configure(builder);
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.ToCollection("domesticPaymentConsent");
+        }
     }
 }

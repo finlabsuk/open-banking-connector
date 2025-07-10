@@ -39,5 +39,16 @@ internal abstract class BaseConfig<TEntity>(
         {
             builder.HasQueryFilter(p => !p.IsDeleted);
         }
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.Property(p => p.Created).HasElementName("created");
+            builder.Property(p => p.CreatedBy).HasElementName("createdBy");
+            builder.Property(p => p.IsDeleted).HasElementName("isDeleted");
+            builder.Property(p => p.IsDeletedModified).HasElementName("isDeletedModified");
+            builder.Property(p => p.IsDeletedModifiedBy).HasElementName("isDeletedModifiedBy");
+            builder.Property(p => p.Reference).HasElementName("reference");
+        }
     }
 }

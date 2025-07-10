@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
@@ -47,6 +48,22 @@ internal class BaseConsentConfig<TEntity>(
                 .WithMany()
                 .HasForeignKey(e => e.BankRegistrationId)
                 .IsRequired();
+        }
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.Property(p => p.AuthContextCodeVerifier).HasElementName("authContextCodeVerifier");
+            builder.Property(p => p.AuthContextModified).HasElementName("authContextModified");
+            builder.Property(p => p.AuthContextModifiedBy).HasElementName("authContextModifiedBy");
+            builder.Property(p => p.AuthContextNonce).HasElementName("authContextNonce");
+            builder.Property(p => p.AuthContextState).HasElementName("authContextState");
+            builder.Property(p => p.BankRegistrationId).HasElementName("bankRegistrationId");
+            builder.Property(p => p.CreatedWithV4).HasElementName("createdWithV4");
+            builder.Property(p => p.ExternalApiId).HasElementName("externalApiId");
+            builder.Property(p => p.ExternalApiUserId).HasElementName("externalApiUserId");
+            builder.Property(p => p.ExternalApiUserIdModified).HasElementName("externalApiUserIdModified");
+            builder.Property(p => p.ExternalApiUserIdModifiedBy).HasElementName("externalApiUserIdModifiedBy");
         }
     }
 }

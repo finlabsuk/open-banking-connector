@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MongoDB.EntityFrameworkCore.Extensions;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.Management;
@@ -39,6 +40,15 @@ internal class ObSealCertificateConfig(
         if (_dbProvider is DbProvider.PostgreSql)
         {
             builder.Property(e => e.AssociatedKey).HasColumnType("jsonb");
+        }
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.ToCollection("obSealCertificate");
+            builder.Property(p => p.AssociatedKey).HasElementName("associatedKey");
+            builder.Property(p => p.AssociatedKeyId).HasElementName("associatedKeyId");
+            builder.Property(p => p.Certificate).HasElementName("certificate");
         }
     }
 }

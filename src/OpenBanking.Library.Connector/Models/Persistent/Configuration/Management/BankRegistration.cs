@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using MongoDB.EntityFrameworkCore.Extensions;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.Management;
@@ -100,6 +101,29 @@ internal class BankRegistrationConfig(
                 .WithMany()
                 .HasForeignKey(e => e.SoftwareStatementId)
                 .IsRequired();
+        }
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.ToCollection("bankRegistration");
+            builder.Property(p => p.AispUseV4).HasElementName("aispUseV4");
+            builder.Property(p => p.AuthorizationEndpoint).HasElementName("authorizationEndpoint");
+            builder.Property(p => p.BankGroup).HasElementName("bankGroup");
+            builder.Property(p => p.BankProfile).HasElementName("bankProfile");
+            builder.Property(p => p.DefaultFragmentRedirectUri).HasElementName("defaultFragmentRedirectUri");
+            builder.Property(p => p.DefaultQueryRedirectUri).HasElementName("defaultQueryRedirectUri");
+            builder.Property(p => p.ExternalApiId).HasElementName("externalApiId");
+            builder.Property(p => p.JwksUri).HasElementName("jwksUri");
+            builder.Property(p => p.PispUseV4).HasElementName("pispUseV4");
+            builder.Property(p => p.RedirectUris).HasElementName("redirectUris");
+            builder.Property(p => p.RegistrationEndpoint).HasElementName("registrationEndpoint");
+            builder.Property(p => p.RegistrationScope).HasElementName("registrationScope");
+            builder.Property(p => p.SoftwareStatementId).HasElementName("softwareStatementId");
+            builder.Property(p => p.TokenEndpoint).HasElementName("tokenEndpoint");
+            builder.Property(p => p.TokenEndpointAuthMethod).HasElementName("tokenEndpointAuthMethod");
+            builder.Property(p => p.UseSimulatedBank).HasElementName("useSimulatedBank");
+            builder.Property(p => p.VrpUseV4).HasElementName("vrpUseV4");
         }
     }
 }

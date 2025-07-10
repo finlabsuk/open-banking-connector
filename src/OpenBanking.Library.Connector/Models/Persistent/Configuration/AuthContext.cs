@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MongoDB.Bson;
@@ -45,6 +46,17 @@ internal class AuthContextConfig<TEntity>(
                                 Builders<BsonDocument>.Filter.Exists("CodeVerifier"),
                                 Builders<BsonDocument>.Filter.Type("CodeVerifier", BsonType.String))
                     });
+        }
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.ToCollection("authContext");
+            builder.Property(p => p.AppSessionId).HasElementName("appSessionId");
+            builder.Property(p => p.CodeVerifier).HasElementName("codeVerifier");
+            builder.Property(p => p.Nonce).HasElementName("nonce");
+            builder.Property(p => p.Reference).HasElementName("reference");
+            builder.Property(p => p.State).HasElementName("state");
         }
     }
 }

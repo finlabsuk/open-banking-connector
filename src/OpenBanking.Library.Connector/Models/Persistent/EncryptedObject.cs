@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
@@ -20,25 +19,21 @@ internal class EncryptedObject : BaseEntity
     /// <summary>
     ///     Encryption "nonce". Protected rather than private for EF Core visibility.
     /// </summary>
-    [Column("nonce")]
     protected byte[] _nonce = null!;
 
     /// <summary>
     ///     Tag. Protected rather than private for EF Core visibility.
     /// </summary>
-    [Column("tag")]
     protected byte[] _tag = null!;
 
     /// <summary>
     ///     Text. Protected rather than private for EF Core visibility.
     /// </summary>
-    [Column("text")]
     protected byte[] _text = null!;
 
     /// <summary>
     ///     Text (string). Protected rather than private for EF Core visibility.
     /// </summary>
-    [Column("text2")]
     protected string? _text2;
 
     /// <summary>

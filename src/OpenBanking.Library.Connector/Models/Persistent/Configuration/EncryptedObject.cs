@@ -3,7 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MongoDB.EntityFrameworkCore.Extensions;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration;
@@ -20,11 +22,10 @@ internal class EncryptedObjectConfig<TEntity>(
     {
         base.Configure(builder);
 
-        // Top-level property info: fields, read-only, JSON conversion, etc
-        builder.Property("_nonce");
-        builder.Property("_text");
-        builder.Property("_tag");
-        builder.Property("_text2");
+        builder.Property("_nonce").HasElementName("nonce");
+        builder.Property("_text").HasElementName("text");
+        builder.Property("_tag").HasElementName("tag");
+        builder.Property("_text2").HasElementName("text2");
 
         // Only set up relationships (foreign keys and navigations) if not MongoDB
         if (_dbProvider is not DbProvider.MongoDb)
@@ -34,6 +35,13 @@ internal class EncryptedObjectConfig<TEntity>(
                 .WithMany()
                 .HasForeignKey(e => e.EncryptionKeyDescriptionId)
                 .IsRequired();
+        }
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.ToCollection("encryptedObject");
+            builder.Property(p => p.EncryptionKeyDescriptionId).HasElementName("encryptionKeyDescriptionId");
         }
     }
 }
