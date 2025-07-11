@@ -187,12 +187,19 @@ public class StartupTasksHostedService : IHostedService
 
         var dbContext = scope2.ServiceProvider.GetRequiredService<BaseDbContext>();
 
+        await new SettingsCleanup()
+            .Cleanup(
+                dbContext,
+                _keySettings,
+                _encryptionSettings,
+                _instrumentationClient,
+                _timeProvider,
+                cancellationToken);
+
         await new EncryptionKeyDescriptionCleanup()
             .Cleanup(
                 dbContext,
                 _secretProvider,
-                _keySettings,
-                _encryptionSettings,
                 _memoryCache,
                 _instrumentationClient,
                 _timeProvider,

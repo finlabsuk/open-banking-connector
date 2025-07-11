@@ -111,6 +111,8 @@ public abstract class BaseDbContext(
         Set<RegistrationAccessTokenEntity>();
 
     // Settings
+    internal DbSet<SettingsEntity> Settings => Set<SettingsEntity>();
+    
     public IMongoDatabase GetMongoDatabase()
     {
         if (DbProvider is not DbProvider.MongoDb)
@@ -232,6 +234,9 @@ public abstract class BaseDbContext(
             new ExternalApiSecretConfig(false, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
         modelBuilder.ApplyConfiguration(
             new RegistrationAccessTokenConfig(false, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
+
+        modelBuilder.ApplyConfiguration(
+            new SettingsConfig(DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
