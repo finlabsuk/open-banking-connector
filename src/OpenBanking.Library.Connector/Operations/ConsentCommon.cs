@@ -76,6 +76,7 @@ internal class
                 .SingleAsync(x => x.Id == bankRegistration.SoftwareStatementId);
             externalApiSecret = await _externalApiSecretMethods
                 .DbSetNoTracking
+                .Where(x => EF.Property<string>(x, "_t") == nameof(ExternalApiSecretEntity))
                 .SingleOrDefaultAsync(x => x.BankRegistrationId == bankRegistration.Id && !x.IsDeleted);
         }
         string tokenEndpoint = bankRegistration.TokenEndpoint;

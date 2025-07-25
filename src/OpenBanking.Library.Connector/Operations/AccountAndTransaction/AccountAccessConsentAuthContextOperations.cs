@@ -11,6 +11,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
@@ -26,9 +27,6 @@ using AccountAccessConsentAuthContextRequest =
     AccountAccessConsentAuthContext;
 using AccountAccessConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
-using AccountAccessConsentAuthContextPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.
-    AccountAccessConsentAuthContext;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 
@@ -40,8 +38,8 @@ internal class
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
     private readonly IBankProfileService _bankProfileService;
     private readonly ClientAccessTokenGet _clientAccessTokenGet;
-    private readonly IDbMethods _dbSaveChangesMethod;
-    private readonly IDbEntityMethods<AccountAccessConsentAuthContextPersisted> _entityMethods;
+    private readonly IDbMethods _dbMethods;
+    private readonly IDbEntityMethods<AccountAccessConsentAuthContext> _entityMethods;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
@@ -49,9 +47,9 @@ internal class
     private readonly ITimeProvider _timeProvider;
 
     public AccountAccessConsentAuthContextOperations(
-        IDbEntityMethods<AccountAccessConsentAuthContextPersisted>
+        IDbEntityMethods<AccountAccessConsentAuthContext>
             entityMethods,
-        IDbMethods dbSaveChangesMethod,
+        IDbMethods dbMethods,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IBankProfileService bankProfileService,
@@ -62,7 +60,7 @@ internal class
         IApiVariantMapper mapper)
     {
         _entityMethods = entityMethods;
-        _dbSaveChangesMethod = dbSaveChangesMethod;
+        _dbMethods = dbMethods;
         _timeProvider = timeProvider;
         _instrumentationClient = instrumentationClient;
         _bankProfileService = bankProfileService;
@@ -237,7 +235,7 @@ internal class
 
         // Create persisted entity
         DateTimeOffset utcNow = _timeProvider.GetUtcNow();
-        var entity = new AccountAccessConsentAuthContextPersisted(
+        var entity = new AccountAccessConsentAuthContext(
             Guid.NewGuid(),
             request.Reference,
             false,
@@ -268,7 +266,7 @@ internal class
             };
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
-        await _dbSaveChangesMethod.SaveChangesAsync();
+        await _dbMethods.SaveChangesAsync();
 
         return (response, nonErrorMessages);
     }
@@ -281,12 +279,28 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Create persisted entity
-        AccountAccessConsentAuthContextPersisted persistedObject =
-            await _entityMethods
-                .DbSetNoTracking
-                .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
-            throw new KeyNotFoundException(
-                $"No record found for AccountAccessConsentAuthContext with ID {readParams.Id}.");
+        AccountAccessConsentAuthContext persistedObject;
+        if (_dbMethods.DbProvider is not DbProvider.MongoDb)
+        {
+            persistedObject =
+                await _entityMethods
+                    .DbSetNoTracking
+                    .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
+                throw new KeyNotFoundException(
+                    $"No record found for AccountAccessConsentAuthContext with ID {readParams.Id}.");
+        }
+        else
+        {
+            persistedObject =
+                await _entityMethods
+                    .DbSetNoTracking
+                    .Where(
+                        x =>
+                            EF.Property<string>(x, "_t") == nameof(AccountAccessConsentAuthContext))
+                    .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
+                throw new KeyNotFoundException(
+                    $"No record found for AccountAccessConsentAuthContext with ID {readParams.Id}.");
+        }
 
         // Create response
         AccountAccessConsentAuthContextReadResponse response = persistedObject.PublicGetLocalResponse;

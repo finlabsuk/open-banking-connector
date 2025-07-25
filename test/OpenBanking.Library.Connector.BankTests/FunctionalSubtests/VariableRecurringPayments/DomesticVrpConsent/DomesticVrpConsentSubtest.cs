@@ -279,14 +279,14 @@ public class DomesticVrpConsentSubtest(
                         DomesticVrpConsentRefreshToken unused2 =
                             await refreshTokenMethods
                                 .DbSetNoTracking
-                                .Where(x => EF.Property<string>(x, "_t") == "DomesticVrpConsentRefreshToken")
+                                .Where(x => EF.Property<string>(x, "_t") == nameof(DomesticVrpConsentRefreshToken))
                                 .SingleOrDefaultAsync(x => x.DomesticVrpConsentId == consent.Id && !x.IsDeleted) ??
                             throw new Exception("Refresh token not found.");
 
                         storedAccessToken =
                             await accessTokenMethods
                                 .DbSet
-                                .Where(x => EF.Property<string>(x, "_t") == "DomesticVrpConsentAccessToken")
+                                .Where(x => EF.Property<string>(x, "_t") == nameof(DomesticVrpConsentAccessToken))
                                 .SingleOrDefaultAsync(x => x.DomesticVrpConsentId == consent.Id && !x.IsDeleted);
                     }
 

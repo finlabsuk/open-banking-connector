@@ -90,6 +90,7 @@ internal class AccountAccessConsentCommon
                 .SingleAsync(x => x.Id == bankRegistration.SoftwareStatementId);
             externalApiSecret = await _externalApiSecretMethods
                 .DbSetNoTracking
+                .Where(x => EF.Property<string>(x, "_t") == nameof(ExternalApiSecretEntity))
                 .SingleOrDefaultAsync(x => x.BankRegistrationId == bankRegistration.Id && !x.IsDeleted);
         }
         return (persistedConsent, bankRegistration, softwareStatement, externalApiSecret);
@@ -112,7 +113,7 @@ internal class AccountAccessConsentCommon
         {
             accessToken =
                 await db
-                    .Where(x => EF.Property<string>(x, "_t") == "AccountAccessConsentAccessToken")
+                    .Where(x => EF.Property<string>(x, "_t") == nameof(AccountAccessConsentAccessToken))
                     .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consentId && !x.IsDeleted);
         }
 
@@ -183,7 +184,7 @@ internal class AccountAccessConsentCommon
         {
             refreshToken =
                 await db
-                    .Where(x => EF.Property<string>(x, "_t") == "AccountAccessConsentRefreshToken")
+                    .Where(x => EF.Property<string>(x, "_t") == nameof(AccountAccessConsentRefreshToken))
                     .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consentId && !x.IsDeleted);
         }
         return refreshToken;

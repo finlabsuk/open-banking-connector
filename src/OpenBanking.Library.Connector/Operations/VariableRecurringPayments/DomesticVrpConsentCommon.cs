@@ -86,6 +86,7 @@ internal class DomesticVrpConsentCommon
                 .SingleAsync(x => x.Id == bankRegistration.SoftwareStatementId);
             externalApiSecret = await _externalApiSecretMethods
                 .DbSetNoTracking
+                .Where(x => EF.Property<string>(x, "_t") == nameof(ExternalApiSecretEntity))
                 .SingleOrDefaultAsync(x => x.BankRegistrationId == bankRegistration.Id && !x.IsDeleted);
         }
         return (persistedConsent, bankRegistration, softwareStatement, externalApiSecret);
@@ -108,7 +109,7 @@ internal class DomesticVrpConsentCommon
         {
             accessToken =
                 await db
-                    .Where(x => EF.Property<string>(x, "_t") == "DomesticVrpConsentAccessToken")
+                    .Where(x => EF.Property<string>(x, "_t") == nameof(DomesticVrpConsentAccessToken))
                     .SingleOrDefaultAsync(x => x.DomesticVrpConsentId == consentId && !x.IsDeleted);
         }
 
@@ -132,7 +133,7 @@ internal class DomesticVrpConsentCommon
         {
             refreshToken =
                 await db
-                    .Where(x => EF.Property<string>(x, "_t") == "DomesticVrpConsentRefreshToken")
+                    .Where(x => EF.Property<string>(x, "_t") == nameof(DomesticVrpConsentRefreshToken))
                     .SingleOrDefaultAsync(x => x.DomesticVrpConsentId == consentId && !x.IsDeleted);
         }
 

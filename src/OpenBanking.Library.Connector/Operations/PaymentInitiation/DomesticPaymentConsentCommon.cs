@@ -88,6 +88,7 @@ internal class DomesticPaymentConsentCommon
                 .SingleAsync(x => x.Id == bankRegistration.SoftwareStatementId);
             externalApiSecret = await _externalApiSecretMethods
                 .DbSetNoTracking
+                .Where(x => EF.Property<string>(x, "_t") == nameof(ExternalApiSecretEntity))
                 .SingleOrDefaultAsync(x => x.BankRegistrationId == bankRegistration.Id && !x.IsDeleted);
         }
         return (persistedConsent, bankRegistration, softwareStatement, externalApiSecret);
@@ -108,7 +109,7 @@ internal class DomesticPaymentConsentCommon
         else
         {
             accessToken = await db
-                .Where(x => EF.Property<string>(x, "_t") == "DomesticPaymentConsentAccessToken")
+                .Where(x => EF.Property<string>(x, "_t") == nameof(DomesticPaymentConsentAccessToken))
                 .SingleOrDefaultAsync(x => x.DomesticPaymentConsentId == consentId && !x.IsDeleted);
         }
 
@@ -132,7 +133,7 @@ internal class DomesticPaymentConsentCommon
         {
             refreshToken =
                 await db
-                    .Where(x => EF.Property<string>(x, "_t") == "DomesticPaymentConsentRefreshToken")
+                    .Where(x => EF.Property<string>(x, "_t") == nameof(DomesticPaymentConsentRefreshToken))
                     .SingleOrDefaultAsync(x => x.DomesticPaymentConsentId == consentId && !x.IsDeleted);
         }
 

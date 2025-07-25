@@ -413,14 +413,14 @@ public class AccountAccessConsentSubtest(
                         AccountAccessConsentRefreshToken unused2 =
                             await refreshTokenMethods
                                 .DbSetNoTracking
-                                .Where(x => EF.Property<string>(x, "_t") == "AccountAccessConsentRefreshToken")
+                                .Where(x => EF.Property<string>(x, "_t") == nameof(AccountAccessConsentRefreshToken))
                                 .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consent.Id && !x.IsDeleted) ??
                             throw new Exception("Refresh token not found.");
 
                         storedAccessToken =
                             await accessTokenMethods
                                 .DbSet
-                                .Where(x => EF.Property<string>(x, "_t") == "AccountAccessConsentAccessToken")
+                                .Where(x => EF.Property<string>(x, "_t") == nameof(AccountAccessConsentAccessToken))
                                 .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consent.Id && !x.IsDeleted);
                     }
 

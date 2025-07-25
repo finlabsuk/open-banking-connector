@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -19,8 +20,6 @@ using DomesticPaymentConsentAuthContextRequest =
     DomesticPaymentConsentAuthContext;
 using DomesticPaymentConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsent;
-using DomesticPaymentConsentAuthContextPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 
@@ -30,17 +29,17 @@ internal class
     IObjectRead<DomesticPaymentConsentAuthContextReadResponse, LocalReadParams>
 {
     private readonly IBankProfileService _bankProfileService;
-    private readonly IDbMethods _dbSaveChangesMethod;
+    private readonly IDbMethods _dbMethods;
     private readonly DomesticPaymentConsentCommon _domesticPaymentConsentCommon;
-    private readonly IDbEntityMethods<DomesticPaymentConsentAuthContextPersisted> _entityMethods;
+    private readonly IDbEntityMethods<DomesticPaymentConsentAuthContext> _entityMethods;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
     private readonly ITimeProvider _timeProvider;
 
     public DomesticPaymentConsentAuthContextOperations(
-        IDbEntityMethods<DomesticPaymentConsentAuthContextPersisted>
+        IDbEntityMethods<DomesticPaymentConsentAuthContext>
             entityMethods,
-        IDbMethods dbSaveChangesMethod,
+        IDbMethods dbMethods,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IBankProfileService bankProfileService,
@@ -48,7 +47,7 @@ internal class
         DomesticPaymentConsentCommon domesticPaymentConsentCommon)
     {
         _entityMethods = entityMethods;
-        _dbSaveChangesMethod = dbSaveChangesMethod;
+        _dbMethods = dbMethods;
         _timeProvider = timeProvider;
         _instrumentationClient = instrumentationClient;
         _bankProfileService = bankProfileService;
@@ -122,7 +121,7 @@ internal class
         // Create persisted entity
         DateTimeOffset utcNow = _timeProvider.GetUtcNow();
 
-        var entity = new DomesticPaymentConsentAuthContextPersisted(
+        var entity = new DomesticPaymentConsentAuthContext(
             Guid.NewGuid(),
             request.Reference,
             false,
@@ -153,7 +152,7 @@ internal class
             };
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
-        await _dbSaveChangesMethod.SaveChangesAsync();
+        await _dbMethods.SaveChangesAsync();
 
         return (response, nonErrorMessages);
     }
@@ -167,12 +166,28 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Create persisted entity
-        DomesticPaymentConsentAuthContextPersisted persistedObject =
-            await _entityMethods
-                .DbSetNoTracking
-                .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
-            throw new KeyNotFoundException(
-                $"No record found for  DomesticPaymentConsentAuthContext with ID {readParams.Id}.");
+        DomesticPaymentConsentAuthContext persistedObject;
+        if (_dbMethods.DbProvider is not DbProvider.MongoDb)
+        {
+            persistedObject =
+                await _entityMethods
+                    .DbSetNoTracking
+                    .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
+                throw new KeyNotFoundException(
+                    $"No record found for  DomesticPaymentConsentAuthContext with ID {readParams.Id}.");
+        }
+        else
+        {
+            persistedObject =
+                await _entityMethods
+                    .DbSetNoTracking
+                    .Where(
+                        x =>
+                            EF.Property<string>(x, "_t") == nameof(DomesticPaymentConsentAuthContext))
+                    .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
+                throw new KeyNotFoundException(
+                    $"No record found for DomesticPaymentConsentAuthContext with ID {readParams.Id}.");
+        }
 
         // Create response
         DomesticPaymentConsentAuthContextReadResponse response = persistedObject.PublicGetLocalResponse;

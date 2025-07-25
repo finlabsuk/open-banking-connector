@@ -157,7 +157,6 @@ public abstract class BaseDbContext(
             new EncryptionKeyDescriptionConfig(true, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
 
         // Auth contexts (note global query filter not supported for inherited types)
-        // var x = new AuthContextConfig(DbProvider, true, JsonFormatting);
         modelBuilder.ApplyConfiguration(
             new AuthContextConfig(true, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
         modelBuilder.ApplyConfiguration(
@@ -179,6 +178,7 @@ public abstract class BaseDbContext(
                 DbProvider,
                 IsRelationalNotDocumentDatabase,
                 _jsonFormatting));
+
         // Consents
         modelBuilder.ApplyConfiguration(
             new AccountAccessConsentConfig(true, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
@@ -187,7 +187,7 @@ public abstract class BaseDbContext(
         modelBuilder.ApplyConfiguration(
             new DomesticVrpConsentConfig(true, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
 
-        // Encrypted objects
+        // Encrypted objects (note global query filter not supported for inherited types)
         modelBuilder.ApplyConfiguration(
             new EncryptedObjectConfig<EncryptedObject>(
                 true,
@@ -235,20 +235,42 @@ public abstract class BaseDbContext(
         modelBuilder.ApplyConfiguration(
             new RegistrationAccessTokenConfig(false, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
 
+        // Settings
         modelBuilder.ApplyConfiguration(
             new SettingsConfig(DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
 
-        modelBuilder.Entity<EncryptedObject>()
-            .HasDiscriminator<string>("_t")
-            .HasValue<AccountAccessConsentAccessToken>("AccountAccessConsentAccessToken")
-            .HasValue<AccountAccessConsentRefreshToken>("AccountAccessConsentRefreshToken")
-            .HasValue<DomesticVrpConsentAccessToken>("DomesticVrpConsentAccessToken")
-            .HasValue<DomesticVrpConsentRefreshToken>("DomesticVrpConsentRefreshToken")
-            .HasValue<DomesticPaymentConsentAccessToken>("DomesticPaymentConsentAccessToken")
-            .HasValue<DomesticPaymentConsentRefreshToken>("DomesticPaymentConsentRefreshToken")
-            .HasValue<ExternalApiSecretEntity>("ExternalApiSecretEntity")
-            .HasValue<RegistrationAccessTokenEntity>("RegistrationAccessTokenEntity")
-            .IsComplete(false);
+        // In case of MongoDB, register discriminator property "_t" as shadow property so can filter on this as MongoDB
+        // provider doesn't do this automatically.
+        if (DbProvider is DbProvider.MongoDb)
+        {
+            modelBuilder.Entity<EncryptedObject>()
+                .HasDiscriminator<string>("_t")
+                .HasValue<AccountAccessConsentAccessToken>(
+                    nameof(Models.Persistent.AccountAndTransaction.AccountAccessConsentAccessToken))
+                .HasValue<AccountAccessConsentRefreshToken>(
+                    nameof(Models.Persistent.AccountAndTransaction.AccountAccessConsentRefreshToken))
+                .HasValue<DomesticPaymentConsentAccessToken>(
+                    nameof(Models.Persistent.PaymentInitiation.DomesticPaymentConsentAccessToken))
+                .HasValue<DomesticPaymentConsentRefreshToken>(
+                    nameof(Models.Persistent.PaymentInitiation.DomesticPaymentConsentRefreshToken))
+                .HasValue<DomesticVrpConsentAccessToken>(
+                    nameof(Models.Persistent.VariableRecurringPayments.DomesticVrpConsentAccessToken))
+                .HasValue<DomesticVrpConsentRefreshToken>(
+                    nameof(Models.Persistent.VariableRecurringPayments.DomesticVrpConsentRefreshToken))
+                .HasValue<ExternalApiSecretEntity>(nameof(ExternalApiSecretEntity))
+                .HasValue<RegistrationAccessTokenEntity>(nameof(RegistrationAccessTokenEntity))
+                .IsComplete();
+
+            modelBuilder.Entity<AuthContext>()
+                .HasDiscriminator<string>("_t")
+                .HasValue<AccountAccessConsentAuthContext>(
+                    nameof(Models.Persistent.AccountAndTransaction.AccountAccessConsentAuthContext))
+                .HasValue<DomesticPaymentConsentAuthContext>(
+                    nameof(Models.Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext))
+                .HasValue<DomesticVrpConsentAuthContext>(
+                    nameof(Models.Persistent.VariableRecurringPayments.DomesticVrpConsentAuthContext))
+                .IsComplete();
+        }
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

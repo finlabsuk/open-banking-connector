@@ -531,9 +531,11 @@ internal class
                 .SingleAsync(x => x.Id == entity.SoftwareStatementId);
             externalApiSecret = await _externalApiSecretMethods
                 .DbSetNoTracking
+                .Where(x => EF.Property<string>(x, "_t") == nameof(ExternalApiSecretEntity))
                 .SingleOrDefaultAsync(x => x.BankRegistrationId == entity.Id && !x.IsDeleted);
             registrationAccessTokenEntity = await _registrationAccessTokenMethods
                 .DbSetNoTracking
+                .Where(x => EF.Property<string>(x, "_t") == nameof(RegistrationAccessTokenEntity))
                 .SingleOrDefaultAsync(x => x.BankRegistrationId == entity.Id && !x.IsDeleted);
         }
         string externalApiId = entity.ExternalApiId;
@@ -746,9 +748,11 @@ internal class
             {
                 externalApiSecretEntity = await _externalApiSecretMethods
                     .DbSetNoTracking
+                    .Where(x => EF.Property<string>(x, "_t") == nameof(ExternalApiSecretEntity))
                     .SingleOrDefaultAsync(x => x.BankRegistrationId == existingRegistration.Id && !x.IsDeleted);
                 registrationAccessTokenEntity = await _registrationAccessTokenMethods
                     .DbSetNoTracking
+                    .Where(x => EF.Property<string>(x, "_t") == nameof(RegistrationAccessTokenEntity))
                     .SingleOrDefaultAsync(x => x.BankRegistrationId == existingRegistration.Id && !x.IsDeleted);
             }
 
