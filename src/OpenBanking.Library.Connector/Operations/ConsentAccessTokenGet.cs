@@ -10,16 +10,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.Extensions.Caching.Memory;
@@ -31,14 +25,32 @@ internal delegate Task<AccessTokenEntity?> GetAccessTokenDelegate(Guid consentId
 
 internal delegate Task<RefreshTokenEntity?> GetRefreshTokenDelegate(Guid consentId, bool dbTracking);
 
+internal delegate Task<AccessTokenEntity> AddNewAccessTokenDelegate(
+    Guid id,
+    string? reference,
+    bool isDeleted,
+    DateTimeOffset isDeletedModified,
+    string? isDeletedModifiedBy,
+    DateTimeOffset created,
+    string? createdBy,
+    Guid consentId);
+
+internal delegate Task<RefreshTokenEntity> AddNewRefreshTokenDelegate(
+    Guid id,
+    string? reference,
+    bool isDeleted,
+    DateTimeOffset isDeletedModified,
+    string? isDeletedModifiedBy,
+    DateTimeOffset created,
+    string? createdBy,
+    Guid consentId);
+
 internal class ConsentAccessTokenGet
 {
     private static readonly ConcurrentDictionary<string, SemaphoreSlim> LockDictionary = new();
-    private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
 
     private readonly IDbMethods _dbSaveChangesMethod;
-    private readonly DomesticPaymentConsentCommon _domesticPaymentConsentCommon;
-    private readonly DomesticVrpConsentCommon _domesticVrpConsentCommon;
+
     private readonly IEncryptionKeyDescription _encryptionKeyInfo;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
@@ -51,10 +63,7 @@ internal class ConsentAccessTokenGet
         IGrantPost grantPost,
         IInstrumentationClient instrumentationClient,
         IMemoryCache memoryCache,
-        IEncryptionKeyDescription encryptionKeyInfo,
-        AccountAccessConsentCommon accountAccessConsentCommon,
-        DomesticPaymentConsentCommon domesticPaymentConsentCommon,
-        DomesticVrpConsentCommon domesticVrpConsentCommon)
+        IEncryptionKeyDescription encryptionKeyInfo)
     {
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
@@ -62,9 +71,6 @@ internal class ConsentAccessTokenGet
         _instrumentationClient = instrumentationClient;
         _memoryCache = memoryCache;
         _encryptionKeyInfo = encryptionKeyInfo;
-        _accountAccessConsentCommon = accountAccessConsentCommon;
-        _domesticPaymentConsentCommon = domesticPaymentConsentCommon;
-        _domesticVrpConsentCommon = domesticVrpConsentCommon;
     }
 
     public async Task<string> GetAccessTokenAndUpdateConsent<TConsentEntity>(
@@ -74,6 +80,8 @@ internal class ConsentAccessTokenGet
         BankRegistrationEntity bankRegistration,
         GetAccessTokenDelegate getAccessToken,
         GetRefreshTokenDelegate getRefreshToken,
+        AddNewAccessTokenDelegate addNewAccessToken,
+        AddNewRefreshTokenDelegate addNewRefreshToken,
         ExternalApiSecretEntity? externalApiSecretEntity,
         bool useOpenIdConnect,
         IApiClient apiClient,
@@ -203,37 +211,15 @@ internal class ConsentAccessTokenGet
             const int expiryThresholdForSaving = 24 * 60 * 60; // one day
             if (newAccessToken.ExpiresIn > expiryThresholdForSaving)
             {
-                AccessTokenEntity newAccessTokenObject = consent switch
-                {
-                    AccountAccessConsent accountAccessConsent => _accountAccessConsentCommon.AddNewAccessToken(
-                        Guid.NewGuid(),
-                        null,
-                        false,
-                        modified,
-                        modifiedBy,
-                        modified,
-                        modifiedBy,
-                        accountAccessConsent.Id),
-                    DomesticPaymentConsent domesticPaymentConsent => _domesticPaymentConsentCommon.AddNewAccessToken(
-                        Guid.NewGuid(),
-                        null,
-                        false,
-                        modified,
-                        modifiedBy,
-                        modified,
-                        modifiedBy,
-                        domesticPaymentConsent.Id),
-                    DomesticVrpConsent domesticVrpConsent => _domesticVrpConsentCommon.AddNewAccessToken(
-                        Guid.NewGuid(),
-                        null,
-                        false,
-                        modified,
-                        modifiedBy,
-                        modified,
-                        modifiedBy,
-                        domesticVrpConsent.Id),
-                    _ => throw new ArgumentOutOfRangeException(nameof(consent))
-                };
+                AccessTokenEntity newAccessTokenObject = await addNewAccessToken(
+                    Guid.NewGuid(),
+                    null,
+                    false,
+                    modified,
+                    modifiedBy,
+                    modified,
+                    modifiedBy,
+                    consent.Id);
                 Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newAccessTokenObject.UpdateAccessToken(
                     newAccessToken,
@@ -251,37 +237,15 @@ internal class ConsentAccessTokenGet
                 storedRefreshTokenEntity.UpdateIsDeleted(true, modified, modifiedBy);
 
                 // Store new refresh token
-                RefreshTokenEntity newRefreshTokenObject = consent switch
-                {
-                    AccountAccessConsent accountAccessConsent => _accountAccessConsentCommon.AddNewRefreshToken(
-                        Guid.NewGuid(),
-                        null,
-                        false,
-                        modified,
-                        modifiedBy,
-                        modified,
-                        modifiedBy,
-                        accountAccessConsent.Id),
-                    DomesticPaymentConsent domesticPaymentConsent => _domesticPaymentConsentCommon.AddNewRefreshToken(
-                        Guid.NewGuid(),
-                        null,
-                        false,
-                        modified,
-                        modifiedBy,
-                        modified,
-                        modifiedBy,
-                        domesticPaymentConsent.Id),
-                    DomesticVrpConsent domesticVrpConsent => _domesticVrpConsentCommon.AddNewRefreshToken(
-                        Guid.NewGuid(),
-                        null,
-                        false,
-                        modified,
-                        modifiedBy,
-                        modified,
-                        modifiedBy,
-                        domesticVrpConsent.Id),
-                    _ => throw new ArgumentOutOfRangeException(nameof(consent))
-                };
+                RefreshTokenEntity newRefreshTokenObject = await addNewRefreshToken(
+                    Guid.NewGuid(),
+                    null,
+                    false,
+                    modified,
+                    modifiedBy,
+                    modified,
+                    modifiedBy,
+                    consent.Id);
                 Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newRefreshTokenObject.UpdateRefreshToken(
                     tokenEndpointResponse.RefreshToken,

@@ -203,6 +203,8 @@ internal class
                 bankRegistration,
                 _accountAccessConsentCommon.GetAccessToken,
                 _accountAccessConsentCommon.GetRefreshToken,
+                _accountAccessConsentCommon.AddNewAccessToken,
+                _accountAccessConsentCommon.AddNewRefreshToken,
                 externalApiSecret,
                 bankProfile.UseOpenIdConnect,
                 apiClient,

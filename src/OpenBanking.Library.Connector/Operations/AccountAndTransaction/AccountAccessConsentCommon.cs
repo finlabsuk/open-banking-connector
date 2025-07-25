@@ -119,7 +119,7 @@ internal class AccountAccessConsentCommon
         return accessToken;
     }
 
-    public AccessTokenEntity AddNewAccessToken(
+    public async Task<AccessTokenEntity> AddNewAccessToken(
         Guid id,
         string? reference,
         bool isDeleted,
@@ -139,11 +139,11 @@ internal class AccountAccessConsentCommon
                 created,
                 createdBy,
                 accountAccessConsentId);
-        _accessTokenEntityMethods.DbSet.AddAsync(accountAccessConsentAccessToken);
+        await _accessTokenEntityMethods.DbSet.AddAsync(accountAccessConsentAccessToken);
         return accountAccessConsentAccessToken;
     }
 
-    public RefreshTokenEntity AddNewRefreshToken(
+    public async Task<RefreshTokenEntity> AddNewRefreshToken(
         Guid id,
         string? reference,
         bool isDeleted,
@@ -155,15 +155,15 @@ internal class AccountAccessConsentCommon
     {
         var accountAccessConsentRefreshToken =
             new AccountAccessConsentRefreshToken(
-                Guid.NewGuid(),
-                null,
-                false,
+                id,
+                reference,
+                isDeleted,
                 isDeletedModified,
                 isDeletedModifiedBy,
                 created,
                 createdBy,
                 accountAccessConsentId);
-        _refreshTokenEntityMethods.DbSet.AddAsync(accountAccessConsentRefreshToken);
+        await _refreshTokenEntityMethods.DbSet.AddAsync(accountAccessConsentRefreshToken);
         return accountAccessConsentRefreshToken;
     }
 

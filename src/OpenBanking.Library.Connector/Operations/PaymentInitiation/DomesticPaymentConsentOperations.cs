@@ -597,6 +597,8 @@ internal class
                 bankRegistration,
                 _domesticPaymentConsentCommon.GetAccessToken,
                 _domesticPaymentConsentCommon.GetRefreshToken,
+                _domesticPaymentConsentCommon.AddNewAccessToken,
+                _domesticPaymentConsentCommon.AddNewRefreshToken,
                 externalApiSecret,
                 bankProfile.UseOpenIdConnect,
                 apiClient,
