@@ -73,7 +73,7 @@ public class ConsentAuth
 
             // Perform automated auth
             TimeSpan timeOut =
-                Debugger.IsAttached ? TimeSpan.FromMinutes(10) : TimeSpan.FromSeconds(30);
+                Debugger.IsAttached ? TimeSpan.FromMinutes(10) : TimeSpan.FromSeconds(40);
             waitForRedirect = redirectObserver.WaitForRedirect(timeOut);
             await AutomatedAuthAsync(
                 authUrl,
@@ -114,6 +114,7 @@ public class ConsentAuth
         using IPlaywright playwright = await Playwright.CreateAsync();
         await using IBrowser browser = await playwright.Chromium.LaunchAsync(_launchOptions);
         IPage page = await browser.NewPageAsync();
+        page.SetDefaultTimeout(40000);
         await page.GotoAsync(authUrl);
         await bankUiMethods.PerformConsentAuthUiInteractions(consentVariety, page, bankUser);
 
