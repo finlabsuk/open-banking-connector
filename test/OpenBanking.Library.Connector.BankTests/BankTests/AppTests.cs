@@ -378,7 +378,7 @@ public class AppTests
 
         var modifiedBy = "Automated bank tests";
 
-        // Create and read software statement (incl. certificates)
+        // Create and read software statement (incl. encryption key, certificates)
         string softwareStatementEnvFile = Path.Combine(
             AppConfiguration.RequestsDirectory,
             "SoftwareStatement",
@@ -390,12 +390,14 @@ public class AppTests
             softwareStatementEnvs.Values.FirstOrDefault(x => x.SoftwareStatementName == testData.SoftwareStatement) ??
             throw new InvalidOperationException(
                 $"Software statement {testData.SoftwareStatement} specified but not found.");
-        (ObWacCertificateResponse obWacCertificateResponse, ObSealCertificateResponse obSealCertificateResponse,
+        (EncryptionKeyDescriptionResponse encryptionKeyResponse, ObWacCertificateResponse obWacCertificateResponse,
+            ObSealCertificateResponse obSealCertificateResponse,
             SoftwareStatementResponse softwareStatementResponse) = await SoftwareStatementCreate(
             softwareStatementEnv,
             modifiedBy,
             testNameUnique,
             managementApiClient);
+        Guid encryptionKeyDescriptionId = encryptionKeyResponse.Id;
         Guid obWacCertificateId = obWacCertificateResponse.Id;
         Guid obSealCertificateId = obSealCertificateResponse.Id;
         Guid softwareStatementId = softwareStatementResponse.Id;
@@ -603,6 +605,7 @@ public class AppTests
         await BankRegistrationDelete(bankRegistrationId, true, managementApiClient);
 
         await SoftwareStatementDelete(
+            encryptionKeyDescriptionId,
             obWacCertificateId,
             obSealCertificateId,
             softwareStatementId,
@@ -627,13 +630,18 @@ public class AppTests
         };
 
     private async
-        Task<(BaseResponse obWacCertificateDeleteResponse, BaseResponse obSealCertificateDeleteResponse, BaseResponse
+        Task<(BaseResponse encryptionKeyDescriptionResponse, BaseResponse obWacCertificateDeleteResponse, BaseResponse
+            obSealCertificateDeleteResponse, BaseResponse
             softwareStatementDeleteResponse)> SoftwareStatementDelete(
+            Guid encryptionKeyDescriptionId,
             Guid obWacCertificateId,
             Guid obSealCertificateId,
             Guid softwareStatementId,
             ManagementApiClient managementApiClient)
     {
+        BaseResponse encryptionKeyDescriptionResponse =
+            await managementApiClient.EncryptionKeyDescriptionDelete(encryptionKeyDescriptionId);
+
         BaseResponse obWacCertificateDeleteResponse =
             await managementApiClient.ObWacCertificateDelete(obWacCertificateId);
 
@@ -643,17 +651,37 @@ public class AppTests
         BaseResponse softwareStatementDeleteResponse =
             await managementApiClient.SoftwareStatementDelete(softwareStatementId);
 
-        return (obWacCertificateDeleteResponse, obSealCertificateDeleteResponse, softwareStatementDeleteResponse);
+        return (encryptionKeyDescriptionResponse, obWacCertificateDeleteResponse, obSealCertificateDeleteResponse,
+            softwareStatementDeleteResponse);
     }
 
     private async
-        Task<(ObWacCertificateResponse obWacCertificateResponse, ObSealCertificateResponse obSealCertificateResponse,
+        Task<(EncryptionKeyDescriptionResponse encryptionKeyResponse, ObWacCertificateResponse obWacCertificateResponse,
+            ObSealCertificateResponse obSealCertificateResponse,
             SoftwareStatementResponse softwareStatementResponse)> SoftwareStatementCreate(
             SoftwareStatementEnv softwareStatementEnv,
             string reference,
             string createdBy,
             ManagementApiClient managementApiClient)
     {
+        // Create encryption key description
+        var encryptionKeyRequest = new EncryptionKeyDescription
+        {
+            Reference = reference,
+            CreatedBy = createdBy,
+            Key = new SecretDescription
+            {
+                Name = softwareStatementEnv.EncryptionKeyName,
+                Source = softwareStatementEnv.EncryptionKeySource
+            },
+            SetAsCurrentEncryptionKey = true
+        };
+        EncryptionKeyDescriptionResponse encryptionKeyResponse =
+            await managementApiClient.EncryptionKeyDescriptionCreate(encryptionKeyRequest);
+
+        // Read encryption key description
+        _ = await managementApiClient.EncryptionKeyDescriptionRead(encryptionKeyResponse.Id);
+
         // Create OBWAC certificate
         var obWacRequest = new ObWacCertificateRequest
         {
@@ -710,7 +738,7 @@ public class AppTests
         // Read software statement
         _ = await managementApiClient.SoftwareStatementRead(softwareStatementResponse.Id);
 
-        return (obWacCertificateResponse, obSealCertificateResponse, softwareStatementResponse);
+        return (encryptionKeyResponse, obWacCertificateResponse, obSealCertificateResponse, softwareStatementResponse);
     }
 
     private async Task<BankRegistrationResponse> BankRegistrationCreate(

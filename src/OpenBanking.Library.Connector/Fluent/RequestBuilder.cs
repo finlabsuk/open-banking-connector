@@ -72,6 +72,7 @@ public class RequestBuilder : IRequestBuilder
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
     private readonly ISecretProvider _secretProvider;
+    private readonly ISettingsService _settingsService;
     private readonly ITimeProvider _timeProvider;
     private readonly TppReportingMetrics _tppReportingMetrics;
 
@@ -83,7 +84,7 @@ public class RequestBuilder : IRequestBuilder
         IDbService dbService,
         IBankProfileService bankProfileService,
         IMemoryCache memoryCache,
-        EncryptionSettings encryptionSettings,
+        ISettingsService settingsService,
         ISecretProvider secretProvider,
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
         TppReportingMetrics tppReportingMetrics)
@@ -92,6 +93,7 @@ public class RequestBuilder : IRequestBuilder
         _apiVariantMapper = apiVariantMapper.ArgNotNull(nameof(apiVariantMapper));
         _dbService = dbService;
         _bankProfileService = bankProfileService;
+        _settingsService = settingsService;
         _secretProvider = secretProvider;
         _httpClientSettingsProvider = httpClientSettingsProvider;
         _tppReportingMetrics = tppReportingMetrics;
@@ -113,7 +115,7 @@ public class RequestBuilder : IRequestBuilder
         _encryptionKeyInfo = new EncryptionKeyDescriptionMethods(
             memoryCache,
             secretProvider,
-            encryptionSettings,
+            settingsService,
             logger,
             dbService.GetDbEntityMethods<EncryptionKeyDescriptionEntity>());
     }
@@ -151,7 +153,8 @@ public class RequestBuilder : IRequestBuilder
             _httpClientSettingsProvider,
             _obSealCertificateMethods,
             _obWacCertificateMethods,
-            _tppReportingMetrics) { Created = _timeProvider.GetUtcNow() };
+            _tppReportingMetrics,
+            _settingsService) { Created = _timeProvider.GetUtcNow() };
         return context;
     }
 }

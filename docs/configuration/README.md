@@ -34,7 +34,6 @@ Below is an example of a setting and value that configures the Open Banking Conn
 Open Banking Connector configuration settings are collected into groups which are described on their own pages:
 
 - [database settings](./database-settings.md) configure the database used by Open Banking Connector
-- [encryption key settings](encryption-key-settings.md) configure encryption keys used by Open Banking Connector
 - [configuration sources settings](./configuration-sources-settings.md) configure configuration sources used by Open
   Banking Connector
 - [open telemetry settings](./open-telemetry-settings.md) configure Open Telemetry settings used by Open Banking

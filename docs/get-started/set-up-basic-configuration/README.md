@@ -35,23 +35,6 @@ OpenBankingConnector__Database__PasswordSettingNames__PostgreSql=OpenBankingConn
 OpenBankingConnector__Custom__PostgreSqlPassword=placeholder # example arbitrary environment variable that supplies database password
 ```
 
-### Encryption key settings
-
-Note: this setting should be included
-after [adding an encryption key description](../add-software-statement-etc/README.md#add-an-encryption-key-description-to-open-banking-connector)
-so can be skipped for now but
-please include once you have added an encryption key description.
-
-Encryption key settings are documented [here](../../configuration/encryption-key-settings.md).
-
-Below is the environment variable necessary to configure which encryption key should be used for encryption of sensitive
-data added to the database.
-
-```bash
-# Encryption key settings
-OpenBankingConnector__Keys__CurrentEncryptionKeyId=MyKeyId # use encryption key description with ID "MyKeyId"
-```
-
 ### Bank profile settings
 
 Almost all bank profile information is supplied via source code.

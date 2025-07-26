@@ -19,6 +19,12 @@ public class EncryptionKeyDescription : EntityBase, ISupportsValidation
     [JsonProperty(Required = Required.Always)]
     public required SecretDescription Key { get; init; }
 
+    /// <summary>
+    ///     When creating a database record for this encryption key description, update the database settings table to
+    ///     set this as the current encryption key.
+    /// </summary>
+    public bool SetAsCurrentEncryptionKey { get; init; }
+
     public async Task<ValidationResult> ValidateAsync() =>
         await new EncryptionKeyDescriptionValidator()
             .ValidateAsync(this);

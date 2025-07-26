@@ -90,7 +90,9 @@ internal class ManagementContext : IManagementContext
                 _sharedContext.TimeProvider,
                 _sharedContext.Instrumentation,
                 _sharedContext.SecretProvider,
-                _sharedContext.EncryptionKeyInfo));
+                _sharedContext.EncryptionKeyInfo,
+                _sharedContext.DbService.GetDbSettingsMethods(),
+                _sharedContext.SettingsService));
 
     public ISoftwareStatementsContext SoftwareStatements
     {

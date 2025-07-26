@@ -16,7 +16,7 @@ public class SettingsCleanup
     public async Task Cleanup(
         BaseDbContext dbContext,
         KeysSettings keysSettings,
-        EncryptionSettings encryptionSettings,
+        ISettingsService settingsService,
         IInstrumentationClient instrumentationClient,
         ITimeProvider timeProvider,
         CancellationToken cancellationToken)
@@ -28,19 +28,23 @@ public class SettingsCleanup
 
         DateTimeOffset utcNow = timeProvider.GetUtcNow();
 
-        encryptionSettings.SetDisableEncryption(keysSettings.DisableEncryption);
-
         // Get singleton settings record (or create if it doesn't exist).
         SettingsEntity? settings =
-            await settingsDbSet.SingleOrDefaultAsync(cancellationToken);
+            await settingsDbSet.SingleOrDefaultAsync(x => x.Id == SettingsEntity.SingletonId, cancellationToken);
         if (settings is null)
         {
-            settings = new SettingsEntity(SettingsEntity.SingletonId, null, utcNow, utcNow);
+            settings = new SettingsEntity(
+                SettingsEntity.SingletonId,
+                null,
+                utcNow,
+                utcNow,
+                keysSettings
+                    .DisableEncryption); // use keySettings.DisableEncryption for initial value of DisableEncryption
             await settingsDbSet.AddAsync(settings, cancellationToken);
         }
 
         // Encryption-related checks (only perform when encryption not disabled)
-        if (!keysSettings.DisableEncryption)
+        if (!settings.DisableEncryption)
         {
             // Different checks depending on whether encryption key descriptions are available
             if (encryptionKeyDescriptionDbSet.Any())
@@ -56,7 +60,7 @@ public class SettingsCleanup
                         ?? throw new InvalidOperationException(
                             "Settings error: " + "No CurrentEncryptionKeyDescription ID specified in database " +
                             "settings table (encryption is not disabled and more than one EncryptionKeyDescription exists).");
-                    settings.UpdateCurrentEncryptionKeyDescription(singleValue.Id, utcNow);
+                    settings.UpdateCurrentEncryptionKey(singleValue.Id, utcNow);
                 }
 
                 // Check CurrentEncryptionKeyDescription ID is valid
@@ -71,8 +75,7 @@ public class SettingsCleanup
                             "specified in database settings table not found.");
                 }
 
-                // Previous checks have ensured CurrentEncryptionKeyDescription exists or have thrown
-                encryptionSettings.SetCurrentKeyId(settings.CurrentEncryptionKeyDescriptionId!.Value);
+                // NB: Previous checks have ensured CurrentEncryptionKeyDescription exists or have thrown
             }
             else
             {
@@ -87,5 +90,9 @@ public class SettingsCleanup
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        // Initialise settings service (cache) according to database settings record
+        settingsService.DisableEncryption = settings.DisableEncryption;
+        settingsService.CurrentEncryptionKeyId = settings.CurrentEncryptionKeyDescriptionId;
     }
 }

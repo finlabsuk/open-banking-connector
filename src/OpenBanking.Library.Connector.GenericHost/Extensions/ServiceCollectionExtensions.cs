@@ -39,8 +39,8 @@ public static class ServiceCollectionExtensions
         // Add secret provider
         services.AddSingleton<ISecretProvider, SecretProvider>();
 
-        // Set up encryption settings
-        services.AddSingleton<EncryptionSettings>();
+        // Add settings service (caches database settings record)
+        services.AddSingleton<ISettingsService, SettingsService>();
 
         // Set up bank profile definitions
         services.AddSingleton<IBankProfileService, BankProfileService>();

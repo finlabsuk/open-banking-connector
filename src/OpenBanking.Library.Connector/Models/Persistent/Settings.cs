@@ -14,7 +14,8 @@ internal class SettingsEntity
         Guid id,
         Guid? currentEncryptionKeyDescriptionId,
         DateTimeOffset modified,
-        DateTimeOffset created)
+        DateTimeOffset created,
+        bool disableEncryption)
     {
         if (id != SingletonId)
         {
@@ -24,6 +25,7 @@ internal class SettingsEntity
         CurrentEncryptionKeyDescriptionId = currentEncryptionKeyDescriptionId;
         Modified = modified;
         Created = created;
+        DisableEncryption = disableEncryption;
     }
 
     public static Guid SingletonId => Guid.Parse("232c4049-a77a-4dbe-b740-ce6e9f4f54cf");
@@ -32,13 +34,21 @@ internal class SettingsEntity
 
     public Guid? CurrentEncryptionKeyDescriptionId { get; private set; }
 
+    public bool DisableEncryption { get; private set; }
+
     public DateTimeOffset Modified { get; private set; }
 
     public DateTimeOffset Created { get; }
 
-    public void UpdateCurrentEncryptionKeyDescription(Guid id, DateTimeOffset modified)
+    public void UpdateCurrentEncryptionKey(Guid encryptionKeyDescriptionId, DateTimeOffset modified)
     {
-        CurrentEncryptionKeyDescriptionId = id;
+        CurrentEncryptionKeyDescriptionId = encryptionKeyDescriptionId;
+        Modified = modified;
+    }
+
+    public void UpdateDisableEncryption(bool disableEncryption, DateTimeOffset modified)
+    {
+        DisableEncryption = disableEncryption;
         Modified = modified;
     }
 }

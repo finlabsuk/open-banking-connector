@@ -32,9 +32,6 @@ public class StartupTasksHostedService : IHostedService
 
     private readonly ISettingsProvider<DatabaseSettings> _databaseSettingsProvider;
 
-    // Ensures this set up at application start-up
-    private readonly EncryptionSettings _encryptionSettings;
-
     private readonly HttpClientSettings _httpClientSettings;
 
     private readonly IInstrumentationClient _instrumentationClient;
@@ -49,6 +46,9 @@ public class StartupTasksHostedService : IHostedService
 
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
+    // This is populated in SettingsCleanup()
+    private readonly ISettingsService _settingsService;
+
     private readonly ITimeProvider _timeProvider;
 
     private readonly TppReportingMetrics _tppReportingMetrics;
@@ -57,7 +57,7 @@ public class StartupTasksHostedService : IHostedService
         IBankProfileService bankProfileService,
         IConfiguration configuration,
         ISettingsProvider<DatabaseSettings> databaseSettingsProvider,
-        EncryptionSettings encryptionSettings,
+        ISettingsService settingsService,
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
         IInstrumentationClient instrumentationClient,
         ILogger<StartupTasksHostedService> logger,
@@ -73,7 +73,7 @@ public class StartupTasksHostedService : IHostedService
             (IConfigurationRoot) (configuration ?? throw new ArgumentNullException(nameof(configuration)));
         _databaseSettingsProvider = databaseSettingsProvider ??
                                     throw new ArgumentNullException(nameof(databaseSettingsProvider));
-        _encryptionSettings = encryptionSettings ?? throw new ArgumentNullException(nameof(encryptionSettings));
+        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _httpClientSettings =
             (httpClientSettingsProvider ?? throw new ArgumentNullException(nameof(httpClientSettingsProvider)))
             .GetSettings();
@@ -190,7 +190,7 @@ public class StartupTasksHostedService : IHostedService
             .Cleanup(
                 dbContext,
                 _keySettings,
-                _encryptionSettings,
+                _settingsService,
                 _instrumentationClient,
                 _timeProvider,
                 cancellationToken);

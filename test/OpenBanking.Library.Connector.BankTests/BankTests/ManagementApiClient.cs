@@ -59,6 +59,45 @@ public class ManagementApiClient(WebAppClient client)
         return response;
     }
 
+    public async Task<EncryptionKeyDescriptionResponse> EncryptionKeyDescriptionCreate(EncryptionKeyDescription request)
+    {
+        // Create object
+        var uriPath = "/manage/encryption-key-descriptions";
+        EncryptionKeyDescriptionResponse response =
+            await client.CreateAsync<EncryptionKeyDescriptionResponse, EncryptionKeyDescription>(uriPath, request);
+
+        // Checks
+        response.Warnings.Should().BeNull();
+
+        return response;
+    }
+
+    public async Task<EncryptionKeyDescriptionResponse> EncryptionKeyDescriptionRead(Guid id)
+    {
+        // Read object
+        var uriPath = $"/manage/encryption-key-descriptions/{id}";
+        var response =
+            await client.GetAsync<EncryptionKeyDescriptionResponse>(uriPath, []);
+
+        // Checks
+        response.Warnings.Should().BeNull();
+
+        return response;
+    }
+
+    public async Task<BaseResponse> EncryptionKeyDescriptionDelete(Guid id)
+    {
+        // Delete object
+        var uriPath = $"/manage/encryption-key-descriptions/{id}";
+        var response =
+            await client.DeleteAsync<BaseResponse>(uriPath, []);
+
+        // Checks
+        response.Warnings.Should().BeNull();
+
+        return response;
+    }
+
     public async Task<ObWacCertificateResponse> ObWacCertificateCreate(ObWacCertificate request)
     {
         // Create object

@@ -24,4 +24,6 @@ public class DbService : IDbService
         new DbEntityMethods<TEntity>(_db);
 
     public IDbMethods GetDbMethods() => new DbMethods(_db);
+
+    public IDbSettingsMethods GetDbSettingsMethods() => new DbMethods(_db);
 }

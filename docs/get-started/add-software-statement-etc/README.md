@@ -87,8 +87,9 @@ Please create an encryption key and add its description to Open Banking Connecto
 
 ## Add an encryption key description to Open Banking Connector
 
-An *encryption key description* describes an encryption key which Open Banking Connector can use to encrypt sensitive
-data in the database such as bank access and refresh tokens. Note that encryption keys are not stored in the database -
+An *encryption key description* describes an encryption key which Open Banking Connector can use for application-level encryption of sensitive
+data in the database such as bank access and refresh tokens. (It is assumed and recommended that database at-rest encryption is also
+used.) Note that encryption keys are not stored in the database -
 this object is simply a reference.
 
 You can add an encryption key description using the [
@@ -107,10 +108,10 @@ Content-Type: application/json
   "Key": {
     "Source": "Configuration", # can alternatively use "AwsSsmParameterStore" or "GoogleCloudSecretManagerV1"
     "Name": "{{EncryptionKeyName}}" # can specify environment variable if "Source" is "Configuration". Must be in format projects/{project_id}/secrets/{secret_id}/versions/{secret_version} if "Source" is "GoogleCloudSecretManagerV1"
-  }
+  },
+  "SetAsCurrentEncryptionKey": true
 }
 ```
 
-Upon creation, Open Banking Connector will provide you with an ID for the encryption key description. Please use this to
-set the [current encryption key setting](../set-up-basic-configuration/README.md#encryption-key-settings) so that Open
+By using `SetAsCurrentEncryptionKey`, you can instruct Open Banking Connector to update its database settings table to set the encryption key as the current encryption key to use for application-level encryption. This will ensure that Open
 Banking Connector does not complain about the lack of an encryption key.

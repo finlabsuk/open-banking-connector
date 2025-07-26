@@ -19,13 +19,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 /// </summary>
 /// <param name="memoryCache"></param>
 /// <param name="secretProvider"></param>
-/// <param name="encryptionSettings"></param>
+/// <param name="settingsService"></param>
 /// <param name="instrumentationClient"></param>
 /// <param name="entityMethods"></param>
 public class EncryptionKeyDescriptionMethods(
     IMemoryCache memoryCache,
     ISecretProvider secretProvider,
-    EncryptionSettings encryptionSettings,
+    ISettingsService settingsService,
     IInstrumentationClient instrumentationClient,
     IDbReadOnlyEntityMethods<EncryptionKeyDescriptionEntity> entityMethods) : IEncryptionKeyDescription
 {
@@ -36,18 +36,18 @@ public class EncryptionKeyDescriptionMethods(
 
     public Guid? GetCurrentKeyId()
     {
-        if (encryptionSettings.DisableEncryption)
+        if (settingsService.DisableEncryption)
         {
             return null;
         }
-        if (encryptionSettings.CurrentKeyId is null)
+        if (settingsService.CurrentEncryptionKeyId is null)
         {
             throw new ArgumentException(
                 "Configuration or key secrets warning: " +
                 "No encryption key specified by CurrentEncryptionKeyId. If you haven't done so, " +
                 "please create an EncryptionKeyDescription and specify its ID as CurrentEncryptionKeyId.");
         }
-        return encryptionSettings.CurrentKeyId;
+        return settingsService.CurrentEncryptionKeyId;
     }
 
     public async Task<byte[]> GetEncryptionKey(Guid? keyId)
