@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
@@ -13,6 +14,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurr
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using Microsoft.EntityFrameworkCore;
 using DomesticVrpConsentAuthContextRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.
     DomesticVrpConsentAuthContext;
@@ -23,16 +25,19 @@ using DomesticVrpConsentAuthContextPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
 
 internal class
-    DomesticVrpConsentAuthContextPost : LocalEntityCreate<
-    DomesticVrpConsentAuthContextPersisted,
-    DomesticVrpConsentAuthContextRequest,
-    DomesticVrpConsentAuthContextCreateResponse>
+    DomesticVrpConsentAuthContextOperations : IObjectCreate<DomesticVrpConsentAuthContextRequest,
+        DomesticVrpConsentAuthContextCreateResponse, LocalCreateParams>,
+    IObjectRead<DomesticVrpConsentAuthContextReadResponse, LocalReadParams>
 {
     private readonly IBankProfileService _bankProfileService;
+    private readonly IDbMethods _dbSaveChangesMethod;
     private readonly DomesticVrpConsentCommon _domesticVrpConsentCommon;
+    private readonly IDbEntityMethods<DomesticVrpConsentAuthContextPersisted> _entityMethods;
+    private readonly IInstrumentationClient _instrumentationClient;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
+    private readonly ITimeProvider _timeProvider;
 
-    public DomesticVrpConsentAuthContextPost(
+    public DomesticVrpConsentAuthContextOperations(
         IDbEntityMethods<DomesticVrpConsentAuthContextPersisted>
             entityMethods,
         IDbMethods dbSaveChangesMethod,
@@ -40,22 +45,28 @@ internal class
         IInstrumentationClient instrumentationClient,
         IBankProfileService bankProfileService,
         ObSealCertificateMethods obSealCertificateMethods,
-        DomesticVrpConsentCommon domesticVrpConsentCommon) : base(
-        entityMethods,
-        dbSaveChangesMethod,
-        timeProvider,
-        instrumentationClient)
+        DomesticVrpConsentCommon domesticVrpConsentCommon)
     {
+        _entityMethods = entityMethods;
+        _dbSaveChangesMethod = dbSaveChangesMethod;
+        _timeProvider = timeProvider;
+        _instrumentationClient = instrumentationClient;
         _bankProfileService = bankProfileService;
         _obSealCertificateMethods = obSealCertificateMethods;
         _domesticVrpConsentCommon = domesticVrpConsentCommon;
     }
 
-    protected override async Task<DomesticVrpConsentAuthContextCreateResponse> AddEntity(
-        DomesticVrpConsentAuthContextRequest request,
-        ITimeProvider timeProvider)
+    public async Task<(DomesticVrpConsentAuthContextCreateResponse response, IList<IFluentResponseInfoOrWarningMessage>
+            nonErrorMessages)>
+        CreateAsync(
+            DomesticVrpConsentAuthContextRequest request,
+            LocalCreateParams createParams)
     {
-        // Load relevant data objects
+        // Create non-error list
+        var nonErrorMessages =
+            new List<IFluentResponseInfoOrWarningMessage>();
+
+        // Load DomesticVrpConsent and related
         (DomesticVrpConsent domesticVrpConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? _) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(request.DomesticVrpConsentId, false);
@@ -136,6 +147,30 @@ internal class
                 AppSessionId = sessionId
             };
 
-        return response;
+        // Persist updates (this happens last so as not to happen if there are any previous errors)
+        await _dbSaveChangesMethod.SaveChangesAsync();
+
+        return (response, nonErrorMessages);
+    }
+
+    public async Task<(DomesticVrpConsentAuthContextReadResponse response, IList<IFluentResponseInfoOrWarningMessage>
+        nonErrorMessages)> ReadAsync(LocalReadParams readParams)
+    {
+        // Create non-error list
+        var nonErrorMessages =
+            new List<IFluentResponseInfoOrWarningMessage>();
+
+        // Create persisted entity
+        DomesticVrpConsentAuthContextPersisted persistedObject =
+            await _entityMethods
+                .DbSetNoTracking
+                .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
+            throw new KeyNotFoundException(
+                $"No record found for DomesticVrpConsentAuthContext with ID {readParams.Id}.");
+
+        // Create response
+        DomesticVrpConsentAuthContextReadResponse response = persistedObject.PublicGetLocalResponse;
+
+        return (response, nonErrorMessages);
     }
 }

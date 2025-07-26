@@ -10,11 +10,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
-using DomesticPaymentConsentAuthContextRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.
-    DomesticPaymentConsentAuthContext;
-using DomesticPaymentConsentAuthContextPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation;
 
@@ -28,10 +23,7 @@ public interface IDomesticPaymentConsentsContext :
     ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
     ///     authorisation of consent.
     /// </summary>
-    ILocalEntityContext<DomesticPaymentConsentAuthContextRequest,
-            IDomesticPaymentConsentAuthContextPublicQuery,
-            DomesticPaymentConsentAuthContextCreateResponse,
-            DomesticPaymentConsentAuthContextReadResponse>
+    IDomesticPaymentConsentAuthContextsContext
         AuthContexts { get; }
 }
 
@@ -94,34 +86,9 @@ internal class DomesticPaymentConsentsConsentContext :
             sharedContext.DbService.GetDbMethods(),
             sharedContext.TimeProvider,
             sharedContext.Instrumentation);
+        AuthContexts = new DomesticPaymentConsentAuthContextsContext(_sharedContext);
     }
 
-    public ILocalEntityContext<DomesticPaymentConsentAuthContextRequest,
-        IDomesticPaymentConsentAuthContextPublicQuery,
-        DomesticPaymentConsentAuthContextCreateResponse,
-        DomesticPaymentConsentAuthContextReadResponse> AuthContexts =>
-        new LocalEntityContext<DomesticPaymentConsentAuthContextPersisted,
-            DomesticPaymentConsentAuthContextRequest,
-            IDomesticPaymentConsentAuthContextPublicQuery,
-            DomesticPaymentConsentAuthContextCreateResponse,
-            DomesticPaymentConsentAuthContextReadResponse>(
-            _sharedContext,
-            new DomesticPaymentConsentAuthContextPost(
-                _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentAuthContextPersisted>(),
-                _sharedContext.DbService.GetDbMethods(),
-                _sharedContext.TimeProvider,
-                _sharedContext.Instrumentation,
-                _sharedContext.BankProfileService,
-                _sharedContext.ObSealCertificateMethods,
-                new DomesticPaymentConsentCommon(
-                    _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsent>(),
-                    _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentAccessToken>(),
-                    _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentRefreshToken>(),
-                    _sharedContext.Instrumentation,
-                    _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
-                    _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
-                    _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
-                    _sharedContext.DbService.GetDbMethods())));
 
     public IObjectRead<DomesticPaymentConsentCreateResponse, ConsentReadParams> ReadObject { get; }
 
@@ -133,4 +100,6 @@ internal class DomesticPaymentConsentsConsentContext :
 
     public Task<DomesticPaymentConsentFundsConfirmationResponse> ReadFundsConfirmationAsync(
         ConsentBaseReadParams readParams) => _domesticPaymentConsentOperations.ReadFundsConfirmationAsync(readParams);
+
+    public IDomesticPaymentConsentAuthContextsContext AuthContexts { get; }
 }

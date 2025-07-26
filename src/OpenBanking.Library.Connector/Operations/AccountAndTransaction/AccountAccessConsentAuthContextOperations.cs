@@ -19,6 +19,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using AccountAccessConsentAuthContextRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request.
@@ -32,19 +33,22 @@ using AccountAccessConsentAuthContextPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 
 internal class
-    AccountAccessConsentAuthContextPost : LocalEntityCreate<
-    AccountAccessConsentAuthContextPersisted,
-    AccountAccessConsentAuthContextRequest,
-    AccountAccessConsentAuthContextCreateResponse>
+    AccountAccessConsentAuthContextOperations : IObjectCreate<AccountAccessConsentAuthContextRequest,
+        AccountAccessConsentAuthContextCreateResponse, LocalCreateParams>,
+    IObjectRead<AccountAccessConsentAuthContextReadResponse, LocalReadParams>
 {
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
     private readonly IBankProfileService _bankProfileService;
     private readonly ClientAccessTokenGet _clientAccessTokenGet;
+    private readonly IDbMethods _dbSaveChangesMethod;
+    private readonly IDbEntityMethods<AccountAccessConsentAuthContextPersisted> _entityMethods;
+    private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
+    private readonly ITimeProvider _timeProvider;
 
-    public AccountAccessConsentAuthContextPost(
+    public AccountAccessConsentAuthContextOperations(
         IDbEntityMethods<AccountAccessConsentAuthContextPersisted>
             entityMethods,
         IDbMethods dbSaveChangesMethod,
@@ -55,12 +59,12 @@ internal class
         ObSealCertificateMethods obSealCertificateMethods,
         ClientAccessTokenGet clientAccessTokenGet,
         AccountAccessConsentCommon accountAccessConsentCommon,
-        IApiVariantMapper mapper) : base(
-        entityMethods,
-        dbSaveChangesMethod,
-        timeProvider,
-        instrumentationClient)
+        IApiVariantMapper mapper)
     {
+        _entityMethods = entityMethods;
+        _dbSaveChangesMethod = dbSaveChangesMethod;
+        _timeProvider = timeProvider;
+        _instrumentationClient = instrumentationClient;
         _bankProfileService = bankProfileService;
         _obWacCertificateMethods = obWacCertificateMethods;
         _obSealCertificateMethods = obSealCertificateMethods;
@@ -69,10 +73,16 @@ internal class
         _mapper = mapper;
     }
 
-    protected override async Task<AccountAccessConsentAuthContextCreateResponse> AddEntity(
-        AccountAccessConsentAuthContextRequest request,
-        ITimeProvider timeProvider)
+    public async Task<(AccountAccessConsentAuthContextCreateResponse response,
+            IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+        CreateAsync(
+            AccountAccessConsentAuthContextRequest request,
+            LocalCreateParams createParams)
     {
+        // Create non-error list
+        var nonErrorMessages =
+            new List<IFluentResponseInfoOrWarningMessage>();
+
         // Load AccountAccessConsent and related
         (AccountAccessConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
@@ -201,7 +211,7 @@ internal class
                     throw new ArgumentOutOfRangeException(
                         $"AISP API version {accountAndTransactionApi.ApiVersion} not supported.");
             }
-            //nonErrorMessages.AddRange(newNonErrorMessages);
+            nonErrorMessages.AddRange(newNonErrorMessages);
 
             AccountAndTransactionModelsPublic.Data5Status status = externalApiResponse.Data.Status;
             reAuthNotInitialAuth =
@@ -257,6 +267,30 @@ internal class
                 AppSessionId = sessionId
             };
 
-        return response;
+        // Persist updates (this happens last so as not to happen if there are any previous errors)
+        await _dbSaveChangesMethod.SaveChangesAsync();
+
+        return (response, nonErrorMessages);
+    }
+
+    public async Task<(AccountAccessConsentAuthContextReadResponse response, IList<IFluentResponseInfoOrWarningMessage>
+        nonErrorMessages)> ReadAsync(LocalReadParams readParams)
+    {
+        // Create non-error list
+        var nonErrorMessages =
+            new List<IFluentResponseInfoOrWarningMessage>();
+
+        // Create persisted entity
+        AccountAccessConsentAuthContextPersisted persistedObject =
+            await _entityMethods
+                .DbSetNoTracking
+                .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
+            throw new KeyNotFoundException(
+                $"No record found for AccountAccessConsentAuthContext with ID {readParams.Id}.");
+
+        // Create response
+        AccountAccessConsentAuthContextReadResponse response = persistedObject.PublicGetLocalResponse;
+
+        return (response, nonErrorMessages);
     }
 }

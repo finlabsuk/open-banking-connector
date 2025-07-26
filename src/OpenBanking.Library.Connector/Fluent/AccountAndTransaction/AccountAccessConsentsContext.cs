@@ -10,16 +10,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTran
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
-using AccountAccessConsentAuthContextRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request.
-    AccountAccessConsentAuthContext;
 using AccountAccessConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
-using AccountAccessConsentAuthContextPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.
-    AccountAccessConsentAuthContext;
-using AccountAccessConsentAuthContext =
-    FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction.AccountAccessConsentAuthContextPost;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransaction;
 
@@ -32,10 +24,7 @@ public interface IAccountAccessConsentsContext :
     ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
     ///     authorisation of consent.
     /// </summary>
-    ILocalEntityContext<AccountAccessConsentAuthContextRequest,
-            IAccountAccessConsentAuthContextPublicQuery,
-            AccountAccessConsentAuthContextCreateResponse,
-            AccountAccessConsentAuthContextReadResponse>
+    IAccountAccessConsentAuthContextsContext
         AuthContexts { get; }
 }
 
@@ -101,29 +90,8 @@ internal class AccountAccessConsentsConsentContext :
                     _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
                     _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
                     _sharedContext.DbService.GetDbMethods()));
-        AuthContexts = new LocalEntityContext<AccountAccessConsentAuthContextPersisted,
-            AccountAccessConsentAuthContextRequest,
-            IAccountAccessConsentAuthContextPublicQuery,
-            AccountAccessConsentAuthContextCreateResponse,
-            AccountAccessConsentAuthContextReadResponse>(
-            _sharedContext,
-            new AccountAccessConsentAuthContext(
-                _sharedContext.DbService.GetDbEntityMethods<AccountAccessConsentAuthContextPersisted>(),
-                _sharedContext.DbService.GetDbMethods(),
-                _sharedContext.TimeProvider,
-                _sharedContext.Instrumentation,
-                _sharedContext.BankProfileService,
-                _sharedContext.ObWacCertificateMethods,
-                _sharedContext.ObSealCertificateMethods,
-                clientAccessTokenGet,
-                accountAccessConsentCommon,
-                _sharedContext.ApiVariantMapper));
+        AuthContexts = new AccountAccessConsentAuthContextsContext(_sharedContext);
     }
-
-    public ILocalEntityContext<AccountAccessConsentAuthContextRequest,
-        IAccountAccessConsentAuthContextPublicQuery,
-        AccountAccessConsentAuthContextCreateResponse,
-        AccountAccessConsentAuthContextReadResponse> AuthContexts { get; }
 
     public IObjectRead<AccountAccessConsentCreateResponse, ConsentReadParams> ReadObject { get; }
 
@@ -131,4 +99,6 @@ internal class AccountAccessConsentsConsentContext :
         CreateObject { get; }
 
     public IObjectDelete<ConsentDeleteParams> DeleteObject { get; }
+
+    public IAccountAccessConsentAuthContextsContext AuthContexts { get; }
 }

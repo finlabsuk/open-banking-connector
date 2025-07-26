@@ -10,12 +10,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurr
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
-using DomesticVrpConsentAuthContextRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.
-    DomesticVrpConsentAuthContext;
-using DomesticVrpConsentAuthContextPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.
-    DomesticVrpConsentAuthContext;
 using DomesticVrpConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent;
 
@@ -32,10 +26,7 @@ public interface IDomesticVrpConsentsContext :
     ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
     ///     authorisation of consent.
     /// </summary>
-    ILocalEntityContext<DomesticVrpConsentAuthContextRequest,
-            IDomesticVrpConsentAuthContextPublicQuery,
-            DomesticVrpConsentAuthContextCreateResponse,
-            DomesticVrpConsentAuthContextReadResponse>
+    IDomesticVrpConsentAuthContextsContext
         AuthContexts { get; }
 }
 
@@ -112,36 +103,11 @@ internal class DomesticVrpConsentsContext :
                     _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
                     _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
                     _sharedContext.DbService.GetDbMethods()));
+        AuthContexts = new DomesticVrpConsentAuthContextsContext(_sharedContext);
     }
 
     public IObjectRead<DomesticVrpConsentCreateResponse, ConsentReadParams> ReadObject { get; }
 
-    public ILocalEntityContext<DomesticVrpConsentAuthContextRequest,
-        IDomesticVrpConsentAuthContextPublicQuery,
-        DomesticVrpConsentAuthContextCreateResponse,
-        DomesticVrpConsentAuthContextReadResponse> AuthContexts =>
-        new LocalEntityContext<DomesticVrpConsentAuthContextPersisted,
-            DomesticVrpConsentAuthContextRequest,
-            IDomesticVrpConsentAuthContextPublicQuery,
-            DomesticVrpConsentAuthContextCreateResponse,
-            DomesticVrpConsentAuthContextReadResponse>(
-            _sharedContext,
-            new DomesticVrpConsentAuthContextPost(
-                _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentAuthContextPersisted>(),
-                _sharedContext.DbService.GetDbMethods(),
-                _sharedContext.TimeProvider,
-                _sharedContext.Instrumentation,
-                _sharedContext.BankProfileService,
-                _sharedContext.ObSealCertificateMethods,
-                new DomesticVrpConsentCommon(
-                    _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsent>(),
-                    _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentAccessToken>(),
-                    _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentRefreshToken>(),
-                    _sharedContext.Instrumentation,
-                    _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
-                    _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
-                    _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
-                    _sharedContext.DbService.GetDbMethods())));
 
     public IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse, ConsentCreateParams>
         CreateObject { get; }
@@ -151,4 +117,6 @@ internal class DomesticVrpConsentsContext :
     public Task<DomesticVrpConsentFundsConfirmationResponse> CreateFundsConfirmationAsync(
         VrpConsentFundsConfirmationCreateParams createParams) =>
         _domesticVrpConsentOperations.CreateFundsConfirmationAsync(createParams);
+
+    public IDomesticVrpConsentAuthContextsContext AuthContexts { get; }
 }
