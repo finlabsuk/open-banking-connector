@@ -158,21 +158,20 @@ public class StartupTasksHostedService : IHostedService
 
                     if (!await mongoDbContext.Database.CanConnectAsync())
                     {
-                        throw new ApplicationException();
+                        throw new ApplicationException("Cannot connect to MongoDB server.");
                     }
 
-                    if (true)
+                    // Create database if doesn't exist
+                    if (databaseSettings.EnsureDatabaseCreated)
                     {
-                        if (databaseSettings.EnsureDatabaseCreated)
-                        {
-                            // Create database
-                            await mongoDbContext.Database.EnsureCreatedAsync();
-                        }
-                        else
-                        {
-                            throw new ApplicationException(
-                                "No database found. Note: set \"Database:EnsureDatabaseCreated\" to \"true\" to create database at application start-up.");
-                        }
+                        // Create database
+                        await mongoDbContext.Database.EnsureCreatedAsync();
+                    }
+                    else
+                    {
+                        throw new ApplicationException(
+                            "Please set set \"Database:EnsureDatabaseCreated\" to \"true\" to ensure MongoDB database " +
+                            "created with indexes etc at application start-up.");
                     }
                     break;
                 default:

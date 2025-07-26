@@ -111,6 +111,7 @@ internal class BankRegistrationConfig(
             builder.Property(p => p.AuthorizationEndpoint).HasElementName("authorizationEndpoint");
             builder.Property(p => p.BankGroup).HasElementName("bankGroup");
             builder.Property(p => p.BankProfile).HasElementName("bankProfile");
+            builder.Property(p => p.DefaultResponseModeOverride).HasElementName("defaultResponseModeOverride");
             builder.Property(p => p.DefaultFragmentRedirectUri).HasElementName("defaultFragmentRedirectUri");
             builder.Property(p => p.DefaultQueryRedirectUri).HasElementName("defaultQueryRedirectUri");
             builder.Property(p => p.ExternalApiId).HasElementName("externalApiId");

@@ -42,6 +42,8 @@ internal class EncryptedObjectConfig<TEntity>(
         {
             builder.ToCollection("encryptedObject");
             builder.Property(p => p.EncryptionKeyDescriptionId).HasElementName("encryptionKeyDescriptionId");
+            builder.Property(p => p.Modified).HasElementName("modified");
+            builder.Property(p => p.ModifiedBy).HasElementName("modifiedBy");
         }
     }
 }
