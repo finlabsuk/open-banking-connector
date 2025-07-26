@@ -13,19 +13,23 @@ using Microsoft.EntityFrameworkCore;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 internal class
-    LocalEntityRead<TEntity, TPublicQuery, TPublicResponse> : BaseRead<TEntity, TPublicResponse, LocalReadParams>,
-        IObjectReadWithSearch<TPublicQuery, TPublicResponse, LocalReadParams>
+    LocalEntityRead<TEntity, TPublicQuery, TPublicResponse> :
+    IObjectReadWithSearch<TPublicQuery, TPublicResponse, LocalReadParams>
     where TEntity : class, ISupportsFluentLocalEntityGet<TPublicResponse>, IEntity
 {
+    private readonly IDbEntityMethods<TEntity> _entityMethods;
+    private readonly IInstrumentationClient _instrumentationClient;
+    private readonly ITimeProvider _timeProvider;
+
     public LocalEntityRead(
         IDbEntityMethods<TEntity> entityMethods,
-        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
-        IInstrumentationClient instrumentationClient) : base(
-        entityMethods,
-        dbSaveChangesMethod,
-        timeProvider,
-        instrumentationClient) { }
+        IInstrumentationClient instrumentationClient)
+    {
+        _entityMethods = entityMethods;
+        _timeProvider = timeProvider;
+        _instrumentationClient = instrumentationClient;
+    }
 
     public async
         Task<(IQueryable<TPublicResponse> response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages
@@ -51,9 +55,8 @@ internal class
         return (resultResponse, nonErrorMessages);
     }
 
-    protected override async
-        Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGet(
-            LocalReadParams readParams)
+    public async Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+        ReadAsync(LocalReadParams readParams)
     {
         // Create non-error list
         var nonErrorMessages =

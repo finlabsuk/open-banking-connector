@@ -29,7 +29,6 @@ internal class
         ReadLocalObject =
             new LocalEntityRead<TEntity, TPublicQuery, TPublicReadLocalResponse>(
                 sharedContext.DbService.GetDbEntityMethods<TEntity>(),
-                sharedContext.DbService.GetDbMethods(),
                 sharedContext.TimeProvider,
                 sharedContext.Instrumentation);
         DeleteLocalObject = new LocalEntityDelete<TEntity, LocalDeleteParams>(
