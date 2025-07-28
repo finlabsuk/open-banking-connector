@@ -22,7 +22,7 @@ used. So the configuration setting `OpenBankingConnector:Database:Provider` is s
 
 Database settings are documented [here](../../configuration/database-settings.md).
 
-Open Banking Connector requires connection to a PostgreSQL database.
+Open Banking Connector requires connection to a database.
 
 The following environment variables can be used to configure use of a PostgreSQL database:
 

@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
@@ -41,6 +42,14 @@ public class DatabaseSettings : ISettings<DatabaseSettings>
             [DbProvider.Sqlite] = string.Empty,
             [DbProvider.PostgreSql] = string.Empty,
             [DbProvider.MongoDb] = string.Empty
+        };
+
+    public Dictionary<DbProvider, SecretSource> PasswordSources { get; set; } =
+        new()
+        {
+            [DbProvider.Sqlite] = SecretSource.Configuration,
+            [DbProvider.PostgreSql] = SecretSource.Configuration,
+            [DbProvider.MongoDb] = SecretSource.Configuration
         };
 
     public Dictionary<DbProvider, string> PasswordSettingNames { get; set; } =
