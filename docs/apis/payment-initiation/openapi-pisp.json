@@ -3,7 +3,7 @@
   "info": {
     "title": "Payment Initiation API",
     "description": "Payment Initiation API for Open Banking Connector Web App",
-    "version": "13.0.0"
+    "version": "14.0.0"
   },
   "paths": {
     "/pisp/domestic-payment-consent-auth-contexts": {
@@ -1309,6 +1309,11 @@
           "DomesticPaymentConsentId": {
             "type": "string",
             "format": "uuid"
+          },
+          "State": {
+            "type": "string",
+            "description": "Optionally specify OAuth2 state to use instead of one automatically created by Open Banking Connector (using this\r\nis not recommended).",
+            "nullable": true
           },
           "Reference": {
             "type": "string",

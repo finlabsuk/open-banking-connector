@@ -99,6 +99,7 @@ internal class
 
         (string authUrl, string state, string nonce, string? codeVerifier, string sessionId) = CreateAuthUrl.Create(
             domesticVrpConsent.ExternalApiId,
+            request.State,
             obSealKey,
             bankRegistration.ExternalApiId,
             bankProfile.UseOpenIdConnect,

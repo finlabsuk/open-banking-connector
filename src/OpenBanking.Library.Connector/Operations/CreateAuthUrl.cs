@@ -49,6 +49,7 @@ public static class CreateAuthUrl
 
     internal static (string authUrl, string state, string nonce, string? codeVerifier, string appSessionId) Create(
         string externalApiConsentId,
+        string? externallyCreatedState,
         OBSealKey obSealKey,
         string clientExternalApiId,
         bool useOpenIdConnect,
@@ -63,7 +64,7 @@ public static class CreateAuthUrl
         IInstrumentationClient instrumentationClient)
     {
         const int lengthInBytes = 24;
-        string state = GenerateRandomString(lengthInBytes);
+        string state = externallyCreatedState ?? GenerateRandomString(lengthInBytes);
         string nonce = GenerateRandomString(lengthInBytes);
         string appSessionId = GenerateRandomString(32);
         string responseTypeString = JsonConvert.SerializeObject(responseType).Replace("\"", "");
