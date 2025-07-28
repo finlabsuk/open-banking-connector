@@ -62,7 +62,6 @@ nav:
     - configuration/README.md
     - Database settings: configuration/database-settings.md
     - Encryption keys settings: configuration/encryption-key-settings.md
-    - Configuration sources settings: configuration/configuration-sources-settings.md
     - Open Telemetry settings: configuration/open-telemetry-settings.md
   - APIs:
     - apis/README.md

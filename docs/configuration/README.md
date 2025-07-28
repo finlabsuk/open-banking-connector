@@ -16,7 +16,7 @@ Configuration consists of *settings* which can be assigned values.
 These settings are organised by area into [settings groups](#settings-groups).
 
 Settings have a hierarchical naming structure where the first "level" is always OpenBankingConnector (essentially a
-namespace) and subsequent levels are separated by colons (:).
+namespace) and subsequent levels are separated by colons ( : ).
 
 Values are always representable as strings (although in JSON files, where applicable and optionally, they may be
 represented in natural form as numbers and booleans where applicable).
@@ -34,21 +34,16 @@ Below is an example of a setting and value that configures the Open Banking Conn
 Open Banking Connector configuration settings are collected into groups which are described on their own pages:
 
 - [database settings](./database-settings.md) configure the database used by Open Banking Connector
-- [configuration sources settings](./configuration-sources-settings.md) configure configuration sources used by Open
-  Banking Connector
 - [open telemetry settings](./open-telemetry-settings.md) configure Open Telemetry settings used by Open Banking
   Connector
 
 ## Sources
 
 Open Banking Connector is written in .NET and by default uses ASP.NET
-Core [default application configuration sources](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-6.0#default-application-configuration-sources)
+Core [default application configuration sources](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-9.0#default-application-configuration-sources)
 to collect configuration from a number of configuration providers in priority order.
 
 These include the command-line and environment variable providers as highest-priority providers.
-
-Configuration sources can be customised and added
-using [configuration sources settings](./configuration-sources-settings.md).
 
 ## Secrets and security
 
@@ -66,7 +61,7 @@ standard configuration.
 
 ## Environment Variables
 
-When supplying configuration via environment variables, you should use double underscores (__) in place of colons (:) in
+When supplying configuration via environment variables, you should use double underscores ( __ ) in place of colons ( : ) in
 settings names. So, for instance, the setting *OpenBankingConnector:Database:Provider* would be configured using
 environment variable `OpenBankingConnector__Database__Provider`. This is a .NET convention and
 explained [here](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-6.0#environment-variables).

@@ -23,8 +23,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Amazon.Extensions.Configuration.SystemsManager" Version="7.0.0"/>
         <PackageReference Include="Google.Cloud.SecretManager.V1" Version="2.6.0"/>
+        <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="4.0.2.5"/>
+        <PackageReference Include="AWSSDK.SSO" Version="4.0.0.15"/>
+        <PackageReference Include="AWSSDK.SSOOIDC" Version="4.0.0.15"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7"/>
         <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.7"/>

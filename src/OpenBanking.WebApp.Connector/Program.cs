@@ -21,9 +21,6 @@ using ServiceCollectionExtensionsGenericHost =
 // Create builder
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// Update configuration
-builder.Host.AddGenericHostConfiguration(args);
-
 // Add services
 
 // Service version is taken to be assembly file version without revision number (see https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning#assembly-file-version for info on assembly file version)
