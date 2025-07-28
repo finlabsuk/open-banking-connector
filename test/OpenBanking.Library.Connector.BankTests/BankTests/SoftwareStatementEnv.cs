@@ -14,13 +14,6 @@ public class SoftwareStatementEnv
     [JsonPropertyName("softwareStatementName")]
     public required string SoftwareStatementName { get; init; }
 
-    [JsonConverter(typeof(JsonStringEnumConverter<SecretSource>))]
-    [JsonPropertyName("encryptionKeySource")]
-    public SecretSource EncryptionKeySource { get; init; } = SecretSource.Configuration;
-
-    [JsonPropertyName("encryptionKeyName")]
-    public required string EncryptionKeyName { get; init; }
-
     [JsonPropertyName("obSealAssociatedKeyId")]
     public required string ObSealAssociatedKeyId { get; init; }
 
