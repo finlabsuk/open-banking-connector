@@ -148,8 +148,8 @@ very important for AES-GCM that nonces are never re-used for the same encryption
 
 Multiple encryption key descriptions can be added to Open Banking Connector using
 the [POST /manage/encryption-key-descriptions](./openapi.md) endpoint. This allows decryption of objects encrypted with
-previously-used keys. New objects will be encrypted with the key specified by configuration
-setting [OpenBankingConnector:Keys:CurrentEncryptionKeyId](../../configuration/encryption-key-settings.md).
+previously-used keys. New objects will be encrypted with the key specified in the database settings table by
+field `current_encryption_key_description_id`. This can be updated when adding a key.
 
 Encryption keys are described by both a `Source` and `Name`. Supported sources at time of writing are environment
 variables (not generally recommended) and AWS SSM secrets. Additional sources supporting other key vaults can be added

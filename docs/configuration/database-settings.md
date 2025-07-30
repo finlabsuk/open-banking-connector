@@ -9,8 +9,9 @@ In non-development environments (the default), you will at least need to at leas
 Database settings are secrets and can be supplied separately to Open Banking Connector from the connection string using a secret name and (optionally) source.
 
 Open Banking Connector then obtains the password and adds it to the connection string as follows:
+
 - For PostgreSQL, the following is apprended to the connection string:
-  - `$";Password={password}"` (C#) where `password` is the obtained password as a string
+    - `$";Password={password}"` (C#) where `password` is the obtained password as a string
 - For MongoDB, the first `@` is used as an insertion point for
     - `$":{password}"` (C#)  where `password` is the obtained password as a string
     - For example, connection string "mongodb://my-user@localhost:27017" might become "mongodb://my-user:my-password@localhost:27017"
