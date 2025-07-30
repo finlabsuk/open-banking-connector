@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "13.0.0"
+    "version": "14.0.0"
   },
   "paths": {
     "/manage/bank-registrations": {
@@ -1005,6 +1005,10 @@
         "properties": {
           "Key": {
             "$ref": "#/components/schemas/SecretDescription"
+          },
+          "SetAsCurrentEncryptionKey": {
+            "type": "boolean",
+            "description": "When creating a database record for this encryption key description, update the database settings table to\r\nset this as the current encryption key."
           },
           "Reference": {
             "type": "string",

@@ -1140,10 +1140,6 @@
       
         
       
-        
-      
-        
-      
     
     
       
@@ -1199,48 +1195,6 @@
   
   <span class="md-ellipsis">
     Database settings
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../configuration/encryption-key-settings/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Encryption keys settings
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../configuration/configuration-sources-settings/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Configuration sources settings
   </span>
   
 
@@ -2299,8 +2253,9 @@ that on Linux a base64-encoded key can be generated via the command</p>
 </code></pre></div>
 <p>Please create an encryption key and add its description to Open Banking Connector as described below.</p>
 <h2 id="add-an-encryption-key-description-to-open-banking-connector">Add an encryption key description to Open Banking Connector</h2>
-<p>An <em>encryption key description</em> describes an encryption key which Open Banking Connector can use to encrypt sensitive
-data in the database such as bank access and refresh tokens. Note that encryption keys are not stored in the database -
+<p>An <em>encryption key description</em> describes an encryption key which Open Banking Connector can use for application-level encryption of sensitive
+data in the database such as bank access and refresh tokens. (It is assumed and recommended that database at-rest encryption is also
+used.) Note that encryption keys are not stored in the database -
 this object is simply a reference.</p>
 <p>You can add an encryption key description using the <a href="../../apis/management/openapi/">
 <code>POST /manage/encryption-key-descriptions</code></a>
@@ -2316,11 +2271,11 @@ endpoint. Here is an example request:</p>
 <span class="err">  &quot;Key&quot;: {</span>
 <span class="err">    &quot;Source&quot;: &quot;Configuration&quot;, # can alternatively use &quot;AwsSsmParameterStore&quot; or &quot;GoogleCloudSecretManagerV1&quot;</span>
 <span class="err">    &quot;Name&quot;: &quot;{{EncryptionKeyName}}&quot; # can specify environment variable if &quot;Source&quot; is &quot;Configuration&quot;. Must be in format projects/{project_id}/secrets/{secret_id}/versions/{secret_version} if &quot;Source&quot; is &quot;GoogleCloudSecretManagerV1&quot;</span>
-<span class="err">  }</span>
+<span class="err">  },</span>
+<span class="err">  &quot;SetAsCurrentEncryptionKey&quot;: true</span>
 <span class="err">}</span>
 </code></pre></div>
-<p>Upon creation, Open Banking Connector will provide you with an ID for the encryption key description. Please use this to
-set the <a href="../set-up-basic-configuration/#encryption-key-settings">current encryption key setting</a> so that Open
+<p>By using <code>SetAsCurrentEncryptionKey</code>, you can instruct Open Banking Connector to update its database settings table to set the encryption key as the current encryption key to use for application-level encryption. This will ensure that Open
 Banking Connector does not complain about the lack of an encryption key.</p>
 
 
@@ -2342,7 +2297,7 @@ Banking Connector does not complain about the lack of an encryption key.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2025-05-30</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2025-07-26</span>
   </span>
 
     

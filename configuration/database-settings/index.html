@@ -12,7 +12,7 @@
         <link rel="prev" href="../">
       
       
-        <link rel="next" href="../encryption-key-settings/">
+        <link rel="next" href="../open-telemetry-settings/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -989,10 +989,6 @@
       
         
       
-        
-      
-        
-      
     
     
       
@@ -1092,6 +1088,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#database-passwords" class="md-nav__link">
+    <span class="md-ellipsis">
+      Database passwords
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#settings" class="md-nav__link">
     <span class="md-ellipsis">
       Settings
@@ -1104,48 +1109,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../encryption-key-settings/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Encryption keys settings
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../configuration-sources-settings/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Configuration sources settings
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -2024,6 +1987,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#database-passwords" class="md-nav__link">
+    <span class="md-ellipsis">
+      Database passwords
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#settings" class="md-nav__link">
     <span class="md-ellipsis">
       Settings
@@ -2053,6 +2025,21 @@
 <h1 id="database-settings">Database settings</h1>
 <p>Database settings are used to configure the database used by Open Banking Connector to read and write data.</p>
 <p>In non-development environments (the default), you will at least need to at least provide a connection string setting for the configured database provider.</p>
+<h2 id="database-passwords">Database passwords</h2>
+<p>Database settings are secrets and can be supplied separately to Open Banking Connector from the connection string using a secret name and (optionally) source.</p>
+<p>Open Banking Connector then obtains the password and adds it to the connection string as follows:</p>
+<ul>
+<li>For PostgreSQL, the following is apprended to the connection string:<ul>
+<li><code>$";Password={password}"</code> (C#) where <code>password</code> is the obtained password as a string</li>
+</ul>
+</li>
+<li>For MongoDB, the first <code>@</code> is used as an insertion point for<ul>
+<li><code>$":{password}"</code> (C#)  where <code>password</code> is the obtained password as a string</li>
+<li>For example, connection string "mongodb://my-user@localhost:27017" might become "mongodb://my-user:my-password@localhost:27017"</li>
+</ul>
+</li>
+<li>For SQLite, passwords are ignored.</li>
+</ul>
 <h2 id="settings">Settings</h2>
 <table>
 <thead>
@@ -2066,15 +2053,33 @@
 <tbody>
 <tr>
 <td>OpenBankingConnector<wbr/>:Database<wbr/>:Provider</td>
-<td>{<code>"Sqlite"</code>, <code>"PostgreSql"</code>}</td>
+<td>{<code>"Sqlite"</code>, <code>"PostgreSql", "MongoDb"</code>}</td>
 <td><code>"PostgreSql"</code></td>
 <td>Determines which database provider Open Banking Connector uses.</td>
 </tr>
 <tr>
-<td>OpenBankingConnector<wbr/>:Database<wbr/>:ConnectionStrings:{Provider} <p style="margin-top: 10px;"> <em>where Provider ∈ {Sqlite, PostgreSql}</em>  </p></td>
+<td>OpenBankingConnector<wbr/>:Database<wbr/>:ConnectionStrings:{Provider} <p style="margin-top: 10px;"> <em>where Provider ∈ {Sqlite, PostgreSql, MongoDb}</em>  </p></td>
 <td>string</td>
-<td><code>"Data Source=./sqliteTestDb.db"</code> (development environment and Provider = <code>"Sqlite"</code>) <p style="margin-top: 10px;"> <code>"Host=localhost;Database=test;</code><wbr/><code>Username=postgres"</code> (development environment and Provider = <code>"PostgreSql"</code>) <p style="margin-top: 10px;"> - (otherwise)</td>
+<td><code>"Data Source=./sqliteTestDb.db"</code> (development environment and Provider = <code>"Sqlite"</code>) <p style="margin-top: 10px;"> <code>"Host=localhost;Database=test;</code><wbr/><code>Username=postgres"</code> (development environment and Provider = <code>"PostgreSql"</code>) <p style="margin-top: 10px;"> <code>"mongodb://localhost:27017"</code> (development environment and Provider = <code>"MongoDb"</code>) <p style="margin-top: 10px;"> - (otherwise)</td>
 <td>Connection strings for each database provider. Open Banking Connector only reads the one for the provider specified by OpenBankingConnector:Database:Provider. The BankTests project, however, may use multiple connection strings to test with multiple databases. A list of connection string parameters for provider <code>PostgreSql</code> is given <a href="https://www.npgsql.org/doc/connection-string-parameters.html">here</a>.</td>
+</tr>
+<tr>
+<td>OpenBankingConnector<wbr/>:Database<wbr/>:Names:{Provider} <p style="margin-top: 10px;"> <em>where Provider ∈ {Sqlite, PostgreSql, MongoDb}</em>  </p></td>
+<td>string</td>
+<td>-</td>
+<td>Name of database for each database provider. Open Banking Connector only reads the one for the provider specified by OpenBankingConnector:Database:Provider. (Only currently implemented for MongoDb).</td>
+</tr>
+<tr>
+<td>OpenBankingConnector<wbr/>:Database<wbr/>:PasswordSettingNames:{Provider} <p style="margin-top: 10px;"> <em>where Provider ∈ {Sqlite, PostgreSql, MongoDb}</em>  </p></td>
+<td>string</td>
+<td>-</td>
+<td>Name of password secret for each database provider. Open Banking Connector only reads the one for the provider specified by OpenBankingConnector:Database:Provider. The password is obtained and added to the connection string (see text above this table).</td>
+</tr>
+<tr>
+<td>OpenBankingConnector<wbr/>:Database<wbr/>:PasswordSources:{Provider} <p style="margin-top: 10px;"> <em>where Provider ∈ {Sqlite, PostgreSql, MongoDb}</em>  </p></td>
+<td>{<code>"Configuration"</code>, <code>"AwsSsmParameterStore"</code>, <code>"GoogleCloudSecretManagerV1"</code>}</td>
+<td><code>"Configuration"</code></td>
+<td>Source of password secret for each database provider. Open Banking Connector only reads the one for the provider specified by OpenBankingConnector:Database:Provider. The password is obtained and added to the connection string (see text above this table).</td>
 </tr>
 <tr>
 <td>OpenBankingConnector<wbr/>:Database<wbr/>:EnsureDatabaseCreated</td>
@@ -2110,7 +2115,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-04-08</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2025-07-30</span>
   </span>
 
     

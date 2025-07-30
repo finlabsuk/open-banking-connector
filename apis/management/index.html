@@ -987,10 +987,6 @@
       
         
       
-        
-      
-        
-      
     
     
       
@@ -1046,48 +1042,6 @@
   
   <span class="md-ellipsis">
     Database settings
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../configuration/encryption-key-settings/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Encryption keys settings
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../configuration/configuration-sources-settings/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Configuration sources settings
   </span>
   
 
@@ -2195,8 +2149,8 @@ still in use since it is
 very important for AES-GCM that nonces are never re-used for the same encryption key.</p>
 <p>Multiple encryption key descriptions can be added to Open Banking Connector using
 the <a href="openapi/">POST /manage/encryption-key-descriptions</a> endpoint. This allows decryption of objects encrypted with
-previously-used keys. New objects will be encrypted with the key specified by configuration
-setting <a href="../../configuration/encryption-key-settings/">OpenBankingConnector:Keys:CurrentEncryptionKeyId</a>.</p>
+previously-used keys. New objects will be encrypted with the key specified in the database settings table by
+field <code>current_encryption_key_description_id</code>. This can be updated when adding a key.</p>
 <p>Encryption keys are described by both a <code>Source</code> and <code>Name</code>. Supported sources at time of writing are environment
 variables (not generally recommended) and AWS SSM secrets. Additional sources supporting other key vaults can be added
 in future as required. Each encryption key should be 256 bits and specified as a base64-encoded string.</p>
@@ -2234,7 +2188,7 @@ safely for all banks and only creates new OAuth2 clients where necessary.&#160;<
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-12-28</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2025-07-30</span>
   </span>
 
     
