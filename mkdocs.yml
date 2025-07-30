@@ -22,13 +22,13 @@ markdown_extensions:
   - attr_list
   - md_in_html
   - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji 
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - footnotes
 plugins:
   - search:
-       lang: en
-       separator: '[\s\-\.]'
+      lang: en
+      separator: '[\s\-\.]'
   - git-revision-date-localized:
       type: iso_date
   - render_swagger
@@ -37,57 +37,56 @@ extra_css:
 copyright: Copyright &copy; 2024 Finnovation Labs Limited and contributors
 nav:
   - Overview:
-    - README.md
-    - Common questions: guide/README.md
+      - README.md
+      - Common questions: guide/README.md
   - Bank integrations: bank-integrations.md
   - Get started:
-    - get-started/README.md
-    - Set up basic configuration: get-started\set-up-basic-configuration\README.md
-    - Run container: get-started\run-container\README.md
-    - Add software statement, certificates and an encryption key description: get-started/add-software-statement-etc/README.md
-    - Create bank registration: get-started\create-bank-registration\README.md
-    - Account access consents:
-      - get-started/account-access-consents/README.md
-      - Create and authorise an account access consent: get-started/account-access-consents/create-and-authorise-account-access-consent/README.md
-      - Get account data: get-started\account-access-consents\get-account-data\README.md
-    - Domestic payment consents:
-      - get-started/domestic-payment-consents/README.md
-      - Create and authorise a domestic payment consent: get-started\domestic-payment-consents\create-and-authorise-domestic-payment-consent\README.md
-      - Check funds and make payment: get-started\domestic-payment-consents\confirm-funds-and-make-payment\README.md
-    - Domestic VRP consents:
-      - get-started/domestic-vrp-consents/README.md
-      - Create and authorise a domestic VRP consent: get-started\domestic-vrp-consents\create-and-authorise-domestic-vrp-consent\README.md
-      - Check funds and make payment: get-started\domestic-vrp-consents\confirm-funds-and-make-payment\README.md
+      - get-started/README.md
+      - Set up basic configuration: get-started\set-up-basic-configuration\README.md
+      - Run container: get-started\run-container\README.md
+      - Add software statement, certificates and an encryption key description: get-started/add-software-statement-etc/README.md
+      - Create bank registration: get-started\create-bank-registration\README.md
+      - Account access consents:
+          - get-started/account-access-consents/README.md
+          - Create and authorise an account access consent: get-started/account-access-consents/create-and-authorise-account-access-consent/README.md
+          - Get account data: get-started\account-access-consents\get-account-data\README.md
+      - Domestic payment consents:
+          - get-started/domestic-payment-consents/README.md
+          - Create and authorise a domestic payment consent: get-started\domestic-payment-consents\create-and-authorise-domestic-payment-consent\README.md
+          - Check funds and make payment: get-started\domestic-payment-consents\confirm-funds-and-make-payment\README.md
+      - Domestic VRP consents:
+          - get-started/domestic-vrp-consents/README.md
+          - Create and authorise a domestic VRP consent: get-started\domestic-vrp-consents\create-and-authorise-domestic-vrp-consent\README.md
+          - Check funds and make payment: get-started\domestic-vrp-consents\confirm-funds-and-make-payment\README.md
   - Configuration:
-    - configuration/README.md
-    - Database settings: configuration/database-settings.md
-    - Encryption keys settings: configuration/encryption-key-settings.md
-    - Open Telemetry settings: configuration/open-telemetry-settings.md
+      - configuration/README.md
+      - Database settings: configuration/database-settings.md
+      - Open Telemetry settings: configuration/open-telemetry-settings.md
   - APIs:
-    - apis/README.md
-    - Management API:
-      - apis/management/README.md
-      - OpenAPI spec: apis/management/openapi.md
-    - Account and Transaction API:
-      - apis/account-and-transaction/README.md
-      - OpenAPI spec: apis/account-and-transaction/openapi.md 
-    - Payment Initiation API:
-      - apis/payment-initiation/README.md
-      - OpenAPI spec: apis/payment-initiation/openapi.md
-    - Variable Recurring Payments API:
-      - apis/variable-recurring-payments/README.md
-      - OpenAPI spec: apis/variable-recurring-payments/openapi.md
-    - Auth Contexts API:
-      - apis/auth-contexts/README.md
-      - OpenAPI spec: apis/auth-contexts/openapi.md 
+      - apis/README.md
+      - Management API:
+          - apis/management/README.md
+          - OpenAPI spec: apis/management/openapi.md
+      - Account and Transaction API:
+          - apis/account-and-transaction/README.md
+          - OpenAPI spec: apis/account-and-transaction/openapi.md
+      - Payment Initiation API:
+          - apis/payment-initiation/README.md
+          - OpenAPI spec: apis/payment-initiation/openapi.md
+      - Variable Recurring Payments API:
+          - apis/variable-recurring-payments/README.md
+          - OpenAPI spec: apis/variable-recurring-payments/openapi.md
+      - Auth Contexts API:
+          - apis/auth-contexts/README.md
+          - OpenAPI spec: apis/auth-contexts/openapi.md
   - Contributor info:
       - contributor-info/README.md
       - Documentation:
-        - contributor-info/documentation/README.md
-        - Update: contributor-info/documentation/update-documentation.md
-        - Deploy: contributor-info/documentation/deploy-documentation.md
+          - contributor-info/documentation/README.md
+          - Update: contributor-info/documentation/update-documentation.md
+          - Deploy: contributor-info/documentation/deploy-documentation.md
       - Developer setup:
-        - contributor-info/developer-setup/README.md
-        - Install OB UK root certificate: contributor-info/developer-setup/install-obuk-root-certs.md
-        - Use Microsoft's Secret Manager: contributor-info/developer-setup/use-secret-manager.md
-        - Install PostgreSQL: contributor-info/developer-setup/install-postgresql.md
+          - contributor-info/developer-setup/README.md
+          - Install OB UK root certificate: contributor-info/developer-setup/install-obuk-root-certs.md
+          - Use Microsoft's Secret Manager: contributor-info/developer-setup/use-secret-manager.md
+          - Install PostgreSQL: contributor-info/developer-setup/install-postgresql.md
