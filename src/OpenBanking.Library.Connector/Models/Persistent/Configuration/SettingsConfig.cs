@@ -37,8 +37,7 @@ internal class SettingsConfig(
             builder
                 .HasOne<EncryptionKeyDescriptionEntity>()
                 .WithMany()
-                .HasForeignKey(e => e.CurrentEncryptionKeyDescriptionId)
-                .IsRequired();
+                .HasForeignKey(e => e.CurrentEncryptionKeyDescriptionId);
         }
 
         // Use camel case for MongoDB

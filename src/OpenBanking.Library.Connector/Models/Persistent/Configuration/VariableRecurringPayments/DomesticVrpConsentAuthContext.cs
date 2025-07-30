@@ -36,8 +36,7 @@ internal class
             builder
                 .HasOne(e => e.DomesticVrpConsentNavigation)
                 .WithMany()
-                .HasForeignKey(e => e.DomesticVrpConsentId)
-                .IsRequired();
+                .HasForeignKey(e => e.DomesticVrpConsentId);
         }
 
         // Use camel case for MongoDB

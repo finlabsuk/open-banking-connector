@@ -32,8 +32,7 @@ internal class
             builder
                 .HasOne(e => e.AccountAccessConsentNavigation)
                 .WithMany()
-                .HasForeignKey(e => e.AccountAccessConsentId)
-                .IsRequired();
+                .HasForeignKey(e => e.AccountAccessConsentId);
         }
 
         // Use camel case for MongoDB

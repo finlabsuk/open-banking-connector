@@ -37,14 +37,12 @@ internal class SoftwareStatementConfig(
             builder
                 .HasOne(e => e.DefaultObSealCertificateNavigation)
                 .WithMany()
-                .HasForeignKey(e => e.DefaultObSealCertificateId)
-                .IsRequired();
+                .HasForeignKey(e => e.DefaultObSealCertificateId);
 
             builder
                 .HasOne(e => e.DefaultObWacCertificateNavigation)
                 .WithMany()
-                .HasForeignKey(e => e.DefaultObWacCertificateId)
-                .IsRequired();
+                .HasForeignKey(e => e.DefaultObWacCertificateId);
         }
 
         // Use camel case for MongoDB

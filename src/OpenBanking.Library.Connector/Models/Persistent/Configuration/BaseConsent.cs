@@ -46,8 +46,7 @@ internal class BaseConsentConfig<TEntity>(
             builder
                 .HasOne(e => e.BankRegistrationNavigation)
                 .WithMany()
-                .HasForeignKey(e => e.BankRegistrationId)
-                .IsRequired();
+                .HasForeignKey(e => e.BankRegistrationId);
         }
 
         // Use camel case for MongoDB

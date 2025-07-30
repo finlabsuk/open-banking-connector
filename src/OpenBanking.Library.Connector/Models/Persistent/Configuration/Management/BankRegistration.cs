@@ -30,8 +30,6 @@ internal class BankRegistrationConfig(
         base.Configure(builder);
 
         // Top-level property info: read-only, JSON conversion, etc
-        builder.Property(e => e.Id)
-            .HasColumnOrder(1);
         builder.Property(e => e.ExternalApiId)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.DefaultResponseModeOverride)
@@ -99,8 +97,7 @@ internal class BankRegistrationConfig(
             builder
                 .HasOne(e => e.SoftwareStatementNavigation)
                 .WithMany()
-                .HasForeignKey(e => e.SoftwareStatementId)
-                .IsRequired();
+                .HasForeignKey(e => e.SoftwareStatementId);
         }
 
         // Use camel case for MongoDB

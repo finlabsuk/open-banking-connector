@@ -22,10 +22,14 @@ internal class EncryptedObjectConfig<TEntity>(
     {
         base.Configure(builder);
 
-        builder.Property("_nonce").HasElementName("nonce");
-        builder.Property("_text").HasElementName("text");
-        builder.Property("_tag").HasElementName("tag");
-        builder.Property("_text2").HasElementName("text2");
+        // Set column names
+        if (_dbProvider is not DbProvider.MongoDb)
+        {
+            builder.Property("_nonce").HasColumnName("nonce");
+            builder.Property("_text").HasColumnName("text");
+            builder.Property("_tag").HasColumnName("tag");
+            builder.Property("_text2").HasColumnName("text2");
+        }
 
         // Only set up relationships (foreign keys and navigations) if not MongoDB
         if (_dbProvider is not DbProvider.MongoDb)
@@ -33,8 +37,7 @@ internal class EncryptedObjectConfig<TEntity>(
             builder
                 .HasOne(e => e.EncryptionKeyDescriptionNavigation)
                 .WithMany()
-                .HasForeignKey(e => e.EncryptionKeyDescriptionId)
-                .IsRequired();
+                .HasForeignKey(e => e.EncryptionKeyDescriptionId);
         }
 
         // Use camel case for MongoDB
@@ -44,6 +47,10 @@ internal class EncryptedObjectConfig<TEntity>(
             builder.Property(p => p.EncryptionKeyDescriptionId).HasElementName("encryptionKeyDescriptionId");
             builder.Property(p => p.Modified).HasElementName("modified");
             builder.Property(p => p.ModifiedBy).HasElementName("modifiedBy");
+            builder.Property("_nonce").HasElementName("nonce");
+            builder.Property("_text").HasElementName("text");
+            builder.Property("_tag").HasElementName("tag");
+            builder.Property("_text2").HasElementName("text2");
         }
     }
 }

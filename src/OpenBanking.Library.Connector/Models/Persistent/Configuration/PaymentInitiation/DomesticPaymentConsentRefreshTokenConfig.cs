@@ -32,8 +32,7 @@ internal class
             builder
                 .HasOne<DomesticPaymentConsent>()
                 .WithMany(e => e.DomesticPaymentConsentRefreshTokensNavigation)
-                .HasForeignKey(e => e.DomesticPaymentConsentId)
-                .IsRequired();
+                .HasForeignKey(e => e.DomesticPaymentConsentId);
         }
 
         // Use camel case for MongoDB

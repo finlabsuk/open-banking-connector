@@ -32,8 +32,7 @@ internal class
             builder
                 .HasOne(e => e.BankRegistrationNavigation)
                 .WithMany(e => e.RegistrationAccessTokensNavigation)
-                .HasForeignKey(e => e.BankRegistrationId)
-                .IsRequired();
+                .HasForeignKey(e => e.BankRegistrationId);
         }
 
         // Use camel case for MongoDB
