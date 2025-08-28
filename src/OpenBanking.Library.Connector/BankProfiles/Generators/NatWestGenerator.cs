@@ -91,12 +91,28 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 NatWestBank.Coutts => "0015800000ti1PbAAI", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/coutts/3.1.8#tls-requirements
                 _ => throw new ArgumentOutOfRangeException()
             },
-            GetAccountAndTransactionApi(bank),
-            null,
-            GetPaymentInitiationApi(bank),
-            null,
-            GetVariableRecurringPaymentsApi(bank),
-            null,
+            new AccountAndTransactionApi { BaseUrl = GetAccountAndTransactionBaseUrl(bank, "v3.1") },
+            new AccountAndTransactionApi
+            {
+                BaseUrl = GetAccountAndTransactionBaseUrl(bank, "v4.0"),
+                ApiVersion = AccountAndTransactionApiVersion.Version4p0
+            },
+            new PaymentInitiationApi { BaseUrl = GetPaymentsBaseUrl(bank, "v3.1") },
+            new PaymentInitiationApi
+            {
+                BaseUrl = GetPaymentsBaseUrl(bank, "v4.0"),
+                ApiVersion = PaymentInitiationApiVersion.Version4p0
+            },
+            bank is NatWestBank.Coutts
+                ? null
+                : new VariableRecurringPaymentsApi { BaseUrl = GetPaymentsBaseUrl(bank, "v3.1") },
+            bank is NatWestBank.Coutts
+                ? null
+                : new VariableRecurringPaymentsApi
+                {
+                    BaseUrl = GetPaymentsBaseUrl(bank, "v4.0"),
+                    ApiVersion = VariableRecurringPaymentsApiVersion.Version4p0
+                },
             bank is not (NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox),
             instrumentationClient)
         {
@@ -282,7 +298,10 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     13,
                 NatWestBank.Coutts => 13,
                 _ => throw new ArgumentOutOfRangeException()
-            }
+            },
+            AispUseV4ByDefault = false,
+            PispUseV4ByDefault = true,
+            VrpUseV4ByDefault = true
         };
     }
 
@@ -310,16 +329,8 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
             null)
     };
 
-    private VariableRecurringPaymentsApi? GetVariableRecurringPaymentsApi(NatWestBank bank)
-    {
-        if (bank is NatWestBank.Coutts)
-        {
-            return null;
-        }
-        return new VariableRecurringPaymentsApi { BaseUrl = GetPaymentsBaseUrl(bank) };
-    }
 
-    private string GetPaymentsBaseUrl(NatWestBank bank)
+    private string GetPaymentsBaseUrl(NatWestBank bank, string version)
     {
         return bank switch
         {
@@ -328,59 +339,62 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
             NatWestBank.NatWest
                 or NatWestBank.NatWestBankline
                 or NatWestBank.NatWestClearSpend =>
-                "https://api.natwest.com/open-banking/v3.1/pisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/nwb/3.1.11
+                $"https://api.natwest.com/open-banking/{version}/pisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/nwb/3.1.11
+            // and https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/nwb/4.0.0
             NatWestBank.RoyalBankOfScotland
                 or NatWestBank.RoyalBankOfScotlandBankline
                 or NatWestBank.RoyalBankOfScotlandClearSpend
                 or NatWestBank.TheOne
                 or NatWestBank.NatWestOne
                 or NatWestBank.VirginOne =>
-                "https://api.rbs.co.uk/open-banking/v3.1/pisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/rbs/3.1.11
+                $"https://api.rbs.co.uk/open-banking/{version}/pisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/rbs/3.1.11
+            // and https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/rbs/4.0.0
             NatWestBank.UlsterBankNi
                 or NatWestBank.UlsterBankNiBankline
                 or NatWestBank.UlsterBankNiClearSpend =>
-                "https://api.ulsterbank.co.uk/open-banking/v3.1/pisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/ubn/3.1.11
+                $"https://api.ulsterbank.co.uk/open-banking/{version}/pisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/ubn/3.1.11
+            // and https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/ubn/4.0.0
             NatWestBank.Mettle =>
-                "https://api.openbanking.prd-mettle.co.uk/apis/open-banking/v3.1/pisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/mettle/3.1.10
+                $"https://api.openbanking.prd-mettle.co.uk/apis/open-banking/{version}/pisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/mettle/3.1.10
+            // and https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/mettle/4.0.0
             NatWestBank.Coutts =>
-                "https://api.coutts.com/open-banking/v3.1/pisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/coutts/3.1.8#api-specification
+                $"https://api.coutts.com/open-banking/{version}/pisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/coutts/3.1.8#api-specification
+            // and https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/coutts/4.0.0
             _ => throw new ArgumentOutOfRangeException()
         };
     }
 
-    private AccountAndTransactionApi GetAccountAndTransactionApi(NatWestBank bank)
+    private string GetAccountAndTransactionBaseUrl(NatWestBank bank, string version)
     {
-        return new AccountAndTransactionApi
+        return bank switch
         {
-            BaseUrl =
-                bank switch
-                {
-                    NatWestBank.NatWestSandbox => GetAccountAndTransactionApiBaseUrl(bank),
-                    NatWestBank.RoyalBankOfScotlandSandbox => GetAccountAndTransactionApiBaseUrl(bank),
-                    NatWestBank.NatWest
-                        or NatWestBank.NatWestBankline
-                        or NatWestBank.NatWestClearSpend =>
-                        "https://api.natwest.com/open-banking/v3.1/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/nwb/3.1.10
-                    NatWestBank.RoyalBankOfScotland
-                        or NatWestBank.RoyalBankOfScotlandBankline
-                        or NatWestBank.RoyalBankOfScotlandClearSpend
-                        or NatWestBank.TheOne
-                        or NatWestBank.NatWestOne
-                        or NatWestBank.VirginOne =>
-                        "https://api.rbs.co.uk/open-banking/v3.1/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/rbs/3.1.10
-                    NatWestBank.UlsterBankNi
-                        or NatWestBank.UlsterBankNiBankline
-                        or NatWestBank.UlsterBankNiClearSpend =>
-                        "https://api.ulsterbank.co.uk/open-banking/v3.1/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/ubn/3.1.10
-                    NatWestBank.Mettle =>
-                        "https://api.openbanking.prd-mettle.co.uk/apis/open-banking/v3.1/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/mettle/3.1.10
-                    NatWestBank.Coutts =>
-                        "https://api.coutts.com/open-banking/v3.1/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/coutts/3.1.8#api-specification
-                    _ => throw new ArgumentOutOfRangeException()
-                }
+            NatWestBank.NatWestSandbox => GetAccountAndTransactionApiBaseUrl(bank),
+            NatWestBank.RoyalBankOfScotlandSandbox => GetAccountAndTransactionApiBaseUrl(bank),
+            NatWestBank.NatWest
+                or NatWestBank.NatWestBankline
+                or NatWestBank.NatWestClearSpend =>
+                $"https://api.natwest.com/open-banking/{version}/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/nwb/3.1.10
+            // and https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/nwb/4.0.0#api-specification
+            NatWestBank.RoyalBankOfScotland
+                or NatWestBank.RoyalBankOfScotlandBankline
+                or NatWestBank.RoyalBankOfScotlandClearSpend
+                or NatWestBank.TheOne
+                or NatWestBank.NatWestOne
+                or NatWestBank.VirginOne =>
+                $"https://api.rbs.co.uk/open-banking/{version}/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/rbs/3.1.10
+            // and https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/rbs/4.0.0
+            NatWestBank.UlsterBankNi
+                or NatWestBank.UlsterBankNiBankline
+                or NatWestBank.UlsterBankNiClearSpend =>
+                $"https://api.ulsterbank.co.uk/open-banking/{version}/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/ubn/3.1.10
+            // and https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/ubn/4.0.0
+            NatWestBank.Mettle =>
+                $"https://api.openbanking.prd-mettle.co.uk/apis/open-banking/{version}/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/mettle/3.1.10
+            // and https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/mettle/4.0.0
+            NatWestBank.Coutts =>
+                $"https://api.coutts.com/open-banking/{version}/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/coutts/3.1.8#api-specification
+            // and https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/coutts/4.0.0
+            _ => throw new ArgumentOutOfRangeException()
         };
     }
-
-    private PaymentInitiationApi GetPaymentInitiationApi(NatWestBank bank) =>
-        new() { BaseUrl = GetPaymentsBaseUrl(bank) };
 }
