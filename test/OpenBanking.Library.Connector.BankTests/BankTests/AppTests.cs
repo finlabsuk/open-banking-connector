@@ -635,6 +635,8 @@ public class AppTests
             obSealCertificateId,
             softwareStatementId,
             managementApiClient);
+
+        Console.WriteLine("AppTest Finish");
     }
 
     private string GetRedirectUri(
