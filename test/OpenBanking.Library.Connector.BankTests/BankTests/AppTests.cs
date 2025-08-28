@@ -46,7 +46,7 @@ public class AppTests
         GetDynamicClientRegistrationTestCases() =>
         GetTestCases(TestType.DynamicClientRegistration);
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(GetDynamicClientRegistrationTestCases), DynamicDataSourceType.Method)]
     [DoNotParallelize]
     public async Task DynamicClientRegistration(BankTestData bankTestData) => await TestAllInner(bankTestData);
@@ -55,7 +55,7 @@ public class AppTests
         GetAccountAccessConsentTestCases() =>
         GetTestCases(TestType.AccountAccessConsent);
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(GetAccountAccessConsentTestCases), DynamicDataSourceType.Method)]
     public async Task AccountAccessConsent(BankTestData bankTestData) => await TestAllInner(bankTestData);
 
@@ -63,7 +63,7 @@ public class AppTests
         GetDomesticPaymentConsentTestCases() =>
         GetTestCases(TestType.DomesticPaymentConsent);
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(GetDomesticPaymentConsentTestCases), DynamicDataSourceType.Method)]
     public async Task DomesticPaymentConsent(BankTestData bankTestData) => await TestAllInner(bankTestData);
 
@@ -71,7 +71,7 @@ public class AppTests
         GetDomesticVrpConsentTestCases() =>
         GetTestCases(TestType.DomesticVrpConsent);
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(GetDomesticVrpConsentTestCases), DynamicDataSourceType.Method)]
     public async Task DomesticVrpConsent(BankTestData bankTestData) => await TestAllInner(bankTestData);
 
@@ -295,7 +295,7 @@ public class AppTests
     private static async Task SetUpEncryptionKey()
     {
         // Create API client
-            BankTestingFixture testLevelWebApplicationFactory = _classLevelWebApplicationFactory;
+        BankTestingFixture testLevelWebApplicationFactory = _classLevelWebApplicationFactory;
         using HttpClient httpClient = testLevelWebApplicationFactory.CreateClient();
         var webAppClient = new WebAppClient(httpClient);
         var managementApiClient = new ManagementApiClient(webAppClient);
