@@ -33,12 +33,34 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
             _bankGroupData.GetBankProfile(bank),
             "https://obonline.nationwide.co.uk/open-banking/", // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
             "0015800000jf8aKAAQ", // from https://developer.nationwide.co.uk/open-banking/how-to?page=1
-            GetAccountAndTransactionApi(bank),
-            null,
-            GetPaymentInitiationApi(bank),
-            null,
-            GetVariableRecurringPaymentsApi(bank),
-            null,
+            new AccountAndTransactionApi { BaseUrl = GetAccountAndTransactionBaseUrl("v3.1") },
+            new AccountAndTransactionApi
+            {
+                BaseUrl = GetAccountAndTransactionBaseUrl("v4.0"),
+                ApiVersion = AccountAndTransactionApiVersion.Version4p0
+            },
+            new PaymentInitiationApi
+            {
+                BaseUrl =
+                    GetPaymentsBaseUrl("v3.1")
+            },
+            new PaymentInitiationApi
+            {
+                BaseUrl =
+                    GetPaymentsBaseUrl("v4.0"),
+                ApiVersion = PaymentInitiationApiVersion.Version4p0
+            },
+            new VariableRecurringPaymentsApi
+            {
+                BaseUrl =
+                    GetPaymentsBaseUrl("v3.1")
+            },
+            new VariableRecurringPaymentsApi
+            {
+                BaseUrl =
+                    GetPaymentsBaseUrl("v4.0"),
+                ApiVersion = VariableRecurringPaymentsApiVersion.Version4p0
+            },
             true,
             instrumentationClient)
         {
@@ -164,31 +186,16 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                 },
                 UseGetPartyEndpoint = false
             },
-            AspspBrandId = 12
+            AspspBrandId = 12,
+            AispUseV4ByDefault = false,
+            PispUseV4ByDefault = true,
+            VrpUseV4ByDefault = true
         };
 
-    private AccountAndTransactionApi? GetAccountAndTransactionApi(NationwideBank bank) =>
-        new()
-        {
-            BaseUrl =
-                "https://api.nationwide.co.uk/open-banking/v3.1/aisp" // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
-        };
-
-    private PaymentInitiationApi? GetPaymentInitiationApi(NationwideBank bank) =>
-        new()
-        {
-            BaseUrl =
-                GetPaymentsBaseUrl()
-        };
-
-    private VariableRecurringPaymentsApi? GetVariableRecurringPaymentsApi(NationwideBank bank) =>
-        new()
-        {
-            BaseUrl =
-                GetPaymentsBaseUrl()
-        };
+    private static string GetAccountAndTransactionBaseUrl(string version) =>
+        $"https://api.nationwide.co.uk/open-banking/{version}/aisp"; // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
 
 
-    private static string GetPaymentsBaseUrl() =>
-        "https://api.nationwide.co.uk/open-banking/v3.1/pisp"; // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
+    private static string GetPaymentsBaseUrl(string version) =>
+        $"https://api.nationwide.co.uk/open-banking/{version}/pisp"; // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
 }
