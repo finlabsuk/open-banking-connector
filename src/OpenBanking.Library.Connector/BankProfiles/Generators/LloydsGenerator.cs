@@ -72,12 +72,33 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                 LloydsBank.MbnaPersonal => GetFinancialId(LloydsBank.MbnaPersonal),
                 _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
             },
-            bank is not LloydsBank.Sandbox ? GetAccountAndTransactionApi(bank) : null,
-            null,
-            GetPaymentInitiationApi(bank),
-            null,
-            GetVariableRecurringPaymentsApi(bank),
-            null,
+            bank is not LloydsBank.Sandbox
+                ? new AccountAndTransactionApi
+                {
+                    BaseUrl =
+                        GetAccountAndTransactionV3BaseUrl(bank)
+                }
+                : null,
+            bank is not LloydsBank.Sandbox
+                ? new AccountAndTransactionApi
+                {
+                    ApiVersion = AccountAndTransactionApiVersion.Version4p0,
+                    BaseUrl =
+                        GetApiBaseUrl(bank, "v4.0/aisp")
+                }
+                : null,
+            new PaymentInitiationApi { BaseUrl = GetApiBaseUrl(bank) },
+            new PaymentInitiationApi
+            {
+                ApiVersion = PaymentInitiationApiVersion.Version4p0,
+                BaseUrl = GetApiBaseUrl(bank, "v4.0/pisp")
+            },
+            new VariableRecurringPaymentsApi { BaseUrl = GetApiBaseUrl(bank) },
+            new VariableRecurringPaymentsApi
+            {
+                ApiVersion = VariableRecurringPaymentsApiVersion.Version4p0,
+                BaseUrl = GetApiBaseUrl(bank, "v4.0/pisp")
+            },
             bank is not LloydsBank.Sandbox,
             instrumentationClient)
         {
@@ -150,15 +171,15 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                             LloydsBank.LloydsPersonal
                                 or LloydsBank.LloydsBusiness
                                 or LloydsBank.LloydsCommerical => null,
-                            LloydsBank.HalifaxPersonal => (GetPaymentsBaseUrl(LloydsBank.HalifaxPersonal),
-                                GetPaymentsBaseUrl(LloydsBank.LloydsPersonal)),
+                            LloydsBank.HalifaxPersonal => (GetApiBaseUrl(LloydsBank.HalifaxPersonal),
+                                GetApiBaseUrl(LloydsBank.LloydsPersonal)),
                             LloydsBank.BankOfScotlandPersonal
                                 or LloydsBank.BankOfScotlandBusiness
                                 or LloydsBank.BankOfScotlandCommerical => (
-                                    GetPaymentsBaseUrl(LloydsBank.BankOfScotlandPersonal),
-                                    GetPaymentsBaseUrl(LloydsBank.LloydsPersonal)),
-                            LloydsBank.MbnaPersonal => (GetPaymentsBaseUrl(LloydsBank.MbnaPersonal),
-                                GetPaymentsBaseUrl(LloydsBank.LloydsPersonal)),
+                                    GetApiBaseUrl(LloydsBank.BankOfScotlandPersonal),
+                                    GetApiBaseUrl(LloydsBank.LloydsPersonal)),
+                            LloydsBank.MbnaPersonal => (GetApiBaseUrl(LloydsBank.MbnaPersonal),
+                                GetApiBaseUrl(LloydsBank.LloydsPersonal)),
                             _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
                         }
                     },
@@ -172,15 +193,15 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                             LloydsBank.LloydsPersonal
                                 or LloydsBank.LloydsBusiness
                                 or LloydsBank.LloydsCommerical => null,
-                            LloydsBank.HalifaxPersonal => (GetPaymentsBaseUrl(LloydsBank.HalifaxPersonal),
-                                GetPaymentsBaseUrl(LloydsBank.LloydsPersonal)),
+                            LloydsBank.HalifaxPersonal => (GetApiBaseUrl(LloydsBank.HalifaxPersonal),
+                                GetApiBaseUrl(LloydsBank.LloydsPersonal)),
                             LloydsBank.BankOfScotlandPersonal
                                 or LloydsBank.BankOfScotlandBusiness
                                 or LloydsBank.BankOfScotlandCommerical => (
-                                    GetPaymentsBaseUrl(LloydsBank.BankOfScotlandPersonal),
-                                    GetPaymentsBaseUrl(LloydsBank.LloydsPersonal)),
-                            LloydsBank.MbnaPersonal => (GetPaymentsBaseUrl(LloydsBank.MbnaPersonal),
-                                GetPaymentsBaseUrl(LloydsBank.LloydsPersonal)),
+                                    GetApiBaseUrl(LloydsBank.BankOfScotlandPersonal),
+                                    GetApiBaseUrl(LloydsBank.LloydsPersonal)),
+                            LloydsBank.MbnaPersonal => (GetApiBaseUrl(LloydsBank.MbnaPersonal),
+                                GetApiBaseUrl(LloydsBank.LloydsPersonal)),
                             _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
                         },
                         ResponseDataStatusMayBeWrong = bank is LloydsBank.Sandbox,
@@ -200,15 +221,15 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                         LloydsBank.LloydsPersonal
                             or LloydsBank.LloydsBusiness
                             or LloydsBank.LloydsCommerical => null,
-                        LloydsBank.HalifaxPersonal => (GetPaymentsBaseUrl(LloydsBank.HalifaxPersonal),
-                            GetPaymentsBaseUrl(LloydsBank.LloydsPersonal)),
+                        LloydsBank.HalifaxPersonal => (GetApiBaseUrl(LloydsBank.HalifaxPersonal),
+                            GetApiBaseUrl(LloydsBank.LloydsPersonal)),
                         LloydsBank.BankOfScotlandPersonal
                             or LloydsBank.BankOfScotlandBusiness
                             or LloydsBank.BankOfScotlandCommerical => (
-                                GetPaymentsBaseUrl(LloydsBank.BankOfScotlandPersonal),
-                                GetPaymentsBaseUrl(LloydsBank.LloydsPersonal)),
-                        LloydsBank.MbnaPersonal => (GetPaymentsBaseUrl(LloydsBank.MbnaPersonal),
-                            GetPaymentsBaseUrl(LloydsBank.LloydsPersonal)),
+                                GetApiBaseUrl(LloydsBank.BankOfScotlandPersonal),
+                                GetApiBaseUrl(LloydsBank.LloydsPersonal)),
+                        LloydsBank.MbnaPersonal => (GetApiBaseUrl(LloydsBank.MbnaPersonal),
+                            GetApiBaseUrl(LloydsBank.LloydsPersonal)),
                         _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
                     }
                 },
@@ -260,47 +281,35 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
         };
     }
 
-    private PaymentInitiationApi GetPaymentInitiationApi(LloydsBank bank) =>
-        new() { BaseUrl = GetPaymentsBaseUrl(bank) };
-
-    private VariableRecurringPaymentsApi GetVariableRecurringPaymentsApi(LloydsBank bank) =>
-        new() { BaseUrl = GetPaymentsBaseUrl(bank) };
-
-    private string GetPaymentsBaseUrl(LloydsBank bank) => bank switch
+    private string GetApiBaseUrl(LloydsBank bank, string suffix = "v3.1/pisp") => bank switch
     {
         LloydsBank.Sandbox => GetPaymentInitiationApiBaseUrl(LloydsBank.Sandbox),
         LloydsBank.LloydsPersonal or LloydsBank.LloydsBusiness or LloydsBank.LloydsCommerical =>
-            "https://secure-api.lloydsbank.com/prod01/lbg/lyds/open-banking/v3.1/pisp", // from https://developer.lloydsbanking.com/node/4055#post-domestic-payment-consents-3.1.10
+            $"https://secure-api.lloydsbank.com/prod01/lbg/lyds/open-banking/{suffix}", // from https://developer.lloydsbanking.com/node/4055#post-domestic-payment-consents-3.1.10
         LloydsBank.HalifaxPersonal =>
-            "https://secure-api.halifax.co.uk/prod01/lbg/lyds/open-banking/v3.1/pisp", // from https://developer.lloydsbanking.com/node/4055#post-domestic-payment-consents-3.1.10
+            $"https://secure-api.halifax.co.uk/prod01/lbg/lyds/open-banking/{suffix}", // from https://developer.lloydsbanking.com/node/4055#post-domestic-payment-consents-3.1.10
         LloydsBank.BankOfScotlandPersonal or LloydsBank.BankOfScotlandBusiness
             or LloydsBank.BankOfScotlandCommerical =>
-            "https://secure-api.bankofscotland.co.uk/prod01/lbg/lyds/open-banking/v3.1/pisp", // from https://developer.lloydsbanking.com/node/4055#post-domestic-payment-consents-3.1.10
+            $"https://secure-api.bankofscotland.co.uk/prod01/lbg/lyds/open-banking/{suffix}", // from https://developer.lloydsbanking.com/node/4055#post-domestic-payment-consents-3.1.10
         LloydsBank.MbnaPersonal =>
-            "https://secure-api.mbna.co.uk/prod01/lbg/lyds/open-banking/v3.1/pisp", // from https://developer.lloydsbanking.com/node/4055#post-domestic-payment-consents-3.1.10
+            $"https://secure-api.mbna.co.uk/prod01/lbg/lyds/open-banking/{suffix}", // from https://developer.lloydsbanking.com/node/4055#post-domestic-payment-consents-3.1.10
         _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
     };
 
-    private AccountAndTransactionApi GetAccountAndTransactionApi(LloydsBank bank)
-    {
-        return new AccountAndTransactionApi
+    private static string GetAccountAndTransactionV3BaseUrl(LloydsBank bank) =>
+        bank switch
         {
-            BaseUrl =
-                bank switch
-                {
-                    LloydsBank.Sandbox =>
-                        "https://matls.rs.aspsp.sandbox.lloydsbanking.com/open-banking/v3.1.10/aisp", // from API discovery endpoint
-                    LloydsBank.LloydsPersonal or LloydsBank.LloydsBusiness or LloydsBank.LloydsCommerical =>
-                        "https://secure-api.lloydsbank.com/prod01/lbg/lyds/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
-                    LloydsBank.HalifaxPersonal =>
-                        "https://secure-api.halifax.co.uk/prod01/lbg/hfx/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
-                    LloydsBank.BankOfScotlandPersonal or LloydsBank.BankOfScotlandBusiness
-                        or LloydsBank.BankOfScotlandCommerical =>
-                        "https://secure-api.bankofscotland.co.uk/prod01/lbg/bos/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
-                    LloydsBank.MbnaPersonal =>
-                        "https://secure-api.mbna.co.uk/prod01/lbg/mbn/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
-                    _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
-                }
+            LloydsBank.Sandbox =>
+                "https://matls.rs.aspsp.sandbox.lloydsbanking.com/open-banking/v3.1.10/aisp", // from API discovery endpoint
+            LloydsBank.LloydsPersonal or LloydsBank.LloydsBusiness or LloydsBank.LloydsCommerical =>
+                "https://secure-api.lloydsbank.com/prod01/lbg/lyds/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
+            LloydsBank.HalifaxPersonal =>
+                "https://secure-api.halifax.co.uk/prod01/lbg/hfx/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
+            LloydsBank.BankOfScotlandPersonal or LloydsBank.BankOfScotlandBusiness
+                or LloydsBank.BankOfScotlandCommerical =>
+                "https://secure-api.bankofscotland.co.uk/prod01/lbg/bos/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
+            LloydsBank.MbnaPersonal =>
+                "https://secure-api.mbna.co.uk/prod01/lbg/mbn/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
+            _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
         };
-    }
 }
