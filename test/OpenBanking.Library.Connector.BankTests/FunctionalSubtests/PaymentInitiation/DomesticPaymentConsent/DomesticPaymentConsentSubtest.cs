@@ -30,6 +30,7 @@ public class DomesticPaymentConsentSubtest(
         DomesticPaymentSubtestEnum subtestEnum,
         BankProfile bankProfile,
         Guid bankRegistrationId,
+        bool pispUseV4,
         OAuth2ResponseMode defaultResponseMode,
         bool testAuth,
         string referenceName,
@@ -48,6 +49,7 @@ public class DomesticPaymentConsentSubtest(
         var amount = amountDouble.ToString("F2");
         DomesticPaymentConsentRequest domesticPaymentConsentRequest = await GetDomesticPaymentConsentRequest(
             bankRegistrationId,
+            pispUseV4,
             testNameUnique,
             modifiedBy,
             pispFluentRequestLogging,
@@ -156,6 +158,7 @@ public class DomesticPaymentConsentSubtest(
             // Create DomesticPayment
             DomesticPaymentRequest domesticPaymentRequest = await GetDomesticPaymentRequest(
                 domesticPaymentConsentId,
+                pispUseV4,
                 modifiedBy,
                 pispFluentRequestLogging,
                 instructionIdentification,
@@ -218,6 +221,7 @@ public class DomesticPaymentConsentSubtest(
 
     private static async Task<DomesticPaymentRequest> GetDomesticPaymentRequest(
         Guid domesticPaymentConsentId,
+        bool pispUseV4,
         string modifiedBy,
         FilePathBuilder pispFluentRequestLogging,
         string instructionIdentification,
@@ -267,8 +271,14 @@ public class DomesticPaymentConsentSubtest(
             },
             Risk = new PaymentInitiationModelsPublic.OBRisk1
             {
-                PaymentContextCode = PaymentInitiationModelsPublic.OBRisk1PaymentContextCode.TransferToSelf,
-                ContractPresentIndicator = true
+                PaymentContextCode =
+                    pispUseV4 ? PaymentInitiationModelsPublic.OBRisk1PaymentContextCode.TransferToSelf : null,
+                V3PaymentContextCode = pispUseV4 ? null :
+                    paymentInitiationApiSettings.PreferPartyToPartyPaymentContextCode ? PaymentInitiationModelsV3p1p11
+                        .OBRisk1PaymentContextCode
+                        .PartyToParty : PaymentInitiationModelsV3p1p11.OBRisk1PaymentContextCode
+                        .TransferToSelf,
+                ContractPresentIndicator = paymentInitiationApiSettings.UseContractPresentIndicator ? true : null
             }
         };
         var domesticPaymentRequest = new DomesticPaymentRequest
@@ -315,6 +325,7 @@ public class DomesticPaymentConsentSubtest(
 
     private static async Task<DomesticPaymentConsentRequest> GetDomesticPaymentConsentRequest(
         Guid bankRegistrationId,
+        bool pispUseV4,
         string testNameUnique,
         string modifiedBy,
         FilePathBuilder pispFluentRequestLogging,
@@ -329,7 +340,10 @@ public class DomesticPaymentConsentSubtest(
         {
             Data = new PaymentInitiationModelsPublic.Data2
             {
-                ReadRefundAccount = PaymentInitiationModelsPublic.Data2ReadRefundAccount.Yes,
+                ReadRefundAccount =
+                    paymentInitiationApiSettings.UseReadRefundAccount
+                        ? PaymentInitiationModelsPublic.Data2ReadRefundAccount.Yes
+                        : null,
                 Initiation = new PaymentInitiationModelsPublic.Initiation2
                 {
                     InstructionIdentification = "placeholder", // logging placeholder
@@ -364,8 +378,14 @@ public class DomesticPaymentConsentSubtest(
             },
             Risk = new PaymentInitiationModelsPublic.OBRisk1
             {
-                PaymentContextCode = PaymentInitiationModelsPublic.OBRisk1PaymentContextCode.TransferToSelf,
-                ContractPresentIndicator = true
+                PaymentContextCode =
+                    pispUseV4 ? PaymentInitiationModelsPublic.OBRisk1PaymentContextCode.TransferToSelf : null,
+                V3PaymentContextCode = pispUseV4 ? null :
+                    paymentInitiationApiSettings.PreferPartyToPartyPaymentContextCode ? PaymentInitiationModelsV3p1p11
+                        .OBRisk1PaymentContextCode
+                        .PartyToParty : PaymentInitiationModelsV3p1p11.OBRisk1PaymentContextCode
+                        .TransferToSelf,
+                ContractPresentIndicator = paymentInitiationApiSettings.UseContractPresentIndicator ? true : null
             }
         };
 

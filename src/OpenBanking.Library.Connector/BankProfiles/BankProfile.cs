@@ -142,6 +142,12 @@ public class PaymentInitiationApiSettings
     public DomesticPaymentExternalApiRequestAdjustments
         DomesticPaymentExternalApiRequestAdjustments { get; set; } = x => x;
 
+    public bool UseReadRefundAccount { get; set; } = true;
+
+    public bool PreferPartyToPartyPaymentContextCode { get; set; } = false;
+
+    public bool UseContractPresentIndicator { get; set; } = true;
+
     public bool UseDomesticPaymentGetPaymentDetailsEndpoint { get; init; } = false;
 }
 

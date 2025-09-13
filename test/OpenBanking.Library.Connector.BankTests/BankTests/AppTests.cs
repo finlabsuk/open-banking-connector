@@ -500,6 +500,7 @@ public class AppTests
         Guid bankRegistrationId = bankRegistrationCreateResponse.Id;
         OAuth2ResponseMode defaultResponseMode =
             bankRegistrationCreateResponse.DefaultResponseModeOverride ?? bankProfile.DefaultResponseMode;
+        bool pispUseV4 = bankRegistrationCreateResponse.PispUseV4;
 
         string redirectUri = GetRedirectUri(
             defaultResponseMode,
@@ -578,6 +579,7 @@ public class AppTests
                         subTest,
                         bankProfile,
                         bankRegistrationId,
+                        pispUseV4,
                         defaultResponseMode,
                         testData.TestAuth,
                         testData.ReferenceName,

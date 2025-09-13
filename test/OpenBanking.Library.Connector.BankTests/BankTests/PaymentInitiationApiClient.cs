@@ -89,6 +89,8 @@ public class PaymentInitiationApiClient(WebAppClient client)
             response.ExternalApiResponse.Should().NotBeNull();
             response.ExternalApiResponse!.Risk.PaymentContextCode.Should()
                 .Be(request.ExternalApiRequest!.Risk.PaymentContextCode);
+            response.ExternalApiResponse!.Risk.V3PaymentContextCode.Should()
+                .Be(request.ExternalApiRequest!.Risk.V3PaymentContextCode);
             bool responseRiskContractPresentIndicatorMayBeMissingOrWrong =
                 customBehaviour?.ResponseRiskContractPresentIndicatorMayBeMissingOrWrong ?? false;
             if (!responseRiskContractPresentIndicatorMayBeMissingOrWrong)
