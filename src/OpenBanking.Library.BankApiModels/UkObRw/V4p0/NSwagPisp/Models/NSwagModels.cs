@@ -2305,7 +2305,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
         /// </summary>
         [Newtonsoft.Json.JsonProperty("PaymentContextCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBRisk1PaymentContextCode? PaymentContextCode { get; set; } = default!;
+        public OBRisk1PaymentContextCodeV4? PaymentContextCode { get; set; } = default!;
         
         [Newtonsoft.Json.JsonProperty("V3PaymentContextCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -3064,7 +3064,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OBRisk1PaymentContextCode
+    public enum OBRisk1PaymentContextCodeV4
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"BillingGoodsAndServicesInAdvance")]

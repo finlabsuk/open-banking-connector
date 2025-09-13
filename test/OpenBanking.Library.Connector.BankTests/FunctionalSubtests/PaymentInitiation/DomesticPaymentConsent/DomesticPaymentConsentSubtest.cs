@@ -272,7 +272,7 @@ public class DomesticPaymentConsentSubtest(
             Risk = new PaymentInitiationModelsPublic.OBRisk1
             {
                 PaymentContextCode =
-                    pispUseV4 ? PaymentInitiationModelsPublic.OBRisk1PaymentContextCode.TransferToSelf : null,
+                    pispUseV4 ? PaymentInitiationModelsPublic.OBRisk1PaymentContextCodeV4.TransferToSelf : null,
                 V3PaymentContextCode = pispUseV4 ? null :
                     paymentInitiationApiSettings.PreferPartyToPartyPaymentContextCode ? PaymentInitiationModelsV3p1p11
                         .OBRisk1PaymentContextCode
@@ -379,7 +379,7 @@ public class DomesticPaymentConsentSubtest(
             Risk = new PaymentInitiationModelsPublic.OBRisk1
             {
                 PaymentContextCode =
-                    pispUseV4 ? PaymentInitiationModelsPublic.OBRisk1PaymentContextCode.TransferToSelf : null,
+                    pispUseV4 ? PaymentInitiationModelsPublic.OBRisk1PaymentContextCodeV4.TransferToSelf : null,
                 V3PaymentContextCode = pispUseV4 ? null :
                     paymentInitiationApiSettings.PreferPartyToPartyPaymentContextCode ? PaymentInitiationModelsV3p1p11
                         .OBRisk1PaymentContextCode
