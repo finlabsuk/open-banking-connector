@@ -379,7 +379,9 @@ public static class Mappings
     private static OBRisk1 MapToRisk(
         this PaymentInitiationModelsV3p1p11.OBRisk1 data) => new()
     {
-        PaymentContextCode = data.PaymentContextCode?.MapToPaymentContextCode(),
+        V3PaymentContextCode =
+            data.PaymentContextCode, // decision: map PaymentContextCode to V3PaymentContextCode to avoid information loss
+        PaymentContextCode = null, // decision: placeholder
         MerchantCategoryCode = data.MerchantCategoryCode,
         MerchantCustomerIdentification = data.MerchantCustomerIdentification,
         ContractPresentIndicator = data.ContractPresentIndicator,
@@ -435,38 +437,6 @@ public static class Mappings
         }
         return code;
     }
-
-    private static OBRisk1PaymentContextCode MapToPaymentContextCode(
-        this PaymentInitiationModelsV3p1p11.OBRisk1PaymentContextCode data) =>
-        // NB: invalid values cannot be POSTed so should not be returned
-        data switch
-        {
-            PaymentInitiationModelsV3p1p11.OBRisk1PaymentContextCode.BillingGoodsAndServicesInAdvance =>
-                OBRisk1PaymentContextCode.BillingGoodsAndServicesInAdvance,
-            PaymentInitiationModelsV3p1p11.OBRisk1PaymentContextCode.BillingGoodsAndServicesInArrears =>
-                OBRisk1PaymentContextCode.BillingGoodsAndServicesInArrears,
-            PaymentInitiationModelsV3p1p11.OBRisk1PaymentContextCode.PispPayee => throw new ArgumentOutOfRangeException(
-                $"Received unexpeted value: ${data}"),
-            PaymentInitiationModelsV3p1p11.OBRisk1PaymentContextCode.EcommerceMerchantInitiatedPayment =>
-                OBRisk1PaymentContextCode.EcommerceMerchantInitiatedPayment,
-            PaymentInitiationModelsV3p1p11.OBRisk1PaymentContextCode.FaceToFacePointOfSale => OBRisk1PaymentContextCode
-                .FaceToFacePointOfSale,
-            PaymentInitiationModelsV3p1p11.OBRisk1PaymentContextCode.TransferToSelf => OBRisk1PaymentContextCode
-                .TransferToSelf,
-            PaymentInitiationModelsV3p1p11.OBRisk1PaymentContextCode.TransferToThirdParty => OBRisk1PaymentContextCode
-                .TransferToThirdParty,
-            PaymentInitiationModelsV3p1p11.OBRisk1PaymentContextCode.BillPayment =>
-                throw new ArgumentOutOfRangeException($"Received unexpeted value: ${data}"),
-            PaymentInitiationModelsV3p1p11.OBRisk1PaymentContextCode.EcommerceGoods =>
-                throw new ArgumentOutOfRangeException($"Received unexpeted value: ${data}"),
-            PaymentInitiationModelsV3p1p11.OBRisk1PaymentContextCode.EcommerceServices =>
-                throw new ArgumentOutOfRangeException($"Received unexpeted value: ${data}"),
-            PaymentInitiationModelsV3p1p11.OBRisk1PaymentContextCode.Other => throw new ArgumentOutOfRangeException(
-                $"Received unexpeted value: ${data}"),
-            PaymentInitiationModelsV3p1p11.OBRisk1PaymentContextCode.PartyToParty =>
-                throw new ArgumentOutOfRangeException($"Received unexpeted value: ${data}"),
-            _ => throw new ArgumentOutOfRangeException(nameof(data), data, null)
-        };
 
     private static Links MapToLinks(
         this PaymentInitiationModelsV3p1p11.Links data) => new()
@@ -675,23 +645,11 @@ public static class Mappings
     {
         return new PaymentInitiationModelsV3p1p11.OBRisk1
         {
-            PaymentContextCode = risk.PaymentContextCode switch
-            {
-                OBRisk1PaymentContextCode.BillingGoodsAndServicesInAdvance => PaymentInitiationModelsV3p1p11
-                    .OBRisk1PaymentContextCode.BillingGoodsAndServicesInAdvance,
-                OBRisk1PaymentContextCode.BillingGoodsAndServicesInArrears => PaymentInitiationModelsV3p1p11
-                    .OBRisk1PaymentContextCode.BillingGoodsAndServicesInArrears,
-                OBRisk1PaymentContextCode.EcommerceMerchantInitiatedPayment => PaymentInitiationModelsV3p1p11
-                    .OBRisk1PaymentContextCode.EcommerceMerchantInitiatedPayment,
-                OBRisk1PaymentContextCode.FaceToFacePointOfSale => PaymentInitiationModelsV3p1p11
-                    .OBRisk1PaymentContextCode.FaceToFacePointOfSale,
-                OBRisk1PaymentContextCode.TransferToSelf => PaymentInitiationModelsV3p1p11.OBRisk1PaymentContextCode
-                    .TransferToSelf,
-                OBRisk1PaymentContextCode.TransferToThirdParty => PaymentInitiationModelsV3p1p11
-                    .OBRisk1PaymentContextCode.TransferToThirdParty,
-                null => null,
-                _ => throw new ArgumentOutOfRangeException()
-            },
+            PaymentContextCode =
+                risk.PaymentContextCode is null
+                    ? risk.V3PaymentContextCode
+                    : throw new ArgumentException(
+                        "Please only use V3PaymentContextCode (and don't set PaymentContextCode) when using v3 external (bank) API"),
             MerchantCategoryCode = risk.MerchantCategoryCode,
             MerchantCustomerIdentification = risk.MerchantCustomerIdentification,
             ContractPresentIndicator = risk.ContractPresentIndicator,

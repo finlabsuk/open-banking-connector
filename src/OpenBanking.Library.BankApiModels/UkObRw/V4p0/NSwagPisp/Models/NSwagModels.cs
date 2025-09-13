@@ -2306,7 +2306,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPis
         [Newtonsoft.Json.JsonProperty("PaymentContextCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public OBRisk1PaymentContextCode? PaymentContextCode { get; set; } = default!;
-
+        
+        [Newtonsoft.Json.JsonProperty("V3PaymentContextCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public V3p1p11.NSwagPisp.Models.OBRisk1PaymentContextCode? V3PaymentContextCode { get; set; } = default!;
+        
         /// <summary>
         /// Category code conform to ISO 18245, related to the type of services or goods the merchant provides for the transaction.
         /// </summary>
