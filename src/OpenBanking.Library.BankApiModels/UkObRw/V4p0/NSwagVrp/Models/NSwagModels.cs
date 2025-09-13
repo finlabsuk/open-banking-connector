@@ -334,9 +334,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagVrp
         [System.ComponentModel.DataAnnotations.Required]
         public required Links Links { get; set; }
 
-        [Newtonsoft.Json.JsonProperty("Meta", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        public required Meta Meta { get; set; }
+        [Newtonsoft.Json.JsonProperty(
+            "Meta",
+            Required = Newtonsoft.Json.Required.Default,
+            NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Meta? Meta { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -640,9 +642,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagVrp
         [System.ComponentModel.DataAnnotations.Required]
         public required Links Links { get; set; }
 
-        [Newtonsoft.Json.JsonProperty("Meta", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        public required Meta Meta { get; set; }
+        [Newtonsoft.Json.JsonProperty(
+            "Meta",
+            Required = Newtonsoft.Json.Required.Default,
+            NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Meta? Meta { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
