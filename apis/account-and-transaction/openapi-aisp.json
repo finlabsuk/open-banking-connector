@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "14.0.0"
+    "version": "15.0.0"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {

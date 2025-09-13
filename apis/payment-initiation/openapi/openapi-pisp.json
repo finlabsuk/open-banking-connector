@@ -3,7 +3,7 @@
   "info": {
     "title": "Payment Initiation API",
     "description": "Payment Initiation API for Open Banking Connector Web App",
-    "version": "14.0.0"
+    "version": "15.0.0"
   },
   "paths": {
     "/pisp/domestic-payment-consent-auth-contexts": {
@@ -2956,6 +2956,9 @@
         "type": "object",
         "properties": {
           "PaymentContextCode": {
+            "$ref": "#/components/schemas/OBRisk1PaymentContextCodeV4"
+          },
+          "V3PaymentContextCode": {
             "$ref": "#/components/schemas/OBRisk1PaymentContextCode"
           },
           "MerchantCategoryCode": {
@@ -3004,6 +3007,23 @@
         "description": "The Risk section is sent by the initiating party to the ASPSP.\r\n\r\nIt is used to specify additional details for risk scoring for Payments."
       },
       "OBRisk1PaymentContextCode": {
+        "enum": [
+          "BillingGoodsAndServicesInAdvance",
+          "BillingGoodsAndServicesInArrears",
+          "PispPayee",
+          "EcommerceMerchantInitiatedPayment",
+          "FaceToFacePointOfSale",
+          "TransferToSelf",
+          "TransferToThirdParty",
+          "BillPayment",
+          "EcommerceGoods",
+          "EcommerceServices",
+          "Other",
+          "PartyToParty"
+        ],
+        "type": "string"
+      },
+      "OBRisk1PaymentContextCodeV4": {
         "enum": [
           "BillingGoodsAndServicesInAdvance",
           "BillingGoodsAndServicesInArrears",
