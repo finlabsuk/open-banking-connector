@@ -119,8 +119,12 @@ public class BankConfigurationApiSettings
     public IdTokenSubClaimType IdTokenSubClaimType { get; set; } = IdTokenSubClaimType.ConsentId;
 }
 
+public delegate string? GetFinancialId(bool useV4NotV3);
+
 public class AccountAndTransactionApiSettings
 {
+    public GetFinancialId? GetFinancialId { get; init; }
+
     /// <summary>
     ///     Describes whether GET /accounts/{AccountId}/party is used when testing with this bank
     /// </summary>

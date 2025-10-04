@@ -282,7 +282,8 @@ internal class DomesticVrp :
             LinksUrlOperations.PostMethodExpectedLinkUrls(
                 externalApiUrl,
                 externalApiId,
-                domesticVrpPostCustomBehaviour),
+                domesticVrpPostCustomBehaviour,
+                vrpUseV4),
             transformedLinkUrlWithoutQuery,
             domesticVrpPostCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
             false);
@@ -461,7 +462,10 @@ internal class DomesticVrp :
         string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
         Uri expectedLinkUrlWithoutQuery = externalApiUrl;
         var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
-            LinksUrlOperations.GetMethodExpectedLinkUrls(expectedLinkUrlWithoutQuery, domesticVrpGetCustomBehaviour),
+            LinksUrlOperations.GetMethodExpectedLinkUrls(
+                expectedLinkUrlWithoutQuery,
+                domesticVrpGetCustomBehaviour,
+                vrpUseV4),
             transformedLinkUrlWithoutQuery,
             domesticVrpGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
             false);

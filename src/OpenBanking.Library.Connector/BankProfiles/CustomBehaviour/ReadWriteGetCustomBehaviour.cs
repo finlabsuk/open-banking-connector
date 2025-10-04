@@ -4,6 +4,8 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 
+public delegate (string oldValue, string newValue)? GetResponseLinksAllowReplace(bool useV4NotV3);
+
 public class ReadWriteGetCustomBehaviour
 {
     public bool? ResponseLinksMayAddSlash { get; set; }
@@ -13,5 +15,5 @@ public class ReadWriteGetCustomBehaviour
     /// <summary>
     ///     Use when response links provided by bank substitute newValue for oldValue.
     /// </summary>
-    public (string oldValue, string newValue)? ResponseLinksAllowReplace { get; set; }
+    public GetResponseLinksAllowReplace? GetResponseLinksAllowReplace { get; set; }
 }

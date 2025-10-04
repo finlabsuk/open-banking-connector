@@ -87,17 +87,17 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                         GetApiBaseUrl(bank, "v4.0/aisp")
                 }
                 : null,
-            new PaymentInitiationApi { BaseUrl = GetApiBaseUrl(bank) },
+            new PaymentInitiationApi { BaseUrl = GetPaymentsApiBaseUrl(bank, false) },
             new PaymentInitiationApi
             {
                 ApiVersion = PaymentInitiationApiVersion.Version4p0,
-                BaseUrl = GetApiBaseUrl(bank, "v4.0/pisp")
+                BaseUrl = GetPaymentsApiBaseUrl(bank, true)
             },
-            new VariableRecurringPaymentsApi { BaseUrl = GetApiBaseUrl(bank) },
+            new VariableRecurringPaymentsApi { BaseUrl = GetPaymentsApiBaseUrl(bank, false) },
             new VariableRecurringPaymentsApi
             {
                 ApiVersion = VariableRecurringPaymentsApiVersion.Version4p0,
-                BaseUrl = GetApiBaseUrl(bank, "v4.0/pisp")
+                BaseUrl = GetPaymentsApiBaseUrl(bank, true)
             },
             bank is not LloydsBank.Sandbox,
             instrumentationClient)
@@ -149,13 +149,53 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                     : new ConsentAuthGetCustomBehaviour { AddRedundantOAuth2NonceRequestParameter = true },
                 AccountAccessConsentPost = bank is LloydsBank.Sandbox
                     ? null
-                    : new ReadWritePostCustomBehaviour { PostResponseLinksMayOmitId = true },
+                    : new ReadWritePostCustomBehaviour
+                    {
+                        PostResponseLinksMayOmitId = true,
+                        GetResponseLinksAllowReplace = AispResponseLinksAllowReplaceFcn(bank)
+                    },
+                AccountAccessConsentGet =
+                    new ReadWriteGetCustomBehaviour
+                    {
+                        GetResponseLinksAllowReplace = AispResponseLinksAllowReplaceFcn(bank)
+                    },
+                AccountGet =
+                    new ReadWriteGetCustomBehaviour
+                    {
+                        GetResponseLinksAllowReplace = AispResponseLinksAllowReplaceFcn(bank)
+                    },
+                BalanceGet =
+                    new ReadWriteGetCustomBehaviour
+                    {
+                        GetResponseLinksAllowReplace = AispResponseLinksAllowReplaceFcn(bank)
+                    },
                 DirectDebitGet = bank is LloydsBank.Sandbox
                     ? null
                     : new DirectDebitGetCustomBehaviour
                     {
+                        GetResponseLinksAllowReplace = AispResponseLinksAllowReplaceFcn(bank),
                         PreviousPaymentDateTimeJsonConverter =
                             DateTimeOffsetConverterEnum.JsonInvalidStringBecomesNull
+                    },
+                Party2Get =
+                    new ReadWriteGetCustomBehaviour
+                    {
+                        GetResponseLinksAllowReplace = AispResponseLinksAllowReplaceFcn(bank)
+                    },
+                PartyGet =
+                    new ReadWriteGetCustomBehaviour
+                    {
+                        GetResponseLinksAllowReplace = AispResponseLinksAllowReplaceFcn(bank)
+                    },
+                StandingOrderGet =
+                    new ReadWriteGetCustomBehaviour
+                    {
+                        GetResponseLinksAllowReplace = AispResponseLinksAllowReplaceFcn(bank)
+                    },
+                TransactionGet =
+                    new ReadWriteGetCustomBehaviour
+                    {
+                        GetResponseLinksAllowReplace = AispResponseLinksAllowReplaceFcn(bank)
                     },
                 DomesticPaymentConsentAuthCodeGrantPost =
                     new AuthCodeGrantPostCustomBehaviour { ExpectedResponseRefreshTokenMayBeAbsent = true },
@@ -165,45 +205,13 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                     new DomesticPaymentConsentCustomBehaviour
                     {
                         PreferMisspeltContractPresentIndicator = true,
-                        ResponseLinksAllowReplace = bank switch
-                        {
-                            LloydsBank.Sandbox => null,
-                            LloydsBank.LloydsPersonal
-                                or LloydsBank.LloydsBusiness
-                                or LloydsBank.LloydsCommerical => null,
-                            LloydsBank.HalifaxPersonal => (GetApiBaseUrl(LloydsBank.HalifaxPersonal),
-                                GetApiBaseUrl(LloydsBank.LloydsPersonal)),
-                            LloydsBank.BankOfScotlandPersonal
-                                or LloydsBank.BankOfScotlandBusiness
-                                or LloydsBank.BankOfScotlandCommerical => (
-                                    GetApiBaseUrl(LloydsBank.BankOfScotlandPersonal),
-                                    GetApiBaseUrl(LloydsBank.LloydsPersonal)),
-                            LloydsBank.MbnaPersonal => (GetApiBaseUrl(LloydsBank.MbnaPersonal),
-                                GetApiBaseUrl(LloydsBank.LloydsPersonal)),
-                            _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
-                        }
+                        GetResponseLinksAllowReplace = PispResponseLinksAllowReplaceFcn(bank)
                     },
                 DomesticPayment =
                     new DomesticPaymentCustomBehaviour
                     {
                         PreferMisspeltContractPresentIndicator = true,
-                        ResponseLinksAllowReplace = bank switch
-                        {
-                            LloydsBank.Sandbox => null,
-                            LloydsBank.LloydsPersonal
-                                or LloydsBank.LloydsBusiness
-                                or LloydsBank.LloydsCommerical => null,
-                            LloydsBank.HalifaxPersonal => (GetApiBaseUrl(LloydsBank.HalifaxPersonal),
-                                GetApiBaseUrl(LloydsBank.LloydsPersonal)),
-                            LloydsBank.BankOfScotlandPersonal
-                                or LloydsBank.BankOfScotlandBusiness
-                                or LloydsBank.BankOfScotlandCommerical => (
-                                    GetApiBaseUrl(LloydsBank.BankOfScotlandPersonal),
-                                    GetApiBaseUrl(LloydsBank.LloydsPersonal)),
-                            LloydsBank.MbnaPersonal => (GetApiBaseUrl(LloydsBank.MbnaPersonal),
-                                GetApiBaseUrl(LloydsBank.LloydsPersonal)),
-                            _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
-                        },
+                        GetResponseLinksAllowReplace = PispResponseLinksAllowReplaceFcn(bank),
                         ResponseDataStatusMayBeWrong = bank is LloydsBank.Sandbox,
                         ResponseDataDebtorMayBeMissingOrWrong = bank is LloydsBank.Sandbox,
                         ResponseDataDebtorSchemeNameMayBeMissingOrWrong = true,
@@ -212,26 +220,13 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                         ResponseDataRefundAccountIdentificationMayBeMissingOrWrong = bank is LloydsBank.Sandbox
                     },
                 DomesticVrp =
-                    new DomesticVrpCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true },
+                    new DomesticVrpCustomBehaviour
+                    {
+                        GetResponseLinksAllowReplace = PispResponseLinksAllowReplaceFcn(bank)
+                    },
                 DomesticVrpConsent = new DomesticVrpConsentCustomBehaviour
                 {
-                    ResponseLinksAllowReplace = bank switch
-                    {
-                        LloydsBank.Sandbox => null,
-                        LloydsBank.LloydsPersonal
-                            or LloydsBank.LloydsBusiness
-                            or LloydsBank.LloydsCommerical => null,
-                        LloydsBank.HalifaxPersonal => (GetApiBaseUrl(LloydsBank.HalifaxPersonal),
-                            GetApiBaseUrl(LloydsBank.LloydsPersonal)),
-                        LloydsBank.BankOfScotlandPersonal
-                            or LloydsBank.BankOfScotlandBusiness
-                            or LloydsBank.BankOfScotlandCommerical => (
-                                GetApiBaseUrl(LloydsBank.BankOfScotlandPersonal),
-                                GetApiBaseUrl(LloydsBank.LloydsPersonal)),
-                        LloydsBank.MbnaPersonal => (GetApiBaseUrl(LloydsBank.MbnaPersonal),
-                            GetApiBaseUrl(LloydsBank.LloydsPersonal)),
-                        _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
-                    }
+                    GetResponseLinksAllowReplace = PispResponseLinksAllowReplaceFcn(bank)
                 },
                 DomesticVrpConsentRefreshTokenGrantPost =
                     new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true }
@@ -246,6 +241,11 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
+                GetFinancialId = useV4NotV3 => useV4NotV3 switch
+                {
+                    true => GetFinancialId(LloydsBank.LloydsPersonal),
+                    false => null
+                },
                 AccountAccessConsentTemplateExternalApiRequestAdjustments = externalApiRequest =>
                 {
                     var elementsToRemove = new List<AccountAndTransactionModelsPublic.Permissions>
@@ -277,11 +277,59 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                     or LloydsBank.BankOfScotlandCommerical => 4,
                 LloydsBank.MbnaPersonal => 18,
                 _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
-            }
+            },
+            AispUseV4ByDefault = false,
+            PispUseV4ByDefault = true,
+            VrpUseV4ByDefault = true
         };
     }
 
-    private string GetApiBaseUrl(LloydsBank bank, string suffix = "v3.1/pisp") => bank switch
+    private GetResponseLinksAllowReplace AispResponseLinksAllowReplaceFcn(LloydsBank bank) =>
+        useV4NotV3 => useV4NotV3 switch
+        {
+            true => bank switch
+            {
+                LloydsBank.Sandbox => null,
+                LloydsBank.LloydsPersonal
+                    or LloydsBank.LloydsBusiness
+                    or LloydsBank.LloydsCommerical => null,
+                LloydsBank.HalifaxPersonal => (GetApiBaseUrl(LloydsBank.HalifaxPersonal, "v4.0/aisp"),
+                    GetApiBaseUrl(LloydsBank.LloydsPersonal, "v4.0/aisp")),
+                LloydsBank.BankOfScotlandPersonal
+                    or LloydsBank.BankOfScotlandBusiness
+                    or LloydsBank.BankOfScotlandCommerical => (
+                        GetApiBaseUrl(LloydsBank.BankOfScotlandPersonal, "v4.0/aisp"),
+                        GetApiBaseUrl(LloydsBank.LloydsPersonal, "v4.0/aisp")),
+                LloydsBank.MbnaPersonal => (GetApiBaseUrl(LloydsBank.MbnaPersonal, "v4.0/aisp"),
+                    GetApiBaseUrl(LloydsBank.LloydsPersonal, "v4.0/aisp")),
+                _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+            },
+            false => null
+        };
+
+    private GetResponseLinksAllowReplace PispResponseLinksAllowReplaceFcn(LloydsBank bank) =>
+        useV4NotV3 => bank switch
+        {
+            LloydsBank.Sandbox => null,
+            LloydsBank.LloydsPersonal
+                or LloydsBank.LloydsBusiness
+                or LloydsBank.LloydsCommerical => null,
+            LloydsBank.HalifaxPersonal => (GetPaymentsApiBaseUrl(LloydsBank.HalifaxPersonal, useV4NotV3),
+                GetPaymentsApiBaseUrl(LloydsBank.LloydsPersonal, useV4NotV3)),
+            LloydsBank.BankOfScotlandPersonal
+                or LloydsBank.BankOfScotlandBusiness
+                or LloydsBank.BankOfScotlandCommerical => (
+                    GetPaymentsApiBaseUrl(LloydsBank.BankOfScotlandPersonal, useV4NotV3),
+                    GetPaymentsApiBaseUrl(LloydsBank.LloydsPersonal, useV4NotV3)),
+            LloydsBank.MbnaPersonal => (GetPaymentsApiBaseUrl(LloydsBank.MbnaPersonal, useV4NotV3),
+                GetPaymentsApiBaseUrl(LloydsBank.LloydsPersonal, useV4NotV3)),
+            _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+        };
+
+    private string GetPaymentsApiBaseUrl(LloydsBank bank, bool useV4NotV3) =>
+        useV4NotV3 ? GetApiBaseUrl(bank, "v4.0/pisp") : GetApiBaseUrl(bank, "v3.1/pisp");
+
+    private string GetApiBaseUrl(LloydsBank bank, string suffix) => bank switch
     {
         LloydsBank.Sandbox => GetPaymentInitiationApiBaseUrl(LloydsBank.Sandbox),
         LloydsBank.LloydsPersonal or LloydsBank.LloydsBusiness or LloydsBank.LloydsCommerical =>

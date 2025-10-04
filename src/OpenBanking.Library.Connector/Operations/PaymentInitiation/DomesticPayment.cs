@@ -189,7 +189,8 @@ internal class DomesticPayment :
             var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
                 LinksUrlOperations.GetMethodExpectedLinkUrls(
                     expectedLinkUrlWithoutQuery,
-                    domesticPaymentGetCustomBehaviour),
+                    domesticPaymentGetCustomBehaviour,
+                    pispUseV4),
                 transformedLinkUrlWithoutQuery,
                 domesticPaymentGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                 false);
@@ -410,7 +411,8 @@ internal class DomesticPayment :
                 LinksUrlOperations.PostMethodExpectedLinkUrls(
                     externalApiUrl,
                     externalApiId,
-                    readWritePostCustomBehaviour),
+                    readWritePostCustomBehaviour,
+                    pispUseV4),
                 transformedLinkUrlWithoutQuery,
                 readWritePostCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                 false);
@@ -569,7 +571,8 @@ internal class DomesticPayment :
             var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
                 LinksUrlOperations.GetMethodExpectedLinkUrls(
                     expectedLinkUrlWithoutQuery,
-                    domesticPaymentGetCustomBehaviour),
+                    domesticPaymentGetCustomBehaviour,
+                    pispUseV4),
                 transformedLinkUrlWithoutQuery,
                 domesticPaymentGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                 false);

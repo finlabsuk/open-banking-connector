@@ -107,20 +107,30 @@ internal class LinksUrlOperations
 
     public static IList<Uri> GetMethodExpectedLinkUrls(
         Uri expectedLinkUrl,
-        ReadWriteGetCustomBehaviour? readWriteGetCustomBehaviour)
+        ReadWriteGetCustomBehaviour? readWriteGetCustomBehaviour,
+        bool useV4NotV3,
+        Uri? additionalExpectedLinkUrl = null)
     {
         List<Uri> expectedLinkUrls = [expectedLinkUrl];
+        if (additionalExpectedLinkUrl is not null)
+        {
+            expectedLinkUrls.Add(additionalExpectedLinkUrl);
+        }
         bool responseLinksMayAddSlash = readWriteGetCustomBehaviour?.ResponseLinksMayAddSlash ?? false;
         if (responseLinksMayAddSlash)
         {
             expectedLinkUrls.Add(new Uri(expectedLinkUrl + "/"));
         }
         (string oldValue, string newValue)? responseLinksAllowReplace =
-            readWriteGetCustomBehaviour?.ResponseLinksAllowReplace;
+            readWriteGetCustomBehaviour?.GetResponseLinksAllowReplace?.Invoke(useV4NotV3);
         if (responseLinksAllowReplace is not null)
         {
             (string oldValue, string newValue) = responseLinksAllowReplace.Value;
-            expectedLinkUrls.Add(new Uri($"{expectedLinkUrl}".Replace(oldValue, newValue)));
+            int noUrls = expectedLinkUrls.Count;
+            for (var idx = 0; idx < noUrls; idx++)
+            {
+                expectedLinkUrls.Add(new Uri($"{expectedLinkUrls[idx]}".Replace(oldValue, newValue)));
+            }
         }
         return expectedLinkUrls;
     }
@@ -128,17 +138,21 @@ internal class LinksUrlOperations
     public static IList<Uri> PostMethodExpectedLinkUrls(
         Uri externalApiUrl,
         string externalApiId,
-        ReadWritePostCustomBehaviour? readWritePostCustomBehaviour)
+        ReadWritePostCustomBehaviour? readWritePostCustomBehaviour,
+        bool useV4NotV3)
     {
         var expectedLinkUrl = new Uri(externalApiUrl + $"/{externalApiId}");
-        IList<Uri> expectedLinkUrls = GetMethodExpectedLinkUrls(
-            expectedLinkUrl,
-            readWritePostCustomBehaviour);
         bool responseLinksMayOmitId = readWritePostCustomBehaviour?.PostResponseLinksMayOmitId ?? false;
+        Uri? additionalExpectedLinkUrl = null;
         if (responseLinksMayOmitId)
         {
-            expectedLinkUrls.Add(externalApiUrl);
+            additionalExpectedLinkUrl = externalApiUrl;
         }
+        IList<Uri> expectedLinkUrls = GetMethodExpectedLinkUrls(
+            expectedLinkUrl,
+            readWritePostCustomBehaviour,
+            useV4NotV3,
+            additionalExpectedLinkUrl);
         return expectedLinkUrls;
     }
 }

@@ -75,7 +75,9 @@ internal class
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
         DirectDebitGetCustomBehaviour?
             directDebitGetCustomBehaviour = customBehaviour?.DirectDebitGet;
-        string bankFinancialId = bankProfile.FinancialId;
+        string bankFinancialId =
+            bankProfile.AccountAndTransactionApiSettings.GetFinancialId?.Invoke(aispUseV4) ??
+            bankProfile.FinancialId;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
 
         // Get IApiClient
@@ -198,7 +200,8 @@ internal class
             var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
                 LinksUrlOperations.GetMethodExpectedLinkUrls(
                     expectedLinkUrlWithoutQuery,
-                    directDebitGetCustomBehaviour),
+                    directDebitGetCustomBehaviour,
+                    aispUseV4),
                 transformedLinkUrlWithoutQuery,
                 directDebitGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                 true);

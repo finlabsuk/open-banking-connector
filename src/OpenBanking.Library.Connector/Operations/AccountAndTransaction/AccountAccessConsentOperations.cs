@@ -123,7 +123,9 @@ internal class
             AccountAndTransactionApi accountAndTransactionApi =
                 bankProfile.GetRequiredAccountAndTransactionApi(aispUseV4);
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
-            string bankFinancialId = bankProfile.FinancialId;
+            string bankFinancialId =
+                bankProfile.AccountAndTransactionApiSettings.GetFinancialId?.Invoke(aispUseV4) ??
+                bankProfile.FinancialId;
 
             // Get IApiClient
             // IApiClient apiClient = bankRegistration.UseSimulatedBank
@@ -243,7 +245,8 @@ internal class
                     LinksUrlOperations.PostMethodExpectedLinkUrls(
                         externalApiUrl,
                         externalApiId,
-                        readWritePostCustomBehaviour),
+                        readWritePostCustomBehaviour,
+                        aispUseV4),
                     transformedLinkUrlWithoutQuery,
                     readWritePostCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                     false);
@@ -363,7 +366,9 @@ internal class
             bool aispUseV4 = bankRegistration.AispUseV4;
             AccountAndTransactionApi accountAndTransactionApi =
                 bankProfile.GetRequiredAccountAndTransactionApi(aispUseV4);
-            string bankFinancialId = bankProfile.FinancialId;
+            string bankFinancialId =
+                bankProfile.AccountAndTransactionApiSettings.GetFinancialId?.Invoke(aispUseV4) ??
+                bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
             // Get IApiClient
@@ -470,7 +475,8 @@ internal class
                 var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
                     LinksUrlOperations.GetMethodExpectedLinkUrls(
                         expectedLinkUrlWithoutQuery,
-                        readWriteGetCustomBehaviour),
+                        readWriteGetCustomBehaviour,
+                        aispUseV4),
                     transformedLinkUrlWithoutQuery,
                     readWriteGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                     false);

@@ -72,7 +72,9 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, A
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
         ReadWriteGetCustomBehaviour?
             readWriteGetCustomBehaviour = customBehaviour?.Party2Get;
-        string bankFinancialId = bankProfile.FinancialId;
+        string bankFinancialId =
+            bankProfile.AccountAndTransactionApiSettings.GetFinancialId?.Invoke(aispUseV4) ??
+            bankProfile.FinancialId;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
 
         // Get IApiClient
@@ -177,7 +179,10 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, A
             string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
             var expectedLinkUrlWithoutQuery = new Uri(urlStringWihoutQuery);
             var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
-                LinksUrlOperations.GetMethodExpectedLinkUrls(expectedLinkUrlWithoutQuery, readWriteGetCustomBehaviour),
+                LinksUrlOperations.GetMethodExpectedLinkUrls(
+                    expectedLinkUrlWithoutQuery,
+                    readWriteGetCustomBehaviour,
+                    aispUseV4),
                 transformedLinkUrlWithoutQuery,
                 readWriteGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                 true);
