@@ -160,5 +160,8 @@ public enum BankProfileEnum
     Santander_Santander,
 
     [EnumMember(Value = "Starling_Starling")]
-    Starling_Starling
+    Starling_Starling,
+
+    [EnumMember(Value = "Tsb_Tsb")]
+    Tsb_Tsb
 }

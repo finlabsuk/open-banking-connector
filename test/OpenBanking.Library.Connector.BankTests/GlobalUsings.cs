@@ -24,6 +24,10 @@ global using StarlingBank =
     FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.StarlingBank;
 global using StarlingRegistrationGroup =
     FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.StarlingBank;
+global using TsbBank =
+    FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.TsbBank;
+global using TsbRegistrationGroup =
+    FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.TsbBank;
 
 // UK Open Banking API models
 global using AccountAndTransactionModelsV3p1p11 =

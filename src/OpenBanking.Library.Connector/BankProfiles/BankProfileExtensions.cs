@@ -60,6 +60,7 @@ public static class BankProfileExtensions
             BankProfileEnum.Revolut_Revolut => BankGroup.Revolut,
             BankProfileEnum.Santander_Santander => BankGroup.Santander,
             BankProfileEnum.Starling_Starling => BankGroup.Starling,
+            BankProfileEnum.Tsb_Tsb => BankGroup.Tsb,
             _ => throw new ArgumentOutOfRangeException(nameof(bankProfileEnum), bankProfileEnum, null)
         };
 }

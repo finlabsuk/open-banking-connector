@@ -21,7 +21,8 @@ public static class BankGroupExtensions
         [BankGroup.Obie] = new Obie(),
         [BankGroup.Revolut] = new Revolut(),
         [BankGroup.Santander] = new Santander(),
-        [BankGroup.Starling] = new Starling()
+        [BankGroup.Starling] = new Starling(),
+        [BankGroup.Tsb] = new Tsb()
     };
 
     public static IBankGroupData<TBank> GetBankGroupData<TBank>(this BankGroup bankGroup)

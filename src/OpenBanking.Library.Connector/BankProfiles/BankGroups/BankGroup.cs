@@ -45,5 +45,8 @@ public enum BankGroup
     Santander,
 
     [EnumMember(Value = "Starling")]
-    Starling
+    Starling,
+
+    [EnumMember(Value = "Tsb")]
+    Tsb
 }

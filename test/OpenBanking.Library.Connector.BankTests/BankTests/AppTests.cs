@@ -230,6 +230,10 @@ public class AppTests
                         bankProfileFromEnv,
                         registrationScope,
                         bankGroup),
+                    BankGroup.Tsb => GetAllInRegistrationGroup<TsbBank, TsbRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
                     _ => throw new ArgumentOutOfRangeException()
                 };
             }
