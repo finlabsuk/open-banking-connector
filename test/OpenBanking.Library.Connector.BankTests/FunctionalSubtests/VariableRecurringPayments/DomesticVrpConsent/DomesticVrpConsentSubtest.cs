@@ -195,10 +195,10 @@ public class DomesticVrpConsentSubtest(
             // Read DomesticVrp
             DomesticVrpResponse domesticVrpResp2 =
                 await variableRecurringPaymentsApiClient.DomesticVrpRead(
-                    new ConsentExternalEntityReadParams
+                    new ExternalEntityReadParams
                     {
-                        ConsentId = domesticVrpConsentId,
-                        ModifiedBy = null,
+                        BankRegistrationId = bankRegistrationId,
+                        UseV4ExternalApi = null,
                         ExtraHeaders = null,
                         PublicRequestUrlWithoutQuery = null,
                         ExternalApiId = domesticVrpExternalId
@@ -210,10 +210,10 @@ public class DomesticVrpConsentSubtest(
             {
                 DomesticVrpPaymentDetailsResponse paymentDetailsResponse =
                     await variableRecurringPaymentsApiClient.DomesticVrpReadPaymentDetails(
-                        new ConsentExternalEntityReadParams
+                        new ExternalEntityReadParams
                         {
-                            ConsentId = domesticVrpConsentId,
-                            ModifiedBy = null,
+                            BankRegistrationId = bankRegistrationId,
+                            UseV4ExternalApi = null,
                             ExtraHeaders = null,
                             PublicRequestUrlWithoutQuery = null,
                             ExternalApiId = domesticVrpExternalId

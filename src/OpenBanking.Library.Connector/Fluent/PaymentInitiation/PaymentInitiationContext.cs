@@ -32,7 +32,7 @@ public interface IPaymentInitiationContext
     /// </summary>
     IDomesticPaymentContext<DomesticPaymentRequest, DomesticPaymentResponse, DomesticPaymentPaymentDetailsResponse,
             ConsentExternalCreateParams,
-            ConsentExternalEntityReadParams>
+            ExternalEntityReadParams>
         DomesticPayments { get; }
 }
 
@@ -79,7 +79,13 @@ internal class PaymentInitiationContext : IPaymentInitiationContext
                 _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
                 _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
                 _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
-                _sharedContext.DbService.GetDbMethods()));
+                _sharedContext.DbService.GetDbMethods()),
+            new ConsentCommon(
+                _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                _sharedContext.Instrumentation,
+                _sharedContext.DbService.GetDbMethods(),
+                _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>()));
     }
 
     public IDomesticPaymentConsentsContext DomesticPaymentConsents =>
@@ -87,7 +93,7 @@ internal class PaymentInitiationContext : IPaymentInitiationContext
 
     public IDomesticPaymentContext<DomesticPaymentRequest, DomesticPaymentResponse,
             DomesticPaymentPaymentDetailsResponse, ConsentExternalCreateParams,
-            ConsentExternalEntityReadParams>
+            ExternalEntityReadParams>
         DomesticPayments =>
         _domesticPayments;
 }

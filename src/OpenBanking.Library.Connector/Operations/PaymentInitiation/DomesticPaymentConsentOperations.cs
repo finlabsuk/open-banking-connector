@@ -40,13 +40,7 @@ internal class
     private readonly IBankProfileService _bankProfileService;
     private readonly ClientAccessTokenGet _clientAccessTokenGet;
     private readonly ConsentAccessTokenGet _consentAccessTokenGet;
-
-    private readonly ConsentCommon<DomesticPaymentConsentPersisted,
-        DomesticPaymentConsentRequest,
-        DomesticPaymentConsentCreateResponse,
-        PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
-        PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> _consentCommon;
-
+    private readonly ConsentCommon _consentCommon;
     private readonly IDbEntityMethods<DomesticPaymentConsentPersisted> _consentEntityMethods;
     private readonly IDbMethods _dbSaveChangesMethod;
     private readonly DomesticPaymentConsentCommon _domesticPaymentConsentCommon;
@@ -64,9 +58,7 @@ internal class
         IApiVariantMapper mapper,
         IBankProfileService bankProfileService,
         ConsentAccessTokenGet consentAccessTokenGet,
-        IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
-        IDbReadOnlyEntityMethods<ExternalApiSecretEntity> externalApiSecretMethods,
-        IDbReadOnlyEntityMethods<SoftwareStatementEntity> softwareStatementMethods,
+        ConsentCommon consentCommon,
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
         ClientAccessTokenGet clientAccessTokenGet,
@@ -83,16 +75,7 @@ internal class
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
         _instrumentationClient = instrumentationClient;
-        _consentCommon =
-            new ConsentCommon<DomesticPaymentConsentPersisted, DomesticPaymentConsentRequest,
-                DomesticPaymentConsentCreateResponse,
-                PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
-                PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
-                bankRegistrationMethods,
-                instrumentationClient,
-                dbSaveChangesMethod,
-                externalApiSecretMethods,
-                softwareStatementMethods);
+        _consentCommon = consentCommon;
     }
 
     private string ClientCredentialsGrantScope => "payments";
@@ -119,8 +102,8 @@ internal class
         if (request.ExternalApiObject is null)
         {
             // Load BankRegistration and related
-            (BankRegistrationEntity bankRegistration, string tokenEndpoint,
-                    SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
+            (BankRegistrationEntity bankRegistration, SoftwareStatementEntity softwareStatement,
+                    ExternalApiSecretEntity? externalApiSecret) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
             pispUseV4 = bankRegistration.PispUseV4;
 

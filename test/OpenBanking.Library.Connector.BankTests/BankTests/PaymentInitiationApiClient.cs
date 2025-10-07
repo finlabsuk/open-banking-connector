@@ -151,7 +151,7 @@ public class PaymentInitiationApiClient(WebAppClient client)
     }
 
     public async Task<DomesticPaymentResponse> DomesticPaymentRead(
-        ConsentExternalEntityReadParams readParams,
+        ExternalEntityReadParams readParams,
         DomesticPaymentCustomBehaviour? customBehaviour)
     {
         // Read object
@@ -161,8 +161,8 @@ public class PaymentInitiationApiClient(WebAppClient client)
                 uriPath,
                 [
                     new KeyValuePair<string, IEnumerable<string>>(
-                        "x-obc-domestic-payment-consent-id",
-                        [$"{readParams.ConsentId}"])
+                        "x-obc-bank-registration-id",
+                        [$"{readParams.BankRegistrationId}"])
                 ]);
 
         // Checks
@@ -233,7 +233,7 @@ public class PaymentInitiationApiClient(WebAppClient client)
     }
 
     public async Task<DomesticPaymentPaymentDetailsResponse> DomesticPaymentReadPaymentDetails(
-        ConsentExternalEntityReadParams readParams)
+        ExternalEntityReadParams readParams)
     {
         // Read object
         var uriPath = $"/pisp/domestic-payments/{readParams.ExternalApiId}/payment-details";
@@ -242,8 +242,8 @@ public class PaymentInitiationApiClient(WebAppClient client)
                 uriPath,
                 [
                     new KeyValuePair<string, IEnumerable<string>>(
-                        "x-obc-domestic-payment-consent-id",
-                        [$"{readParams.ConsentId}"])
+                        "x-obc-bank-registration-id",
+                        [$"{readParams.BankRegistrationId}"])
                 ]);
 
         // Checks

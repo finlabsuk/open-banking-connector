@@ -36,11 +36,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 /// </summary>
 internal class DomesticPayment :
     IDomesticPaymentContext<DomesticPaymentRequest, DomesticPaymentResponse, DomesticPaymentPaymentDetailsResponse,
-        ConsentExternalCreateParams, ConsentExternalEntityReadParams>
+        ConsentExternalCreateParams, ExternalEntityReadParams>
 {
     private readonly IBankProfileService _bankProfileService;
     private readonly ClientAccessTokenGet _clientAccessTokenGet;
     private readonly ConsentAccessTokenGet _consentAccessTokenGet;
+    private readonly ConsentCommon _consentCommon;
     private readonly DomesticPaymentConsentCommon _domesticPaymentConsentCommon;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
@@ -58,7 +59,8 @@ internal class DomesticPayment :
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
         ClientAccessTokenGet clientAccessTokenGet,
-        DomesticPaymentConsentCommon domesticPaymentConsentCommon)
+        DomesticPaymentConsentCommon domesticPaymentConsentCommon,
+        ConsentCommon consentCommon)
     {
         _instrumentationClient = instrumentationClient;
         _mapper = mapper;
@@ -69,24 +71,25 @@ internal class DomesticPayment :
         _obSealCertificateMethods = obSealCertificateMethods;
         _clientAccessTokenGet = clientAccessTokenGet;
         _domesticPaymentConsentCommon = domesticPaymentConsentCommon;
+        _consentCommon = consentCommon;
     }
 
     private string RelativePathBeforeId => "/domestic-payments";
 
     public async
         Task<DomesticPaymentPaymentDetailsResponse> ReadPaymentDetailsAsync(
-            ConsentExternalEntityReadParams readParams)
+            ExternalEntityReadParams readParams)
     {
         // Create non-error list
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        // Load DomesticPaymentConsent and related
-        (DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
-                SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
-            await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.ConsentId, false);
+        // Load BankRegistration and related
+        (BankRegistrationEntity bankRegistration, SoftwareStatementEntity softwareStatement,
+                ExternalApiSecretEntity? externalApiSecret) =
+            await _consentCommon.GetBankRegistration(readParams.BankRegistrationId);
         string externalApiId = readParams.ExternalApiId;
-        bool pispUseV4 = persistedConsent.CreatedWithV4;
+        bool pispUseV4 = readParams.UseV4ExternalApi ?? bankRegistration.PispUseV4;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
@@ -450,18 +453,18 @@ internal class DomesticPayment :
     }
 
     public async
-        Task<DomesticPaymentResponse> ReadAsync(ConsentExternalEntityReadParams readParams)
+        Task<DomesticPaymentResponse> ReadAsync(ExternalEntityReadParams readParams)
     {
         // Create non-error list
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        // Load DomesticPaymentConsent and related
-        (DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
-                SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
-            await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.ConsentId, false);
+        // Load BankRegistration and related
+        (BankRegistrationEntity bankRegistration, SoftwareStatementEntity softwareStatement,
+                ExternalApiSecretEntity? externalApiSecret) =
+            await _consentCommon.GetBankRegistration(readParams.BankRegistrationId);
         string externalApiId = readParams.ExternalApiId;
-        bool pispUseV4 = persistedConsent.CreatedWithV4;
+        bool pispUseV4 = readParams.UseV4ExternalApi ?? bankRegistration.PispUseV4;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);

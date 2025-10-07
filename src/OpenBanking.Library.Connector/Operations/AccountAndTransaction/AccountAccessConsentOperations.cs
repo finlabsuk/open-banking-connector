@@ -36,13 +36,7 @@ internal class
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
     private readonly IBankProfileService _bankProfileService;
     private readonly ClientAccessTokenGet _clientAccessTokenGet;
-
-    private readonly ConsentCommon<AccountAccessConsentPersisted,
-        AccountAccessConsentRequest,
-        AccountAccessConsentCreateResponse,
-        AccountAndTransactionModelsPublic.OBReadConsent1,
-        AccountAndTransactionModelsPublic.OBReadConsentResponse1> _consentCommon;
-
+    private readonly ConsentCommon _consentCommon;
     private readonly IDbEntityMethods<AccountAccessConsentPersisted> _consentEntityMethods;
     private readonly IDbMethods _dbSaveChangesMethod;
     private readonly IInstrumentationClient _instrumentationClient;
@@ -58,9 +52,7 @@ internal class
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         IBankProfileService bankProfileService,
-        IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
-        IDbReadOnlyEntityMethods<ExternalApiSecretEntity> externalApiSecretMethods,
-        IDbReadOnlyEntityMethods<SoftwareStatementEntity> softwareStatementMethods,
+        ConsentCommon consentCommon,
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
         ClientAccessTokenGet clientAccessTokenGet,
@@ -76,16 +68,7 @@ internal class
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
         _instrumentationClient = instrumentationClient;
-        _consentCommon =
-            new ConsentCommon<AccountAccessConsentPersisted, AccountAccessConsentRequest,
-                AccountAccessConsentCreateResponse,
-                AccountAndTransactionModelsPublic.OBReadConsent1,
-                AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
-                bankRegistrationMethods,
-                instrumentationClient,
-                dbSaveChangesMethod,
-                externalApiSecretMethods,
-                softwareStatementMethods);
+        _consentCommon = consentCommon;
     }
 
     public static string ClientCredentialsGrantScope => "accounts";
@@ -113,8 +96,8 @@ internal class
         if (request.ExternalApiObject is null)
         {
             // Load BankRegistration and related
-            (BankRegistrationEntity bankRegistration, string tokenEndpoint,
-                    SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
+            (BankRegistrationEntity bankRegistration, SoftwareStatementEntity softwareStatement,
+                    ExternalApiSecretEntity? externalApiSecret) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
             // Get bank profile

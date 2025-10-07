@@ -183,10 +183,10 @@ public class DomesticPaymentConsentSubtest(
 
             // Read DomesticPayment
             DomesticPaymentResponse domesticPaymentReadResponse = await paymentInitiationApiClient.DomesticPaymentRead(
-                new ConsentExternalEntityReadParams
+                new ExternalEntityReadParams
                 {
-                    ConsentId = domesticPaymentConsentId,
-                    ModifiedBy = null,
+                    BankRegistrationId = bankRegistrationId,
+                    UseV4ExternalApi = null,
                     ExtraHeaders = null,
                     PublicRequestUrlWithoutQuery = null,
                     ExternalApiId = domesticPaymentExternalId
@@ -198,10 +198,10 @@ public class DomesticPaymentConsentSubtest(
             {
                 DomesticPaymentPaymentDetailsResponse domesticPaymentReadPaymentDetailsResponse =
                     await paymentInitiationApiClient.DomesticPaymentReadPaymentDetails(
-                        new ConsentExternalEntityReadParams
+                        new ExternalEntityReadParams
                         {
-                            ConsentId = domesticPaymentConsentId,
-                            ModifiedBy = null,
+                            BankRegistrationId = bankRegistrationId,
+                            UseV4ExternalApi = null,
                             ExtraHeaders = null,
                             PublicRequestUrlWithoutQuery = null,
                             ExternalApiId = domesticPaymentExternalId

@@ -151,7 +151,7 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
     }
 
     public async Task<DomesticVrpResponse> DomesticVrpRead(
-        ConsentExternalEntityReadParams readParams,
+        ExternalEntityReadParams readParams,
         DomesticVrpCustomBehaviour? customBehaviour)
     {
         // Read object
@@ -161,8 +161,8 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
                 uriPath,
                 [
                     new KeyValuePair<string, IEnumerable<string>>(
-                        "x-obc-domestic-vrp-consent-id",
-                        [$"{readParams.ConsentId}"])
+                        "x-obc-bank-registration-id",
+                        [$"{readParams.BankRegistrationId}"])
                 ]);
 
         // Checks
@@ -235,7 +235,7 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
     }
 
     public async Task<DomesticVrpPaymentDetailsResponse> DomesticVrpReadPaymentDetails(
-        ConsentExternalEntityReadParams readParams)
+        ExternalEntityReadParams readParams)
     {
         // Read object
         var uriPath = $"/vrp/domestic-vrps/{readParams.ExternalApiId}/payment-details";
@@ -244,8 +244,8 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
                 uriPath,
                 [
                     new KeyValuePair<string, IEnumerable<string>>(
-                        "x-obc-domestic-vrp-consent-id",
-                        [$"{readParams.ConsentId}"])
+                        "x-obc-bank-registration-id",
+                        [$"{readParams.BankRegistrationId}"])
                 ]);
 
         // Checks

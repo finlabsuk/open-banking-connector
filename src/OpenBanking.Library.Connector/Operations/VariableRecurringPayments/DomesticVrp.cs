@@ -39,11 +39,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 internal class DomesticVrp :
     IDomesticVrpContext<DomesticVrpRequest, DomesticVrpResponse, DomesticVrpPaymentDetailsResponse,
         ConsentExternalCreateParams,
-        ConsentExternalEntityReadParams>
+        ExternalEntityReadParams>
 {
     private readonly IBankProfileService _bankProfileService;
     private readonly ClientAccessTokenGet _clientAccessTokenGet;
     private readonly ConsentAccessTokenGet _consentAccessTokenGet;
+    private readonly ConsentCommon _consentCommon;
     private readonly DomesticVrpConsentCommon _domesticVrpConsentCommon;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
@@ -62,7 +63,8 @@ internal class DomesticVrp :
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
         ClientAccessTokenGet clientAccessTokenGet,
-        DomesticVrpConsentCommon domesticVrpConsentCommon)
+        DomesticVrpConsentCommon domesticVrpConsentCommon,
+        ConsentCommon consentCommon)
     {
         _instrumentationClient = instrumentationClient;
         _mapper = mapper;
@@ -73,6 +75,7 @@ internal class DomesticVrp :
         _obSealCertificateMethods = obSealCertificateMethods;
         _clientAccessTokenGet = clientAccessTokenGet;
         _domesticVrpConsentCommon = domesticVrpConsentCommon;
+        _consentCommon = consentCommon;
     }
 
     private string RelativePathBeforeId => "/domestic-vrps";
@@ -319,18 +322,18 @@ internal class DomesticVrp :
         return response;
     }
 
-    public async Task<DomesticVrpResponse> ReadAsync(ConsentExternalEntityReadParams readParams)
+    public async Task<DomesticVrpResponse> ReadAsync(ExternalEntityReadParams readParams)
     {
         // Create non-error list
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        // Load DomesticVrpConsent and related
-        (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
-                SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
-            await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.ConsentId, false);
+        // Load BankRegistration and related
+        (BankRegistrationEntity bankRegistration, SoftwareStatementEntity softwareStatement,
+                ExternalApiSecretEntity? externalApiSecret) =
+            await _consentCommon.GetBankRegistration(readParams.BankRegistrationId);
         string externalApiId = readParams.ExternalApiId;
-        bool vrpUseV4 = persistedConsent.CreatedWithV4;
+        bool vrpUseV4 = readParams.UseV4ExternalApi ?? bankRegistration.VrpUseV4;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
@@ -502,18 +505,18 @@ internal class DomesticVrp :
     }
 
     public async Task<DomesticVrpPaymentDetailsResponse> ReadPaymentDetailsAsync(
-        ConsentExternalEntityReadParams readParams)
+        ExternalEntityReadParams readParams)
     {
         // Create non-error list
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        // Load DomesticVrpConsent and related
-        (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
-                SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
-            await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.ConsentId, false);
-        bool vrpUseV4 = persistedConsent.CreatedWithV4;
+        // Load BankRegistration and related
+        (BankRegistrationEntity bankRegistration, SoftwareStatementEntity softwareStatement,
+                ExternalApiSecretEntity? externalApiSecret) =
+            await _consentCommon.GetBankRegistration(readParams.BankRegistrationId);
         string externalApiId = readParams.ExternalApiId;
+        bool vrpUseV4 = readParams.UseV4ExternalApi ?? bankRegistration.VrpUseV4;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);

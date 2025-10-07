@@ -17,5 +17,5 @@ public interface IExternalEntityContext<in TPublicRequest, TPublicResponse, in T
     ICreateExternalEntityContext<TPublicRequest, TPublicResponse, TCreateParams>,
     IReadExternalEntityContext<TPublicResponse, TReadParams>
     where TPublicResponse : class
-    where TReadParams : ConsentExternalEntityReadParams
+    where TReadParams : ExternalEntityReadParams
     where TCreateParams : ConsentExternalCreateParams { }

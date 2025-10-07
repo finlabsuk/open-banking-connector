@@ -34,7 +34,7 @@ public interface IVariableRecurringPaymentsContext
     /// </summary>
     IDomesticVrpContext<DomesticVrpRequest, DomesticVrpResponse, DomesticVrpPaymentDetailsResponse,
         ConsentExternalCreateParams,
-        ConsentExternalEntityReadParams> DomesticVrps { get; }
+        ExternalEntityReadParams> DomesticVrps { get; }
 }
 
 internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsContext
@@ -81,7 +81,13 @@ internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsCont
                 _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
                 _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
                 _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
-                _sharedContext.DbService.GetDbMethods()));
+                _sharedContext.DbService.GetDbMethods()),
+            new ConsentCommon(
+                _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                _sharedContext.Instrumentation,
+                _sharedContext.DbService.GetDbMethods(),
+                _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>()));
     }
 
     public IDomesticVrpConsentsContext DomesticVrpConsents =>
@@ -89,6 +95,6 @@ internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsCont
 
     public IDomesticVrpContext<DomesticVrpRequest, DomesticVrpResponse, DomesticVrpPaymentDetailsResponse,
             ConsentExternalCreateParams,
-            ConsentExternalEntityReadParams>
+            ExternalEntityReadParams>
         DomesticVrps => _domesticVrp;
 }
