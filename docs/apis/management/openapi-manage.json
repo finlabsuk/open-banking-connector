@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "15.0.0"
+    "version": "16.0.0"
   },
   "paths": {
     "/manage/bank-registrations": {
@@ -698,7 +698,8 @@
           "Obie",
           "Revolut",
           "Santander",
-          "Starling"
+          "Starling",
+          "Tsb"
         ],
         "type": "string"
       },
@@ -752,7 +753,8 @@
           "Obie_Model2023",
           "Revolut_Revolut",
           "Santander_Santander",
-          "Starling_Starling"
+          "Starling_Starling",
+          "Tsb_Tsb"
         ],
         "type": "string",
         "description": "Banks for which bank profiles have been created. Called BankProfileEnum to avoid confusion with the associated\r\nclass BankProfile."

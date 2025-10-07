@@ -20,8 +20,9 @@ public class SecretProvider(IConfiguration configuration) : ISecretProvider
         return secretDescription.Source switch
         {
             SecretSource.AwsSsmParameterStore => await GetSecretFromAwsParameterStore(secretDescription.Name),
-            SecretSource.GoogleCloudSecretManagerV1     => await GetSecretFromGoogleCloudSecretManagerV1(secretDescription.Name),
-            SecretSource.Configuration or _   => GetSecretFromConfiguration(secretDescription.Name)
+            SecretSource.GoogleCloudSecretManagerV1 => await GetSecretFromGoogleCloudSecretManagerV1(
+                secretDescription.Name),
+            SecretSource.Configuration or _ => GetSecretFromConfiguration(secretDescription.Name)
         };
     }
 
@@ -66,7 +67,7 @@ public class SecretProvider(IConfiguration configuration) : ISecretProvider
         try
         {
             var client = await SecretManagerServiceClient.CreateAsync();
-            
+
             // Name is expected to be in the format projects/{project_id}/secrets/{secret_id}/versions/{secret_version}
             AccessSecretVersionResponse? secret = await client.AccessSecretVersionAsync(name);
 
@@ -85,7 +86,7 @@ public class SecretProvider(IConfiguration configuration) : ISecretProvider
             };
         }
     }
-    
+
     private SecretResult GetSecretFromConfiguration(string name)
     {
         var tmp = configuration.GetValue<string>(name, "");

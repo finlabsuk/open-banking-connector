@@ -21,4 +21,3 @@ public interface IDbEntityMethods<TEntity> : IDbReadOnlyEntityMethods<TEntity>
     Task<IQueryable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate);
     Task AddAsync(TEntity entity);
 }
-

@@ -16,7 +16,7 @@ public enum SecretSource
 
     [EnumMember(Value = "AwsSsmParameterStore")]
     AwsSsmParameterStore,
-    
+
     [EnumMember(Value = "GoogleCloudSecretManagerV1")]
     GoogleCloudSecretManagerV1
 }

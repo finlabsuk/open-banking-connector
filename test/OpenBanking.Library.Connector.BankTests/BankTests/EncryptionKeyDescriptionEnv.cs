@@ -12,8 +12,8 @@ public class EncryptionKeyDescriptionEnvFile : Dictionary<string, EncryptionKeyD
 public class EncryptionKeyDescriptionEnv
 {
     [JsonPropertyName("encryptionKeyDescriptionName")]
-    public required string  EncryptionKeyDescriptionName { get; init; }
-    
+    public required string EncryptionKeyDescriptionName { get; init; }
+
     [JsonConverter(typeof(JsonStringEnumConverter<SecretSource>))]
     [JsonPropertyName("encryptionKeySource")]
     public SecretSource EncryptionKeySource { get; init; } = SecretSource.Configuration;
