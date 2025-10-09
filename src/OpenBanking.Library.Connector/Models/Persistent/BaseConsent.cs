@@ -75,6 +75,9 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
 
     public string? ExternalApiUserIdModifiedBy { get; private set; }
 
+    /// <summary>
+    ///     Created using v4 external (bank) API
+    /// </summary>
     public bool CreatedWithV4 { get; }
 
     /// <summary>

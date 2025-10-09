@@ -315,7 +315,8 @@ internal class
                 AuthContextModified = persistedConsent.AuthContextModified,
                 AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
                 ExternalApiResponse = externalApiResponse,
-                ExternalApiResponseInfo = externalApiResponseInfo
+                ExternalApiResponseInfo = externalApiResponseInfo,
+                CreatedWithV4 = persistedConsent.CreatedWithV4
             };
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
@@ -507,7 +508,8 @@ internal class
                 AuthContextModified = persistedConsent.AuthContextModified,
                 AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
                 ExternalApiResponse = externalApiResponse,
-                ExternalApiResponseInfo = externalApiResponseInfo
+                ExternalApiResponseInfo = externalApiResponseInfo,
+                CreatedWithV4 = persistedConsent.CreatedWithV4
             };
 
         return (response, nonErrorMessages);
