@@ -94,6 +94,12 @@ public class DomesticPaymentsController : ControllerBase
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
+        if (bankRegistrationId == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Required header x-obc-bank-registration-id either set to empty value or not provided.");
+        }
+
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
@@ -145,6 +151,12 @@ public class DomesticPaymentsController : ControllerBase
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
+        if (bankRegistrationId == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Required header x-obc-bank-registration-id either set to empty value or not provided.");
+        }
+
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
