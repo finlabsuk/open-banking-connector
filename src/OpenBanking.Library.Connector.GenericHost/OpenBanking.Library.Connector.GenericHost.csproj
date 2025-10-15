@@ -24,14 +24,14 @@
 
     <ItemGroup>
         <PackageReference Include="Google.Cloud.SecretManager.V1" Version="2.6.0"/>
-        <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="4.0.4.3"/>
-        <PackageReference Include="AWSSDK.SSO" Version="4.0.1.6"/>
-        <PackageReference Include="AWSSDK.SSOOIDC" Version="4.0.2.3"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9"/>
-        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.9"/>
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.9"/>
-        <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="9.0.9"/>
+        <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="4.0.4.5"/>
+        <PackageReference Include="AWSSDK.SSO" Version="4.0.1.8"/>
+        <PackageReference Include="AWSSDK.SSOOIDC" Version="4.0.2.5"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.10"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.10"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.10"/>
+        <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="9.0.10"/>
     </ItemGroup>
 
     <ItemGroup>
