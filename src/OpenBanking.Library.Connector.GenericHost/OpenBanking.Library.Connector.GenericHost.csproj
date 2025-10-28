@@ -23,10 +23,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Google.Cloud.SecretManager.V1" Version="2.6.0"/>
-        <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="4.0.4.5"/>
-        <PackageReference Include="AWSSDK.SSO" Version="4.0.1.8"/>
-        <PackageReference Include="AWSSDK.SSOOIDC" Version="4.0.2.5"/>
+        <PackageReference Include="Google.Cloud.SecretManager.V1" Version="2.7.0"/>
+        <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="4.0.5.3"/>
+        <PackageReference Include="AWSSDK.SSO" Version="4.0.2.1"/>
+        <PackageReference Include="AWSSDK.SSOOIDC" Version="4.0.3.2"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.10"/>
         <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.10"/>
