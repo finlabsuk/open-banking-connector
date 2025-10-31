@@ -220,6 +220,7 @@ internal class DomesticVrp :
                         new PaymentInitiationPostRequestProcessor<
                             VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPRequest>(
                             bankFinancialId,
+                            false,
                             accessToken,
                             _instrumentationClient,
                             softwareStatement,
@@ -249,6 +250,7 @@ internal class DomesticVrp :
                         new PaymentInitiationPostRequestProcessor<
                             VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest>(
                             bankFinancialId,
+                            false,
                             accessToken,
                             _instrumentationClient,
                             softwareStatement,
@@ -403,18 +405,9 @@ internal class DomesticVrp :
         {
             case VariableRecurringPaymentsApiVersion.Version3p1p11:
                 var apiRequestsV3 =
-                    new ApiRequests<VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPRequest,
-                        VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPResponse,
-                        VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPRequest,
+                    new ApiGetRequests<VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPResponse,
                         VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPResponse>(
-                        new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken),
-                        new PaymentInitiationPostRequestProcessor<
-                            VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPRequest>(
-                            bankFinancialId,
-                            ccGrantAccessToken,
-                            _instrumentationClient,
-                            softwareStatement,
-                            obSealKey));
+                        new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken));
                 (VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPResponse externalApiResponseV3, xFapiInteractionId,
                         newNonErrorMessages) =
                     await apiRequestsV3.GetAsync(
@@ -429,18 +422,9 @@ internal class DomesticVrp :
                 break;
             case VariableRecurringPaymentsApiVersion.VersionPublic:
                 var apiRequests =
-                    new ApiRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
-                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse,
-                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
+                    new ApiGetRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse,
                         VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>(
-                        new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken),
-                        new PaymentInitiationPostRequestProcessor<
-                            VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest>(
-                            bankFinancialId,
-                            ccGrantAccessToken,
-                            _instrumentationClient,
-                            softwareStatement,
-                            obSealKey));
+                        new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken));
                 (externalApiResponse, xFapiInteractionId, newNonErrorMessages) =
                     await apiRequests.GetAsync(
                         externalApiUrl,

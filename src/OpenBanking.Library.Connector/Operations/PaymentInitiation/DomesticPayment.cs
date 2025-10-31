@@ -328,6 +328,7 @@ internal class DomesticPayment :
                 readWritePostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
             externalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
         }
+        bool useB64JoseHeader = readWritePostCustomBehaviour?.UseB64JoseHeader ?? false;
         var tppReportingRequestInfo = new TppReportingRequestInfo
         {
             EndpointDescription =
@@ -354,6 +355,7 @@ internal class DomesticPayment :
                         new ApiGetRequestProcessor(bankFinancialId, accessToken),
                         new PaymentInitiationPostRequestProcessor<PaymentInitiationModelsV3p1p11.OBWriteDomestic2>(
                             bankFinancialId,
+                            useB64JoseHeader,
                             accessToken,
                             _instrumentationClient,
                             softwareStatement,
@@ -381,6 +383,7 @@ internal class DomesticPayment :
                         new ApiGetRequestProcessor(bankFinancialId, accessToken),
                         new PaymentInitiationPostRequestProcessor<PaymentInitiationModelsPublic.OBWriteDomestic2>(
                             bankFinancialId,
+                            useB64JoseHeader,
                             accessToken,
                             _instrumentationClient,
                             softwareStatement,
@@ -514,17 +517,9 @@ internal class DomesticPayment :
         {
             case PaymentInitiationApiVersion.Version3p1p11:
                 var apiRequestsV3 =
-                    new ApiRequests<PaymentInitiationModelsV3p1p11.OBWriteDomestic2,
-                        PaymentInitiationModelsV3p1p11.OBWriteDomesticResponse5,
-                        PaymentInitiationModelsV3p1p11.OBWriteDomestic2,
+                    new ApiGetRequests<PaymentInitiationModelsV3p1p11.OBWriteDomesticResponse5,
                         PaymentInitiationModelsV3p1p11.OBWriteDomesticResponse5>(
-                        new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken),
-                        new PaymentInitiationPostRequestProcessor<PaymentInitiationModelsV3p1p11.OBWriteDomestic2>(
-                            bankFinancialId,
-                            ccGrantAccessToken,
-                            _instrumentationClient,
-                            softwareStatement,
-                            obSealKey));
+                        new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken));
                 (PaymentInitiationModelsV3p1p11.OBWriteDomesticResponse5 externalApiResponseV3, xFapiInteractionId,
                         newNonErrorMessages) =
                     await apiRequestsV3.GetAsync(
@@ -539,17 +534,9 @@ internal class DomesticPayment :
                 break;
             case PaymentInitiationApiVersion.VersionPublic:
                 var apiRequests =
-                    new ApiRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,
-                        PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
-                        PaymentInitiationModelsPublic.OBWriteDomestic2,
+                    new ApiGetRequests<PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
                         PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
-                        new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken),
-                        new PaymentInitiationPostRequestProcessor<PaymentInitiationModelsPublic.OBWriteDomestic2>(
-                            bankFinancialId,
-                            ccGrantAccessToken,
-                            _instrumentationClient,
-                            softwareStatement,
-                            obSealKey));
+                        new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken));
                 (externalApiResponse, xFapiInteractionId, newNonErrorMessages) =
                     await apiRequests.GetAsync(
                         externalApiUrl,

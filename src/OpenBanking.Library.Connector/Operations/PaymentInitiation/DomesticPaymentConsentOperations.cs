@@ -153,6 +153,7 @@ internal class
                     readWritePostCustomBehaviour?.PreferMisspeltContractPresentIndicator ?? false;
                 externalApiRequest.Risk.AdjustBeforeSendToBank(preferMisspeltContractPresentIndicator);
             }
+            bool useB64JoseHeader = readWritePostCustomBehaviour?.UseB64JoseHeader ?? false;
             var tppReportingRequestInfo = new TppReportingRequestInfo
             {
                 EndpointDescription =
@@ -179,6 +180,7 @@ internal class
                             new PaymentInitiationPostRequestProcessor<
                                 PaymentInitiationModelsV3p1p11.OBWriteDomesticConsent4>(
                                 bankFinancialId,
+                                useB64JoseHeader,
                                 ccGrantAccessToken,
                                 _instrumentationClient,
                                 softwareStatement,
@@ -208,6 +210,7 @@ internal class
                             new PaymentInitiationPostRequestProcessor<
                                 PaymentInitiationModelsPublic.OBWriteDomesticConsent4>(
                                 bankFinancialId,
+                                useB64JoseHeader,
                                 ccGrantAccessToken,
                                 _instrumentationClient,
                                 softwareStatement,
@@ -409,18 +412,9 @@ internal class
             {
                 case PaymentInitiationApiVersion.Version3p1p11:
                     var apiRequestsV3 =
-                        new ApiRequests<PaymentInitiationModelsV3p1p11.OBWriteDomesticConsent4,
-                            PaymentInitiationModelsV3p1p11.OBWriteDomesticConsentResponse5,
-                            PaymentInitiationModelsV3p1p11.OBWriteDomesticConsent4,
+                        new ApiGetRequests<PaymentInitiationModelsV3p1p11.OBWriteDomesticConsentResponse5,
                             PaymentInitiationModelsV3p1p11.OBWriteDomesticConsentResponse5>(
-                            new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken),
-                            new PaymentInitiationPostRequestProcessor<
-                                PaymentInitiationModelsV3p1p11.OBWriteDomesticConsent4>(
-                                bankFinancialId,
-                                ccGrantAccessToken,
-                                _instrumentationClient,
-                                softwareStatement,
-                                obSealKey));
+                            new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken));
                     (PaymentInitiationModelsV3p1p11.OBWriteDomesticConsentResponse5 externalApiResponseV3,
                             xFapiInteractionId,
                             newNonErrorMessages) =
@@ -437,18 +431,9 @@ internal class
                     break;
                 case PaymentInitiationApiVersion.VersionPublic:
                     var apiRequests =
-                        new ApiRequests<PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
-                            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
-                            PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
+                        new ApiGetRequests<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
                             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
-                            new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken),
-                            new PaymentInitiationPostRequestProcessor<
-                                PaymentInitiationModelsPublic.OBWriteDomesticConsent4>(
-                                bankFinancialId,
-                                ccGrantAccessToken,
-                                _instrumentationClient,
-                                softwareStatement,
-                                obSealKey));
+                            new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken));
                     (externalApiResponse, xFapiInteractionId,
                             newNonErrorMessages) =
                         await apiRequests.GetAsync(

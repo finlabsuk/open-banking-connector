@@ -25,6 +25,7 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
 
     public PaymentInitiationPostRequestProcessor(
         string orgId,
+        bool useB64,
         string accessToken,
         IInstrumentationClient instrumentationClient,
         SoftwareStatementEntity softwareStatement,
@@ -32,7 +33,7 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
     {
         _instrumentationClient = instrumentationClient;
         _orgId = orgId;
-        _useB64 = false; // was true before PISP v3.1.4 which is no longer supported
+        _useB64 = useB64; // was true before PISP v3.1.4 which is no longer supported
         _softwareStatementEntity = softwareStatement;
         _obSealKey = obSealKey;
         _accessToken = accessToken;
@@ -146,7 +147,7 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
         dict.Add("http://openbanking.org.uk/iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
         dict.Add(
             "http://openbanking.org.uk/iss",
-            $"{orgId}/{softwareId}"); // TODO: adjust. See HSBC implementation guide
+            $"{orgId}/{softwareId}");
         dict.Add("http://openbanking.org.uk/tan", "openbanking.org.uk");
         if (!(b64 is null))
         {

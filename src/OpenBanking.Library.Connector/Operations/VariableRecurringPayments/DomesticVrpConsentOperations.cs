@@ -201,6 +201,7 @@ internal class
                         new PaymentInitiationPostRequestProcessor<
                             VariableRecurringPaymentsModelsV3p1p11.OBVRPFundsConfirmationRequest>(
                             bankFinancialId,
+                            false,
                             accessToken,
                             _instrumentationClient,
                             softwareStatement,
@@ -229,6 +230,7 @@ internal class
                         new PaymentInitiationPostRequestProcessor<
                             VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationRequest>(
                             bankFinancialId,
+                            false,
                             accessToken,
                             _instrumentationClient,
                             softwareStatement,
@@ -365,6 +367,7 @@ internal class
                             new PaymentInitiationPostRequestProcessor<
                                 VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPConsentRequest>(
                                 bankFinancialId,
+                                false,
                                 ccGrantAccessToken,
                                 _instrumentationClient,
                                 softwareStatement,
@@ -394,6 +397,7 @@ internal class
                             new PaymentInitiationPostRequestProcessor<
                                 VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest>(
                                 bankFinancialId,
+                                false,
                                 ccGrantAccessToken,
                                 _instrumentationClient,
                                 softwareStatement,
@@ -591,18 +595,9 @@ internal class
             {
                 case VariableRecurringPaymentsApiVersion.Version3p1p11:
                     var apiRequestsV3 =
-                        new ApiRequests<VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPConsentRequest,
-                            VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPConsentResponse,
-                            VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPConsentRequest,
+                        new ApiGetRequests<VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPConsentResponse,
                             VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPConsentResponse>(
-                            new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken),
-                            new PaymentInitiationPostRequestProcessor<
-                                VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPConsentRequest>(
-                                bankFinancialId,
-                                ccGrantAccessToken,
-                                _instrumentationClient,
-                                softwareStatement,
-                                obSealKey));
+                            new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken));
                     (VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPConsentResponse externalApiResponseV3,
                             xFapiInteractionId, newNonErrorMessages) =
                         await apiRequestsV3.GetAsync(
@@ -618,18 +613,9 @@ internal class
                     break;
                 case VariableRecurringPaymentsApiVersion.VersionPublic:
                     var apiRequests =
-                        new ApiRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
-                            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse,
-                            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
+                        new ApiGetRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse,
                             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>(
-                            new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken),
-                            new PaymentInitiationPostRequestProcessor<
-                                VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest>(
-                                bankFinancialId,
-                                ccGrantAccessToken,
-                                _instrumentationClient,
-                                softwareStatement,
-                                obSealKey));
+                            new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken));
                     (externalApiResponse, xFapiInteractionId, newNonErrorMessages) =
                         await apiRequests.GetAsync(
                             externalApiUrl,
