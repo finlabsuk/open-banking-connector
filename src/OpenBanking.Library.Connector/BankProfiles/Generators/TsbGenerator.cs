@@ -3,11 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
@@ -24,7 +27,7 @@ public class TsbGenerator : BankProfileGeneratorBase<TsbBank>
         IInstrumentationClient instrumentationClient) =>
         new(
             _bankGroupData.GetBankProfile(bank),
-            "https://apis.tsb.co.uk/apis/open-banking/v3.1", // from https://apis.developer.tsb.co.uk/ and https://apis.developer.tsb.co.uk/#/security
+            "https://apis.tsb.co.uk/apis/open-banking/v3.1/", // from https://apis.developer.tsb.co.uk/ and https://apis.developer.tsb.co.uk/#/security
             GetFinancialId(bank),
             new AccountAndTransactionApi { BaseUrl = GetApiBaseUrl(true) },
             null,
@@ -38,7 +41,9 @@ public class TsbGenerator : BankProfileGeneratorBase<TsbBank>
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {
                 TokenEndpointAuthMethod = TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt,
-                UseRegistrationGetEndpoint = true
+                UseRegistrationGetEndpoint = true,
+                UseRegistrationDeleteEndpoint = true,
+                IdTokenSubClaimType = IdTokenSubClaimType.EndUserId
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
@@ -57,6 +62,26 @@ public class TsbGenerator : BankProfileGeneratorBase<TsbBank>
                     }
                     return externalApiRequest;
                 }
+            },
+            PaymentInitiationApiSettings = new PaymentInitiationApiSettings
+            {
+                UseReadRefundAccount = false,
+                PreferPartyToPartyPaymentContextCode = true,
+                UseContractPresentIndicator = false
+            },
+            CustomBehaviour = new CustomBehaviourClass
+            {
+                AccountAccessConsentRefreshTokenGrantPost =
+                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
+                DomesticPaymentConsent =
+                    new DomesticPaymentConsentCustomBehaviour { UseB64JoseHeader = true },
+                DomesticPayment =
+                    new DomesticPaymentCustomBehaviour
+                    {
+                        UseB64JoseHeader = true,
+                        ResponseDataRefundMayBeMissingOrWrong = true,
+                        ResponseDataDebtorMayBeMissingOrWrong = true
+                    }
             },
             AspspBrandId = 0
         };
