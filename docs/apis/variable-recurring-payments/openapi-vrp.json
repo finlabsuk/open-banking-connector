@@ -3,7 +3,7 @@
   "info": {
     "title": "Variable Recurring Payments API",
     "description": "Variable Recurring Payments API for Open Banking Connector Web App",
-    "version": "16.1.0"
+    "version": "17.0.0"
   },
   "paths": {
     "/vrp/domestic-vrp-consent-auth-contexts": {
