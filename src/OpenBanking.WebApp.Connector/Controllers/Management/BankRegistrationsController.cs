@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
@@ -87,8 +88,8 @@ public class BankRegistrationsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<BaseResponse>> DeleteAsync(
         Guid bankRegistrationId,
-        [FromHeader(Name = "x-obc-exclude-external-api-operation")]
-        bool? excludeExternalApiOperation)
+        [Required] [FromHeader(Name = "x-obc-exclude-external-api-operation")]
+        bool excludeExternalApiOperation)
     {
         // Operation
         BaseResponse fluentResponse = await _requestBuilder
@@ -97,7 +98,7 @@ public class BankRegistrationsController : ControllerBase
             .DeleteAsync(
                 new BankRegistrationDeleteParams
                 {
-                    ExcludeExternalApiOperation = excludeExternalApiOperation ?? false,
+                    ExcludeExternalApiOperation = excludeExternalApiOperation,
                     Id = bankRegistrationId,
                     ModifiedBy = null
                 });

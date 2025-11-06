@@ -51,7 +51,10 @@ public class ManagementApiClient(WebAppClient client)
                 uriPath,
                 deleteParams.ExcludeExternalApiOperation
                     ? [new KeyValuePair<string, IEnumerable<string>>("x-obc-exclude-external-api-operation", ["true"])]
-                    : []);
+                    :
+                    [
+                        new KeyValuePair<string, IEnumerable<string>>("x-obc-exclude-external-api-operation", ["false"])
+                    ]);
 
         // Checks
         response.Warnings.Should().BeNull();
