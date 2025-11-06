@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "16.0.0"
+    "version": "17.0.0"
   },
   "paths": {
     "/manage/bank-registrations": {
@@ -115,6 +115,7 @@
             "name": "x-obc-exclude-external-api-operation",
             "in": "header",
             "description": "",
+            "required": true,
             "schema": {
               "type": "boolean"
             }
