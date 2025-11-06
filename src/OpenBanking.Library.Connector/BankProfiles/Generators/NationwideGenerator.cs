@@ -187,7 +187,7 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                 UseGetPartyEndpoint = false
             },
             AspspBrandId = 12,
-            AispUseV4ByDefault = false,
+            AispUseV4ByDefault = true,
             PispUseV4ByDefault = true,
             VrpUseV4ByDefault = true
         };

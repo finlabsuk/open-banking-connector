@@ -260,7 +260,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                 LloydsBank.MbnaPersonal => 18,
                 _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
             },
-            AispUseV4ByDefault = false,
+            AispUseV4ByDefault = true,
             PispUseV4ByDefault = true,
             VrpUseV4ByDefault = true
         };

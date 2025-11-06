@@ -299,7 +299,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 NatWestBank.Coutts => 13,
                 _ => throw new ArgumentOutOfRangeException()
             },
-            AispUseV4ByDefault = false,
+            AispUseV4ByDefault = true,
             PispUseV4ByDefault = true,
             VrpUseV4ByDefault = true
         };
