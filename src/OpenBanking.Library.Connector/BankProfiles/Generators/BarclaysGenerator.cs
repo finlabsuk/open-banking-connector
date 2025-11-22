@@ -53,12 +53,24 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                 _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
             },
             GetFinancialId(bank),
-            GetAccountAndTransactionApi(bank),
-            null,
-            GetPaymentInitiationApi(bank),
-            null,
-            GetVariableRecurringPaymentsApi(bank),
-            null,
+            new AccountAndTransactionApi { BaseUrl = GetApiBaseUrl("v3.1/aisp") },
+            new AccountAndTransactionApi
+            {
+                ApiVersion = AccountAndTransactionApiVersion.Version4p0,
+                BaseUrl = GetApiBaseUrl("v4.0/aisp")
+            },
+            new PaymentInitiationApi { BaseUrl = GetApiBaseUrl("v3.1/pisp") },
+            new PaymentInitiationApi
+            {
+                ApiVersion = PaymentInitiationApiVersion.Version4p0,
+                BaseUrl = GetApiBaseUrl("v4.0/pisp")
+            },
+            new VariableRecurringPaymentsApi { BaseUrl = GetApiBaseUrl("v3.1/pisp") },
+            new VariableRecurringPaymentsApi
+            {
+                ApiVersion = VariableRecurringPaymentsApiVersion.Version4p0,
+                BaseUrl = GetApiBaseUrl("v4.0/pisp")
+            },
             bank is not BarclaysBank.Sandbox,
             instrumentationClient)
         {
@@ -187,7 +199,9 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                 DomesticVrp = new DomesticVrpCustomBehaviour
                 {
                     PostResponseLinksMayOmitId = true,
-                    PreferMisspeltContractPresentIndicator = true
+                    PreferMisspeltContractPresentIndicator = true,
+                    ResponseDataStatusMayBeMissingOrWrong = true,
+                    ResponseDataRefundMayBeMissingOrWrong = true
                 }
             },
             VariableRecurringPaymentsApiSettings = new VariableRecurringPaymentsApiSettings
@@ -196,30 +210,23 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                 {
                     request.Data.VRPType = null;
                     return request;
-                }
+                },
+                UseDomesticVrpConsentPutEndpoint = true
             },
             AspspBrandId = bank is BarclaysBank.Sandbox
                 ? 10006 // sandbox
-                : 5
+                : 5,
+            AispUseV4ByDefault = true,
+            PispUseV4ByDefault = true,
+            VrpUseV4ByDefault = true
         };
     }
 
-    private AccountAndTransactionApi GetAccountAndTransactionApi(BarclaysBank bank) =>
-        new()
-        {
-            BaseUrl = bank is BarclaysBank.Sandbox
-                ? "https://sandbox.api.barclays:443/open-banking/v3.1/sandbox/aisp" // from https://developer.barclays.com/apis/account-and-transactions/20e74071-13fb-44eb-b98f-2c89d6251ad8.bdn/documentation#interface-details
-                : "https://telesto.api.barclays:443/open-banking/v3.1/aisp" // from https://developer.barclays.com/apis/account-and-transactions/20e74071-13fb-44eb-b98f-2c89d6251ad8.bdn/documentation#interface-details
-        };
-
-    private PaymentInitiationApi GetPaymentInitiationApi(BarclaysBank bank) =>
-        new() { BaseUrl = GetPaymentsBaseUrl(bank) };
-
-    private VariableRecurringPaymentsApi GetVariableRecurringPaymentsApi(BarclaysBank bank) =>
-        new() { BaseUrl = GetPaymentsBaseUrl(bank) };
-
-    private static string GetPaymentsBaseUrl(BarclaysBank bank) =>
-        bank is BarclaysBank.Sandbox
-            ? "https://sandbox.api.barclays:443/open-banking/v3.1/sandbox/pisp" // from https://developer.barclays.com/apis/payment-initiation/1f6ad5c5-e397-41c0-8d3b-c35446491402.bdn/documentation#interface-details
-            : "https://telesto.api.barclays:443/open-banking/v3.1/pisp"; // from https://developer.barclays.com/apis/payment-initiation/1f6ad5c5-e397-41c0-8d3b-c35446491402.bdn/documentation#interface-details
+    private static string GetApiBaseUrl(string suffix) =>
+        $"https://telesto.api.barclays:443/open-banking/{suffix}"; // from
+    // https://developer.barclays.com/apis/account-and-transactions/20e74071-13fb-44eb-b98f-2c89d6251ad8.bdn/documentation#interface-details,
+    // https://developer.barclays.com/apis/account-and-transactions/e6101c4d-5a76-4ac6-9659-1de2db4267a5.bdn/documentation#interface-details,
+    // https://developer.barclays.com/apis/payment-initiation/1f6ad5c5-e397-41c0-8d3b-c35446491402.bdn/documentation#interface-details,
+    // https://developer.barclays.com/apis/payment-initiation/6f206027-5e08-4f4f-a1c5-553cba3c847c.bdn/documentation#interface-details,
+    // https://developer.barclays.com/apis/variable-recurring-payment/0756dc5a-00ca-4b1d-b91d-f6c558d05fc3.bdn/documentation#interface-details
 }
