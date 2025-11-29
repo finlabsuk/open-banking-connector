@@ -31,7 +31,9 @@ internal class DomesticVrpConsent :
         string? externalApiUserIdModifiedBy,
         Guid bankRegistrationId,
         string externalApiId,
-        bool createdWithV4) : base(
+        bool createdWithV4,
+        bool migratedToV4,
+        DateTimeOffset migratedToV4Modified) : base(
         id,
         reference,
         isDeleted,
@@ -49,7 +51,11 @@ internal class DomesticVrpConsent :
         externalApiUserIdModifiedBy,
         bankRegistrationId,
         externalApiId,
-        createdWithV4) { }
+        createdWithV4)
+    {
+        MigratedToV4 = migratedToV4;
+        MigratedToV4Modified = migratedToV4Modified;
+    }
 
     /// <summary>
     ///     Associated access tokens
@@ -62,6 +68,21 @@ internal class DomesticVrpConsent :
     /// </summary>
     public IList<DomesticVrpConsentRefreshToken> DomesticVrpConsentRefreshTokensNavigation { get; } =
         new List<DomesticVrpConsentRefreshToken>();
+
+    /// <summary>
+    ///     Migrated to v4 external (bank) API consent
+    /// </summary>
+    public bool MigratedToV4 { get; private set; }
+
+    public DateTimeOffset MigratedToV4Modified { get; private set; }
+
+    public void UpdateMigratedToV4(
+        bool migratedToV4,
+        DateTimeOffset migratedToV4Modified)
+    {
+        MigratedToV4 = migratedToV4;
+        MigratedToV4Modified = migratedToV4Modified;
+    }
 
     protected override string GetConsentTypeString() => "vrp_dom";
 

@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MongoDB.EntityFrameworkCore.Extensions;
 using Newtonsoft.Json;
@@ -21,10 +22,20 @@ internal class DomesticVrpConsentConfig(
     {
         base.Configure(builder);
 
+        builder.Property(e => e.MigratedToV4);
+        builder.Property(e => e.MigratedToV4Modified);
+
+        if (_dbProvider is DbProvider.PostgreSql)
+        {
+            builder.Property(e => e.MigratedToV4Modified).HasColumnName("migrated_to_v4_modified");
+        }
+
         // Use camel case for MongoDB
         if (_dbProvider is DbProvider.MongoDb)
         {
             builder.ToCollection("domesticVrpConsent");
+            builder.Property(p => p.MigratedToV4).HasElementName("migratedToV4");
+            builder.Property(p => p.MigratedToV4Modified).HasElementName("migratedToV4Modified");
         }
     }
 }

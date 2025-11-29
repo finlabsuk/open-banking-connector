@@ -100,7 +100,7 @@ internal class DomesticVrp :
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(request.DomesticVrpConsentId, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
-        bool vrpUseV4 = persistedConsent.CreatedWithV4;
+        bool vrpUseV4 = persistedConsent.CreatedWithV4 || persistedConsent.MigratedToV4;
 
         // Validate consent ID
         if (string.IsNullOrEmpty(request.ExternalApiRequest.Data.ConsentId))

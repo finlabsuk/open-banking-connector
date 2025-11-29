@@ -18,8 +18,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
 
 public interface IDomesticVrpConsentsContext :
     IConsentContext<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse, DomesticVrpConsentCreateResponse>,
-    ICreateVrpConsentFundsConfirmationContext<DomesticVrpConsentFundsConfirmationRequest,
-        DomesticVrpConsentFundsConfirmationResponse>,
+    ICreateVrpConsentFundsConfirmationContext,
+    IUpdateVrpConsentContext,
     IDeleteConsentContext
 {
     /// <summary>
@@ -122,4 +122,9 @@ internal class DomesticVrpConsentsContext :
         _domesticVrpConsentOperations.CreateFundsConfirmationAsync(createParams);
 
     public IDomesticVrpConsentAuthContextsContext AuthContexts { get; }
+
+    public Task<DomesticVrpConsentCreateResponse> UpdateAsync(
+        DomesticVrpConsentRequest request,
+        ConsentBaseReadParams updateParams) =>
+        _domesticVrpConsentOperations.UpdateAsync(request, updateParams);
 }

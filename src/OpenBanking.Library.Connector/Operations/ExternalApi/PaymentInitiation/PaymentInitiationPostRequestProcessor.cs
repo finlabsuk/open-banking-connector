@@ -22,6 +22,7 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
     private readonly string _orgId;
     private readonly SoftwareStatementEntity _softwareStatementEntity;
     private readonly bool _useB64;
+    private readonly bool _usePutNotPost;
 
     public PaymentInitiationPostRequestProcessor(
         string orgId,
@@ -29,7 +30,8 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
         string accessToken,
         IInstrumentationClient instrumentationClient,
         SoftwareStatementEntity softwareStatement,
-        OBSealKey obSealKey)
+        OBSealKey obSealKey,
+        bool usePutNotPost = false)
     {
         _instrumentationClient = instrumentationClient;
         _orgId = orgId;
@@ -37,6 +39,7 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
         _softwareStatementEntity = softwareStatement;
         _obSealKey = obSealKey;
         _accessToken = accessToken;
+        _usePutNotPost = usePutNotPost;
     }
 
     public async Task<(TResponse response, string? xFapiInteractionId)> PostAsync<TResponse>(
@@ -50,7 +53,7 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
         where TResponse : class
     {
         // Process request
-        var requestDescription = $"POST {uri})";
+        var requestDescription = $"{(_usePutNotPost ? "PUT" : "POST")} {uri})";
 
         // Create JWT and log
         var jsonSerializerSettings =
@@ -90,7 +93,7 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
 
         // Send request
         (TResponse response, string? xFapiInteractionId) = await new HttpRequestBuilder()
-            .SetMethod(HttpMethod.Post)
+            .SetMethod(_usePutNotPost ? HttpMethod.Put : HttpMethod.Post)
             .SetUri(uri)
             .SetHeaders(headers)
             .SetJsonContent(request, requestJsonSerializerSettings)

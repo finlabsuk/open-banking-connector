@@ -68,7 +68,7 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
 
         if (!deleteParams.ExcludeExternalApiOperation)
         {
-            bool vrpUseV4 = persistedObject.CreatedWithV4;
+            bool vrpUseV4 = persistedObject.CreatedWithV4 || persistedObject.MigratedToV4;
             string bankApiId = persistedObject.ExternalApiId;
 
             // Get bank profile

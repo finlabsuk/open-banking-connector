@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
+using FinnovationLabs.OpenBanking.Library.Connector.Migrations.MongoDb;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.AccountAndTransaction;
@@ -20,6 +21,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServices;
 
@@ -173,6 +175,15 @@ public class StartupTasksHostedService : IHostedService
                             "Please set set \"Database:EnsureDatabaseCreated\" to \"true\" to ensure MongoDB database " +
                             "created with indexes etc at application start-up.");
                     }
+
+                    // Apply migrations
+                    var mongoDatabase = scope.ServiceProvider.GetRequiredService<IMongoDatabase>();
+                    await new ToVersion1()
+                        .FromVersion0(
+                            mongoDatabase,
+                            _instrumentationClient,
+                            _timeProvider,
+                            cancellationToken);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
