@@ -192,7 +192,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             },
             VariableRecurringPaymentsApiSettings = new VariableRecurringPaymentsApiSettings
             {
-                DomesticVrpExternalApiRequestAdjustments = request =>
+                DomesticVrpExternalApiV3RequestAdjustments = request =>
                 {
                     request.Data.VRPType = null;
                     return request;

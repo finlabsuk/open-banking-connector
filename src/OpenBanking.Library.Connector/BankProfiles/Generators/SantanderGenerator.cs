@@ -72,7 +72,7 @@ public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistration
                     request.Data.ControlParameters.PSUInteractionTypes = null;
                     return request;
                 },
-                DomesticVrpExternalApiRequestAdjustments = request =>
+                DomesticVrpExternalApiV3RequestAdjustments = request =>
                 {
                     request.Data.PSUInteractionType = null;
                     return request;

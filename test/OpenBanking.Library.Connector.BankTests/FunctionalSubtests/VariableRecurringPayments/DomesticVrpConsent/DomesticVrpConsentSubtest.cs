@@ -464,10 +464,7 @@ public class DomesticVrpConsentSubtest(
         var domesticVrpRequest = new DomesticVrpRequest
         {
             DomesticVrpConsentId = default, // logging placeholder
-            ExternalApiRequest =
-                variableRecurringPaymentsApiSettings
-                    .DomesticVrpExternalApiRequestAdjustments(
-                        externalApiRequest), // customise external API request using bank profile
+            ExternalApiRequest = externalApiRequest,
             ModifiedBy = "placeholder" // logging placeholder
         };
         await vrpFluentRequestLogging
@@ -518,7 +515,6 @@ public class DomesticVrpConsentSubtest(
             paymentsEnv.BankAccountId; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.CreditorAccount.Name =
             paymentsEnv.BankAccountName; // replace logging placeholder
-
 
         return domesticVrpRequest;
     }

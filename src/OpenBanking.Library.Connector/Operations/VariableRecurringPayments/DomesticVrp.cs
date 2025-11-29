@@ -166,8 +166,11 @@ internal class DomesticVrp :
         // Create new object at external API
         var externalApiUrl = new Uri(variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId);
         VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest externalApiRequest = request.ExternalApiRequest;
-        externalApiRequest = bankProfile.VariableRecurringPaymentsApiSettings
-            .DomesticVrpExternalApiRequestAdjustments(externalApiRequest);
+        if (!vrpUseV4)
+        {
+            externalApiRequest = bankProfile.VariableRecurringPaymentsApiSettings
+                .DomesticVrpExternalApiV3RequestAdjustments(externalApiRequest);
+        }
         if (externalApiRequest.Risk.ContractPresentInidicator is not null)
         {
             throw new ArgumentException("ExternalApiRequest contains mis-spelt field Risk/ContractPresentInidicator.");
