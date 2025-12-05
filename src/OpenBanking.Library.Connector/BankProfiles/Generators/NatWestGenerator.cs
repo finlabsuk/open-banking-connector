@@ -274,7 +274,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 DomesticVrp = new DomesticVrpCustomBehaviour
                 {
                     PreferMisspeltContractPresentIndicator = true,
-                    ResponseDataStatusMayBeWrong =
+                    ResponseDataStatusMayBeMissingOrWrong =
                         bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
                 }
             },

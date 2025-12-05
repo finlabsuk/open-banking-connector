@@ -170,7 +170,7 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
         response.ExternalApiResponse.Should().NotBeNull();
 
         // Check status
-        bool responseDataStatusMayBeWrong = customBehaviour?.ResponseDataStatusMayBeWrong ?? false;
+        bool responseDataStatusMayBeWrong = customBehaviour?.ResponseDataStatusMayBeMissingOrWrong ?? false;
         if (!responseDataStatusMayBeWrong)
         {
             response.ExternalApiResponse.Data.Status.Should()
