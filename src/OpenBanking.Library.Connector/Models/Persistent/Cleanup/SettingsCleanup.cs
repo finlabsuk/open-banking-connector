@@ -36,10 +36,12 @@ public class SettingsCleanup
             settings = new SettingsEntity(
                 SettingsEntity.SingletonId,
                 null,
-                utcNow,
-                utcNow,
                 keysSettings
-                    .DisableEncryption); // use keySettings.DisableEncryption for initial value of DisableEncryption
+                    .DisableEncryption,
+                utcNow,
+                utcNow,
+                SettingsEntity
+                    .CurrentSchemaVersion); // use keySettings.DisableEncryption for initial value of DisableEncryption
             await settingsDbSet.AddAsync(settings, cancellationToken);
         }
 

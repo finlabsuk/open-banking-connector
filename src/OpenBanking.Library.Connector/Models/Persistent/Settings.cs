@@ -13,9 +13,10 @@ internal class SettingsEntity
     public SettingsEntity(
         Guid id,
         Guid? currentEncryptionKeyDescriptionId,
+        bool disableEncryption,
         DateTimeOffset modified,
         DateTimeOffset created,
-        bool disableEncryption)
+        long schemaVersion)
     {
         if (id != SingletonId)
         {
@@ -23,12 +24,15 @@ internal class SettingsEntity
         }
         Id = id;
         CurrentEncryptionKeyDescriptionId = currentEncryptionKeyDescriptionId;
+        DisableEncryption = disableEncryption;
         Modified = modified;
         Created = created;
-        DisableEncryption = disableEncryption;
+        SchemaVersion = schemaVersion;
     }
 
     public static Guid SingletonId => Guid.Parse("232c4049-a77a-4dbe-b740-ce6e9f4f54cf");
+
+    public static long CurrentSchemaVersion => 1;
 
     public Guid Id { get; }
 
@@ -39,6 +43,14 @@ internal class SettingsEntity
     public DateTimeOffset Modified { get; private set; }
 
     public DateTimeOffset Created { get; }
+
+    public long SchemaVersion { get; private set; }
+
+    public void UpdateSchemaVersion(long schemaVersion, DateTimeOffset modified)
+    {
+        SchemaVersion = schemaVersion;
+        Modified = modified;
+    }
 
     public void UpdateCurrentEncryptionKey(Guid encryptionKeyDescriptionId, DateTimeOffset modified)
     {

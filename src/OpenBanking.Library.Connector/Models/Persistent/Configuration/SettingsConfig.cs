@@ -49,6 +49,7 @@ internal class SettingsConfig(
                 .HasElementName("currentEncryptionKeyDescriptionId");
             builder.Property(p => p.Modified).HasElementName("modified");
             builder.Property(p => p.DisableEncryption).HasElementName("disableEncryption");
+            builder.Property(p => p.SchemaVersion).HasElementName("schemaVersion");
         }
     }
 }
