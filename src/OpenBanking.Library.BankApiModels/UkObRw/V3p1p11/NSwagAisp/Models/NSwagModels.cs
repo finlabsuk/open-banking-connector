@@ -1167,10 +1167,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// <summary>
         /// Currency from which an amount is to be converted in a currency conversion.
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("SourceCurrency", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{3,3}$")]
-        public required string SourceCurrency { get; set; }
+        [Newtonsoft.Json.JsonProperty("SourceCurrency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string? SourceCurrency { get; set; } = default!;
 
         /// <summary>
         /// Currency into which an amount is to be converted in a currency conversion.
