@@ -149,7 +149,7 @@ internal class AuthContextUpdate :
                             .DomesticVrpConsentRefreshTokensNavigation)
                     .AsSplitQuery() // Load collections in separate SQL queries
                     .SingleOrDefault(x => x.State == state) ??
-                throw new KeyNotFoundException($"No record found for Auth Context with state {state}.");
+                throw new HttpResponseException($"No record found for Auth Context with state {state}.", 400);
         }
         else
         {
@@ -157,11 +157,8 @@ internal class AuthContextUpdate :
                 _authContextMethods
                     .DbSet
                     .SingleOrDefault(x => x.State == state) ??
-                throw new KeyNotFoundException($"No record found for Auth Context with state {state}.");
+                throw new HttpResponseException($"No record found for Auth Context with state {state}.", 400);
         }
-
-        string authContextNonce = authContext.Nonce;
-        string authContextAppSessionId = authContext.AppSessionId;
 
         // Only accept redirects within 10 mins of auth context (session) creation
         const int authContextExpiryIntervalInSeconds = 10 * 60;
@@ -169,9 +166,10 @@ internal class AuthContextUpdate :
             .AddSeconds(authContextExpiryIntervalInSeconds);
         if (_timeProvider.GetUtcNow() > authContextExpiryTime)
         {
-            throw new InvalidOperationException(
+            throw new HttpResponseException(
                 "Auth context exists but now stale (more than 10 minutes old) so will not process redirect. " +
-                "Please create a new auth context and authenticate again.");
+                "Please create a new auth context and authenticate again.",
+                400);
         }
 
         // Validate error parameter
@@ -189,6 +187,7 @@ internal class AuthContextUpdate :
         string code = request.OAuth2RedirectOptionalParameters.Code;
 
         // Validate auth context app session ID
+        string authContextAppSessionId = authContext.AppSessionId;
         if (request.AppSessionId is not null)
         {
             if (request.AppSessionId != authContextAppSessionId)
@@ -385,6 +384,7 @@ internal class AuthContextUpdate :
         }
 
         // Determine nonce
+        string authContextNonce = authContext.Nonce;
         ConsentAuthGetCustomBehaviour? consentAuthGetCustomBehaviour = authContext switch
         {
             AccountAccessConsentAuthContext => customBehaviour?.AccountAccessConsentAuthGet,
