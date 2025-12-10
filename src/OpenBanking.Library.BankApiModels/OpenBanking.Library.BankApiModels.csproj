@@ -24,19 +24,12 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="14.0.0"/>
-        <PackageReference Include="Azure.Core" Version="1.50.0"/>
-        <PackageReference Include="Microsoft.Azure.AutoRest.CSharp" Version="3.0.0-beta.20210604.4" PrivateAssets="All"/>
         <PackageReference Include="FluentValidation" Version="12.1.0"/>
         <PackageReference Include="jose-jwt" Version="5.2.0"/>
         <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.24"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4"/>
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0"/>
     </ItemGroup>
-
-    <PropertyGroup>
-        <IncludeGeneratorSharedCode>true</IncludeGeneratorSharedCode>
-        <RestoreAdditionalProjectSources>https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json</RestoreAdditionalProjectSources>
-    </PropertyGroup>
 
     <PropertyGroup>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
