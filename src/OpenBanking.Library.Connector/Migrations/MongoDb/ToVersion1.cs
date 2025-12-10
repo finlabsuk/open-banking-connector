@@ -4,26 +4,60 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.MongoDb;
 
 public class ToVersion1
 {
-    public Task FromVersion0(
+    public async Task FromVersion0(
         IMongoDatabase mongoDatabase,
         IInstrumentationClient instrumentationClient,
         ITimeProvider timeProvider,
         CancellationToken cancellationToken)
     {
-        // Steps:
-        // 1. Check database exists (exit if not)
-        // 2. Check if settings singleton (row with _id "232c4049-a77a-4dbe-b740-ce6e9f4f54cf") has field schemaVersion; if so exit
-        // 3. Run through each document in domesticVrpConsent collection and, where missing, add fields migratedToV4 (Boolean, false)
-        // and migratedToV4Modified (ISODate, set to now or equal to field created as preferred).
-        // 4. Add schemaVersion (long in C#) to settings document with value set to 1 to indicate migration completed
+ 
+        var settingsCollection = mongoDatabase.GetCollection<SettingsEntity>("settings");
+        var settingsFilter = Builders<SettingsEntity>.Filter.Eq(s => s.Id, SettingsEntity.SingletonId);
 
-        return Task.CompletedTask;
+        var projection = Builders<SettingsEntity>.Projection.Include(s => s.SchemaVersion);
+        
+        var settingsDoc = await settingsCollection.Find(settingsFilter)
+            .Project(projection)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        // Exit if new database (no settings singleton) or migration previously performed (settings contains schemaVersion)
+        if (settingsDoc == null || settingsDoc.Contains("schemaVersion"))
+        {
+            return;
+        }
+
+        var domesticVrpConsentCollection = mongoDatabase.GetCollection<DomesticVrpConsent>("domesticVrpConsent");
+        
+        var missingFieldFilter = Builders<DomesticVrpConsent>.Filter.Exists(d => d.MigratedToV4, false);
+
+        var updateDefinition = Builders<DomesticVrpConsent>.Update
+            .Set(d => d.MigratedToV4, false)
+            .Set(d => d.MigratedToV4Modified, timeProvider.GetUtcNow().UtcDateTime);
+
+        var updateResult = await domesticVrpConsentCollection.UpdateManyAsync(
+            missingFieldFilter, 
+            updateDefinition, 
+            new UpdateOptions { IsUpsert = false },
+            cancellationToken);
+
+        instrumentationClient.Info($"Migrated {updateResult.ModifiedCount} VRP consent documents.");
+
+        var settingsUpdate = Builders<SettingsEntity>.Update.Set(s => s.SchemaVersion, 1);
+        
+        await settingsCollection.UpdateOneAsync(
+            settingsFilter, 
+            settingsUpdate, 
+            cancellationToken: cancellationToken);
+        
     }
 }

@@ -21,6 +21,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServices;
@@ -157,33 +158,46 @@ public class StartupTasksHostedService : IHostedService
                     break;
                 case DbProvider.MongoDb:
                     var mongoDbContext = scope.ServiceProvider.GetRequiredService<MongoDbDbContext>();
-
-                    if (!await mongoDbContext.Database.CanConnectAsync())
+                    if (!await mongoDbContext.Database.CanConnectAsync(cancellationToken))
                     {
                         throw new ApplicationException("Cannot connect to MongoDB server.");
                     }
 
-                    // Create database if doesn't exist
-                    if (databaseSettings.EnsureDatabaseCreated)
+                    var mongoDatabase = scope.ServiceProvider.GetRequiredService<IMongoDatabase>();
+                    IAsyncCursor<string> collectionCursor =
+                        await mongoDatabase.ListCollectionNamesAsync(
+                            new ListCollectionNamesOptions { Filter = new BsonDocument("name", "settings") },
+                            cancellationToken);
+                    bool mongoDbDatabaseExists = await collectionCursor.AnyAsync(cancellationToken);
+
+                    if (!mongoDbDatabaseExists)
                     {
-                        // Create database
-                        await mongoDbContext.Database.EnsureCreatedAsync();
+                        // Ensure database created
+                        if (databaseSettings.EnsureDatabaseCreated)
+                        {
+                            // Create database
+                            await mongoDbContext.Database.EnsureCreatedAsync(cancellationToken);
+                        }
+                        else
+                        {
+                            throw new ApplicationException(
+                                "Database not available. " +
+                                "Please set \"Database:EnsureDatabaseCreated\" to \"true\" to ensure MongoDB database " +
+                                "created with indexes etc at application start-up.");
+                        }
                     }
                     else
                     {
-                        throw new ApplicationException(
-                            "Please set set \"Database:EnsureDatabaseCreated\" to \"true\" to ensure MongoDB database " +
-                            "created with indexes etc at application start-up.");
-                    }
+                        MongoDbDriverConfiguration.EnsureConstructorHasRun();
 
-                    // Apply migrations
-                    var mongoDatabase = scope.ServiceProvider.GetRequiredService<IMongoDatabase>();
-                    await new ToVersion1()
-                        .FromVersion0(
-                            mongoDatabase,
-                            _instrumentationClient,
-                            _timeProvider,
-                            cancellationToken);
+                        // Apply migration
+                        await new ToVersion1()
+                            .FromVersion0(
+                                mongoDatabase,
+                                _instrumentationClient,
+                                _timeProvider,
+                                cancellationToken);
+                    }
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
