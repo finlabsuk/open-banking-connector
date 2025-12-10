@@ -29,6 +29,8 @@ public static class ServiceCollectionExtensions
 
         // Startup tasks
         services.AddHostedService<WebAppInformationHostedService>();
+        
+        services.AddHealthChecks();
 
         return services;
     }

@@ -167,6 +167,9 @@ app.UseSwaggerUI(
 // Add controller endpoints
 app.MapControllers();
 
+// Add health check endpoint
+app.MapHealthChecks("/healthz");
+
 // Run 
 app.Run();
 
