@@ -12,7 +12,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using AccountAndTransactionModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAisp.Models;
 using ServiceCollectionExtensionsWeb =
     FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions.ServiceCollectionExtensions;
 using ServiceCollectionExtensionsGenericHost =

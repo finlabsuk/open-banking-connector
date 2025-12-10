@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Text.Json;
-using Azure.Core;
 using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAisp.Models;
@@ -57,8 +56,4 @@ public partial record OBReadConsentResponse1 : ISupportsValidation
     public Task<ValidationResult> ValidateAsync() =>
         Task.FromResult(new ValidationResult());
 
-    public void WriteObject(Utf8JsonWriter jsonWriter)
-    {
-        jsonWriter.WriteObjectValue(this);
-    }
 }

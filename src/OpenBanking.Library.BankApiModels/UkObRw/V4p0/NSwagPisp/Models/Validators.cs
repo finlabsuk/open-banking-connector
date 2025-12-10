@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Validators;
 using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPisp.Models;
