@@ -3,7 +3,7 @@
   "info": {
     "title": "Variable Recurring Payments API",
     "description": "Variable Recurring Payments API for Open Banking Connector Web App",
-    "version": "17.0.0"
+    "version": "17.1.0"
   },
   "paths": {
     "/vrp/domestic-vrp-consent-auth-contexts": {
@@ -139,6 +139,64 @@
       }
     },
     "/vrp/domestic-vrp-consents/{domesticVrpConsentId}": {
+      "put": {
+        "tags": [
+          "Domestic VRP Consents"
+        ],
+        "summary": "Update domestic VRP consent (migrate from v3 to v4)",
+        "parameters": [
+          {
+            "name": "domesticVrpConsentId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DomesticVrpConsentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticVrpConsentCreateResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticVrpConsentCreateResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticVrpConsentCreateResponse"
+                }
+              }
+            }
+          }
+        }
+      },
       "get": {
         "tags": [
           "Domestic VRP Consents"
@@ -701,7 +759,6 @@
           "DomesticVRPId",
           "Initiation",
           "Instruction",
-          "Status",
           "StatusUpdateDateTime"
         ],
         "type": "object",
@@ -1073,10 +1130,20 @@
           "CreatedWithV4",
           "ExternalApiId",
           "ExternalApiResponseInfo",
-          "Id"
+          "Id",
+          "MigratedToV4",
+          "MigratedToV4Modified"
         ],
         "type": "object",
         "properties": {
+          "MigratedToV4": {
+            "type": "boolean",
+            "description": "Migrated to v4 external (bank) API consent"
+          },
+          "MigratedToV4Modified": {
+            "type": "string",
+            "format": "date-time"
+          },
           "ExternalApiResponse": {
             "$ref": "#/components/schemas/OBDomesticVRPConsentResponse"
           },
