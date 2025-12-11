@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "17.0.0"
+    "version": "17.1.0"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -2857,15 +2857,12 @@
         "description": "Indicates whether the balance is a credit or a debit balance. \r\n\r\nUsage: A zero balance is considered to be a credit balance.\r\n\r\n<br />\r\n\r\nFor a full list of enumeration values refer to `OBInternalCreditDebitCode` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)"
       },
       "OBCurrencyExchange5": {
-        "required": [
-          "SourceCurrency"
-        ],
         "type": "object",
         "properties": {
           "SourceCurrency": {
-            "pattern": "^[A-Z]{3,3}$",
             "type": "string",
-            "description": "Currency from which an amount is to be converted in a currency conversion."
+            "description": "Currency from which an amount is to be converted in a currency conversion.",
+            "nullable": true
           },
           "TargetCurrency": {
             "pattern": "^[A-Z]{3,3}$",
