@@ -17,7 +17,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.12"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.23">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.12">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
