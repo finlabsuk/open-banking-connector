@@ -149,7 +149,11 @@ internal class AuthContextUpdate :
                             .DomesticVrpConsentRefreshTokensNavigation)
                     .AsSplitQuery() // Load collections in separate SQL queries
                     .SingleOrDefault(x => x.State == state) ??
-                throw new HttpResponseException($"No record found for Auth Context with state {state}.", 400);
+                throw new HttpResponseException(
+                    ProblemDetailsTitle.AuthContextNotFound,
+                    "No record found for Auth Context with specified state.",
+                    400,
+                    new Dictionary<string, object?> { ["state"] = $"{state}" });
         }
         else
         {
@@ -157,7 +161,11 @@ internal class AuthContextUpdate :
                 _authContextMethods
                     .DbSet
                     .SingleOrDefault(x => x.State == state) ??
-                throw new HttpResponseException($"No record found for Auth Context with state {state}.", 400);
+                throw new HttpResponseException(
+                    ProblemDetailsTitle.AuthContextNotFound,
+                    "No record found for Auth Context with specified state.",
+                    400,
+                    new Dictionary<string, object?> { ["state"] = $"{state}" });
         }
 
         // Only accept redirects within 10 mins of auth context (session) creation
@@ -167,9 +175,11 @@ internal class AuthContextUpdate :
         if (_timeProvider.GetUtcNow() > authContextExpiryTime)
         {
             throw new HttpResponseException(
-                "Auth context exists but now stale (more than 10 minutes old) so will not process redirect. " +
+                ProblemDetailsTitle.AuthContextStale,
+                "Auth context exists but now stale (more than ten minutes old) so will not process redirect. " +
                 "Please create a new auth context and authenticate again.",
-                400);
+                400,
+                new Dictionary<string, object?> { ["state"] = $"{state}" });
         }
 
         // Validate error parameter

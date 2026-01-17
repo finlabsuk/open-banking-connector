@@ -4,10 +4,24 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
+public enum ProblemDetailsTitle
+{
+    AuthContextNotFound,
+    AuthContextStale
+}
+
 /// <summary>
 ///     Exception exposed via HTTP response
 /// </summary>
-public class HttpResponseException(string message, int statusCode) : Exception(message)
+public class HttpResponseException(
+    ProblemDetailsTitle title,
+    string detail,
+    int statusCode,
+    IDictionary<string, object?>? extensions = null) : Exception(detail)
 {
+    public ProblemDetailsTitle Title { get; } = title;
+
     public int StatusCode { get; } = statusCode;
+
+    public IDictionary<string, object?>? Extensions { get; } = extensions;
 }

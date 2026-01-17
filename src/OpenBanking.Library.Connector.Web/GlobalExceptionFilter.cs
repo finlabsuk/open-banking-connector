@@ -18,12 +18,27 @@ public class GlobalExceptionFilter(ProblemDetailsFactory problemDetailsFactory) 
             ProblemDetails problemDetails = problemDetailsFactory.CreateProblemDetails(
                 context.HttpContext,
                 exception.StatusCode,
-                null,
+                GetTitleString(exception.Title),
                 null,
                 exception.Message);
+            if (exception.Extensions is not null)
+            {
+                problemDetails.Extensions = exception.Extensions;
+            }
 
             context.Result = new ObjectResult(problemDetails) { StatusCode = exception.StatusCode };
             context.ExceptionHandled = true;
         }
+    }
+
+    private static string GetTitleString(ProblemDetailsTitle title)
+    {
+        var titleString = title.ToString();
+        if (string.IsNullOrEmpty(titleString) ||
+            char.IsLower(titleString[0]))
+        {
+            return titleString;
+        }
+        return char.ToLower(titleString[0]) + titleString[1..];
     }
 }
