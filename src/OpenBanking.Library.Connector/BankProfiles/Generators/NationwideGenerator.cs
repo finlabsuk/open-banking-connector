@@ -159,7 +159,8 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                 DomesticVrpConsent = new DomesticVrpConsentCustomBehaviour
                 {
                     PostResponseLinksMayOmitId = true,
-                    PreferMisspeltContractPresentIndicator = true
+                    PreferMisspeltContractPresentIndicator = true,
+                    ResponseLinksMayHaveIncorrectUrlBeforeQuery = true
                 },
                 DomesticVrp = new DomesticVrpCustomBehaviour
                 {
