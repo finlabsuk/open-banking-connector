@@ -24,7 +24,7 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="14.0.0"/>
-        <PackageReference Include="FluentValidation" Version="12.1.0"/>
+        <PackageReference Include="FluentValidation" Version="12.1.1"/>
         <PackageReference Include="jose-jwt" Version="5.2.0"/>
         <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.24"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4"/>
