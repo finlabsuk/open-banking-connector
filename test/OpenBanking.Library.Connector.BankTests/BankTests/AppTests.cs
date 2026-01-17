@@ -314,8 +314,8 @@ public class AppTests
             throw new InvalidOperationException("encryption key description with name Default not found.");
         EncryptionKeyDescriptionResponse encryptionKeyDescriptionResponse = await EncryptionKeyDescriptionCreate(
             encryptionKeyDescriptionEnv,
+            null,
             ModifiedBy,
-            "",
             managementApiClient);
         Guid encryptionKeyDescriptionId = encryptionKeyDescriptionResponse.Id;
     }
@@ -694,7 +694,7 @@ public class AppTests
     private static async
         Task<EncryptionKeyDescriptionResponse> EncryptionKeyDescriptionCreate(
             EncryptionKeyDescriptionEnv softwareStatementEnv,
-            string reference,
+            string? reference,
             string createdBy,
             ManagementApiClient managementApiClient)
     {
