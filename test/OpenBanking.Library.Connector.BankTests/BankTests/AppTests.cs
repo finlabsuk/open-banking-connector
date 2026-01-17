@@ -47,7 +47,7 @@ public class AppTests
         GetTestCases(TestType.DynamicClientRegistration);
 
     [TestMethod]
-    [DynamicData(nameof(GetDynamicClientRegistrationTestCases), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(GetDynamicClientRegistrationTestCases))]
     [DoNotParallelize]
     public async Task DynamicClientRegistration(BankTestData bankTestData) => await TestAllInner(bankTestData);
 
@@ -56,7 +56,7 @@ public class AppTests
         GetTestCases(TestType.AccountAccessConsent);
 
     [TestMethod]
-    [DynamicData(nameof(GetAccountAccessConsentTestCases), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(GetAccountAccessConsentTestCases))]
     public async Task AccountAccessConsent(BankTestData bankTestData) => await TestAllInner(bankTestData);
 
     public static IEnumerable<object[]>
@@ -64,7 +64,7 @@ public class AppTests
         GetTestCases(TestType.DomesticPaymentConsent);
 
     [TestMethod]
-    [DynamicData(nameof(GetDomesticPaymentConsentTestCases), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(GetDomesticPaymentConsentTestCases))]
     public async Task DomesticPaymentConsent(BankTestData bankTestData) => await TestAllInner(bankTestData);
 
     public static IEnumerable<object[]>
@@ -72,7 +72,7 @@ public class AppTests
         GetTestCases(TestType.DomesticVrpConsent);
 
     [TestMethod]
-    [DynamicData(nameof(GetDomesticVrpConsentTestCases), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(GetDomesticVrpConsentTestCases))]
     public async Task DomesticVrpConsent(BankTestData bankTestData) => await TestAllInner(bankTestData);
 
     [ClassInitialize]
@@ -80,9 +80,6 @@ public class AppTests
     {
         Console.WriteLine("AppTest ClassInitialize");
         _classLevelWebApplicationFactory = new BankTestingFixture();
-        using HttpClient
-            httpClient = _classLevelWebApplicationFactory
-                .CreateClient(); // seems required to ensure application fully set up
         _appContextFixture = new AppContextFixture();
         await SetUpEncryptionKey();
     }
