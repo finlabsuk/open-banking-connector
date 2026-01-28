@@ -159,6 +159,15 @@ public enum BankProfileEnum
     [EnumMember(Value = "Santander_Santander")]
     Santander_Santander,
 
+    [EnumMember(Value = "Santander_Personal")]
+    Santander_Personal,
+
+    [EnumMember(Value = "Santander_Business")]
+    Santander_Business,
+
+    [EnumMember(Value = "Santander_Corporate")]
+    Santander_Corporate,
+
     [EnumMember(Value = "Starling_Starling")]
     Starling_Starling,
 
