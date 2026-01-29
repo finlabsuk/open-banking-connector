@@ -542,7 +542,16 @@ internal class GrantPost : IGrantPost
             throw new Exception("Consent ID from ID token does not match expected consent ID.");
         }
 
-        if (!string.Equals(idToken.Nonce, expectedNonce))
+        bool idTokenMayNotHaveNonceClaim =
+            idTokenProcessingCustomBehaviour?.IdTokenMayNotHaveNonceClaim ?? false;
+        if (!idTokenMayNotHaveNonceClaim &&
+            idToken.Nonce is null)
+        {
+            throw new Exception("Nonce not provided in ID token.");
+        }
+
+        if (idToken.Nonce is not null &&
+            !string.Equals(idToken.Nonce, expectedNonce))
         {
             throw new Exception("Nonce from ID token does not match expected nonce.");
         }
