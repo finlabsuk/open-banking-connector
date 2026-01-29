@@ -7,6 +7,12 @@ using Jose;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Security;
 
+public enum JwtType
+{
+    Jwt,
+    Jose
+}
+
 public static class JwtFactory
 {
     public static string CreateJwt(
@@ -35,27 +41,22 @@ public static class JwtFactory
         }
     }
 
-    public static Dictionary<string, object> DefaultJwtHeadersExcludingTyp(string signingId) =>
-        new() { { "kid", signingId.ArgNotNull(nameof(signingId)) } };
-
-    public static Dictionary<string, object> DefaultJwtHeadersIncludingTyp(string signingId) =>
-        new()
+    private static string GetJwtTypeString(JwtType jwtType) =>
+        jwtType switch
         {
-            { "typ", "JWT" },
-            { "kid", signingId.ArgNotNull(nameof(signingId)) }
+            JwtType.Jwt => "JWT",
+            JwtType.Jose => "JOSE",
+            _ => throw new ArgumentOutOfRangeException(nameof(jwtType), jwtType, null)
         };
 
-    public static Dictionary<string, object> JwtHeaders(string? signingId, string? type)
+    public static Dictionary<string, object> GetDefaultJwtHeaders(string signingId, JwtType? jwtType = null)
     {
-        var jwtHeaders = new Dictionary<string, object>();
-        if (signingId is not null)
+        var jwtHeaders = new Dictionary<string, object> { ["kid"] = signingId.ArgNotNull(nameof(signingId)) };
+        if (jwtType is not null)
         {
-            jwtHeaders.Add("kid", signingId);
+            jwtHeaders.Add("typ", GetJwtTypeString(jwtType.Value));
         }
-        if (type is not null)
-        {
-            jwtHeaders.Add("typ", type);
-        }
+
         return jwtHeaders;
     }
 }

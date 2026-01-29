@@ -144,7 +144,7 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
             b64 = null;
         }
 
-        Dictionary<string, object> dict = JwtFactory.DefaultJwtHeadersExcludingTyp(signingId);
+        Dictionary<string, object> dict = JwtFactory.GetDefaultJwtHeaders(signingId, JwtType.Jose);
         dict.Add("cty", "application/json");
         dict.Add("crit", crit);
         dict.Add("http://openbanking.org.uk/iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds());

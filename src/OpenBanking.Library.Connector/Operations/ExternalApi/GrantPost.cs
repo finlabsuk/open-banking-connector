@@ -504,7 +504,7 @@ internal class GrantPost : IGrantPost
         };
         string payloadJson = claims.ToJsonString();
         string jwt = JwtFactory.CreateJwt(
-            JwtFactory.DefaultJwtHeadersExcludingTyp(obSealKey.KeyId),
+            JwtFactory.GetDefaultJwtHeaders(obSealKey.KeyId),
             payloadJson,
             obSealKey.Key,
             jwsAlgorithm);

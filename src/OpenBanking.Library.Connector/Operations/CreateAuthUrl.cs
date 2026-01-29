@@ -191,7 +191,7 @@ public static class CreateAuthUrl
             oAuth2RequestObjectClaims,
             jsonSerializerSettings);
         string requestObjectJwt = JwtFactory.CreateJwt(
-            JwtFactory.JwtHeaders(obSealKey.KeyId, null),
+            JwtFactory.GetDefaultJwtHeaders(obSealKey.KeyId),
             payloadJson,
             obSealKey.Key,
             null);
