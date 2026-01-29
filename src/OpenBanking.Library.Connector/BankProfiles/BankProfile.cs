@@ -168,6 +168,9 @@ public class VariableRecurringPaymentsApiSettings
     public DomesticVrpExternalApiRequestAdjustments
         DomesticVrpExternalApiV3RequestAdjustments { get; set; } = x => x;
 
+    public DomesticVrpExternalApiRequestAdjustments
+        DomesticVrpExternalApiRequestAdjustments { get; set; } = x => x;
+
     public bool UseDomesticVrpGetPaymentDetailsEndpoint { get; init; } = false;
 
     public bool UseDomesticVrpConsentPutEndpoint { get; init; } = false;

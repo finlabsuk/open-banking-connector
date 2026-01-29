@@ -171,6 +171,8 @@ internal class DomesticVrp :
             externalApiRequest = bankProfile.VariableRecurringPaymentsApiSettings
                 .DomesticVrpExternalApiV3RequestAdjustments(externalApiRequest);
         }
+        externalApiRequest = bankProfile.VariableRecurringPaymentsApiSettings
+            .DomesticVrpExternalApiRequestAdjustments(externalApiRequest);
         if (externalApiRequest.Risk.ContractPresentInidicator is not null)
         {
             throw new ArgumentException("ExternalApiRequest contains mis-spelt field Risk/ContractPresentInidicator.");

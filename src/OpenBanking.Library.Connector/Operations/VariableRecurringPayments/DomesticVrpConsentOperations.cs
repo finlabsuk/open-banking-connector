@@ -800,6 +800,8 @@ internal class
             request.ExternalApiRequest ??
             throw new InvalidOperationException(
                 "ExternalApiRequest specified as null so not possible to create external API request.");
+        externalApiRequest = bankProfile.VariableRecurringPaymentsApiSettings
+            .DomesticVrpConsentExternalApiRequestAdjustments(externalApiRequest);
         if (externalApiRequest.Risk.ContractPresentInidicator is not null)
         {
             throw new ArgumentException("ExternalApiRequest contains mis-spelt field Risk/ContractPresentInidicator.");
