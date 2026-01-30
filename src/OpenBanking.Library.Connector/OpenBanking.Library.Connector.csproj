@@ -30,10 +30,10 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.12"/>
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.15.0"/>
         <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.12"/>
-        <PackageReference Include="MongoDB.EntityFrameworkCore" Version="9.0.3"/>
+        <PackageReference Include="MongoDB.EntityFrameworkCore" Version="9.0.4"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
-        <PackageReference Include="OpenTelemetry" Version="1.14.0"/>
+        <PackageReference Include="OpenTelemetry" Version="1.15.0"/>
     </ItemGroup>
 
     <ItemGroup>
