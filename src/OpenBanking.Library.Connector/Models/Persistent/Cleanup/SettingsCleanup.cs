@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -15,7 +14,6 @@ public class SettingsCleanup
 {
     public async Task Cleanup(
         BaseDbContext dbContext,
-        KeysSettings keysSettings,
         ISettingsService settingsService,
         IInstrumentationClient instrumentationClient,
         ITimeProvider timeProvider,
@@ -36,12 +34,11 @@ public class SettingsCleanup
             settings = new SettingsEntity(
                 SettingsEntity.SingletonId,
                 null,
-                keysSettings
-                    .DisableEncryption,
+                false,
                 utcNow,
                 utcNow,
                 SettingsEntity
-                    .CurrentSchemaVersion); // use keySettings.DisableEncryption for initial value of DisableEncryption
+                    .CurrentSchemaVersion);
             await settingsDbSet.AddAsync(settings, cancellationToken);
         }
 

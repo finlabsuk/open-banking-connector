@@ -33,7 +33,6 @@ public static class ServiceCollectionExtensions
         services
             .AddSettingsGroup<DatabaseSettings>()
             .AddSettingsGroup<BankProfilesSettings>()
-            .AddSettingsGroup<KeysSettings>()
             .AddSettingsGroup<HttpClientSettings>();
 
         // Add secret provider

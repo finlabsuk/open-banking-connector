@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -15,7 +14,7 @@ public class EncryptedObjectCleanup
 {
     public Task Cleanup(
         BaseDbContext postgreSqlDbContext,
-        KeysSettings keysSettings,
+        ISettingsService settingsService,
         IInstrumentationClient instrumentationClient,
         ITimeProvider timeProvider,
         CancellationToken cancellationToken)
@@ -29,7 +28,7 @@ public class EncryptedObjectCleanup
                 .EncryptedObject;
 
         // Warn if database contains unencrypted objects
-        if (!keysSettings.DisableEncryption &&
+        if (!settingsService.DisableEncryption &&
             encryptedObjects.Any(r => r.EncryptionKeyDescriptionId == null))
         {
             string fullMessage =

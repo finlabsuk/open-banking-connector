@@ -39,8 +39,6 @@ public class StartupTasksHostedService : IHostedService
 
     private readonly IInstrumentationClient _instrumentationClient;
 
-    private readonly KeysSettings _keySettings;
-
     private readonly ILogger<StartupTasksHostedService> _logger;
 
     private readonly IMemoryCache _memoryCache;
@@ -68,7 +66,6 @@ public class StartupTasksHostedService : IHostedService
         ISecretProvider secretProvider,
         IServiceScopeFactory serviceScopeFactory,
         TppReportingMetrics tppReportingMetrics,
-        ISettingsProvider<KeysSettings> keySettingsProvider,
         ITimeProvider timeProvider)
     {
         _bankProfileService = bankProfileService ?? throw new ArgumentNullException(nameof(bankProfileService));
@@ -88,7 +85,6 @@ public class StartupTasksHostedService : IHostedService
         _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         _tppReportingMetrics = tppReportingMetrics ?? throw new ArgumentNullException(nameof(tppReportingMetrics));
         _timeProvider = timeProvider;
-        _keySettings = keySettingsProvider.GetSettings();
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -214,7 +210,6 @@ public class StartupTasksHostedService : IHostedService
         await new SettingsCleanup()
             .Cleanup(
                 dbContext,
-                _keySettings,
                 _settingsService,
                 _instrumentationClient,
                 _timeProvider,
@@ -255,7 +250,7 @@ public class StartupTasksHostedService : IHostedService
         await new EncryptedObjectCleanup()
             .Cleanup(
                 dbContext,
-                _keySettings,
+                _settingsService,
                 _instrumentationClient,
                 _timeProvider,
                 cancellationToken);
