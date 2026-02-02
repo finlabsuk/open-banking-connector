@@ -3,7 +3,7 @@
   "info": {
     "title": "Auth Contexts API",
     "description": "Auth Contexts API for Open Banking Connector Web App",
-    "version": "17.1.0"
+    "version": "18.0.0"
   },
   "paths": {
     "/auth/redirect-delegate": {
@@ -142,5 +142,10 @@
         "type": "string"
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Post-Auth Redirects"
+    }
+  ]
 }
