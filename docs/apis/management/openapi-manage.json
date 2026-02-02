@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "17.1.0"
+    "version": "18.0.0"
   },
   "paths": {
     "/manage/bank-registrations": {
@@ -754,6 +754,9 @@
           "Obie_Model2023",
           "Revolut_Revolut",
           "Santander_Santander",
+          "Santander_Personal",
+          "Santander_Business",
+          "Santander_Corporate",
           "Starling_Starling",
           "Tsb_Tsb"
         ],
@@ -1656,5 +1659,22 @@
         "description": "Token endpoint auth methods supported by Open Banking Connector"
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Bank Registrations"
+    },
+    {
+      "name": "Encryption Key Descriptions"
+    },
+    {
+      "name": "OBSeal Signing Certificates"
+    },
+    {
+      "name": "OBWAC Transport Certificates"
+    },
+    {
+      "name": "Software Statements"
+    }
+  ]
 }

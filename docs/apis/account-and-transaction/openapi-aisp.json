@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "17.1.0"
+    "version": "18.0.0"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -4599,5 +4599,34 @@
         "description": "Response to Transaction read requests"
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Account Access Consent Auth Contexts"
+    },
+    {
+      "name": "Account Access Consents"
+    },
+    {
+      "name": "Accounts"
+    },
+    {
+      "name": "Balances"
+    },
+    {
+      "name": "Direct Debits"
+    },
+    {
+      "name": "Monzo Pots"
+    },
+    {
+      "name": "Parties"
+    },
+    {
+      "name": "Standing Orders"
+    },
+    {
+      "name": "Transactions"
+    }
+  ]
 }
