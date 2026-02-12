@@ -183,6 +183,10 @@ public class AppTests
                         bankProfileFromEnv,
                         registrationScope,
                         bankGroup),
+                    BankGroup.Chase => GetAllInRegistrationGroup<ChaseBank, ChaseRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
                     BankGroup.Cooperative => GetAllInRegistrationGroup<CooperativeBank, CooperativeRegistrationGroup>(
                         bankProfileFromEnv,
                         registrationScope,

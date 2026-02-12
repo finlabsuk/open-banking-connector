@@ -270,6 +270,7 @@ internal class
             bankGroup switch
             {
                 BankGroup.Barclays => GetExistingRegistration<BarclaysBank, BarclaysRegistrationGroup>,
+                BankGroup.Chase => GetExistingRegistration<ChaseBank, ChaseRegistrationGroup>,
                 BankGroup.Cooperative => GetExistingRegistration<CooperativeBank, CooperativeRegistrationGroup>,
                 BankGroup.Danske => GetExistingRegistration<DanskeBank, DanskeRegistrationGroup>,
                 BankGroup.Hsbc => GetExistingRegistration<HsbcBank, HsbcRegistrationGroup>,

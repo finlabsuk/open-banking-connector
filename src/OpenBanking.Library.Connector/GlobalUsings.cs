@@ -2,6 +2,10 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+global using ChaseBank =
+    FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.ChaseBank;
+global using ChaseRegistrationGroup =
+    FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.ChaseBank;
 global using DanskeBank = FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.DanskeBank;
 global using DanskeRegistrationGroup = FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.DanskeBank;
 global using HsbcBank = FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.HsbcBank;

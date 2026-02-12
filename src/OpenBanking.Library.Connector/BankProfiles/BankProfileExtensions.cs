@@ -18,6 +18,7 @@ public static class BankProfileExtensions
             BankProfileEnum.Barclays_Business => BankGroup.Barclays,
             BankProfileEnum.Barclays_Corporate => BankGroup.Barclays,
             BankProfileEnum.Barclays_BarclaycardCommercialPayments => BankGroup.Barclays,
+            BankProfileEnum.Chase_Chase => BankGroup.Chase,
             BankProfileEnum.Cooperative_Cooperative => BankGroup.Cooperative,
             BankProfileEnum.Cooperative_CooperativeSandbox => BankGroup.Cooperative,
             BankProfileEnum.Cooperative_Smile => BankGroup.Cooperative,

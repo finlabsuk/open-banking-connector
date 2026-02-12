@@ -42,6 +42,7 @@ public class BankProfileService : IBankProfileService
         _bankProfileGeneratorsDictionary = new BankProfileGeneratorsDictionary
         {
             [BankGroup.Barclays] = new BarclaysGenerator(bankProfilesSettingsProvider),
+            [BankGroup.Chase] = new ChaseGenerator(bankProfilesSettingsProvider),
             [BankGroup.Cooperative] = new CooperativeGenerator(bankProfilesSettingsProvider),
             [BankGroup.Danske] = new DanskeGenerator(bankProfilesSettingsProvider),
             [BankGroup.Hsbc] = new HsbcGenerator(bankProfilesSettingsProvider),
@@ -64,6 +65,7 @@ public class BankProfileService : IBankProfileService
                     () => profileEnum.GetBankGroup() switch
                     {
                         BankGroup.Barclays => GetBankProfile<BarclaysBank>(profileEnum, _instrumentationClient),
+                        BankGroup.Chase => GetBankProfile<ChaseBank>(profileEnum, _instrumentationClient),
                         BankGroup.Cooperative => GetBankProfile<CooperativeBank>(
                             profileEnum,
                             _instrumentationClient),
