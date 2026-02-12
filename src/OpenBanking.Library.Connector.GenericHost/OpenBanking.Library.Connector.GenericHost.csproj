@@ -27,11 +27,11 @@
         <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="4.0.6.12"/>
         <PackageReference Include="AWSSDK.SSO" Version="4.0.2.13"/>
         <PackageReference Include="AWSSDK.SSOOIDC" Version="4.0.3.14"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.12"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.12"/>
-        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.12"/>
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.12"/>
-        <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="9.0.12"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.13"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.13"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.13"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.13"/>
+        <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="9.0.13"/>
     </ItemGroup>
 
     <ItemGroup>
