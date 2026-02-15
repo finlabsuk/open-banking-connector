@@ -253,7 +253,7 @@ public class AccountAccessConsentSubtest(
                         requestedPermissions.Contains(AccountAndTransactionModelsPublic.Permissions.ReadBalances);
                     if (testGetBalances)
                     {
-                        BalancesResponse balancesResp =
+                        BalancesResponse balancesResp2 =
                             await accountAndTransactionApiClient.BalancesRead(readForSingleAccount);
                     }
 
@@ -438,9 +438,18 @@ public class AccountAccessConsentSubtest(
                     }
                 }
 
-                // GET /accounts
-                AccountsResponse accountsResponse2 =
-                    await accountAndTransactionApiClient.AccountsRead(readForAllAccounts);
+                if (bankProfile.AccountAndTransactionApiSettings.UseBalancesNotAccountEndpointInSecondSession)
+                {
+                    // GET /balances
+                    BalancesResponse balancesResp3 =
+                        await accountAndTransactionApiClient.BalancesRead(readForAllAccounts);
+                }
+                else
+                {
+                    // GET /accounts
+                    AccountsResponse accountsResponse2 =
+                        await accountAndTransactionApiClient.AccountsRead(readForAllAccounts);
+                }
             }
 
             // Delete AccountAccessConsent (excludes external API delete)
