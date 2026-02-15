@@ -218,4 +218,14 @@ public class ManagementApiClient(WebAppClient client)
 
         return response;
     }
+
+    public async Task<SoftwareStatementsResponse> SoftwareStatementReadAll()
+    {
+        // Read objects
+        var uriPath = "/manage/software-statements";
+        var response =
+            await client.GetAsync<SoftwareStatementsResponse>(uriPath, []);
+
+        return response;
+    }
 }

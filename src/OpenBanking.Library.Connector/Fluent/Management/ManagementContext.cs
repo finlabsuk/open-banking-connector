@@ -105,7 +105,6 @@ internal class ManagementContext : IManagementContext
                 _sharedContext.Instrumentation);
             return new SoftwareStatementsContext(
                 _sharedContext,
-                softwareStatementOperations,
                 softwareStatementOperations);
         }
     }

@@ -48,6 +48,24 @@ public class SoftwareStatementsController : ControllerBase
     }
 
     /// <summary>
+    ///     Read software statements
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<
+        SoftwareStatementsResponse>> GetAsync()
+    {
+        // Operation
+        SoftwareStatementsResponse fluentResponse = await _requestBuilder
+            .Management
+            .SoftwareStatements
+            .ReadLocalAsync(new LocalReadAllParams());
+
+        return Ok(fluentResponse);
+    }
+
+    /// <summary>
     ///     Read software statement
     /// </summary>
     /// <param name="softwareStatementId"></param>

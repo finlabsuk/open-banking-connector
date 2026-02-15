@@ -99,14 +99,15 @@ safely for all banks and only creates new OAuth2 clients where necessary.
 
 ## Software Statement endpoints
 
-The four endpoints
+The five endpoints
 
 - [POST /manage/software-statements](./openapi.md)
+- [GET /manage/software-statements](./openapi.md)
 - [GET /manage/software-statements/{softwareStatementId}](./openapi.md)
 - [PUT /manage/software-statements/{softwareStatementId}](./openapi.md)
 - [DELETE /manage/software-statements/{softwareStatementId}](./openapi.md)
 
-create, read, update and delete `SoftwareStatement` records in the database `software_statement` table. A
+create, read all, read, update and delete `SoftwareStatement` records in the database `software_statement` table. A
 `SoftwareStatement` record corresponds to and describes a software statement created in the UK Open Banking Directory.
 
 In UK Open Banking, a software statement identifies a third-party provider (TPP) application which can create

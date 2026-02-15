@@ -19,7 +19,8 @@ internal class SoftwareStatementOperations(
     ITimeProvider timeProvider,
     IInstrumentationClient instrumentationClient)
     : IObjectCreate<SoftwareStatement, SoftwareStatementResponse, LocalCreateParams>,
-        IObjectUpdate2<SoftwareStatementUpdate, SoftwareStatementResponse>
+        IObjectUpdate2<SoftwareStatementUpdate, SoftwareStatementResponse>,
+        IObjectReadAll<SoftwareStatementsResponse, LocalReadAllParams>
 {
     private readonly IInstrumentationClient _instrumentationClient = instrumentationClient;
 
@@ -59,6 +60,45 @@ internal class SoftwareStatementOperations(
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
         await dbSaveChangesMethod.SaveChangesAsync();
+
+        return (response, nonErrorMessages);
+    }
+
+    public async Task<(SoftwareStatementsResponse response, IList<IFluentResponseInfoOrWarningMessage>
+            nonErrorMessages)>
+        ReadAllAsync(
+            LocalReadAllParams readParams)
+    {
+        // Create non-error list
+        var nonErrorMessages =
+            new List<IFluentResponseInfoOrWarningMessage>();
+
+
+        // Load entities
+        List<SoftwareStatementResponseItem> items = await entityMethods
+            .DbSetNoTracking
+            .Select(
+                x => new SoftwareStatementResponseItem
+                {
+                    OrganisationId = x.OrganisationId,
+                    SoftwareId = x.SoftwareId,
+                    SandboxEnvironment = x.SandboxEnvironment,
+                    DefaultObWacCertificateId = x.DefaultObWacCertificateId,
+                    DefaultObSealCertificateId = x.DefaultObSealCertificateId,
+                    DefaultQueryRedirectUrl = x.DefaultQueryRedirectUrl,
+                    DefaultFragmentRedirectUrl = x.DefaultFragmentRedirectUrl,
+                    Id = x.Id,
+                    Created = x.Created,
+                    CreatedBy = x.CreatedBy,
+                    Reference = x.Reference
+                })
+            .ToListAsync();
+
+        var response = new SoftwareStatementsResponse
+        {
+            Data = items,
+            Warnings = null
+        };
 
         return (response, nonErrorMessages);
     }
