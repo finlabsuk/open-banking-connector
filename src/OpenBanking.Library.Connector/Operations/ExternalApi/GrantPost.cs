@@ -202,12 +202,14 @@ internal class GrantPost : IGrantPost
         }
 
         // Validate response refresh token
-        if (response.RefreshToken is not null)
+        bool unexpectedResponseRefreshTokenMayBePresent =
+            clientCredentialsGrantPostCustomBehaviour?.UnexpectedResponseRefreshTokenMayBePresent ?? false;
+        if (!unexpectedResponseRefreshTokenMayBePresent &&
+            response.RefreshToken is not null)
         {
             throw new InvalidOperationException(
-                "Parameter refresh_token received when using client credentials grant.");
+                "Did not expect but received refresh token when using client credentials grant.");
         }
-
         return response;
     }
 

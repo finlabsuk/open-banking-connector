@@ -319,8 +319,11 @@ public class AccountAccessConsentSubtest(
                                 await accountAndTransactionApiClient.PartiesRead(readForSingleAccount);
                         }
 
-                        Parties2Response partiesResp =
-                            await accountAndTransactionApiClient.Parties2Read(readForSingleAccount);
+                        if (bankProfile.AccountAndTransactionApiSettings.UseGetParty2Endpoint)
+                        {
+                            Parties2Response partiesResp =
+                                await accountAndTransactionApiClient.Parties2Read(readForSingleAccount);
+                        }
                     }
 
                     // GET /accounts/{AccountId}/direct-debits

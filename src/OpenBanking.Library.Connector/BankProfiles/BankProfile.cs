@@ -130,6 +130,11 @@ public class AccountAndTransactionApiSettings
     /// </summary>
     public bool UseGetPartyEndpoint { get; init; } = true;
 
+    /// <summary>
+    ///     Describes whether GET /accounts/{AccountId}/parties is used when testing with this bank
+    /// </summary>
+    public bool UseGetParty2Endpoint { get; init; } = true;
+
     public bool UseReauth { get; init; } = true;
 
     public AccountAccessConsentExternalApiRequestAdjustments
