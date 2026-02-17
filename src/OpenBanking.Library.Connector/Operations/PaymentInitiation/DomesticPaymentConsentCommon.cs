@@ -122,22 +122,30 @@ internal class DomesticPaymentConsentCommon
             ? _refreshTokenEntityMethods.DbSet
             : _refreshTokenEntityMethods.DbSetNoTracking;
 
-        DomesticPaymentConsentRefreshToken? refreshToken;
+        List<DomesticPaymentConsentRefreshToken> refreshTokens;
         if (_dbMethods.DbProvider is not DbProvider.MongoDb)
         {
-            refreshToken =
-                await db
-                    .SingleOrDefaultAsync(x => x.DomesticPaymentConsentId == consentId && !x.IsDeleted);
+            refreshTokens = await db
+                .Where(x => x.DomesticPaymentConsentId == consentId && !x.IsDeleted)
+                .OrderByDescending(x => x.Created)
+                .ToListAsync();
         }
         else
         {
-            refreshToken =
-                await db
-                    .Where(x => EF.Property<string>(x, "_t") == nameof(DomesticPaymentConsentRefreshToken))
-                    .SingleOrDefaultAsync(x => x.DomesticPaymentConsentId == consentId && !x.IsDeleted);
+            refreshTokens = await db
+                .Where(x => EF.Property<string>(x, "_t") == nameof(DomesticPaymentConsentRefreshToken))
+                .Where(x => x.DomesticPaymentConsentId == consentId && !x.IsDeleted)
+                .OrderByDescending(x => x.Created)
+                .ToListAsync();
         }
 
-        return refreshToken;
+        if (refreshTokens.Count > 1)
+        {
+            _instrumentationClient.Warning(
+                $"Found {refreshTokens.Count} rather than one refresh tokens for DomesticPaymentConsent {consentId}.");
+        }
+
+        return refreshTokens.FirstOrDefault();
     }
 
     public async Task<AccessTokenEntity> AddNewAccessToken(

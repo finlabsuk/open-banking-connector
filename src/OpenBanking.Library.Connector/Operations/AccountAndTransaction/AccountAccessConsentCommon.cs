@@ -174,20 +174,30 @@ internal class AccountAccessConsentCommon
             ? _refreshTokenEntityMethods.DbSet
             : _refreshTokenEntityMethods.DbSetNoTracking;
 
-        AccountAccessConsentRefreshToken? refreshToken;
+        List<AccountAccessConsentRefreshToken> refreshTokens;
         if (_dbMethods.DbProvider is not DbProvider.MongoDb)
         {
-            refreshToken = await db
-                .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consentId && !x.IsDeleted);
+            refreshTokens = await db
+                .Where(x => x.AccountAccessConsentId == consentId && !x.IsDeleted)
+                .OrderByDescending(x => x.Created)
+                .ToListAsync();
         }
         else
         {
-            refreshToken =
-                await db
-                    .Where(x => EF.Property<string>(x, "_t") == nameof(AccountAccessConsentRefreshToken))
-                    .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consentId && !x.IsDeleted);
+            refreshTokens = await db
+                .Where(x => EF.Property<string>(x, "_t") == nameof(AccountAccessConsentRefreshToken))
+                .Where(x => x.AccountAccessConsentId == consentId && !x.IsDeleted)
+                .OrderByDescending(x => x.Created)
+                .ToListAsync();
         }
-        return refreshToken;
+
+        if (refreshTokens.Count > 1)
+        {
+            _instrumentationClient.Warning(
+                $"Found {refreshTokens.Count} rather than one refresh tokens for AccountAccessConsent {consentId}.");
+        }
+
+        return refreshTokens.FirstOrDefault();
     }
 
     public static string GetBankTokenIssuerClaim(CustomBehaviourClass? customBehaviour, string issuerUrl) =>
