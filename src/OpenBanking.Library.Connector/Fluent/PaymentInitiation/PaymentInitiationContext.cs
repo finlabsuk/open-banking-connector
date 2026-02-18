@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -31,7 +32,7 @@ public interface IPaymentInitiationContext
     /// </summary>
     IDomesticPaymentContext<DomesticPaymentRequest, DomesticPaymentResponse, DomesticPaymentPaymentDetailsResponse,
             ConsentExternalCreateParams,
-            ConsentExternalEntityReadParams>
+            ExternalEntityReadParams>
         DomesticPayments { get; }
 }
 
@@ -55,12 +56,12 @@ internal class PaymentInitiationContext : IPaymentInitiationContext
             sharedContext.MemoryCache,
             sharedContext.EncryptionKeyInfo);
         _domesticPayments = new DomesticPaymentOperations(
-            _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentPersisted>(),
+            _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentPersisted>(),
             _sharedContext.Instrumentation,
             _sharedContext.ApiVariantMapper,
             _sharedContext.TimeProvider,
             new ConsentAccessTokenGet(
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.DbService.GetDbMethods(),
                 _sharedContext.TimeProvider,
                 grantPost,
                 _sharedContext.Instrumentation,
@@ -71,10 +72,20 @@ internal class PaymentInitiationContext : IPaymentInitiationContext
             _sharedContext.ObSealCertificateMethods,
             clientAccessTokenGet,
             new DomesticPaymentConsentCommon(
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentPersisted>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentAccessToken>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentRefreshToken>(),
-                _sharedContext.Instrumentation));
+                _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentPersisted>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentAccessToken>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentRefreshToken>(),
+                _sharedContext.Instrumentation,
+                _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                _sharedContext.DbService.GetDbMethods()),
+            new ConsentCommon(
+                _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                _sharedContext.Instrumentation,
+                _sharedContext.DbService.GetDbMethods(),
+                _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>()));
     }
 
     public IDomesticPaymentConsentsContext DomesticPaymentConsents =>
@@ -82,7 +93,7 @@ internal class PaymentInitiationContext : IPaymentInitiationContext
 
     public IDomesticPaymentContext<DomesticPaymentRequest, DomesticPaymentResponse,
             DomesticPaymentPaymentDetailsResponse, ConsentExternalCreateParams,
-            ConsentExternalEntityReadParams>
+            ExternalEntityReadParams>
         DomesticPayments =>
         _domesticPayments;
 }

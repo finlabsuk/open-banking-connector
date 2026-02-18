@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 /// <typeparam name="TReadParams"></typeparam>
 public interface IReadExternalEntityPaymentDetailsContext<TPublicResponse, in TReadParams>
     where TPublicResponse : class
-    where TReadParams : ConsentExternalEntityReadParams
+    where TReadParams : ExternalEntityReadParams
 {
     /// <summary>
     ///     READ objects using consent ID (includes GETing objects from bank API).

@@ -36,15 +36,9 @@ internal class
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
     private readonly IBankProfileService _bankProfileService;
     private readonly ClientAccessTokenGet _clientAccessTokenGet;
-
-    private readonly ConsentCommon<AccountAccessConsentPersisted,
-        AccountAccessConsentRequest,
-        AccountAccessConsentCreateResponse,
-        AccountAndTransactionModelsPublic.OBReadConsent1,
-        AccountAndTransactionModelsPublic.OBReadConsentResponse1> _consentCommon;
-
-    private readonly IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _consentEntityMethods;
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly ConsentCommon _consentCommon;
+    private readonly IDbEntityMethods<AccountAccessConsentPersisted> _consentEntityMethods;
+    private readonly IDbMethods _dbSaveChangesMethod;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
@@ -52,13 +46,13 @@ internal class
     private readonly ITimeProvider _timeProvider;
 
     public AccountAccessConsentOperations(
-        IDbReadWriteEntityMethods<AccountAccessConsentPersisted> consentEntityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<AccountAccessConsentPersisted> consentEntityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         IBankProfileService bankProfileService,
-        IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
+        ConsentCommon consentCommon,
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
         ClientAccessTokenGet clientAccessTokenGet,
@@ -74,13 +68,7 @@ internal class
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
         _instrumentationClient = instrumentationClient;
-        _consentCommon =
-            new ConsentCommon<AccountAccessConsentPersisted, AccountAccessConsentRequest,
-                AccountAccessConsentCreateResponse,
-                AccountAndTransactionModelsPublic.OBReadConsent1,
-                AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
-                bankRegistrationMethods,
-                instrumentationClient);
+        _consentCommon = consentCommon;
     }
 
     public static string ClientCredentialsGrantScope => "accounts";
@@ -104,18 +92,23 @@ internal class
         AccountAndTransactionModelsPublic.OBReadConsentResponse1? externalApiResponse;
         ExternalApiResponseInfo? externalApiResponseInfo;
         string externalApiId;
+        bool aispUseV4;
         if (request.ExternalApiObject is null)
         {
             // Load BankRegistration and related
-            (BankRegistrationEntity bankRegistration, string tokenEndpoint,
-                    SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
+            (BankRegistrationEntity bankRegistration, SoftwareStatementEntity softwareStatement,
+                    ExternalApiSecretEntity? externalApiSecret) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-            AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
+            aispUseV4 = bankRegistration.AispUseV4;
+            AccountAndTransactionApi accountAndTransactionApi =
+                bankProfile.GetRequiredAccountAndTransactionApi(aispUseV4);
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
-            string bankFinancialId = bankProfile.FinancialId;
+            string bankFinancialId =
+                bankProfile.AccountAndTransactionApiSettings.GetFinancialId?.Invoke(aispUseV4) ??
+                bankProfile.FinancialId;
 
             // Get IApiClient
             // IApiClient apiClient = bankRegistration.UseSimulatedBank
@@ -235,7 +228,8 @@ internal class
                     LinksUrlOperations.PostMethodExpectedLinkUrls(
                         externalApiUrl,
                         externalApiId,
-                        readWritePostCustomBehaviour),
+                        readWritePostCustomBehaviour,
+                        aispUseV4),
                     transformedLinkUrlWithoutQuery,
                     readWritePostCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                     false);
@@ -268,6 +262,7 @@ internal class
             externalApiResponse = null;
             externalApiResponseInfo = null;
             externalApiId = request.ExternalApiObject.ExternalApiId;
+            aispUseV4 = false;
         }
 
         // Create persisted entity and return response
@@ -281,11 +276,6 @@ internal class
             utcNow,
             request.CreatedBy,
             null,
-            0,
-            utcNow,
-            request.CreatedBy,
-            null,
-            null,
             null,
             null,
             utcNow,
@@ -294,7 +284,8 @@ internal class
             utcNow,
             request.CreatedBy,
             request.BankRegistrationId,
-            externalApiId);
+            externalApiId,
+            aispUseV4);
 
         AuthContextRequest? authContext = request.ExternalApiObject?.AuthContext;
         if (authContext is not null)
@@ -324,7 +315,8 @@ internal class
                 AuthContextModified = persistedConsent.AuthContextModified,
                 AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
                 ExternalApiResponse = externalApiResponse,
-                ExternalApiResponseInfo = externalApiResponseInfo
+                ExternalApiResponseInfo = externalApiResponseInfo,
+                CreatedWithV4 = persistedConsent.CreatedWithV4
             };
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
@@ -355,8 +347,12 @@ internal class
         {
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-            AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
-            string bankFinancialId = bankProfile.FinancialId;
+            bool aispUseV4 = bankRegistration.AispUseV4;
+            AccountAndTransactionApi accountAndTransactionApi =
+                bankProfile.GetRequiredAccountAndTransactionApi(aispUseV4);
+            string bankFinancialId =
+                bankProfile.AccountAndTransactionApiSettings.GetFinancialId?.Invoke(aispUseV4) ??
+                bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
             // Get IApiClient
@@ -463,7 +459,8 @@ internal class
                 var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
                     LinksUrlOperations.GetMethodExpectedLinkUrls(
                         expectedLinkUrlWithoutQuery,
-                        readWriteGetCustomBehaviour),
+                        readWriteGetCustomBehaviour,
+                        aispUseV4),
                     transformedLinkUrlWithoutQuery,
                     readWriteGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                     false);
@@ -511,7 +508,8 @@ internal class
                 AuthContextModified = persistedConsent.AuthContextModified,
                 AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
                 ExternalApiResponse = externalApiResponse,
-                ExternalApiResponseInfo = externalApiResponseInfo
+                ExternalApiResponseInfo = externalApiResponseInfo,
+                CreatedWithV4 = persistedConsent.CreatedWithV4
             };
 
         return (response, nonErrorMessages);

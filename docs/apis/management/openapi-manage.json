@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "13.0.0"
+    "version": "18.1.0"
   },
   "paths": {
     "/manage/bank-registrations": {
@@ -115,6 +115,7 @@
             "name": "x-obc-exclude-external-api-operation",
             "in": "header",
             "description": "",
+            "required": true,
             "schema": {
               "type": "boolean"
             }
@@ -548,6 +549,34 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Software Statements"
+        ],
+        "summary": "Read software statements",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoftwareStatementsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoftwareStatementsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoftwareStatementsResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/manage/software-statements/{softwareStatementId}": {
@@ -685,6 +714,25 @@
   },
   "components": {
     "schemas": {
+      "BankGroup": {
+        "enum": [
+          "Barclays",
+          "Chase",
+          "Cooperative",
+          "Danske",
+          "Hsbc",
+          "Lloyds",
+          "Monzo",
+          "Nationwide",
+          "NatWest",
+          "Obie",
+          "Revolut",
+          "Santander",
+          "Starling",
+          "Tsb"
+        ],
+        "type": "string"
+      },
       "BankProfileEnum": {
         "enum": [
           "Barclays_Sandbox",
@@ -694,6 +742,7 @@
           "Barclays_Business",
           "Barclays_Corporate",
           "Barclays_BarclaycardCommercialPayments",
+          "Chase_Chase",
           "Cooperative_Cooperative",
           "Cooperative_CooperativeSandbox",
           "Cooperative_Smile",
@@ -735,7 +784,11 @@
           "Obie_Model2023",
           "Revolut_Revolut",
           "Santander_Santander",
-          "Starling_Starling"
+          "Santander_Personal",
+          "Santander_Business",
+          "Santander_Corporate",
+          "Starling_Starling",
+          "Tsb_Tsb"
         ],
         "type": "string",
         "description": "Banks for which bank profiles have been created. Called BankProfileEnum to avoid confusion with the associated\r\nclass BankProfile."
@@ -801,6 +854,21 @@
             "type": "boolean",
             "description": "Use simulated bank (only supported for some bank profiles)."
           },
+          "AispUseV4": {
+            "type": "boolean",
+            "description": "Use v4 external (bank) API for AISP (when not specified default setting for bank profile is used).",
+            "nullable": true
+          },
+          "PispUseV4": {
+            "type": "boolean",
+            "description": "Use v4 external (bank) API for new PISP consent creation (when not specified default setting for bank profile is\r\nused).",
+            "nullable": true
+          },
+          "VrpUseV4": {
+            "type": "boolean",
+            "description": "Use v4 external (bank) API for new VRP consent creation (when not specified default setting for bank profile is\r\nused).",
+            "nullable": true
+          },
           "Reference": {
             "type": "string",
             "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
@@ -816,7 +884,9 @@
       },
       "BankRegistrationResponse": {
         "required": [
+          "AispUseV4",
           "AuthorizationEndpoint",
+          "BankGroup",
           "BankProfile",
           "Created",
           "DefaultFragmentRedirectUri",
@@ -825,13 +895,15 @@
           "ExternalApiId",
           "Id",
           "JwksUri",
+          "PispUseV4",
           "RedirectUris",
           "RegistrationEndpoint",
           "RegistrationScope",
           "SoftwareStatementId",
           "TokenEndpoint",
           "TokenEndpointAuthMethod",
-          "UseSimulatedBank"
+          "UseSimulatedBank",
+          "VrpUseV4"
         ],
         "type": "object",
         "properties": {
@@ -851,6 +923,9 @@
           },
           "BankProfile": {
             "$ref": "#/components/schemas/BankProfileEnum"
+          },
+          "BankGroup": {
+            "$ref": "#/components/schemas/BankGroup"
           },
           "JwksUri": {
             "type": "string",
@@ -899,6 +974,18 @@
           "UseSimulatedBank": {
             "type": "boolean",
             "description": "Use simulated bank (only supported for some bank profiles)."
+          },
+          "AispUseV4": {
+            "type": "boolean",
+            "description": "Use v4 external (bank) API for AISP."
+          },
+          "PispUseV4": {
+            "type": "boolean",
+            "description": "Use v4 external (bank) API for new PISP consent creation."
+          },
+          "VrpUseV4": {
+            "type": "boolean",
+            "description": "Use v4 external (bank) API for new VRP consent creation."
           },
           "Id": {
             "type": "string",
@@ -954,6 +1041,10 @@
         "properties": {
           "Key": {
             "$ref": "#/components/schemas/SecretDescription"
+          },
+          "SetAsCurrentEncryptionKey": {
+            "type": "boolean",
+            "description": "When creating a database record for this encryption key description, update the database settings table to\r\nset this as the current encryption key."
           },
           "Reference": {
             "type": "string",
@@ -1411,7 +1502,8 @@
       "SecretSource": {
         "enum": [
           "Configuration",
-          "AwsSsmParameterStore"
+          "AwsSsmParameterStore",
+          "GoogleCloudSecretManagerV1"
         ],
         "type": "string"
       },
@@ -1549,6 +1641,77 @@
         "additionalProperties": false,
         "description": "Response to SoftwareStatement read and create requests."
       },
+      "SoftwareStatementResponseItem": {
+        "required": [
+          "Created",
+          "DefaultFragmentRedirectUrl",
+          "DefaultObSealCertificateId",
+          "DefaultObWacCertificateId",
+          "DefaultQueryRedirectUrl",
+          "Id",
+          "OrganisationId",
+          "SandboxEnvironment",
+          "SoftwareId"
+        ],
+        "type": "object",
+        "properties": {
+          "OrganisationId": {
+            "type": "string",
+            "description": "Organisation ID from UK Open Banking directory as string.",
+            "nullable": true
+          },
+          "SoftwareId": {
+            "type": "string",
+            "description": "Software statement ID from UK Open Banking directory as string.",
+            "nullable": true
+          },
+          "SandboxEnvironment": {
+            "type": "boolean",
+            "description": "When true, denotes software statement is defined in UK OB directory sandbox (not production) environment."
+          },
+          "DefaultObWacCertificateId": {
+            "type": "string",
+            "description": "ID of default ObWacCertificate to use for mutual TLS with this software statement.",
+            "format": "uuid"
+          },
+          "DefaultObSealCertificateId": {
+            "type": "string",
+            "description": "ID of default ObSealCertificate to use for signing JWTs etc with this software statement.",
+            "format": "uuid"
+          },
+          "DefaultQueryRedirectUrl": {
+            "type": "string",
+            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = query.",
+            "nullable": true
+          },
+          "DefaultFragmentRedirectUrl": {
+            "type": "string",
+            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.",
+            "nullable": true
+          },
+          "Id": {
+            "type": "string",
+            "description": "Unique Open Banking Connector ID (used in local database).",
+            "format": "uuid"
+          },
+          "Created": {
+            "type": "string",
+            "description": "Created timestamp in local database.",
+            "format": "date-time"
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "SoftwareStatementUpdate": {
         "type": "object",
         "properties": {
@@ -1577,6 +1740,30 @@
         },
         "additionalProperties": false
       },
+      "SoftwareStatementsResponse": {
+        "required": [
+          "Data"
+        ],
+        "type": "object",
+        "properties": {
+          "Data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SoftwareStatementResponseItem"
+            },
+            "nullable": true
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "SupportedAlgorithmsEnum": {
         "enum": [
           "RS256",
@@ -1597,5 +1784,22 @@
         "description": "Token endpoint auth methods supported by Open Banking Connector"
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Bank Registrations"
+    },
+    {
+      "name": "Encryption Key Descriptions"
+    },
+    {
+      "name": "OBSeal Signing Certificates"
+    },
+    {
+      "name": "OBWAC Transport Certificates"
+    },
+    {
+      "name": "Software Statements"
+    }
+  ]
 }

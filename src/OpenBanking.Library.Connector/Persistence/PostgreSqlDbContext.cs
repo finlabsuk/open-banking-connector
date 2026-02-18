@@ -3,17 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
-// PostgreSql DB context
-public class PostgreSqlDbContext : BaseDbContext
-{
-    public PostgreSqlDbContext(DbContextOptions<PostgreSqlDbContext> options) : base(options) { }
-
-    // Use indenting to aid visualisation
-    protected override Formatting JsonFormatting => Formatting.None;
-
-    protected override DbProvider DbProvider => DbProvider.PostgreSql;
-}
+/// <summary>
+///     PostgreSQL DB context.
+/// </summary>
+/// <param name="options"></param>
+public class PostgreSqlDbContext(DbContextOptions<PostgreSqlDbContext> options)
+    : BaseDbContext(options, DbProvider.PostgreSql, true) { }

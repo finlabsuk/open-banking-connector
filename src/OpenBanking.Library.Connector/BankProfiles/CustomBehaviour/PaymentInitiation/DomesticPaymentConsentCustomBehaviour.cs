@@ -11,4 +11,6 @@ public class DomesticPaymentConsentCustomBehaviour : ReadWritePostCustomBehaviou
     public bool? ResponseRiskContractPresentIndicatorMayBeMissingOrWrong { get; set; }
 
     public bool? ResponseDataFundsAvailableResultFundsAvailableMayBeWrong { get; set; }
+
+    public bool? UseB64JoseHeader { get; set; }
 }

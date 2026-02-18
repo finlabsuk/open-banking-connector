@@ -10,7 +10,7 @@ public class DomesticVrpCustomBehaviour : ReadWritePostCustomBehaviour
 {
     public DomesticVrpRefundConverterOptions? RefundResponseJsonConverter { get; set; }
     public bool? PreferMisspeltContractPresentIndicator { get; set; }
-    public bool? ResponseDataStatusMayBeWrong { get; set; }
+    public bool? ResponseDataStatusMayBeMissingOrWrong { get; set; }
     public bool? ResponseDataDebtorAccountMayBeMissingOrWrong { get; set; }
     public bool? ResponseDataDebtorAccountSchemeNameMayBeWrong { get; set; }
     public bool? ResponseDataDebtorAccountIdentificationMayBeWrong { get; set; }

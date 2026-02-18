@@ -18,6 +18,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
 using TimeProvider = FinnovationLabs.OpenBanking.Library.Connector.Services.TimeProvider;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
@@ -32,14 +33,13 @@ public static class ServiceCollectionExtensions
         services
             .AddSettingsGroup<DatabaseSettings>()
             .AddSettingsGroup<BankProfilesSettings>()
-            .AddSettingsGroup<KeysSettings>()
             .AddSettingsGroup<HttpClientSettings>();
 
         // Add secret provider
         services.AddSingleton<ISecretProvider, SecretProvider>();
 
-        // Set up encryption settings
-        services.AddSingleton<EncryptionSettings>();
+        // Add settings service (caches database settings record)
+        services.AddSingleton<ISettingsService, SettingsService>();
 
         // Set up bank profile definitions
         services.AddSingleton<IBankProfileService, BankProfileService>();
@@ -52,7 +52,12 @@ public static class ServiceCollectionExtensions
 
         // Get DB settings and determine connection string
         var databaseSettings = GetSettings<DatabaseSettings>(configuration);
-        string connectionString = GetConnectionString(databaseSettings, configuration);
+        services.AddSingleton<IDbConnectionString, DbConnectionString>(
+            sp =>
+            {
+                var secretProvider = sp.GetRequiredService<ISecretProvider>();
+                return new DbConnectionString(databaseSettings, secretProvider);
+            });
 
         // Configure DB
         switch (databaseSettings.Provider)
@@ -60,13 +65,42 @@ public static class ServiceCollectionExtensions
             case DbProvider.Sqlite:
                 services
                     // See e.g. https://jasonwatmore.com/post/2020/01/03/aspnet-core-ef-core-migrations-for-multiple-databases-sqlite-and-sql-server 
-                    .AddDbContext<BaseDbContext, SqliteDbContext>(options => { options.UseSqlite(connectionString); });
+                    .AddDbContext<BaseDbContext, SqliteDbContext>(
+                        (sp, optionsBuilder) =>
+                        {
+                            var connectionStringService = sp.GetRequiredService<IDbConnectionString>();
+                            optionsBuilder.UseSqlite(connectionStringService.GetConnectionString());
+                        });
                 break;
             case DbProvider.PostgreSql:
                 services.AddDbContext<BaseDbContext, PostgreSqlDbContext>(
-                    optionsBuilder =>
+                    (sp, optionsBuilder) =>
                     {
-                        optionsBuilder.UseNpgsql(connectionString, options => options.EnableRetryOnFailure());
+                        var connectionStringService = sp.GetRequiredService<IDbConnectionString>();
+                        optionsBuilder.UseNpgsql(
+                            connectionStringService.GetConnectionString(),
+                            options => options.EnableRetryOnFailure());
+                    });
+                break;
+            case DbProvider.MongoDb:
+                string databaseName = databaseSettings.Names[DbProvider.MongoDb];
+                services.AddSingleton<IMongoClient>(
+                    sp =>
+                    {
+                        var connectionStringService = sp.GetRequiredService<IDbConnectionString>();
+                        return new MongoClient(connectionStringService.GetConnectionString());
+                    });
+                services.AddSingleton<IMongoDatabase>(
+                    sp =>
+                    {
+                        var mongoClient = sp.GetRequiredService<IMongoClient>();
+                        return mongoClient.GetDatabase(databaseName);
+                    });
+                services.AddDbContext<BaseDbContext, MongoDbDbContext>(
+                    (sp, optionsBuilder) =>
+                    {
+                        var mongoClient = sp.GetRequiredService<IMongoClient>();
+                        optionsBuilder.UseMongoDB(mongoClient, databaseName);
                     });
                 break;
             default:
@@ -129,31 +163,5 @@ public static class ServiceCollectionExtensions
                 ConfigurationSettingsProvider<TSettings>>();
 
         return services;
-    }
-
-    private static string GetConnectionString(DatabaseSettings settings, IConfiguration configuration)
-    {
-        if (!settings.ConnectionStrings.TryGetValue(settings.Provider, out string? connectionString))
-        {
-            throw new ArgumentException($"No database connection string found for provider {settings.Provider}.");
-        }
-
-        string? password = null;
-        if (settings.PasswordSettingNames.TryGetValue(settings.Provider, out string? passwordSettingName))
-        {
-            password = configuration.GetValue<string>(passwordSettingName, "");
-            if (string.IsNullOrEmpty(password))
-            {
-                throw new ArgumentException(
-                    $"Cannot get non-empty password from specified setting {passwordSettingName}.");
-            }
-        }
-
-        return settings.Provider switch
-        {
-            DbProvider.Sqlite => connectionString,
-            DbProvider.PostgreSql => connectionString + (password is not null ? $";Password={password}" : ""),
-            _ => throw new ArgumentOutOfRangeException(nameof(settings.Provider), settings.Provider, null)
-        };
     }
 }

@@ -118,8 +118,8 @@ public abstract class IdTokenBase
     [JsonProperty(PropertyName = "jti")]
     public string? Jti { get; set; }
 
-    [JsonProperty("nonce", Required = Required.Always)]
-    public string Nonce { get; set; } = null!;
+    [JsonProperty("nonce")]
+    public string? Nonce { get; set; }
 
     [JsonProperty(PropertyName = "auth_time")]
     public string? AuthTime { get; set; }

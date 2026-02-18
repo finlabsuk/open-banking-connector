@@ -16,26 +16,27 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 
 internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, ConsentDeleteParams>
 {
+    private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
     private readonly IBankProfileService _bankProfileService;
     private readonly ClientAccessTokenGet _clientAccessTokenGet;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
 
     public AccountAccessConsentDelete(
-        IDbReadWriteEntityMethods<AccountAccessConsent> entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<AccountAccessConsent> entityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IBankProfileService bankProfileService,
         ObSealCertificateMethods obSealCertificateMethods,
         ObWacCertificateMethods obWacCertificateMethods,
-        ClientAccessTokenGet clientAccessTokenGet) : base(
+        ClientAccessTokenGet clientAccessTokenGet,
+        AccountAccessConsentCommon accountAccessConsentCommon) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
@@ -45,6 +46,7 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
         _obSealCertificateMethods = obSealCertificateMethods;
         _obWacCertificateMethods = obWacCertificateMethods;
         _clientAccessTokenGet = clientAccessTokenGet;
+        _accountAccessConsentCommon = accountAccessConsentCommon;
     }
 
     protected string RelativePathBeforeId => "/account-access-consents";
@@ -60,29 +62,22 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load object
-        AccountAccessConsent persistedObject =
-            await _entityMethods
-                .DbSet
-                .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
-                .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
-                .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
-            throw new KeyNotFoundException($"No record found for Account Access Consent with ID {deleteParams.Id}.");
-
+        (AccountAccessConsent persistedConsent, BankRegistrationEntity bankRegistration,
+                SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
+            await _accountAccessConsentCommon.GetAccountAccessConsent(deleteParams.Id, true);
         if (!deleteParams.ExcludeExternalApiOperation)
         {
-            BankRegistrationEntity bankRegistration = persistedObject.BankRegistrationNavigation;
-            string bankApiId = persistedObject.ExternalApiId;
-            SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
-            ExternalApiSecretEntity? externalApiSecret =
-                bankRegistration.ExternalApiSecretsNavigation
-                    .SingleOrDefault(x => !x.IsDeleted);
+            string bankApiId = persistedConsent.ExternalApiId;
 
             // Get bank profile
             BankProfile bankProfile =
                 _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+            bool aispUseV4 = bankRegistration.AispUseV4;
             AccountAndTransactionApi accountAndTransactionApi =
-                bankProfile.GetRequiredAccountAndTransactionApi();
-            string bankFinancialId = bankProfile.FinancialId;
+                bankProfile.GetRequiredAccountAndTransactionApi(aispUseV4);
+            string bankFinancialId =
+                bankProfile.AccountAndTransactionApiSettings.GetFinancialId?.Invoke(aispUseV4) ??
+                bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
             // Get IApiClient
@@ -105,7 +100,7 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
                 await _clientAccessTokenGet.GetAccessToken(
                     "accounts",
                     obSealKey,
-                    persistedObject.BankRegistrationNavigation,
+                    bankRegistration,
                     externalApiSecret,
                     customBehaviour?.ClientCredentialsGrantPost,
                     apiClient,
@@ -129,6 +124,6 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
                 apiClient);
         }
 
-        return (persistedObject, nonErrorMessages);
+        return (persistedConsent, nonErrorMessages);
     }
 }

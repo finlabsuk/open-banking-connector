@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
+using FinnovationLabs.OpenBanking.Library.Connector.Migrations.MongoDb;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.AccountAndTransaction;
@@ -20,6 +21,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServices;
 
@@ -32,14 +35,9 @@ public class StartupTasksHostedService : IHostedService
 
     private readonly ISettingsProvider<DatabaseSettings> _databaseSettingsProvider;
 
-    // Ensures this set up at application start-up
-    private readonly EncryptionSettings _encryptionSettings;
-
     private readonly HttpClientSettings _httpClientSettings;
 
     private readonly IInstrumentationClient _instrumentationClient;
-
-    private readonly KeysSettings _keySettings;
 
     private readonly ILogger<StartupTasksHostedService> _logger;
 
@@ -49,6 +47,9 @@ public class StartupTasksHostedService : IHostedService
 
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
+    // This is populated in SettingsCleanup()
+    private readonly ISettingsService _settingsService;
+
     private readonly ITimeProvider _timeProvider;
 
     private readonly TppReportingMetrics _tppReportingMetrics;
@@ -57,7 +58,7 @@ public class StartupTasksHostedService : IHostedService
         IBankProfileService bankProfileService,
         IConfiguration configuration,
         ISettingsProvider<DatabaseSettings> databaseSettingsProvider,
-        EncryptionSettings encryptionSettings,
+        ISettingsService settingsService,
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
         IInstrumentationClient instrumentationClient,
         ILogger<StartupTasksHostedService> logger,
@@ -65,7 +66,6 @@ public class StartupTasksHostedService : IHostedService
         ISecretProvider secretProvider,
         IServiceScopeFactory serviceScopeFactory,
         TppReportingMetrics tppReportingMetrics,
-        ISettingsProvider<KeysSettings> keySettingsProvider,
         ITimeProvider timeProvider)
     {
         _bankProfileService = bankProfileService ?? throw new ArgumentNullException(nameof(bankProfileService));
@@ -73,7 +73,7 @@ public class StartupTasksHostedService : IHostedService
             (IConfigurationRoot) (configuration ?? throw new ArgumentNullException(nameof(configuration)));
         _databaseSettingsProvider = databaseSettingsProvider ??
                                     throw new ArgumentNullException(nameof(databaseSettingsProvider));
-        _encryptionSettings = encryptionSettings ?? throw new ArgumentNullException(nameof(encryptionSettings));
+        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _httpClientSettings =
             (httpClientSettingsProvider ?? throw new ArgumentNullException(nameof(httpClientSettingsProvider)))
             .GetSettings();
@@ -85,7 +85,6 @@ public class StartupTasksHostedService : IHostedService
         _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         _tppReportingMetrics = tppReportingMetrics ?? throw new ArgumentNullException(nameof(tppReportingMetrics));
         _timeProvider = timeProvider;
-        _keySettings = keySettingsProvider.GetSettings();
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -153,60 +152,108 @@ public class StartupTasksHostedService : IHostedService
                     }
 
                     break;
+                case DbProvider.MongoDb:
+                    var mongoDbContext = scope.ServiceProvider.GetRequiredService<MongoDbDbContext>();
+                    if (!await mongoDbContext.Database.CanConnectAsync(cancellationToken))
+                    {
+                        throw new ApplicationException("Cannot connect to MongoDB server.");
+                    }
+
+                    var mongoDatabase = scope.ServiceProvider.GetRequiredService<IMongoDatabase>();
+                    IAsyncCursor<string> collectionCursor =
+                        await mongoDatabase.ListCollectionNamesAsync(
+                            new ListCollectionNamesOptions { Filter = new BsonDocument("name", "settings") },
+                            cancellationToken);
+                    bool mongoDbDatabaseExists = await collectionCursor.AnyAsync(cancellationToken);
+
+                    if (!mongoDbDatabaseExists)
+                    {
+                        // Ensure database created
+                        if (databaseSettings.EnsureDatabaseCreated)
+                        {
+                            // Create database
+                            await mongoDbContext.Database.EnsureCreatedAsync(cancellationToken);
+                        }
+                        else
+                        {
+                            throw new ApplicationException(
+                                "Database not available. " +
+                                "Please set \"Database:EnsureDatabaseCreated\" to \"true\" to ensure MongoDB database " +
+                                "created with indexes etc at application start-up.");
+                        }
+                    }
+                    else
+                    {
+                        MongoDbDriverConfiguration.EnsureConstructorHasRun();
+
+                        // Apply migration
+                        await new ToVersion1()
+                            .FromVersion0(
+                                mongoDatabase,
+                                _instrumentationClient,
+                                _timeProvider,
+                                cancellationToken);
+                    }
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
         // Database checks and cleanup
-        if (databaseSettings.Provider is DbProvider.PostgreSql)
-        {
-            // Get scope
-            using IServiceScope scope2 = _serviceScopeFactory.CreateScope();
 
-            var postgreSqlDbContext = scope2.ServiceProvider.GetRequiredService<PostgreSqlDbContext>();
+        // Get scope
+        using IServiceScope scope2 = _serviceScopeFactory.CreateScope();
 
-            await new EncryptionKeyDescriptionCleanup()
-                .Cleanup(
-                    postgreSqlDbContext,
-                    _secretProvider,
-                    _keySettings,
-                    _encryptionSettings,
-                    _memoryCache,
-                    _instrumentationClient,
-                    _timeProvider,
-                    cancellationToken);
+        var dbContext = scope2.ServiceProvider.GetRequiredService<BaseDbContext>();
 
-            await new SoftwareStatementCleanup()
-                .Cleanup(
-                    postgreSqlDbContext,
-                    _secretProvider,
-                    _httpClientSettings,
-                    _memoryCache,
-                    _instrumentationClient,
-                    _tppReportingMetrics);
+        await new SettingsCleanup()
+            .Cleanup(
+                dbContext,
+                _settingsService,
+                _instrumentationClient,
+                _timeProvider,
+                cancellationToken);
 
-            await new BankRegistrationCleanup()
-                .Cleanup(
-                    postgreSqlDbContext,
-                    _logger);
+        await new EncryptionKeyDescriptionCleanup()
+            .Cleanup(
+                dbContext,
+                _secretProvider,
+                _memoryCache,
+                _instrumentationClient,
+                _timeProvider,
+                cancellationToken);
 
-            await new AccountAccessConsentCleanup()
-                .Cleanup(
-                    postgreSqlDbContext,
-                    _logger);
+        await new SoftwareStatementCleanup()
+            .Cleanup(
+                dbContext,
+                _secretProvider,
+                _httpClientSettings,
+                _memoryCache,
+                _instrumentationClient,
+                _tppReportingMetrics);
 
-            //postgreSqlDbContext.ChangeTracker.DetectChanges();
+        await new BankRegistrationCleanup()
+            .Cleanup(
+                dbContext,
+                _logger);
 
-            await postgreSqlDbContext.SaveChangesAsync(cancellationToken);
+        await new AccountAccessConsentCleanup()
+            .Cleanup(
+                dbContext,
+                _logger);
 
-            await new EncryptedObjectCleanup()
-                .Cleanup(
-                    postgreSqlDbContext,
-                    _instrumentationClient,
-                    _timeProvider,
-                    cancellationToken);
-        }
+        //postgreSqlDbContext.ChangeTracker.DetectChanges();
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        await new EncryptedObjectCleanup()
+            .Cleanup(
+                dbContext,
+                _settingsService,
+                _instrumentationClient,
+                _timeProvider,
+                cancellationToken);
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

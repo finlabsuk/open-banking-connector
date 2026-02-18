@@ -25,11 +25,32 @@ internal delegate Task<AccessTokenEntity?> GetAccessTokenDelegate(Guid consentId
 
 internal delegate Task<RefreshTokenEntity?> GetRefreshTokenDelegate(Guid consentId, bool dbTracking);
 
+internal delegate Task<AccessTokenEntity> AddNewAccessTokenDelegate(
+    Guid id,
+    string? reference,
+    bool isDeleted,
+    DateTimeOffset isDeletedModified,
+    string? isDeletedModifiedBy,
+    DateTimeOffset created,
+    string? createdBy,
+    Guid consentId);
+
+internal delegate Task<RefreshTokenEntity> AddNewRefreshTokenDelegate(
+    Guid id,
+    string? reference,
+    bool isDeleted,
+    DateTimeOffset isDeletedModified,
+    string? isDeletedModifiedBy,
+    DateTimeOffset created,
+    string? createdBy,
+    Guid consentId);
+
 internal class ConsentAccessTokenGet
 {
     private static readonly ConcurrentDictionary<string, SemaphoreSlim> LockDictionary = new();
 
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly IDbMethods _dbSaveChangesMethod;
+
     private readonly IEncryptionKeyDescription _encryptionKeyInfo;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
@@ -37,7 +58,7 @@ internal class ConsentAccessTokenGet
     private readonly ITimeProvider _timeProvider;
 
     public ConsentAccessTokenGet(
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IGrantPost grantPost,
         IInstrumentationClient instrumentationClient,
@@ -59,8 +80,9 @@ internal class ConsentAccessTokenGet
         BankRegistrationEntity bankRegistration,
         GetAccessTokenDelegate getAccessToken,
         GetRefreshTokenDelegate getRefreshToken,
+        AddNewAccessTokenDelegate addNewAccessToken,
+        AddNewRefreshTokenDelegate addNewRefreshToken,
         ExternalApiSecretEntity? externalApiSecretEntity,
-        string tokenEndpoint,
         bool useOpenIdConnect,
         IApiClient apiClient,
         OBSealKey obSealKey,
@@ -74,6 +96,7 @@ internal class ConsentAccessTokenGet
     {
         string consentAssociatedData = consent.GetAssociatedData(bankRegistration);
         string bankRegistrationAssociatedData = bankRegistration.GetAssociatedData();
+        string tokenEndpoint = bankRegistration.TokenEndpoint;
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod = bankRegistration.TokenEndpointAuthMethod;
 
         // Check nonce available
@@ -188,14 +211,15 @@ internal class ConsentAccessTokenGet
             const int expiryThresholdForSaving = 24 * 60 * 60; // one day
             if (newAccessToken.ExpiresIn > expiryThresholdForSaving)
             {
-                AccessTokenEntity newAccessTokenObject = consent.AddNewAccessToken(
+                AccessTokenEntity newAccessTokenObject = await addNewAccessToken(
                     Guid.NewGuid(),
                     null,
                     false,
                     modified,
                     modifiedBy,
                     modified,
-                    modifiedBy);
+                    modifiedBy,
+                    consent.Id);
                 Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newAccessTokenObject.UpdateAccessToken(
                     newAccessToken,
@@ -213,14 +237,15 @@ internal class ConsentAccessTokenGet
                 storedRefreshTokenEntity.UpdateIsDeleted(true, modified, modifiedBy);
 
                 // Store new refresh token
-                RefreshTokenEntity newRefreshTokenObject = consent.AddNewRefreshToken(
+                RefreshTokenEntity newRefreshTokenObject = await addNewRefreshToken(
                     Guid.NewGuid(),
                     null,
                     false,
                     modified,
                     modifiedBy,
                     modified,
-                    modifiedBy);
+                    modifiedBy,
+                    consent.Id);
                 Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newRefreshTokenObject.UpdateRefreshToken(
                     tokenEndpointResponse.RefreshToken,

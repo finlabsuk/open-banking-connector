@@ -39,4 +39,6 @@ public interface ISharedContext
     ObWacCertificateMethods ObWacCertificateMethods { get; }
 
     TppReportingMetrics TppReportingMetrics { get; }
+
+    ISettingsService SettingsService { get; }
 }

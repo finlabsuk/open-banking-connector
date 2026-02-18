@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 
 /// <summary>
@@ -33,8 +31,7 @@ internal class RegistrationAccessTokenEntity : EncryptedObject
     }
 
     // Parent consent
-    [ForeignKey(nameof(BankRegistrationId))]
-    public BankRegistrationEntity BankRegistrationNavigation { get; private set; } = null!;
+    public BankRegistrationEntity BankRegistrationNavigation { get; } = null!;
 
     public Guid BankRegistrationId { get; }
 

@@ -68,13 +68,16 @@ internal class
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-        AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
+        bool aispUseV4 = bankRegistration.AispUseV4;
+        AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi(aispUseV4);
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
         DirectDebitGetCustomBehaviour?
             directDebitGetCustomBehaviour = customBehaviour?.DirectDebitGet;
-        string bankFinancialId = bankProfile.FinancialId;
+        string bankFinancialId =
+            bankProfile.AccountAndTransactionApiSettings.GetFinancialId?.Invoke(aispUseV4) ??
+            bankProfile.FinancialId;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
 
         // Get IApiClient
@@ -98,8 +101,9 @@ internal class
                 bankRegistration,
                 _accountAccessConsentCommon.GetAccessToken,
                 _accountAccessConsentCommon.GetRefreshToken,
+                _accountAccessConsentCommon.AddNewAccessToken,
+                _accountAccessConsentCommon.AddNewRefreshToken,
                 externalApiSecret,
-                persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 bankProfile.UseOpenIdConnect,
                 apiClient,
                 obSealKey,
@@ -138,9 +142,11 @@ internal class
                 (int) previousPaymentDateTimeJsonConverter);
 
             jsonSerializerSettings.Context =
+#pragma warning disable SYSLIB0050 // see https://github.com/JamesNK/Newtonsoft.Json/issues/2953
                 new StreamingContext(
                     StreamingContextStates.All,
                     optionsDict);
+#pragma warning restore SYSLIB0050
         }
         AccountAndTransactionModelsPublic.OBReadDirectDebit2 externalApiResponse;
         string? xFapiInteractionId;
@@ -194,7 +200,8 @@ internal class
             var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
                 LinksUrlOperations.GetMethodExpectedLinkUrls(
                     expectedLinkUrlWithoutQuery,
-                    directDebitGetCustomBehaviour),
+                    directDebitGetCustomBehaviour,
+                    aispUseV4),
                 transformedLinkUrlWithoutQuery,
                 directDebitGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                 true);

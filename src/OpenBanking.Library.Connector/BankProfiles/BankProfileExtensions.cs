@@ -18,6 +18,7 @@ public static class BankProfileExtensions
             BankProfileEnum.Barclays_Business => BankGroup.Barclays,
             BankProfileEnum.Barclays_Corporate => BankGroup.Barclays,
             BankProfileEnum.Barclays_BarclaycardCommercialPayments => BankGroup.Barclays,
+            BankProfileEnum.Chase_Chase => BankGroup.Chase,
             BankProfileEnum.Cooperative_Cooperative => BankGroup.Cooperative,
             BankProfileEnum.Cooperative_CooperativeSandbox => BankGroup.Cooperative,
             BankProfileEnum.Cooperative_Smile => BankGroup.Cooperative,
@@ -59,7 +60,11 @@ public static class BankProfileExtensions
             BankProfileEnum.Obie_Model2023 => BankGroup.Obie,
             BankProfileEnum.Revolut_Revolut => BankGroup.Revolut,
             BankProfileEnum.Santander_Santander => BankGroup.Santander,
+            BankProfileEnum.Santander_Personal => BankGroup.Santander,
+            BankProfileEnum.Santander_Business => BankGroup.Santander,
+            BankProfileEnum.Santander_Corporate => BankGroup.Santander,
             BankProfileEnum.Starling_Starling => BankGroup.Starling,
+            BankProfileEnum.Tsb_Tsb => BankGroup.Tsb,
             _ => throw new ArgumentOutOfRangeException(nameof(bankProfileEnum), bankProfileEnum, null)
         };
 }

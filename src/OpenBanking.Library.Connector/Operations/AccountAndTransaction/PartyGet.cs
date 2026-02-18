@@ -65,13 +65,16 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Acc
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-        AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
+        bool aispUseV4 = bankRegistration.AispUseV4;
+        AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi(aispUseV4);
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
         ReadWriteGetCustomBehaviour?
             readWriteGetCustomBehaviour = customBehaviour?.PartyGet;
-        string bankFinancialId = bankProfile.FinancialId;
+        string bankFinancialId =
+            bankProfile.AccountAndTransactionApiSettings.GetFinancialId?.Invoke(aispUseV4) ??
+            bankProfile.FinancialId;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
 
         // Get IApiClient
@@ -95,8 +98,9 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Acc
                 bankRegistration,
                 _accountAccessConsentCommon.GetAccessToken,
                 _accountAccessConsentCommon.GetRefreshToken,
+                _accountAccessConsentCommon.AddNewAccessToken,
+                _accountAccessConsentCommon.AddNewRefreshToken,
                 externalApiSecret,
-                persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 bankProfile.UseOpenIdConnect,
                 apiClient,
                 obSealKey,
@@ -176,7 +180,10 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Acc
             string? transformedLinkUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
             var expectedLinkUrlWithoutQuery = new Uri(urlStringWihoutQuery);
             var linksUrlOperations = LinksUrlOperations.CreateLinksUrlOperations(
-                LinksUrlOperations.GetMethodExpectedLinkUrls(expectedLinkUrlWithoutQuery, readWriteGetCustomBehaviour),
+                LinksUrlOperations.GetMethodExpectedLinkUrls(
+                    expectedLinkUrlWithoutQuery,
+                    readWriteGetCustomBehaviour,
+                    aispUseV4),
                 transformedLinkUrlWithoutQuery,
                 readWriteGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                 true);

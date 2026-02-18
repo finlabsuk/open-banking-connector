@@ -10,11 +10,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
-using DomesticPaymentConsentAuthContextRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.
-    DomesticPaymentConsentAuthContext;
-using DomesticPaymentConsentAuthContextPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation;
 
@@ -28,10 +23,7 @@ public interface IDomesticPaymentConsentsContext :
     ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
     ///     authorisation of consent.
     /// </summary>
-    ILocalEntityContext<DomesticPaymentConsentAuthContextRequest,
-            IDomesticPaymentConsentAuthContextPublicQuery,
-            DomesticPaymentConsentAuthContextCreateResponse,
-            DomesticPaymentConsentAuthContextReadResponse>
+    IDomesticPaymentConsentAuthContextsContext
         AuthContexts { get; }
 }
 
@@ -55,14 +47,14 @@ internal class DomesticPaymentConsentsConsentContext :
             sharedContext.MemoryCache,
             sharedContext.EncryptionKeyInfo);
         _domesticPaymentConsentOperations = new DomesticPaymentConsentOperations(
-            sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
-            sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsent>(),
+            sharedContext.DbService.GetDbMethods(),
             sharedContext.TimeProvider,
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
             sharedContext.BankProfileService,
             new ConsentAccessTokenGet(
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.DbService.GetDbMethods(),
                 _sharedContext.TimeProvider,
                 new GrantPost(
                     _sharedContext.ApiClient,
@@ -72,42 +64,34 @@ internal class DomesticPaymentConsentsConsentContext :
                 _sharedContext.Instrumentation,
                 _sharedContext.MemoryCache,
                 _sharedContext.EncryptionKeyInfo),
-            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
+            new ConsentCommon(
+                _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                _sharedContext.Instrumentation,
+                _sharedContext.DbService.GetDbMethods(),
+                _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>()),
             _sharedContext.ObWacCertificateMethods,
             _sharedContext.ObSealCertificateMethods,
             clientAccessTokenGet,
             new DomesticPaymentConsentCommon(
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentAccessToken>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentRefreshToken>(),
-                _sharedContext.Instrumentation));
+                _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsent>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentAccessToken>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsentRefreshToken>(),
+                _sharedContext.Instrumentation,
+                _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                _sharedContext.DbService.GetDbMethods()));
         CreateObject = _domesticPaymentConsentOperations;
         ReadObject = _domesticPaymentConsentOperations;
         DeleteLocalObject = new LocalEntityDelete<DomesticPaymentConsent, LocalDeleteParams>(
-            sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
-            sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            sharedContext.DbService.GetDbEntityMethods<DomesticPaymentConsent>(),
+            sharedContext.DbService.GetDbMethods(),
             sharedContext.TimeProvider,
             sharedContext.Instrumentation);
+        AuthContexts = new DomesticPaymentConsentAuthContextsContext(_sharedContext);
     }
 
-    public ILocalEntityContext<DomesticPaymentConsentAuthContextRequest,
-        IDomesticPaymentConsentAuthContextPublicQuery,
-        DomesticPaymentConsentAuthContextCreateResponse,
-        DomesticPaymentConsentAuthContextReadResponse> AuthContexts =>
-        new LocalEntityContext<DomesticPaymentConsentAuthContextPersisted,
-            DomesticPaymentConsentAuthContextRequest,
-            IDomesticPaymentConsentAuthContextPublicQuery,
-            DomesticPaymentConsentAuthContextCreateResponse,
-            DomesticPaymentConsentAuthContextReadResponse>(
-            _sharedContext,
-            new DomesticPaymentConsentAuthContextPost(
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentAuthContextPersisted>(),
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                _sharedContext.TimeProvider,
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
-                _sharedContext.Instrumentation,
-                _sharedContext.BankProfileService,
-                _sharedContext.ObSealCertificateMethods));
 
     public IObjectRead<DomesticPaymentConsentCreateResponse, ConsentReadParams> ReadObject { get; }
 
@@ -119,4 +103,6 @@ internal class DomesticPaymentConsentsConsentContext :
 
     public Task<DomesticPaymentConsentFundsConfirmationResponse> ReadFundsConfirmationAsync(
         ConsentBaseReadParams readParams) => _domesticPaymentConsentOperations.ReadFundsConfirmationAsync(readParams);
+
+    public IDomesticPaymentConsentAuthContextsContext AuthContexts { get; }
 }

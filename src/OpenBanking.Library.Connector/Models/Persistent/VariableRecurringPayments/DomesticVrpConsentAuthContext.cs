@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
@@ -44,9 +43,8 @@ internal partial class DomesticVrpConsentAuthContext :
         DomesticVrpConsentId = domesticVrpConsentId;
     }
 
-    // Parent consent (optional to avoid warning due to non-support of global query filter)
-    [ForeignKey("DomesticVrpConsentId")]
-    public DomesticVrpConsent DomesticVrpConsentNavigation { get; set; } = null!;
+    // Parent consent
+    public DomesticVrpConsent DomesticVrpConsentNavigation { get; } = null!;
 
     public Guid DomesticVrpConsentId { get; }
 }

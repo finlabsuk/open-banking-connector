@@ -20,7 +20,7 @@ public class ObWacCertificateMethods(
     ISecretProvider secretProvider,
     IInstrumentationClient instrumentationClient,
     TppReportingMetrics tppReportingMetrics,
-    IDbReadWriteEntityMethods<ObWacCertificateEntity> entityMethods)
+    IDbEntityMethods<ObWacCertificateEntity> entityMethods)
 {
     public async Task<ObWacCertificate> GetValue(
         Guid obWacId) =>

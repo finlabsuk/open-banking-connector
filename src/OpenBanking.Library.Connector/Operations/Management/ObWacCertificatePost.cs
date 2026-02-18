@@ -20,8 +20,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Management;
 internal class ObWacCertificatePost : IObjectCreate<ObWacCertificate,
     ObWacCertificateResponse, LocalCreateParams>
 {
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
-    private readonly IDbReadWriteEntityMethods<ObWacCertificateEntity> _entityMethods;
+    private readonly IDbMethods _dbSaveChangesMethod;
+    private readonly IDbEntityMethods<ObWacCertificateEntity> _entityMethods;
     private readonly ISettingsProvider<HttpClientSettings> _httpClientSettingsProvider;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IMemoryCache _memoryCache;
@@ -30,8 +30,8 @@ internal class ObWacCertificatePost : IObjectCreate<ObWacCertificate,
     private readonly TppReportingMetrics _tppReportingMetrics;
 
     public ObWacCertificatePost(
-        IDbReadWriteEntityMethods<ObWacCertificateEntity> entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<ObWacCertificateEntity> entityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,

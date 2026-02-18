@@ -10,7 +10,7 @@ using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 
-public class DomesticPaymentConsentAuthContext : EntityBase, ISupportsValidation
+public class DomesticPaymentConsentAuthContext : AuthContextBase, ISupportsValidation
 {
     [JsonProperty(Required = Required.Always)]
     public required Guid DomesticPaymentConsentId { get; init; }

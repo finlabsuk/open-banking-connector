@@ -7,12 +7,10 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
-// SQLite DB context
-public class SqliteDbContext : BaseDbContext
-{
-    public SqliteDbContext(DbContextOptions<SqliteDbContext> options) : base(options) { }
-
-    // Use indenting to aid visualisation (SQLite context mainly used for debug).
-    protected override Formatting JsonFormatting => Formatting.Indented;
-    protected override DbProvider DbProvider => DbProvider.Sqlite;
-}
+/// <summary>
+///     SQLite DB context.
+///     Specifies JSON indenting to aid visualisation (SQLite context mainly used for debug).
+/// </summary>
+/// <param name="options"></param>
+public class SqliteDbContext(DbContextOptions<SqliteDbContext> options)
+    : BaseDbContext(options, DbProvider.Sqlite, true, Formatting.Indented) { }

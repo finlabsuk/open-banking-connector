@@ -32,11 +32,28 @@ public class BankRegistrationEnv
     [JsonPropertyName("externalApiClientSecretName")]
     public string? ExternalApiClientSecretName { get; init; }
 
+    [JsonConverter(typeof(JsonStringEnumConverter<SecretSource>))]
+    [JsonPropertyName("externalApiClientSecretSource")]
+    public SecretSource ExternalApiClientSecretSource { get; init; } = SecretSource.Configuration;
+
     [JsonPropertyName("externalApiRegistrationAccessTokenName")]
     public string? ExternalApiRegistrationAccessTokenName { get; init; }
 
+    [JsonConverter(typeof(JsonStringEnumConverter<SecretSource>))]
+    [JsonPropertyName("externalApiRegistrationAccessTokenSource")]
+    public SecretSource ExternalApiRegistrationAccessTokenSource { get; init; } = SecretSource.Configuration;
+
     [JsonPropertyName("externalApiAccountAccessConsentId")]
     public string? ExternalApiAccountAccessConsentId { get; init; }
+
+    [JsonPropertyName("aispUseV4")]
+    public bool? AispUseV4 { get; init; }
+
+    [JsonPropertyName("pispUseV4")]
+    public bool? PispUseV4 { get; init; }
+
+    [JsonPropertyName("vrpUseV4")]
+    public bool? VrpUseV4 { get; init; }
 
     [JsonPropertyName("testDynamicClientRegistration")]
     public required bool TestDynamicClientRegistration { get; init; }

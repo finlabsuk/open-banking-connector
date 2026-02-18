@@ -5,11 +5,13 @@
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 
@@ -27,7 +29,10 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
             _bankGroupData.GetBankProfile(bank),
             "https://oba.revolut.com", // from https://developer.revolut.com/docs/guides/build-banking-apps/register-your-application-using-dcr/open-id-configuration-urls
             "001580000103UAvAAM", // from https://developer.revolut.com/docs/guides/build-banking-apps/tutorials/get-account-and-transaction-information
-            GetAccountAndTransactionApi(bank),
+            new AccountAndTransactionApi { BaseUrl = GetBaseUrl() },
+            null,
+            new PaymentInitiationApi { BaseUrl = GetBaseUrl() },
+            null,
             null,
             null,
             true,
@@ -46,12 +51,17 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                     {
                         AddRedundantOAuth2NonceRequestParameter = true,
                         IdTokenProcessingCustomBehaviour =
-                            new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
+                            new IdTokenProcessingCustomBehaviour
+                            {
+                                IdTokenMayNotHaveAuthTimeClaim = true,
+                                IssClaim = "https://oba.revolut.com"
+                            },
+                        AudClaim =
+                            "https://oba-auth.revolut.com" // from https://developer.revolut.com/updates/2025-03-04-open-banking-fapi1-advanced#new-requirements-for-request-jwts
                     },
                 AccountAccessConsentAuthCodeGrantPost =
                     new AuthCodeGrantPostCustomBehaviour
                     {
-                        ExpectedResponseRefreshTokenMayBeAbsent = true,
                         IdTokenProcessingCustomBehaviour =
                             new IdTokenProcessingCustomBehaviour
                             {
@@ -59,9 +69,43 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                                 IdTokenMayNotHaveConsentIdClaim = true,
                                 IdTokenMayNotHaveAcrClaim = true,
                                 IdTokenExpirationTimeClaimJsonConverter =
-                                    DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
+                                    DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat,
+                                IssClaim = "https://oba.revolut.com"
                             }
-                    }
+                    },
+                AccountAccessConsentRefreshTokenGrantPost =
+                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
+                DomesticPaymentConsentAuthGet = new ConsentAuthGetCustomBehaviour
+                {
+                    AddRedundantOAuth2NonceRequestParameter = true,
+                    IdTokenProcessingCustomBehaviour =
+                        new IdTokenProcessingCustomBehaviour
+                        {
+                            IdTokenMayNotHaveAuthTimeClaim = true,
+                            IssClaim = "https://oba.revolut.com"
+                        },
+                    AudClaim =
+                        "https://oba-auth.revolut.com"
+                },
+                DomesticPaymentConsentAuthCodeGrantPost = new AuthCodeGrantPostCustomBehaviour
+                {
+                    ExpectedResponseRefreshTokenMayBeAbsent = true,
+                    IdTokenProcessingCustomBehaviour =
+                        new IdTokenProcessingCustomBehaviour
+                        {
+                            IdTokenMayNotHaveAuthTimeClaim = true,
+                            IdTokenMayNotHaveConsentIdClaim = true,
+                            IdTokenMayNotHaveAcrClaim = true,
+                            IdTokenExpirationTimeClaimJsonConverter =
+                                DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat,
+                            IssClaim = "https://oba.revolut.com"
+                        }
+                },
+                DomesticPayment = new DomesticPaymentCustomBehaviour
+                {
+                    ResponseDataRefundMayBeMissingOrWrong = true,
+                    ResponseDataDebtorMayBeMissingOrWrong = true
+                }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings { UseRegistrationDeleteEndpoint = true },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
@@ -89,14 +133,16 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                     return externalApiRequest;
                 }
             },
+            PaymentInitiationApiSettings = new PaymentInitiationApiSettings
+            {
+                UseReadRefundAccount = false,
+                PreferPartyToPartyPaymentContextCode = true,
+                UseContractPresentIndicator = false
+            },
             DefaultResponseMode = OAuth2ResponseMode.Query,
             AspspBrandId = 1470
         };
 
-    private AccountAndTransactionApi GetAccountAndTransactionApi(RevolutBank bank) =>
-        new()
-        {
-            BaseUrl =
-                "https://oba.revolut.com" // from https://developer.revolut.com/docs/open-banking/create-account-access-consents
-        };
+    private static string GetBaseUrl() =>
+        "https://oba-auth.revolut.com"; // from https://developer.revolut.com/docs/open-banking/create-account-access-consents
 }

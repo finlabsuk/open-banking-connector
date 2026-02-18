@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using ClientRegistrationModelsPublic =
@@ -39,6 +40,11 @@ public interface IBankRegistrationPublicQuery : IEntityBaseQuery
     ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
     /// </summary>
     public BankProfileEnum BankProfile { get; }
+
+    /// <summary>
+    ///     Bank group
+    /// </summary>
+    public BankGroup BankGroup { get; }
 
     /// <summary>
     ///     JWK Set URI (normally supplied from OpenID Configuration)
@@ -83,6 +89,21 @@ public interface IBankRegistrationPublicQuery : IEntityBaseQuery
     ///     Functional APIs used for bank registration.
     /// </summary>
     RegistrationScopeEnum RegistrationScope { get; }
+
+    /// <summary>
+    ///     Use v4 external (bank) API for AISP.
+    /// </summary>
+    public bool AispUseV4 { get; }
+
+    /// <summary>
+    ///     Use v4 external (bank) API for new PISP consent creation.
+    /// </summary>
+    public bool PispUseV4 { get; }
+
+    /// <summary>
+    ///     Use v4 external (bank) API for new VRP consent creation.
+    /// </summary>
+    public bool VrpUseV4 { get; }
 }
 
 /// <summary>
@@ -112,6 +133,11 @@ public class BankRegistrationResponse : EntityBaseResponse, IBankRegistrationPub
     ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
     /// </summary>
     public required BankProfileEnum BankProfile { get; init; }
+
+    /// <summary>
+    ///     Bank group
+    /// </summary>
+    public required BankGroup BankGroup { get; init; }
 
     /// <summary>
     ///     JWK Set URI (normally supplied from OpenID Configuration)
@@ -163,4 +189,19 @@ public class BankRegistrationResponse : EntityBaseResponse, IBankRegistrationPub
     ///     Use simulated bank (only supported for some bank profiles).
     /// </summary>
     public required bool UseSimulatedBank { get; init; }
+
+    /// <summary>
+    ///     Use v4 external (bank) API for AISP.
+    /// </summary>
+    public required bool AispUseV4 { get; init; }
+
+    /// <summary>
+    ///     Use v4 external (bank) API for new PISP consent creation.
+    /// </summary>
+    public required bool PispUseV4 { get; init; }
+
+    /// <summary>
+    ///     Use v4 external (bank) API for new VRP consent creation.
+    /// </summary>
+    public required bool VrpUseV4 { get; init; }
 }

@@ -33,7 +33,7 @@ public class ReplayClient(BankProfile bankProfile) : IHttpClient
         HttpResponseMessage response;
 
         // Get AISP base URL
-        string aispBaseUrl = bankProfile.AccountAndTransactionApi?.BaseUrl ?? throw new Exception();
+        string aispBaseUrl = bankProfile.GetRequiredAccountAndTransactionApi(false).BaseUrl ?? throw new Exception();
 
         // Check for matching endpoint 
         AispEndpointEnum? matchingEndpoint = null;

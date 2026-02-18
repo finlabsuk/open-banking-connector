@@ -32,9 +32,6 @@ public class AppContextFixture : IDisposable
                     ApplicationName = typeof(AppContextFixture).GetTypeInfo().Assembly.GetName().Name
                 });
 
-        // Update configuration
-        builder.Host.AddGenericHostConfiguration(args);
-
         // Add services
         Assembly webHostAssembly = typeof(ServiceCollectionExtensions).Assembly;
 

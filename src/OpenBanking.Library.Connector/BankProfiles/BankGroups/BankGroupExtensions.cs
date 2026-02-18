@@ -11,6 +11,7 @@ public static class BankGroupExtensions
     private static readonly ConcurrentDictionary<BankGroup, IBankGroupData> BankGroupsDictionary = new()
     {
         [BankGroup.Barclays] = new Barclays(),
+        [BankGroup.Chase] = new Chase(),
         [BankGroup.Cooperative] = new Cooperative(),
         [BankGroup.Danske] = new Danske(),
         [BankGroup.Hsbc] = new Hsbc(),
@@ -21,7 +22,8 @@ public static class BankGroupExtensions
         [BankGroup.Obie] = new Obie(),
         [BankGroup.Revolut] = new Revolut(),
         [BankGroup.Santander] = new Santander(),
-        [BankGroup.Starling] = new Starling()
+        [BankGroup.Starling] = new Starling(),
+        [BankGroup.Tsb] = new Tsb()
     };
 
     public static IBankGroupData<TBank> GetBankGroupData<TBank>(this BankGroup bankGroup)

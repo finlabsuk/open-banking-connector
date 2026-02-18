@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
@@ -19,20 +20,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Management;
 internal class EncryptionKeyDescriptionPost :
     IObjectCreate<EncryptionKeyDescription, EncryptionKeyDescriptionResponse, LocalCreateParams>
 {
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly IDbMethods _dbSaveChangesMethod;
     private readonly IEncryptionKeyDescription _encryptionKeyDescriptionMethods;
-    private readonly IDbReadWriteEntityMethods<EncryptionKeyDescriptionEntity> _entityMethods;
+    private readonly IDbEntityMethods<EncryptionKeyDescriptionEntity> _entityMethods;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly ISecretProvider _secretProvider;
+    private readonly IDbSettingsMethods _settingsMethods;
+    private readonly ISettingsService _settingsService;
     private readonly ITimeProvider _timeProvider;
 
     public EncryptionKeyDescriptionPost(
-        IDbReadWriteEntityMethods<EncryptionKeyDescriptionEntity> entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<EncryptionKeyDescriptionEntity> entityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         ISecretProvider secretProvider,
-        IEncryptionKeyDescription encryptionKeyDescriptionMethods)
+        IEncryptionKeyDescription encryptionKeyDescriptionMethods,
+        IDbSettingsMethods settingsMethods,
+        ISettingsService settingsService)
     {
         _entityMethods = entityMethods;
         _dbSaveChangesMethod = dbSaveChangesMethod;
@@ -40,6 +45,8 @@ internal class EncryptionKeyDescriptionPost :
         _instrumentationClient = instrumentationClient;
         _secretProvider = secretProvider;
         _encryptionKeyDescriptionMethods = encryptionKeyDescriptionMethods;
+        _settingsMethods = settingsMethods;
+        _settingsService = settingsService;
     }
 
     public async Task<(EncryptionKeyDescriptionResponse response, IList<IFluentResponseInfoOrWarningMessage>
@@ -61,8 +68,7 @@ internal class EncryptionKeyDescriptionPost :
             request.CreatedBy,
             utcNow,
             request.CreatedBy,
-            request.Key,
-            null);
+            request.Key);
 
         // Try to create cache object
         SecretResult keyResult = await _secretProvider.GetSecretAsync(entity.Key);
@@ -83,17 +89,30 @@ internal class EncryptionKeyDescriptionPost :
         }
         var encryptionKeyDescription = new EncryptionKeyDescriptionCached { Key = key };
 
-        // Add cache entry
-        _encryptionKeyDescriptionMethods.Set(entity.Id, encryptionKeyDescription);
-
         // Add entity
         await _entityMethods.AddAsync(entity);
 
+        // Update current encryption key if required
+        if (request.SetAsCurrentEncryptionKey)
+        {
+            SettingsEntity settings = await _settingsMethods.GetSettingsAsync();
+            settings.UpdateCurrentEncryptionKey(entity.Id, utcNow);
+        }
+
+        // Persist database changes
+        await _dbSaveChangesMethod.SaveChangesAsync();
+
+        // Add cache entry
+        _encryptionKeyDescriptionMethods.Set(entity.Id, encryptionKeyDescription);
+
+        // Update current encryption key in settings cache
+        if (request.SetAsCurrentEncryptionKey)
+        {
+            _settingsService.CurrentEncryptionKeyId = entity.Id;
+        }
+
         // Create response
         EncryptionKeyDescriptionResponse response = entity.PublicGetLocalResponse;
-
-        // Persist updates (this happens last so as not to happen if there are any previous errors)
-        await _dbSaveChangesMethod.SaveChangesAsync();
 
         return (response, nonErrorMessages);
     }

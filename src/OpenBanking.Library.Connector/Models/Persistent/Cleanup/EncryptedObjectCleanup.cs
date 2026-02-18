@@ -12,8 +12,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanu
 
 public class EncryptedObjectCleanup
 {
-    public async Task Cleanup(
-        PostgreSqlDbContext postgreSqlDbContext,
+    public Task Cleanup(
+        BaseDbContext postgreSqlDbContext,
+        ISettingsService settingsService,
         IInstrumentationClient instrumentationClient,
         ITimeProvider timeProvider,
         CancellationToken cancellationToken)
@@ -26,21 +27,15 @@ public class EncryptedObjectCleanup
             postgreSqlDbContext
                 .EncryptedObject;
 
-        // Check encrypted objects
-        foreach (EncryptedObject encryptedObject in encryptedObjects)
+        // Warn if database contains unencrypted objects
+        if (!settingsService.DisableEncryption &&
+            encryptedObjects.Any(r => r.EncryptionKeyDescriptionId == null))
         {
-            if (encryptedObject.KeyId is not null &&
-                encryptedObject.EncryptionKeyDescriptionId is null)
-            {
-                EncryptionKeyDescriptionEntity keyEntity =
-                    encryptionKeyDescriptions.SingleOrDefault(x => x.LegacyName == encryptedObject.KeyId) ??
-                    throw new ArgumentException(
-                        "Database clean-up error: " +
-                        $"EncryptionKeyDescription with legacy name {encryptedObject.KeyId} specified by EncryptedObject with ID {encryptedObject.Id} not found.");
-                encryptedObject.EncryptionKeyDescriptionId = keyEntity.Id;
-            }
+            string fullMessage =
+                "Database clean-up warning: " +
+                "Encryption is enabled yet at least one EncryptedObject is not encrypted (has null EncryptionKeyDescriptionId).";
+            instrumentationClient.Warning(fullMessage);
         }
-
-        await postgreSqlDbContext.SaveChangesAsync(cancellationToken);
+        return Task.CompletedTask;
     }
 }

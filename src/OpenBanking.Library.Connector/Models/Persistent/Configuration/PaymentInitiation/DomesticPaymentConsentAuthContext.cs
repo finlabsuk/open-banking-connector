@@ -3,28 +3,46 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation;
 
 internal class
-    DomesticPaymentConsentAuthContext : AuthContextConfig<
-        Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext>
-{
-    public DomesticPaymentConsentAuthContext(
-        DbProvider dbProvider,
+    DomesticPaymentConsentAuthContext(
         bool supportsGlobalQueryFilter,
-        Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
-
+        DbProvider dbProvider,
+        bool isRelationalDatabase,
+        Formatting jsonFormatting)
+    : AuthContextConfig<
+        Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext>(
+        supportsGlobalQueryFilter,
+        dbProvider,
+        isRelationalDatabase,
+        jsonFormatting)
+{
     public override void Configure(
         EntityTypeBuilder<Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext> builder)
     {
         base.Configure(builder);
 
         // Top-level property info: read-only, JSON conversion, etc
-        builder.Property(e => e.DomesticPaymentConsentId)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.DomesticPaymentConsentId); // shared column
+
+        // Only set up relationships (foreign keys and navigations) if not MongoDB
+        if (_dbProvider is not DbProvider.MongoDb)
+        {
+            builder
+                .HasOne(e => e.DomesticPaymentConsentNavigation)
+                .WithMany()
+                .HasForeignKey(e => e.DomesticPaymentConsentId);
+        }
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.Property(p => p.DomesticPaymentConsentId).HasElementName("domesticPaymentConsentId");
+        }
     }
 }

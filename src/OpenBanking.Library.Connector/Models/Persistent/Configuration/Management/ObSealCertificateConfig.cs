@@ -8,17 +8,18 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MongoDB.EntityFrameworkCore.Extensions;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.Management;
 
-internal class ObSealCertificateConfig : BaseConfig<ObSealCertificateEntity>
+internal class ObSealCertificateConfig(
+    bool supportsGlobalQueryFilter,
+    DbProvider dbProvider,
+    bool isRelationalDatabase,
+    Formatting jsonFormatting)
+    : BaseConfig<ObSealCertificateEntity>(supportsGlobalQueryFilter, dbProvider, isRelationalDatabase, jsonFormatting)
 {
-    public ObSealCertificateConfig(
-        DbProvider dbProvider,
-        bool supportsGlobalQueryFilter,
-        Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
-
     public override void Configure(EntityTypeBuilder<ObSealCertificateEntity> builder)
     {
         base.Configure(builder);
@@ -39,6 +40,15 @@ internal class ObSealCertificateConfig : BaseConfig<ObSealCertificateEntity>
         if (_dbProvider is DbProvider.PostgreSql)
         {
             builder.Property(e => e.AssociatedKey).HasColumnType("jsonb");
+        }
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.ToCollection("obSealCertificate");
+            builder.Property(p => p.AssociatedKey).HasElementName("associatedKey");
+            builder.Property(p => p.AssociatedKeyId).HasElementName("associatedKeyId");
+            builder.Property(p => p.Certificate).HasElementName("certificate");
         }
     }
 }

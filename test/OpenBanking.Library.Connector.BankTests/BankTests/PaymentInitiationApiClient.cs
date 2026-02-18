@@ -89,6 +89,8 @@ public class PaymentInitiationApiClient(WebAppClient client)
             response.ExternalApiResponse.Should().NotBeNull();
             response.ExternalApiResponse!.Risk.PaymentContextCode.Should()
                 .Be(request.ExternalApiRequest!.Risk.PaymentContextCode);
+            response.ExternalApiResponse!.Risk.V3PaymentContextCode.Should()
+                .Be(request.ExternalApiRequest!.Risk.V3PaymentContextCode);
             bool responseRiskContractPresentIndicatorMayBeMissingOrWrong =
                 customBehaviour?.ResponseRiskContractPresentIndicatorMayBeMissingOrWrong ?? false;
             if (!responseRiskContractPresentIndicatorMayBeMissingOrWrong)
@@ -149,7 +151,7 @@ public class PaymentInitiationApiClient(WebAppClient client)
     }
 
     public async Task<DomesticPaymentResponse> DomesticPaymentRead(
-        ConsentExternalEntityReadParams readParams,
+        ExternalEntityReadParams readParams,
         DomesticPaymentCustomBehaviour? customBehaviour)
     {
         // Read object
@@ -159,8 +161,8 @@ public class PaymentInitiationApiClient(WebAppClient client)
                 uriPath,
                 [
                     new KeyValuePair<string, IEnumerable<string>>(
-                        "x-obc-domestic-payment-consent-id",
-                        [$"{readParams.ConsentId}"])
+                        "x-obc-bank-registration-id",
+                        [$"{readParams.BankRegistrationId}"])
                 ]);
 
         // Checks
@@ -173,10 +175,15 @@ public class PaymentInitiationApiClient(WebAppClient client)
         {
             response.ExternalApiResponse.Data.Status.Should()
                 .BeOneOf(
-                    PaymentInitiationModelsPublic.Data4Status.AcceptedCreditSettlementCompleted,
-                    PaymentInitiationModelsPublic.Data4Status.AcceptedSettlementCompleted,
-                    PaymentInitiationModelsPublic.Data4Status.AcceptedWithoutPosting,
-                    PaymentInitiationModelsPublic.Data4Status.AcceptedSettlementInProcess);
+                    PaymentInitiationModelsPublic.Data4Status.ACCC,
+                    PaymentInitiationModelsPublic.Data4Status.ACCP,
+                    PaymentInitiationModelsPublic.Data4Status.ACFC,
+                    PaymentInitiationModelsPublic.Data4Status.ACSC,
+                    PaymentInitiationModelsPublic.Data4Status.ACSP,
+                    PaymentInitiationModelsPublic.Data4Status.ACTC,
+                    PaymentInitiationModelsPublic.Data4Status.ACWC,
+                    PaymentInitiationModelsPublic.Data4Status.ACWP,
+                    PaymentInitiationModelsPublic.Data4Status.PDNG);
         }
 
         // Check refund account
@@ -226,7 +233,7 @@ public class PaymentInitiationApiClient(WebAppClient client)
     }
 
     public async Task<DomesticPaymentPaymentDetailsResponse> DomesticPaymentReadPaymentDetails(
-        ConsentExternalEntityReadParams readParams)
+        ExternalEntityReadParams readParams)
     {
         // Read object
         var uriPath = $"/pisp/domestic-payments/{readParams.ExternalApiId}/payment-details";
@@ -235,8 +242,8 @@ public class PaymentInitiationApiClient(WebAppClient client)
                 uriPath,
                 [
                     new KeyValuePair<string, IEnumerable<string>>(
-                        "x-obc-domestic-payment-consent-id",
-                        [$"{readParams.ConsentId}"])
+                        "x-obc-bank-registration-id",
+                        [$"{readParams.BankRegistrationId}"])
                 ]);
 
         // Checks

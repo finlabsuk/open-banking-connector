@@ -2,6 +2,10 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+global using ChaseBank =
+    FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.ChaseBank;
+global using ChaseRegistrationGroup =
+    FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.ChaseBank;
 global using DanskeBank = FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.DanskeBank;
 global using DanskeRegistrationGroup = FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.DanskeBank;
 global using HsbcBank = FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.HsbcBank;
@@ -24,11 +28,21 @@ global using StarlingBank =
     FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.StarlingBank;
 global using StarlingRegistrationGroup =
     FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.StarlingBank;
+global using TsbBank =
+    FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.TsbBank;
+global using TsbRegistrationGroup =
+    FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.TsbBank;
 
 // UK Open Banking API models
+global using AccountAndTransactionModelsV3p1p11 =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagAisp.Models;
 global using AccountAndTransactionModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAisp.Models;
-global using PaymentInitiationModelsPublic =
+global using PaymentInitiationModelsV3p1p11 =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagPisp.Models;
-global using VariableRecurringPaymentsModelsPublic =
+global using PaymentInitiationModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPisp.Models;
+global using VariableRecurringPaymentsModelsV3p1p11 =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagVrp.Models;
+global using VariableRecurringPaymentsModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagVrp.Models;

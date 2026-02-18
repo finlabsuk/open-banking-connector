@@ -236,8 +236,13 @@ public class AccountAccessConsentSubtest(
                         ExtraHeaders = null,
                         PublicRequestUrlWithoutQuery = null
                     };
-                    AccountAndTransactionModelsPublic.OBExternalAccountSubType1Code? accountSubType =
-                        account.AccountTypeCode;
+                    bool accountIsCreditCardType =
+                        (account.V3AccountSubType is not null &&
+                         account.V3AccountSubType is AccountAndTransactionModelsV3p1p11.OBExternalAccountSubType1Code
+                             .CreditCard) ||
+                        (account.AccountTypeCode is not null &&
+                         account.AccountTypeCode is AccountAndTransactionModelsPublic.OBExternalAccountSubType1CodeV4
+                             .CARD);
 
                     // GET /accounts/{accountId}
                     AccountsResponse accountsResp2 =
@@ -248,7 +253,7 @@ public class AccountAccessConsentSubtest(
                         requestedPermissions.Contains(AccountAndTransactionModelsPublic.Permissions.ReadBalances);
                     if (testGetBalances)
                     {
-                        BalancesResponse balancesResp =
+                        BalancesResponse balancesResp2 =
                             await accountAndTransactionApiClient.BalancesRead(readForSingleAccount);
                     }
 
@@ -314,14 +319,17 @@ public class AccountAccessConsentSubtest(
                                 await accountAndTransactionApiClient.PartiesRead(readForSingleAccount);
                         }
 
-                        Parties2Response partiesResp =
-                            await accountAndTransactionApiClient.Parties2Read(readForSingleAccount);
+                        if (bankProfile.AccountAndTransactionApiSettings.UseGetParty2Endpoint)
+                        {
+                            Parties2Response partiesResp =
+                                await accountAndTransactionApiClient.Parties2Read(readForSingleAccount);
+                        }
                     }
 
                     // GET /accounts/{AccountId}/direct-debits
                     bool testGetDirectDebits =
                         requestedPermissions.Contains(AccountAndTransactionModelsPublic.Permissions.ReadDirectDebits) &&
-                        accountSubType is not AccountAndTransactionModelsPublic.OBExternalAccountSubType1Code.CARD;
+                        !accountIsCreditCardType;
                     if (testGetDirectDebits)
                     {
                         DirectDebitsResponse directDebitsResp =
@@ -334,8 +342,7 @@ public class AccountAccessConsentSubtest(
                              AccountAndTransactionModelsPublic.Permissions.ReadStandingOrdersBasic) ||
                          requestedPermissions.Contains(
                              AccountAndTransactionModelsPublic.Permissions.ReadStandingOrdersDetail)) &&
-                        accountSubType is not AccountAndTransactionModelsPublic.OBExternalAccountSubType1Code
-                            .CARD;
+                        !accountIsCreditCardType;
                     if (testGetStandingOrders)
                     {
                         StandingOrdersResponse standingOrdersResp =
@@ -364,43 +371,85 @@ public class AccountAccessConsentSubtest(
 
                     // Get consent
                     IDbService dbService = serviceScopeContainer.DbService;
+                    IDbMethods dbMethods = dbService.GetDbMethods();
                     IDbEntityMethods<Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent>
                         consentEntityMethods =
                             dbService
-                                .GetDbEntityMethodsClass<
+                                .GetDbEntityMethods<
                                     Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent>();
-                    Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent consent =
-                        consentEntityMethods
-                            .DbSet
-                            .Include(o => o.AccountAccessConsentAccessTokensNavigation)
-                            .Include(o => o.AccountAccessConsentRefreshTokensNavigation)
-                            .AsSplitQuery()
-                            .SingleOrDefault(x => x.Id == accountAccessConsentId) ??
-                        throw new KeyNotFoundException();
+                    IDbEntityMethods<AccountAccessConsentAccessToken> accessTokenMethods =
+                        dbService.GetDbEntityMethods<AccountAccessConsentAccessToken>();
+                    IDbEntityMethods<AccountAccessConsentRefreshToken> refreshTokenMethods =
+                        dbService.GetDbEntityMethods<AccountAccessConsentRefreshToken>();
 
-                    // Ensure refresh token available
-                    AccountAccessConsentRefreshToken _ =
-                        consent
-                            .AccountAccessConsentRefreshTokensNavigation.SingleOrDefault(x => !x.IsDeleted) ??
-                        throw new Exception("Refresh token not found.");
+                    Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent consent;
+                    AccountAccessConsentAccessToken? storedAccessToken;
+                    if (dbMethods.DbProvider is not DbProvider.MongoDb)
+                    {
+                        consent =
+                            consentEntityMethods
+                                .DbSet
+                                .Include(o => o.AccountAccessConsentAccessTokensNavigation)
+                                .Include(o => o.AccountAccessConsentRefreshTokensNavigation)
+                                .AsSplitQuery()
+                                .SingleOrDefault(x => x.Id == accountAccessConsentId) ??
+                            throw new KeyNotFoundException();
+
+                        // Ensure refresh token available
+                        AccountAccessConsentRefreshToken _ =
+                            consent
+                                .AccountAccessConsentRefreshTokensNavigation.SingleOrDefault(x => !x.IsDeleted) ??
+                            throw new Exception("Refresh token not found.");
+
+                        storedAccessToken = consent
+                            .AccountAccessConsentAccessTokensNavigation.SingleOrDefault(x => !x.IsDeleted);
+                    }
+                    else
+                    {
+                        consent =
+                            consentEntityMethods
+                                .DbSet
+                                .SingleOrDefault(x => x.Id == accountAccessConsentId) ??
+                            throw new KeyNotFoundException();
+
+                        // Ensure refresh token available
+                        AccountAccessConsentRefreshToken unused2 =
+                            await refreshTokenMethods
+                                .DbSetNoTracking
+                                .Where(x => EF.Property<string>(x, "_t") == nameof(AccountAccessConsentRefreshToken))
+                                .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consent.Id && !x.IsDeleted) ??
+                            throw new Exception("Refresh token not found.");
+
+                        storedAccessToken =
+                            await accessTokenMethods
+                                .DbSet
+                                .Where(x => EF.Property<string>(x, "_t") == nameof(AccountAccessConsentAccessToken))
+                                .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consent.Id && !x.IsDeleted);
+                    }
 
                     // If available, delete cached access token (to force use of refresh token)
                     memoryCache.Remove(consent.GetCacheKey());
 
                     // If available, delete stored access token (to force use of refresh token) 
-                    AccountAccessConsentAccessToken? storedAccessToken =
-                        consent
-                            .AccountAccessConsentAccessTokensNavigation.SingleOrDefault(x => !x.IsDeleted);
                     if (storedAccessToken is not null)
                     {
                         storedAccessToken.UpdateIsDeleted(true, DateTimeOffset.UtcNow, modifiedBy);
-                        await dbService.GetDbSaveChangesMethodClass().SaveChangesAsync();
+                        await dbService.GetDbMethods().SaveChangesAsync();
                     }
                 }
 
-                // GET /accounts
-                AccountsResponse accountsResponse2 =
-                    await accountAndTransactionApiClient.AccountsRead(readForAllAccounts);
+                if (bankProfile.AccountAndTransactionApiSettings.UseBalancesNotAccountEndpointInSecondSession)
+                {
+                    // GET /balances
+                    BalancesResponse balancesResp3 =
+                        await accountAndTransactionApiClient.BalancesRead(readForAllAccounts);
+                }
+                else
+                {
+                    // GET /accounts
+                    AccountsResponse accountsResponse2 =
+                        await accountAndTransactionApiClient.AccountsRead(readForAllAccounts);
+                }
             }
 
             // Delete AccountAccessConsent (excludes external API delete)

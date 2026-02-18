@@ -99,14 +99,15 @@ safely for all banks and only creates new OAuth2 clients where necessary.
 
 ## Software Statement endpoints
 
-The four endpoints
+The five endpoints
 
 - [POST /manage/software-statements](./openapi.md)
+- [GET /manage/software-statements](./openapi.md)
 - [GET /manage/software-statements/{softwareStatementId}](./openapi.md)
 - [PUT /manage/software-statements/{softwareStatementId}](./openapi.md)
 - [DELETE /manage/software-statements/{softwareStatementId}](./openapi.md)
 
-create, read, update and delete `SoftwareStatement` records in the database `software_statement` table. A
+create, read all, read, update and delete `SoftwareStatement` records in the database `software_statement` table. A
 `SoftwareStatement` record corresponds to and describes a software statement created in the UK Open Banking Directory.
 
 In UK Open Banking, a software statement identifies a third-party provider (TPP) application which can create
@@ -148,8 +149,8 @@ very important for AES-GCM that nonces are never re-used for the same encryption
 
 Multiple encryption key descriptions can be added to Open Banking Connector using
 the [POST /manage/encryption-key-descriptions](./openapi.md) endpoint. This allows decryption of objects encrypted with
-previously-used keys. New objects will be encrypted with the key specified by configuration
-setting [OpenBankingConnector:Keys:CurrentEncryptionKeyId](../../configuration/encryption-key-settings.md).
+previously-used keys. New objects will be encrypted with the key specified in the database settings table by
+field `current_encryption_key_description_id`. This can be updated when adding a key.
 
 Encryption keys are described by both a `Source` and `Name`. Supported sources at time of writing are environment
 variables (not generally recommended) and AWS SSM secrets. Additional sources supporting other key vaults can be added

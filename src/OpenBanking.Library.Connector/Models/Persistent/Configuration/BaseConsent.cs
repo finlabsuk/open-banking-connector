@@ -10,55 +10,59 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration;
 
-internal class BaseConsentConfig<TEntity> : BaseConfig<TEntity>
+internal class BaseConsentConfig<TEntity>(
+    bool supportsGlobalQueryFilter,
+    DbProvider dbProvider,
+    bool isRelationalDatabase,
+    Formatting jsonFormatting)
+    : BaseConfig<TEntity>(supportsGlobalQueryFilter, dbProvider, isRelationalDatabase, jsonFormatting)
     where TEntity : BaseConsent
 {
-    public BaseConsentConfig(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
-        base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
-
     public override void Configure(EntityTypeBuilder<TEntity> builder)
     {
         base.Configure(builder);
 
         // Top-level property info: read-only, JSON conversion, etc
-        builder.Property(e => e.Id)
-            .HasColumnOrder(0);
+        builder.Property(e => e.Id);
         builder.Property(e => e.BankRegistrationId)
-            .HasColumnOrder(1)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.CreatedWithV4)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
 
         builder.Property(e => e.ExternalApiId)
-            .HasColumnOrder(100)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property(e => e.AuthContextState)
-            .HasColumnOrder(101);
-        builder.Property(e => e.AuthContextNonce)
-            .HasColumnOrder(102);
-        builder.Property(e => e.AuthContextModified)
-            .HasColumnOrder(103);
-        builder.Property(e => e.AuthContextModifiedBy)
-            .HasColumnOrder(104);
+        builder.Property(e => e.AuthContextState);
+        builder.Property(e => e.AuthContextNonce);
+        builder.Property(e => e.AuthContextModified);
+        builder.Property(e => e.AuthContextModifiedBy);
         builder.Property(e => e.AuthContextCodeVerifier);
-        builder.Property("_accessTokenAccessToken")
-            .HasColumnOrder(105);
-        builder.Property("_accessTokenExpiresIn")
-            .HasColumnOrder(106);
-        builder.Property("_accessTokenRefreshToken")
-            .HasColumnOrder(107);
-        builder.Property("_accessTokenModified")
-            .HasColumnOrder(108);
-        builder.Property("_accessTokenModifiedBy")
-            .HasColumnOrder(109);
         builder.Property(e => e.ExternalApiUserId);
         builder.Property(e => e.ExternalApiUserIdModified);
         builder.Property(e => e.ExternalApiUserIdModifiedBy);
 
-        // Note: we specify column order above and in parent classes to solve two problems:
-        // (1) Auto-ordering with two base classes seems to put columns from "middle" class at end of table.
-        // (2) Field-sourced columns jump to start of table with auto-ordering and their ordering w.r.t. one
-        // another seems fixed as alphabetical.
-        // We group columns above into two blocks:
-        // 0-99: for keys (primary and foreign)
-        // 100+: for "middle" class columns including those sourced from fields. 
+        // Only set up relationships (foreign keys and navigations) if not MongoDB
+        if (_dbProvider is not DbProvider.MongoDb)
+        {
+            builder
+                .HasOne(e => e.BankRegistrationNavigation)
+                .WithMany()
+                .HasForeignKey(e => e.BankRegistrationId);
+        }
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.Property(p => p.AuthContextCodeVerifier).HasElementName("authContextCodeVerifier");
+            builder.Property(p => p.AuthContextModified).HasElementName("authContextModified");
+            builder.Property(p => p.AuthContextModifiedBy).HasElementName("authContextModifiedBy");
+            builder.Property(p => p.AuthContextNonce).HasElementName("authContextNonce");
+            builder.Property(p => p.AuthContextState).HasElementName("authContextState");
+            builder.Property(p => p.BankRegistrationId).HasElementName("bankRegistrationId");
+            builder.Property(p => p.CreatedWithV4).HasElementName("createdWithV4");
+            builder.Property(p => p.ExternalApiId).HasElementName("externalApiId");
+            builder.Property(p => p.ExternalApiUserId).HasElementName("externalApiUserId");
+            builder.Property(p => p.ExternalApiUserIdModified).HasElementName("externalApiUserIdModified");
+            builder.Property(p => p.ExternalApiUserIdModifiedBy).HasElementName("externalApiUserIdModifiedBy");
+        }
     }
 }

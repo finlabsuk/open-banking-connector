@@ -12,6 +12,6 @@ public interface IDomesticPaymentContext<in TPublicRequest, TPublicResponse, TPu
     IReadExternalEntityContext<TPublicResponse, TReadParams>,
     IReadExternalEntityPaymentDetailsContext<TPublicPaymentDetailsResponse, TReadParams>
     where TPublicResponse : class
-    where TReadParams : ConsentExternalEntityReadParams
+    where TReadParams : ExternalEntityReadParams
     where TCreateParams : ConsentExternalCreateParams
     where TPublicPaymentDetailsResponse : class { }

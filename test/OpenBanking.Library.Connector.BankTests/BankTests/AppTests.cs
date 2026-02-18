@@ -38,6 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 [TestClass]
 public class AppTests
 {
+    private const string ModifiedBy = "Automated bank tests";
     private static AppContextFixture _appContextFixture = null!;
     private static BankTestingFixture _classLevelWebApplicationFactory = null!;
 
@@ -45,8 +46,8 @@ public class AppTests
         GetDynamicClientRegistrationTestCases() =>
         GetTestCases(TestType.DynamicClientRegistration);
 
-    [DataTestMethod]
-    [DynamicData(nameof(GetDynamicClientRegistrationTestCases), DynamicDataSourceType.Method)]
+    [TestMethod]
+    [DynamicData(nameof(GetDynamicClientRegistrationTestCases))]
     [DoNotParallelize]
     public async Task DynamicClientRegistration(BankTestData bankTestData) => await TestAllInner(bankTestData);
 
@@ -54,35 +55,33 @@ public class AppTests
         GetAccountAccessConsentTestCases() =>
         GetTestCases(TestType.AccountAccessConsent);
 
-    [DataTestMethod]
-    [DynamicData(nameof(GetAccountAccessConsentTestCases), DynamicDataSourceType.Method)]
+    [TestMethod]
+    [DynamicData(nameof(GetAccountAccessConsentTestCases))]
     public async Task AccountAccessConsent(BankTestData bankTestData) => await TestAllInner(bankTestData);
 
     public static IEnumerable<object[]>
         GetDomesticPaymentConsentTestCases() =>
         GetTestCases(TestType.DomesticPaymentConsent);
 
-    [DataTestMethod]
-    [DynamicData(nameof(GetDomesticPaymentConsentTestCases), DynamicDataSourceType.Method)]
+    [TestMethod]
+    [DynamicData(nameof(GetDomesticPaymentConsentTestCases))]
     public async Task DomesticPaymentConsent(BankTestData bankTestData) => await TestAllInner(bankTestData);
 
     public static IEnumerable<object[]>
         GetDomesticVrpConsentTestCases() =>
         GetTestCases(TestType.DomesticVrpConsent);
 
-    [DataTestMethod]
-    [DynamicData(nameof(GetDomesticVrpConsentTestCases), DynamicDataSourceType.Method)]
+    [TestMethod]
+    [DynamicData(nameof(GetDomesticVrpConsentTestCases))]
     public async Task DomesticVrpConsent(BankTestData bankTestData) => await TestAllInner(bankTestData);
 
     [ClassInitialize]
-    public static void ClassInitialize(TestContext context)
+    public static async Task ClassInitialize(TestContext context)
     {
         Console.WriteLine("AppTest ClassInitialize");
         _classLevelWebApplicationFactory = new BankTestingFixture();
-        using HttpClient
-            httpClient = _classLevelWebApplicationFactory
-                .CreateClient(); // seems required to ensure application fully set up
         _appContextFixture = new AppContextFixture();
+        await SetUpEncryptionKey();
     }
 
     [ClassCleanup]
@@ -108,7 +107,7 @@ public class AppTests
             new JsonSerializerOptions()).GetAwaiter().GetResult();
 
         // Loop through test groups
-        foreach (BankRegistrationEnv bankRegistrationEnv in bankRegistrationEnvs.Values)
+        foreach ((string bankRegistrationEnvName, BankRegistrationEnv bankRegistrationEnv) in bankRegistrationEnvs)
         {
             bool testConsent = testType switch
             {
@@ -184,6 +183,10 @@ public class AppTests
                         bankProfileFromEnv,
                         registrationScope,
                         bankGroup),
+                    BankGroup.Chase => GetAllInRegistrationGroup<ChaseBank, ChaseRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
                     BankGroup.Cooperative => GetAllInRegistrationGroup<CooperativeBank, CooperativeRegistrationGroup>(
                         bankProfileFromEnv,
                         registrationScope,
@@ -228,6 +231,10 @@ public class AppTests
                         bankProfileFromEnv,
                         registrationScope,
                         bankGroup),
+                    BankGroup.Tsb => GetAllInRegistrationGroup<TsbBank, TsbRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
                     _ => throw new ArgumentOutOfRangeException()
                 };
             }
@@ -252,9 +259,7 @@ public class AppTests
                         SoftwareStatement = softwareStatement,
                         BankProfile = bankProfile,
                         BankRegistrationExternalApiId = bankRegistrationExternalApiId,
-                        BankRegistrationExternalApiSecretName = bankRegistrationExternalApiSecretName,
-                        BankRegistrationRegistrationAccessTokenName =
-                            bankRegistrationRegistrationAccessTokenName,
+                        BankRegistrationEnvName = bankRegistrationEnvName,
                         AccountAccessConsentExternalApiId = accountAccessConsentExternalApiId,
                         AccountAccessConsentAuthContextNonce = null,
                         RegistrationScope = registrationScope,
@@ -290,6 +295,33 @@ public class AppTests
                     .Select(x => bankGroupData.GetBankProfile(x));
             return bankProfiles;
         }
+    }
+
+    private static async Task SetUpEncryptionKey()
+    {
+        // Create API client
+        BankTestingFixture testLevelWebApplicationFactory = _classLevelWebApplicationFactory;
+        using HttpClient httpClient = testLevelWebApplicationFactory.CreateClient();
+        var webAppClient = new WebAppClient(httpClient);
+        var managementApiClient = new ManagementApiClient(webAppClient);
+
+        // Create and read encryption key description
+        string encryptionKeyDescriptionEnvFile = Path.Combine(
+            AppConfiguration.RequestsDirectory,
+            "EncryptionKeyDescription",
+            "http-client.private.env.json");
+        var encryptionKeyDescriptionEnvs = await DataFile.ReadFile<EncryptionKeyDescriptionEnvFile>(
+            encryptionKeyDescriptionEnvFile,
+            new JsonSerializerOptions());
+        EncryptionKeyDescriptionEnv encryptionKeyDescriptionEnv =
+            encryptionKeyDescriptionEnvs.Values.FirstOrDefault(x => x.EncryptionKeyDescriptionName == "Default") ??
+            throw new InvalidOperationException("encryption key description with name Default not found.");
+        EncryptionKeyDescriptionResponse encryptionKeyDescriptionResponse = await EncryptionKeyDescriptionCreate(
+            encryptionKeyDescriptionEnv,
+            null,
+            ModifiedBy,
+            managementApiClient);
+        Guid encryptionKeyDescriptionId = encryptionKeyDescriptionResponse.Id;
     }
 
     private async Task TestAllInner(BankTestData testData)
@@ -378,8 +410,6 @@ public class AppTests
         EmailOptions emailOptions = bankTestSettings.Auth.Email;
         var consentAuth = new ConsentAuth(browserTypeLaunchOptions, emailOptions, bankProfileDefinitions);
 
-        var modifiedBy = "Automated bank tests";
-
         // Create and read software statement (incl. certificates)
         string softwareStatementEnvFile = Path.Combine(
             AppConfiguration.RequestsDirectory,
@@ -392,24 +422,42 @@ public class AppTests
             softwareStatementEnvs.Values.FirstOrDefault(x => x.SoftwareStatementName == testData.SoftwareStatement) ??
             throw new InvalidOperationException(
                 $"Software statement {testData.SoftwareStatement} specified but not found.");
-        (ObWacCertificateResponse obWacCertificateResponse, ObSealCertificateResponse obSealCertificateResponse,
+        (ObWacCertificateResponse obWacCertificateResponse,
+            ObSealCertificateResponse obSealCertificateResponse,
             SoftwareStatementResponse softwareStatementResponse) = await SoftwareStatementCreate(
             softwareStatementEnv,
-            modifiedBy,
             testNameUnique,
+            ModifiedBy,
             managementApiClient);
         Guid obWacCertificateId = obWacCertificateResponse.Id;
         Guid obSealCertificateId = obSealCertificateResponse.Id;
         Guid softwareStatementId = softwareStatementResponse.Id;
 
         // Create BankRegistrationRequest
+        string bankRegistrationEnvFile = Path.Combine(
+            AppConfiguration.RequestsDirectory,
+            "BankRegistration",
+            "http-client.private.env.json");
+        var bankRegistrationEnvs = await DataFile.ReadFile<BankRegistrationEnvFile>(
+            bankRegistrationEnvFile,
+            new JsonSerializerOptions());
+        if (!bankRegistrationEnvs.TryGetValue(
+                testData.BankRegistrationEnvName,
+                out BankRegistrationEnv? bankRegistrationEnv))
+        {
+            throw new InvalidOperationException(
+                $"Bank registration test environment {testData.BankRegistrationEnvName} specified but not found.");
+        }
         var bankRegistrationRequest = new BankRegistration
         {
             BankProfile = bankProfile.BankProfileEnum,
             SoftwareStatementId = softwareStatementId,
             RegistrationScope = testData.RegistrationScope,
+            AispUseV4 = bankRegistrationEnv.AispUseV4,
+            PispUseV4 = bankRegistrationEnv.PispUseV4,
+            VrpUseV4 = bankRegistrationEnv.VrpUseV4,
             Reference = testNameUnique,
-            CreatedBy = modifiedBy
+            CreatedBy = ModifiedBy
         };
 
         if (testData.TestType is TestType.DynamicClientRegistration)
@@ -431,15 +479,23 @@ public class AppTests
         bankRegistrationRequest.ExternalApiId =
             testData.BankRegistrationExternalApiId ??
             throw new InvalidOperationException("No external API BankRegistration ID provided.");
-        if (testData.BankRegistrationExternalApiSecretName is not null)
+        if (bankRegistrationEnv.ExternalApiClientSecretName is not null)
         {
             bankRegistrationRequest.ExternalApiSecretFromSecrets =
-                new SecretDescription { Name = testData.BankRegistrationExternalApiSecretName };
+                new SecretDescription
+                {
+                    Name = bankRegistrationEnv.ExternalApiClientSecretName,
+                    Source = bankRegistrationEnv.ExternalApiClientSecretSource
+                };
         }
-        if (testData.BankRegistrationRegistrationAccessTokenName is not null)
+        if (bankRegistrationEnv.ExternalApiRegistrationAccessTokenName is not null)
         {
             bankRegistrationRequest.RegistrationAccessTokenFromSecrets =
-                new SecretDescription { Name = testData.BankRegistrationRegistrationAccessTokenName };
+                new SecretDescription
+                {
+                    Name = bankRegistrationEnv.ExternalApiRegistrationAccessTokenName,
+                    Source = bankRegistrationEnv.ExternalApiRegistrationAccessTokenSource
+                };
         }
         BankRegistrationResponse bankRegistrationCreateResponse =
             await BankRegistrationCreate(
@@ -449,6 +505,7 @@ public class AppTests
         Guid bankRegistrationId = bankRegistrationCreateResponse.Id;
         OAuth2ResponseMode defaultResponseMode =
             bankRegistrationCreateResponse.DefaultResponseModeOverride ?? bankProfile.DefaultResponseMode;
+        bool pispUseV4 = bankRegistrationCreateResponse.PispUseV4;
 
         string redirectUri = GetRedirectUri(
             defaultResponseMode,
@@ -468,12 +525,6 @@ public class AppTests
                     "Cannot test AccountAndTransaction API due to missing registration scope.");
             }
 
-            if (bankProfile.AccountAndTransactionApi is null)
-            {
-                throw new InvalidOperationException(
-                    "Cannot test AccountAndTransaction API as no API specified in bank profile.");
-            }
-
             foreach (AccountAccessConsentSubtestEnum subTest in
                      AccountAccessConsentSubtest.AccountAccessConsentSubtestsSupported(bankProfile))
             {
@@ -485,7 +536,7 @@ public class AppTests
                     defaultResponseMode,
                     testData.TestAuth,
                     testNameUnique,
-                    modifiedBy,
+                    ModifiedBy,
                     testDataProcessorFluentRequestLogging
                         .AppendToPath("aisp")
                         .AppendToPath($"{subTest.ToString()}"),
@@ -526,12 +577,6 @@ public class AppTests
                         "Cannot test PaymentInitiation API due to missing registration scope.");
                 }
 
-                if (bankProfile.PaymentInitiationApi is null)
-                {
-                    throw new InvalidOperationException(
-                        "Cannot test PaymentInitiation API as no API specified in bank profile.");
-                }
-
                 foreach (DomesticPaymentSubtestEnum subTest in
                          DomesticPaymentConsentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
                 {
@@ -539,12 +584,13 @@ public class AppTests
                         subTest,
                         bankProfile,
                         bankRegistrationId,
+                        pispUseV4,
                         defaultResponseMode,
                         testData.TestAuth,
                         testData.ReferenceName,
                         paymentsEnv,
                         testNameUnique,
-                        modifiedBy,
+                        ModifiedBy,
                         testDataProcessorFluentRequestLogging
                             .AppendToPath("pisp")
                             .AppendToPath($"{subTest.ToString()}"),
@@ -563,12 +609,6 @@ public class AppTests
                         "Cannot test VariableRecurringPayments API due to missing registration scope.");
                 }
 
-                if (bankProfile.VariableRecurringPaymentsApi is null)
-                {
-                    throw new InvalidOperationException(
-                        "Cannot test VariableRecurringPayments API as no API specified in bank profile.");
-                }
-
                 foreach (DomesticVrpSubtestEnum subTest in
                          DomesticVrpConsentSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
                 {
@@ -581,7 +621,7 @@ public class AppTests
                         testData.ReferenceName,
                         paymentsEnv,
                         testNameUnique,
-                        modifiedBy,
+                        ModifiedBy,
                         testDataProcessorFluentRequestLogging
                             .AppendToPath("vrp")
                             .AppendToPath($"{subTest.ToString()}"),
@@ -602,6 +642,8 @@ public class AppTests
             obSealCertificateId,
             softwareStatementId,
             managementApiClient);
+
+        Console.WriteLine("AppTest Finish");
     }
 
     private string GetRedirectUri(
@@ -622,7 +664,18 @@ public class AppTests
         };
 
     private async
-        Task<(BaseResponse obWacCertificateDeleteResponse, BaseResponse obSealCertificateDeleteResponse, BaseResponse
+        Task<BaseResponse> EncryptionKeyDescriptionDelete(
+            Guid encryptionKeyDescriptionId,
+            ManagementApiClient managementApiClient)
+    {
+        BaseResponse encryptionKeyDescriptionResponse =
+            await managementApiClient.EncryptionKeyDescriptionDelete(encryptionKeyDescriptionId);
+        return encryptionKeyDescriptionResponse;
+    }
+
+    private async
+        Task<(BaseResponse obWacCertificateDeleteResponse, BaseResponse
+            obSealCertificateDeleteResponse, BaseResponse
             softwareStatementDeleteResponse)> SoftwareStatementDelete(
             Guid obWacCertificateId,
             Guid obSealCertificateId,
@@ -638,11 +691,41 @@ public class AppTests
         BaseResponse softwareStatementDeleteResponse =
             await managementApiClient.SoftwareStatementDelete(softwareStatementId);
 
-        return (obWacCertificateDeleteResponse, obSealCertificateDeleteResponse, softwareStatementDeleteResponse);
+        return (obWacCertificateDeleteResponse, obSealCertificateDeleteResponse,
+            softwareStatementDeleteResponse);
+    }
+
+    private static async
+        Task<EncryptionKeyDescriptionResponse> EncryptionKeyDescriptionCreate(
+            EncryptionKeyDescriptionEnv softwareStatementEnv,
+            string? reference,
+            string createdBy,
+            ManagementApiClient managementApiClient)
+    {
+        // Create encryption key description
+        var encryptionKeyRequest = new EncryptionKeyDescription
+        {
+            Reference = reference,
+            CreatedBy = createdBy,
+            Key = new SecretDescription
+            {
+                Name = softwareStatementEnv.EncryptionKeyName,
+                Source = softwareStatementEnv.EncryptionKeySource
+            },
+            SetAsCurrentEncryptionKey = true
+        };
+        EncryptionKeyDescriptionResponse encryptionKeyResponse =
+            await managementApiClient.EncryptionKeyDescriptionCreate(encryptionKeyRequest);
+
+        // Read encryption key description
+        _ = await managementApiClient.EncryptionKeyDescriptionRead(encryptionKeyResponse.Id);
+
+        return encryptionKeyResponse;
     }
 
     private async
-        Task<(ObWacCertificateResponse obWacCertificateResponse, ObSealCertificateResponse obSealCertificateResponse,
+        Task<(ObWacCertificateResponse obWacCertificateResponse,
+            ObSealCertificateResponse obSealCertificateResponse,
             SoftwareStatementResponse softwareStatementResponse)> SoftwareStatementCreate(
             SoftwareStatementEnv softwareStatementEnv,
             string reference,
@@ -654,7 +737,11 @@ public class AppTests
         {
             Reference = reference,
             CreatedBy = createdBy,
-            AssociatedKey = new SecretDescription { Name = softwareStatementEnv.ObWacAssociatedKeyName },
+            AssociatedKey = new SecretDescription
+            {
+                Name = softwareStatementEnv.ObWacAssociatedKeyName,
+                Source = softwareStatementEnv.ObWacAssociatedKeySource
+            },
             Certificate = softwareStatementEnv.ObWacCertificate
         };
         ObWacCertificateResponse obWacCertificateResponse =
@@ -669,7 +756,11 @@ public class AppTests
             Reference = reference,
             CreatedBy = createdBy,
             AssociatedKeyId = softwareStatementEnv.ObSealAssociatedKeyId,
-            AssociatedKey = new SecretDescription { Name = softwareStatementEnv.ObSealAssociatedKeyName },
+            AssociatedKey = new SecretDescription
+            {
+                Name = softwareStatementEnv.ObSealAssociatedKeyName,
+                Source = softwareStatementEnv.ObSealAssociatedKeySource
+            },
             Certificate = softwareStatementEnv.ObSealCertificate
         };
         ObSealCertificateResponse obSealCertificateResponse =

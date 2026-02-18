@@ -36,6 +36,9 @@ public enum BankProfileEnum
     [EnumMember(Value = "Barclays_BarclaycardCommercialPayments")]
     Barclays_BarclaycardCommercialPayments,
 
+    [EnumMember(Value = "Chase_Chase")]
+    Chase_Chase,
+
     [EnumMember(Value = "Cooperative_Cooperative")]
     Cooperative_Cooperative,
 
@@ -159,6 +162,18 @@ public enum BankProfileEnum
     [EnumMember(Value = "Santander_Santander")]
     Santander_Santander,
 
+    [EnumMember(Value = "Santander_Personal")]
+    Santander_Personal,
+
+    [EnumMember(Value = "Santander_Business")]
+    Santander_Business,
+
+    [EnumMember(Value = "Santander_Corporate")]
+    Santander_Corporate,
+
     [EnumMember(Value = "Starling_Starling")]
-    Starling_Starling
+    Starling_Starling,
+
+    [EnumMember(Value = "Tsb_Tsb")]
+    Tsb_Tsb
 }

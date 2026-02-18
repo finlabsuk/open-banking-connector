@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FsCheck;
+using FsCheck.Fluent;
 using FsCheck.Xunit;
 using Xunit.Abstractions;
 
@@ -12,14 +13,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
 
 public class BankClientProfileDbRepoTests : DbTest
 {
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly IDbMethods _dbSaveChangesMethod;
     private readonly ITestOutputHelper _output;
     private readonly IDbEntityMethods<BankRegistrationEntity> _repo;
 
     public BankClientProfileDbRepoTests(ITestOutputHelper output)
     {
         _repo = new DbEntityMethods<BankRegistrationEntity>(_dB);
-        _dbSaveChangesMethod = new DbSaveChangesMethod(_dB);
+        _dbSaveChangesMethod = new DbMethods(_dB);
         _output = output;
     }
 
@@ -28,7 +29,7 @@ public class BankClientProfileDbRepoTests : DbTest
     /// </summary>
     /// <param name="s"></param>
     /// <returns></returns>
-    [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]
+    [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = [typeof(FsCheckCustomArbs)])]
     public bool FsCheckStringNotNullAndContainsNoNulls_WorksCorrectly(StringNotNullAndContainsNoNulls s)
     {
         bool? outcome = !s.Item.Contains("\0");

@@ -31,6 +31,9 @@ public class StarlingGenerator : BankProfileGeneratorBase<StarlingBank>
             GetAccountAndTransactionApi(bank),
             null,
             null,
+            null,
+            null,
+            null,
             true,
             instrumentationClient)
         {
@@ -38,7 +41,7 @@ public class StarlingGenerator : BankProfileGeneratorBase<StarlingBank>
             BankConfigurationApiSettings = new BankConfigurationApiSettings { UseRegistrationGetEndpoint = true },
             CustomBehaviour = new CustomBehaviourClass
             {
-                BankRegistrationPut = new BankRegistrationPutCustomBehaviour { CustomTokenScope = "openid" },
+                BankRegistrationPut = new BankRegistrationPutCustomBehaviour { GetCustomTokenScope = _ => "openid" },
                 AccountAccessConsentAuthGet =
                     new ConsentAuthGetCustomBehaviour
                     {

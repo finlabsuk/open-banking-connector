@@ -5,28 +5,40 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AccountAndTransaction;
 
 internal class
-    AccountAccessConsentRefreshTokenConfig : EncryptedObjectConfig<
-        AccountAccessConsentRefreshToken>
-{
-    public AccountAccessConsentRefreshTokenConfig(
-        DbProvider dbProvider,
+    AccountAccessConsentRefreshTokenConfig(
         bool supportsGlobalQueryFilter,
-        Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
-
+        DbProvider dbProvider,
+        bool isRelationalDatabase,
+        Formatting jsonFormatting)
+    : EncryptedObjectConfig<
+        AccountAccessConsentRefreshToken>(supportsGlobalQueryFilter, dbProvider, isRelationalDatabase, jsonFormatting)
+{
     public override void Configure(EntityTypeBuilder<AccountAccessConsentRefreshToken> builder)
     {
         base.Configure(builder);
 
         // Top-level property info: read-only, JSON conversion, etc
-        builder.Property(e => e.AccountAccessConsentId)
-            .HasColumnName("account_access_consent_id") // shared column
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.AccountAccessConsentId); // shared column
+
+        // Only set up relationships (foreign keys and navigations) if not MongoDB
+        if (_dbProvider is not DbProvider.MongoDb)
+        {
+            builder
+                .HasOne<AccountAccessConsent>()
+                .WithMany(e => e.AccountAccessConsentRefreshTokensNavigation)
+                .HasForeignKey(e => e.AccountAccessConsentId);
+        }
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.Property(p => p.AccountAccessConsentId).HasElementName("accountAccessConsentId");
+        }
     }
 }

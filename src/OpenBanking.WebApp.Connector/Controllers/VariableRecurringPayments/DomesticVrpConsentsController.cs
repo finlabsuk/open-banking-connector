@@ -69,6 +69,55 @@ public class DomesticVrpConsentsController : ControllerBase
     }
 
     /// <summary>
+    ///     Update domestic VRP consent (migrate from v3 to v4)
+    /// </summary>
+    /// <param name="domesticVrpConsentId"></param>
+    /// <param name="request"></param>
+    /// <param name="xFapiCustomerIpAddress"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    [HttpPut("{domesticVrpConsentId:guid}")]
+    [Consumes("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<DomesticVrpConsentCreateResponse>> PutAsync(
+        Guid domesticVrpConsentId,
+        [FromBody]
+        DomesticVrpConsentRequest request,
+        [FromHeader(Name = "x-fapi-customer-ip-address")]
+        string? xFapiCustomerIpAddress)
+    {
+        string requestUrlWithoutQuery =
+            _linkGenerator.GetUriByAction(HttpContext) ??
+            throw new InvalidOperationException("Can't generate calling URL.");
+
+        // Determine extra headers
+        IEnumerable<HttpHeader>? extraHeaders;
+        if (xFapiCustomerIpAddress is not null)
+        {
+            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+        }
+        else
+        {
+            extraHeaders = null;
+        }
+
+        DomesticVrpConsentCreateResponse fluentResponse = await _requestBuilder
+            .VariableRecurringPayments
+            .DomesticVrpConsents
+            .UpdateAsync(
+                request,
+                new ConsentBaseReadParams
+                {
+                    Id = domesticVrpConsentId,
+                    ModifiedBy = null,
+                    ExtraHeaders = extraHeaders,
+                    PublicRequestUrlWithoutQuery = requestUrlWithoutQuery
+                });
+
+        return Ok(fluentResponse);
+    }
+
+    /// <summary>
     ///     Read domestic VRP consent
     /// </summary>
     /// <param name="domesticVrpConsentId">ID of DomesticVrpConsent</param>

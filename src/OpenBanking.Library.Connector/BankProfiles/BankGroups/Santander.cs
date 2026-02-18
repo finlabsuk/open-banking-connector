@@ -9,13 +9,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
 public enum SantanderBank
 {
-    Santander
+    Santander,
+    Personal,
+    Business,
+    Corporate
 }
 
 public class Santander() : BankGroupBase<SantanderBank, SantanderRegistrationGroup>(BankGroup.Santander)
 {
     protected override ConcurrentDictionary<BankProfileEnum, SantanderBank> BankProfileToBank { get; } =
-        new() { [BankProfileEnum.Santander_Santander] = SantanderBank.Santander };
+        new()
+        {
+            [BankProfileEnum.Santander_Santander] = SantanderBank.Santander,
+            [BankProfileEnum.Santander_Personal] = SantanderBank.Personal,
+            [BankProfileEnum.Santander_Business] = SantanderBank.Business,
+            [BankProfileEnum.Santander_Corporate] = SantanderBank.Corporate
+        };
 
     public override SantanderRegistrationGroup GetRegistrationGroup(
         SantanderBank bank,

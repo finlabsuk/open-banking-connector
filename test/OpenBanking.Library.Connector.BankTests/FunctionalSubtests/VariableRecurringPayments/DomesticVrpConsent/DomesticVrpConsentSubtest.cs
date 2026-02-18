@@ -195,10 +195,10 @@ public class DomesticVrpConsentSubtest(
             // Read DomesticVrp
             DomesticVrpResponse domesticVrpResp2 =
                 await variableRecurringPaymentsApiClient.DomesticVrpRead(
-                    new ConsentExternalEntityReadParams
+                    new ExternalEntityReadParams
                     {
-                        ConsentId = domesticVrpConsentId,
-                        ModifiedBy = null,
+                        BankRegistrationId = bankRegistrationId,
+                        UseV4ExternalApi = null,
                         ExtraHeaders = null,
                         PublicRequestUrlWithoutQuery = null,
                         ExternalApiId = domesticVrpExternalId
@@ -210,10 +210,10 @@ public class DomesticVrpConsentSubtest(
             {
                 DomesticVrpPaymentDetailsResponse paymentDetailsResponse =
                     await variableRecurringPaymentsApiClient.DomesticVrpReadPaymentDetails(
-                        new ConsentExternalEntityReadParams
+                        new ExternalEntityReadParams
                         {
-                            ConsentId = domesticVrpConsentId,
-                            ModifiedBy = null,
+                            BankRegistrationId = bankRegistrationId,
+                            UseV4ExternalApi = null,
                             ExtraHeaders = null,
                             PublicRequestUrlWithoutQuery = null,
                             ExternalApiId = domesticVrpExternalId
@@ -233,38 +233,71 @@ public class DomesticVrpConsentSubtest(
 
                     // Get consent
                     IDbService dbService = serviceScopeContainer.DbService;
+                    IDbMethods dbMethods = dbService.GetDbMethods();
                     IDbEntityMethods<Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent>
                         consentEntityMethods =
                             dbService
-                                .GetDbEntityMethodsClass<
+                                .GetDbEntityMethods<
                                     Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent>();
-                    Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent consent =
-                        consentEntityMethods
-                            .DbSet
-                            .Include(o => o.DomesticVrpConsentAccessTokensNavigation)
-                            .Include(o => o.DomesticVrpConsentRefreshTokensNavigation)
-                            .AsSplitQuery()
-                            .SingleOrDefault(x => x.Id == domesticVrpConsentId) ??
-                        throw new KeyNotFoundException();
+                    IDbEntityMethods<DomesticVrpConsentAccessToken> accessTokenMethods =
+                        dbService.GetDbEntityMethods<DomesticVrpConsentAccessToken>();
+                    IDbEntityMethods<DomesticVrpConsentRefreshToken> refreshTokenMethods =
+                        dbService.GetDbEntityMethods<DomesticVrpConsentRefreshToken>();
+                    Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent consent;
+                    DomesticVrpConsentAccessToken? storedAccessToken;
+                    if (dbMethods.DbProvider is not DbProvider.MongoDb)
+                    {
+                        consent =
+                            consentEntityMethods
+                                .DbSet
+                                .Include(o => o.DomesticVrpConsentAccessTokensNavigation)
+                                .Include(o => o.DomesticVrpConsentRefreshTokensNavigation)
+                                .AsSplitQuery()
+                                .SingleOrDefault(x => x.Id == domesticVrpConsentId) ??
+                            throw new KeyNotFoundException();
 
-                    // Ensure refresh token available
-                    DomesticVrpConsentRefreshToken unused =
-                        consent
-                            .DomesticVrpConsentRefreshTokensNavigation
-                            .SingleOrDefault(x => !x.IsDeleted) ??
-                        throw new Exception("Refresh token not found.");
+                        // Ensure refresh token available
+                        DomesticVrpConsentRefreshToken unused =
+                            consent
+                                .DomesticVrpConsentRefreshTokensNavigation
+                                .SingleOrDefault(x => !x.IsDeleted) ??
+                            throw new Exception("Refresh token not found.");
+
+                        storedAccessToken = consent
+                            .DomesticVrpConsentAccessTokensNavigation.SingleOrDefault(x => !x.IsDeleted);
+                    }
+                    else
+                    {
+                        consent =
+                            consentEntityMethods
+                                .DbSetNoTracking
+                                .SingleOrDefault(x => x.Id == domesticVrpConsentId) ??
+                            throw new KeyNotFoundException();
+
+
+                        // Ensure refresh token available
+                        DomesticVrpConsentRefreshToken unused2 =
+                            await refreshTokenMethods
+                                .DbSetNoTracking
+                                .Where(x => EF.Property<string>(x, "_t") == nameof(DomesticVrpConsentRefreshToken))
+                                .SingleOrDefaultAsync(x => x.DomesticVrpConsentId == consent.Id && !x.IsDeleted) ??
+                            throw new Exception("Refresh token not found.");
+
+                        storedAccessToken =
+                            await accessTokenMethods
+                                .DbSet
+                                .Where(x => EF.Property<string>(x, "_t") == nameof(DomesticVrpConsentAccessToken))
+                                .SingleOrDefaultAsync(x => x.DomesticVrpConsentId == consent.Id && !x.IsDeleted);
+                    }
 
                     // If available, delete cached access token (to force use of refresh token)
                     memoryCache.Remove(consent.GetCacheKey());
 
                     // If available, delete stored access token (to force use of refresh token) 
-                    DomesticVrpConsentAccessToken? storedAccessToken =
-                        consent
-                            .DomesticVrpConsentAccessTokensNavigation.SingleOrDefault(x => !x.IsDeleted);
                     if (storedAccessToken is not null)
                     {
                         storedAccessToken.UpdateIsDeleted(true, DateTimeOffset.UtcNow, modifiedBy);
-                        await dbService.GetDbSaveChangesMethodClass().SaveChangesAsync();
+                        await dbService.GetDbMethods().SaveChangesAsync();
                     }
                 }
 
@@ -374,9 +407,19 @@ public class DomesticVrpConsentSubtest(
                         Name = "placeholder" // logging placeholder
                     },
                     RemittanceInformation =
-                        new VariableRecurringPaymentsModelsPublic.RemittanceInformation
+                        new VariableRecurringPaymentsModelsPublic.OBRemittanceInformation2
                         {
-                            Reference = "placeholder" // logging placeholder 
+                            Structured =
+                            [
+                                new VariableRecurringPaymentsModelsPublic.OBRemittanceInformationStructured
+                                {
+                                    CreditorReferenceInformation =
+                                        new VariableRecurringPaymentsModelsPublic.CreditorReferenceInformation
+                                        {
+                                            Reference = "placeholder" // logging placeholder 
+                                        }
+                                }
+                            ]
                         }
                 },
                 Instruction = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInstruction
@@ -384,9 +427,19 @@ public class DomesticVrpConsentSubtest(
                     InstructionIdentification = "placeholder", // logging placeholder
                     EndToEndIdentification = "placeholder", // logging placeholder
                     RemittanceInformation =
-                        new VariableRecurringPaymentsModelsPublic.OBVRPRemittanceInformation
+                        new VariableRecurringPaymentsModelsPublic.OBRemittanceInformation2
                         {
-                            Reference = "placeholder" // logging placeholder 
+                            Structured =
+                            [
+                                new VariableRecurringPaymentsModelsPublic.OBRemittanceInformationStructured
+                                {
+                                    CreditorReferenceInformation =
+                                        new VariableRecurringPaymentsModelsPublic.CreditorReferenceInformation
+                                        {
+                                            Reference = "placeholder" // logging placeholder 
+                                        }
+                                }
+                            ]
                         },
                     InstructedAmount = new VariableRecurringPaymentsModelsPublic.OBActiveOrHistoricCurrencyAndAmount
                     {
@@ -411,10 +464,7 @@ public class DomesticVrpConsentSubtest(
         var domesticVrpRequest = new DomesticVrpRequest
         {
             DomesticVrpConsentId = default, // logging placeholder
-            ExternalApiRequest =
-                variableRecurringPaymentsApiSettings
-                    .DomesticVrpExternalApiRequestAdjustments(
-                        externalApiRequest), // customise external API request using bank profile
+            ExternalApiRequest = externalApiRequest,
             ModifiedBy = "placeholder" // logging placeholder
         };
         await vrpFluentRequestLogging
@@ -431,14 +481,32 @@ public class DomesticVrpConsentSubtest(
             paymentsEnv.BankAccountId; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
             paymentsEnv.BankAccountName; // replace logging placeholder
-        domesticVrpRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Reference =
-            "DV " + referenceName; // replace logging placeholder
+        domesticVrpRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Structured =
+        [
+            new VariableRecurringPaymentsModelsPublic.OBRemittanceInformationStructured
+            {
+                CreditorReferenceInformation =
+                    new VariableRecurringPaymentsModelsPublic.CreditorReferenceInformation
+                    {
+                        Reference = "DV " + referenceName // replace logging placeholder
+                    }
+            }
+        ];
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.InstructionIdentification =
             instructionIdentification; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.EndToEndIdentification =
             endToEndIdentification; // replace logging placeholder
-        domesticVrpRequest.ExternalApiRequest.Data.Instruction.RemittanceInformation!.Reference =
-            "DV " + referenceName; // replace logging placeholder
+        domesticVrpRequest.ExternalApiRequest.Data.Instruction.RemittanceInformation!.Structured =
+        [
+            new VariableRecurringPaymentsModelsPublic.OBRemittanceInformationStructured
+            {
+                CreditorReferenceInformation =
+                    new VariableRecurringPaymentsModelsPublic.CreditorReferenceInformation
+                    {
+                        Reference = "DV " + referenceName // replace logging placeholder
+                    }
+            }
+        ];
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.InstructedAmount.Amount =
             amount; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.CreditorAccount.SchemeName =
@@ -447,7 +515,6 @@ public class DomesticVrpConsentSubtest(
             paymentsEnv.BankAccountId; // replace logging placeholder
         domesticVrpRequest.ExternalApiRequest.Data.Instruction.CreditorAccount.Name =
             paymentsEnv.BankAccountName; // replace logging placeholder
-
 
         return domesticVrpRequest;
     }
@@ -502,11 +569,20 @@ public class DomesticVrpConsentSubtest(
                             Identification = "placeholder", // logging placeholder
                             Name = "placeholder" // logging placeholder
                         },
-                        RemittanceInformation =
-                            new VariableRecurringPaymentsModelsPublic.RemittanceInformation
-                            {
-                                Reference = "placeholder" // logging placeholder 
-                            }
+                        RemittanceInformation = new VariableRecurringPaymentsModelsPublic.OBRemittanceInformation2
+                        {
+                            Structured =
+                            [
+                                new VariableRecurringPaymentsModelsPublic.OBRemittanceInformationStructured
+                                {
+                                    CreditorReferenceInformation =
+                                        new VariableRecurringPaymentsModelsPublic.CreditorReferenceInformation
+                                        {
+                                            Reference = "placeholder" // logging placeholder 
+                                        }
+                                }
+                            ]
+                        }
                     }
                 },
                 Risk = new VariableRecurringPaymentsModelsPublic.OBRisk1
@@ -540,8 +616,18 @@ public class DomesticVrpConsentSubtest(
             paymentsEnv.BankAccountId; // replace logging placeholder
         domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
             paymentsEnv.BankAccountName; // replace logging placeholder
-        domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Reference =
-            "DV " + referenceName; // replace logging placeholder
+        domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.RemittanceInformation!.Structured =
+        [
+            new VariableRecurringPaymentsModelsPublic.OBRemittanceInformationStructured
+            {
+                CreditorReferenceInformation =
+                    new VariableRecurringPaymentsModelsPublic.CreditorReferenceInformation
+                    {
+                        Reference = "DV " + referenceName // replace logging placeholder
+                    }
+            }
+        ];
+
 
         domesticVrpConsentRequest.Reference = testNameUnique; // replace logging placeholder
         domesticVrpConsentRequest.CreatedBy = modifiedBy; // replace logging placeholder

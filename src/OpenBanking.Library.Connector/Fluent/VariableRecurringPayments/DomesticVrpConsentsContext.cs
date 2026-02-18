@@ -10,12 +10,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurr
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
-using DomesticVrpConsentAuthContextRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.
-    DomesticVrpConsentAuthContext;
-using DomesticVrpConsentAuthContextPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.
-    DomesticVrpConsentAuthContext;
 using DomesticVrpConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent;
 
@@ -24,18 +18,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
 
 public interface IDomesticVrpConsentsContext :
     IConsentContext<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse, DomesticVrpConsentCreateResponse>,
-    ICreateVrpConsentFundsConfirmationContext<DomesticVrpConsentFundsConfirmationRequest,
-        DomesticVrpConsentFundsConfirmationResponse>,
+    ICreateVrpConsentFundsConfirmationContext,
+    IUpdateVrpConsentContext,
     IDeleteConsentContext
 {
     /// <summary>
     ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
     ///     authorisation of consent.
     /// </summary>
-    ILocalEntityContext<DomesticVrpConsentAuthContextRequest,
-            IDomesticVrpConsentAuthContextPublicQuery,
-            DomesticVrpConsentAuthContextCreateResponse,
-            DomesticVrpConsentAuthContextReadResponse>
+    IDomesticVrpConsentAuthContextsContext
         AuthContexts { get; }
 }
 
@@ -59,14 +50,14 @@ internal class DomesticVrpConsentsContext :
             sharedContext.MemoryCache,
             sharedContext.EncryptionKeyInfo);
         _domesticVrpConsentOperations = new DomesticVrpConsentOperations(
-            sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
-            sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentPersisted>(),
+            sharedContext.DbService.GetDbMethods(),
             sharedContext.TimeProvider,
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
             sharedContext.BankProfileService,
             new ConsentAccessTokenGet(
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.DbService.GetDbMethods(),
                 _sharedContext.TimeProvider,
                 new GrantPost(
                     _sharedContext.ApiClient,
@@ -76,49 +67,50 @@ internal class DomesticVrpConsentsContext :
                 _sharedContext.Instrumentation,
                 _sharedContext.MemoryCache,
                 _sharedContext.EncryptionKeyInfo),
-            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
+            new ConsentCommon(
+                _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                _sharedContext.Instrumentation,
+                _sharedContext.DbService.GetDbMethods(),
+                _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>()),
             _sharedContext.ObWacCertificateMethods,
             _sharedContext.ObSealCertificateMethods,
             clientAccessTokenGet,
             new DomesticVrpConsentCommon(
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentAccessToken>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentRefreshToken>(),
-                _sharedContext.Instrumentation));
+                _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentPersisted>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentAccessToken>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentRefreshToken>(),
+                _sharedContext.Instrumentation,
+                _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                _sharedContext.DbService.GetDbMethods()));
         CreateObject = _domesticVrpConsentOperations;
         ReadObject = _domesticVrpConsentOperations;
         DeleteObject =
             new DomesticVrpConsentDelete(
-                sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
-                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentPersisted>(),
+                sharedContext.DbService.GetDbMethods(),
                 sharedContext.TimeProvider,
                 sharedContext.Instrumentation,
                 sharedContext.BankProfileService,
                 sharedContext.ObWacCertificateMethods,
                 sharedContext.ObSealCertificateMethods,
-                clientAccessTokenGet);
+                clientAccessTokenGet,
+                new DomesticVrpConsentCommon(
+                    _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentPersisted>(),
+                    _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentRefreshToken>(),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                    _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                    _sharedContext.DbService.GetDbMethods()));
+        AuthContexts = new DomesticVrpConsentAuthContextsContext(_sharedContext);
     }
 
     public IObjectRead<DomesticVrpConsentCreateResponse, ConsentReadParams> ReadObject { get; }
 
-    public ILocalEntityContext<DomesticVrpConsentAuthContextRequest,
-        IDomesticVrpConsentAuthContextPublicQuery,
-        DomesticVrpConsentAuthContextCreateResponse,
-        DomesticVrpConsentAuthContextReadResponse> AuthContexts =>
-        new LocalEntityContext<DomesticVrpConsentAuthContextPersisted,
-            DomesticVrpConsentAuthContextRequest,
-            IDomesticVrpConsentAuthContextPublicQuery,
-            DomesticVrpConsentAuthContextCreateResponse,
-            DomesticVrpConsentAuthContextReadResponse>(
-            _sharedContext,
-            new DomesticVrpConsentAuthContextPost(
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentAuthContextPersisted>(),
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                _sharedContext.TimeProvider,
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
-                _sharedContext.Instrumentation,
-                _sharedContext.BankProfileService,
-                _sharedContext.ObSealCertificateMethods));
 
     public IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse, ConsentCreateParams>
         CreateObject { get; }
@@ -128,4 +120,11 @@ internal class DomesticVrpConsentsContext :
     public Task<DomesticVrpConsentFundsConfirmationResponse> CreateFundsConfirmationAsync(
         VrpConsentFundsConfirmationCreateParams createParams) =>
         _domesticVrpConsentOperations.CreateFundsConfirmationAsync(createParams);
+
+    public IDomesticVrpConsentAuthContextsContext AuthContexts { get; }
+
+    public Task<DomesticVrpConsentCreateResponse> UpdateAsync(
+        DomesticVrpConsentRequest request,
+        ConsentBaseReadParams updateParams) =>
+        _domesticVrpConsentOperations.UpdateAsync(request, updateParams);
 }

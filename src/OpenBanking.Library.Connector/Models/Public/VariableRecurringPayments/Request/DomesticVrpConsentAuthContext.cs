@@ -10,7 +10,7 @@ using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 
-public class DomesticVrpConsentAuthContext : EntityBase, ISupportsValidation
+public class DomesticVrpConsentAuthContext : AuthContextBase, ISupportsValidation
 {
     [JsonProperty(Required = Required.Always)]
     public required Guid DomesticVrpConsentId { get; init; }

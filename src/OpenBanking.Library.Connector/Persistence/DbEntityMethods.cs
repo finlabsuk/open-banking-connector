@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 /// <summary>
-///     Entity- (type-) specific DB methods
+///     Entity-specific database methods.
 /// </summary>
 /// <typeparam name="TEntity"></typeparam>
 public class DbEntityMethods<TEntity> : IDbEntityMethods<TEntity>

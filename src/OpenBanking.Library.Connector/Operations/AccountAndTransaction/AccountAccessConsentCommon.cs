@@ -16,20 +16,32 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
 internal class AccountAccessConsentCommon
 {
-    private readonly IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> _accessTokenEntityMethods;
-    private readonly IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _entityMethods;
+    private readonly IDbEntityMethods<AccountAccessConsentAccessToken> _accessTokenEntityMethods;
+    private readonly IDbReadOnlyEntityMethods<BankRegistrationEntity> _bankRegistrationMethods;
+    private readonly IDbReadOnlyMethods _dbMethods;
+    private readonly IDbEntityMethods<AccountAccessConsentPersisted> _entityMethods;
+    private readonly IDbReadOnlyEntityMethods<ExternalApiSecretEntity> _externalApiSecretMethods;
     private readonly IInstrumentationClient _instrumentationClient;
-    private readonly IDbReadWriteEntityMethods<AccountAccessConsentRefreshToken> _refreshTokenEntityMethods;
+    private readonly IDbEntityMethods<AccountAccessConsentRefreshToken> _refreshTokenEntityMethods;
+    private readonly IDbReadOnlyEntityMethods<SoftwareStatementEntity> _softwareStatementMethods;
 
     public AccountAccessConsentCommon(
-        IDbReadWriteEntityMethods<AccountAccessConsentPersisted> entityMethods,
-        IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> accessTokenEntityMethods,
-        IDbReadWriteEntityMethods<AccountAccessConsentRefreshToken> refreshTokenEntityMethods,
-        IInstrumentationClient instrumentationClient)
+        IDbEntityMethods<AccountAccessConsentPersisted> entityMethods,
+        IDbEntityMethods<AccountAccessConsentAccessToken> accessTokenEntityMethods,
+        IDbEntityMethods<AccountAccessConsentRefreshToken> refreshTokenEntityMethods,
+        IInstrumentationClient instrumentationClient,
+        IDbReadOnlyEntityMethods<SoftwareStatementEntity> softwareStatementMethods,
+        IDbReadOnlyEntityMethods<ExternalApiSecretEntity> externalApiSecretMethods,
+        IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
+        IDbReadOnlyMethods dbMethods)
     {
         _entityMethods = entityMethods;
         _accessTokenEntityMethods = accessTokenEntityMethods;
         _instrumentationClient = instrumentationClient;
+        _softwareStatementMethods = softwareStatementMethods;
+        _externalApiSecretMethods = externalApiSecretMethods;
+        _bankRegistrationMethods = bankRegistrationMethods;
+        _dbMethods = dbMethods;
         _refreshTokenEntityMethods = refreshTokenEntityMethods;
     }
 
@@ -44,21 +56,43 @@ internal class AccountAccessConsentCommon
             ? _entityMethods.DbSet
             : _entityMethods.DbSetNoTracking;
 
-        AccountAccessConsentPersisted persistedConsent =
-            await db
-                .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
-                .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
-                .AsSplitQuery() // Load collections in separate SQL queries
-                .SingleOrDefaultAsync(x => x.Id == consentId) ??
-            throw new KeyNotFoundException($"No record found for Account Access Consent with ID {consentId}.");
-        BankRegistrationEntity bankRegistration = persistedConsent.BankRegistrationNavigation;
+        AccountAccessConsentPersisted persistedConsent;
+        BankRegistrationEntity bankRegistration;
+        SoftwareStatementEntity softwareStatement;
+        ExternalApiSecretEntity? externalApiSecret;
+        if (_dbMethods.DbProvider is not DbProvider.MongoDb)
+        {
+            persistedConsent =
+                await db
+                    .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
+                    .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
+                    .AsSplitQuery() // Load collections in separate SQL queries
+                    .SingleOrDefaultAsync(x => x.Id == consentId) ??
+                throw new KeyNotFoundException($"No record found for Account Access Consent with ID {consentId}.");
+            bankRegistration = persistedConsent.BankRegistrationNavigation;
 
-        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
+            softwareStatement = bankRegistration.SoftwareStatementNavigation;
 
-        ExternalApiSecretEntity? externalApiSecret =
-            bankRegistration.ExternalApiSecretsNavigation
+            externalApiSecret = bankRegistration.ExternalApiSecretsNavigation
                 .SingleOrDefault(x => !x.IsDeleted);
-
+        }
+        else
+        {
+            persistedConsent =
+                await db
+                    .SingleOrDefaultAsync(x => x.Id == consentId) ??
+                throw new KeyNotFoundException($"No record found for Account Access Consent with ID {consentId}.");
+            bankRegistration = await _bankRegistrationMethods
+                .DbSetNoTracking
+                .SingleAsync(x => x.Id == persistedConsent.BankRegistrationId);
+            softwareStatement = await _softwareStatementMethods
+                .DbSetNoTracking
+                .SingleAsync(x => x.Id == bankRegistration.SoftwareStatementId);
+            externalApiSecret = await _externalApiSecretMethods
+                .DbSetNoTracking
+                .Where(x => EF.Property<string>(x, "_t") == nameof(ExternalApiSecretEntity))
+                .SingleOrDefaultAsync(x => x.BankRegistrationId == bankRegistration.Id && !x.IsDeleted);
+        }
         return (persistedConsent, bankRegistration, softwareStatement, externalApiSecret);
     }
 
@@ -68,11 +102,70 @@ internal class AccountAccessConsentCommon
             ? _accessTokenEntityMethods.DbSet
             : _accessTokenEntityMethods.DbSetNoTracking;
 
-        AccountAccessConsentAccessToken? accessToken =
-            await db
-                .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consentId && !x.IsDeleted);
+        AccountAccessConsentAccessToken? accessToken;
+        if (_dbMethods.DbProvider is not DbProvider.MongoDb)
+        {
+            accessToken =
+                await db
+                    .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consentId && !x.IsDeleted);
+        }
+        else
+        {
+            accessToken =
+                await db
+                    .Where(x => EF.Property<string>(x, "_t") == nameof(AccountAccessConsentAccessToken))
+                    .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consentId && !x.IsDeleted);
+        }
 
         return accessToken;
+    }
+
+    public async Task<AccessTokenEntity> AddNewAccessToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy,
+        Guid accountAccessConsentId)
+    {
+        var accountAccessConsentAccessToken =
+            new AccountAccessConsentAccessToken(
+                id,
+                reference,
+                isDeleted,
+                isDeletedModified,
+                isDeletedModifiedBy,
+                created,
+                createdBy,
+                accountAccessConsentId);
+        await _accessTokenEntityMethods.DbSet.AddAsync(accountAccessConsentAccessToken);
+        return accountAccessConsentAccessToken;
+    }
+
+    public async Task<RefreshTokenEntity> AddNewRefreshToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy,
+        Guid accountAccessConsentId)
+    {
+        var accountAccessConsentRefreshToken =
+            new AccountAccessConsentRefreshToken(
+                id,
+                reference,
+                isDeleted,
+                isDeletedModified,
+                isDeletedModifiedBy,
+                created,
+                createdBy,
+                accountAccessConsentId);
+        await _refreshTokenEntityMethods.DbSet.AddAsync(accountAccessConsentRefreshToken);
+        return accountAccessConsentRefreshToken;
     }
 
     public async Task<RefreshTokenEntity?> GetRefreshToken(Guid consentId, bool dbTracking)
@@ -81,11 +174,30 @@ internal class AccountAccessConsentCommon
             ? _refreshTokenEntityMethods.DbSet
             : _refreshTokenEntityMethods.DbSetNoTracking;
 
-        AccountAccessConsentRefreshToken? refreshToken =
-            await db
-                .SingleOrDefaultAsync(x => x.AccountAccessConsentId == consentId && !x.IsDeleted);
+        List<AccountAccessConsentRefreshToken> refreshTokens;
+        if (_dbMethods.DbProvider is not DbProvider.MongoDb)
+        {
+            refreshTokens = await db
+                .Where(x => x.AccountAccessConsentId == consentId && !x.IsDeleted)
+                .OrderByDescending(x => x.Created)
+                .ToListAsync();
+        }
+        else
+        {
+            refreshTokens = await db
+                .Where(x => EF.Property<string>(x, "_t") == nameof(AccountAccessConsentRefreshToken))
+                .Where(x => x.AccountAccessConsentId == consentId && !x.IsDeleted)
+                .OrderByDescending(x => x.Created)
+                .ToListAsync();
+        }
 
-        return refreshToken;
+        if (refreshTokens.Count > 1)
+        {
+            _instrumentationClient.Warning(
+                $"Found {refreshTokens.Count} rather than one refresh tokens for AccountAccessConsent {consentId}.");
+        }
+
+        return refreshTokens.FirstOrDefault();
     }
 
     public static string GetBankTokenIssuerClaim(CustomBehaviourClass? customBehaviour, string issuerUrl) =>

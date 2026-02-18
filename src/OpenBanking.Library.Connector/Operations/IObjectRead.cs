@@ -14,6 +14,8 @@ public class LocalReadParams
     public required string? ModifiedBy { get; init; }
 }
 
+public class LocalReadAllParams { }
+
 public class BankRegistrationReadParams : LocalReadParams
 {
     public required bool ExcludeExternalApiOperation { get; init; }
@@ -44,4 +46,11 @@ internal interface
     Task<(IQueryable<TPublicResponse> response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages
             )>
         ReadAsync(Expression<Func<TPublicQuery, bool>> predicate);
+}
+
+internal interface IObjectReadAll<TPublicResponse, in TReadAllParams>
+    where TReadAllParams : LocalReadAllParams
+{
+    Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ReadAllAsync(
+        TReadAllParams readParams);
 }

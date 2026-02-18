@@ -119,17 +119,28 @@ public class BankConfigurationApiSettings
     public IdTokenSubClaimType IdTokenSubClaimType { get; set; } = IdTokenSubClaimType.ConsentId;
 }
 
+public delegate string? GetFinancialId(bool useV4NotV3);
+
 public class AccountAndTransactionApiSettings
 {
+    public GetFinancialId? GetFinancialId { get; init; }
+
     /// <summary>
     ///     Describes whether GET /accounts/{AccountId}/party is used when testing with this bank
     /// </summary>
     public bool UseGetPartyEndpoint { get; init; } = true;
 
+    /// <summary>
+    ///     Describes whether GET /accounts/{AccountId}/parties is used when testing with this bank
+    /// </summary>
+    public bool UseGetParty2Endpoint { get; init; } = true;
+
     public bool UseReauth { get; init; } = true;
 
     public AccountAccessConsentExternalApiRequestAdjustments
         AccountAccessConsentTemplateExternalApiRequestAdjustments { get; set; } = x => x;
+
+    public bool UseBalancesNotAccountEndpointInSecondSession { get; init; }
 }
 
 public class PaymentInitiationApiSettings
@@ -141,6 +152,12 @@ public class PaymentInitiationApiSettings
 
     public DomesticPaymentExternalApiRequestAdjustments
         DomesticPaymentExternalApiRequestAdjustments { get; set; } = x => x;
+
+    public bool UseReadRefundAccount { get; set; } = true;
+
+    public bool PreferPartyToPartyPaymentContextCode { get; set; } = false;
+
+    public bool UseContractPresentIndicator { get; set; } = true;
 
     public bool UseDomesticPaymentGetPaymentDetailsEndpoint { get; init; } = false;
 }
@@ -156,9 +173,14 @@ public class VariableRecurringPaymentsApiSettings
         DomesticVrpConsentExternalApiFundsConfirmationRequestAdjustments { get; set; } = x => x;
 
     public DomesticVrpExternalApiRequestAdjustments
+        DomesticVrpExternalApiV3RequestAdjustments { get; set; } = x => x;
+
+    public DomesticVrpExternalApiRequestAdjustments
         DomesticVrpExternalApiRequestAdjustments { get; set; } = x => x;
 
     public bool UseDomesticVrpGetPaymentDetailsEndpoint { get; init; } = false;
+
+    public bool UseDomesticVrpConsentPutEndpoint { get; init; } = false;
 }
 
 /// <summary>
@@ -167,24 +189,51 @@ public class VariableRecurringPaymentsApiSettings
 /// </summary>
 public class BankProfile
 {
+    /// <summary>
+    ///     Account and Transaction (AISP) API version. May be null where API not supported or used/tested.
+    /// </summary>
+    private readonly AccountAndTransactionApi? _accountAndTransactionApi;
+
+    private readonly AccountAndTransactionApi? _accountAndTransactionV4Api;
+
+    /// <summary>
+    ///     Payment Initiation (PISP) API version. May be null where API not supported or used/tested.
+    /// </summary>
+    private readonly PaymentInitiationApi? _paymentInitiationApi;
+
+    private readonly PaymentInitiationApi? _paymentInitiationV4Api;
+
     private readonly OAuth2ResponseMode? _specifiedDefaultResponseMode;
+
+    /// <summary>
+    ///     Variable Recurring Payments (VRP) API version. May be null where API not supported or used/tested.
+    /// </summary>
+    private readonly VariableRecurringPaymentsApi? _variableRecurringPaymentsApi;
+
+    private readonly VariableRecurringPaymentsApi? _variableRecurringPaymentsV4Api;
 
     public BankProfile(
         BankProfileEnum bankProfileEnum,
         string issuerUrl,
         string financialId,
         AccountAndTransactionApi? accountAndTransactionApi,
+        AccountAndTransactionApi? accountAndTransactionV4Api,
         PaymentInitiationApi? paymentInitiationApi,
+        PaymentInitiationApi? paymentInitiationV4Api,
         VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
+        VariableRecurringPaymentsApi? variableRecurringPaymentsV4Api,
         bool supportsSca,
         IInstrumentationClient instrumentationClient)
     {
         BankProfileEnum = bankProfileEnum;
         IssuerUrl = issuerUrl;
         FinancialId = financialId ?? throw new ArgumentNullException(nameof(financialId));
-        AccountAndTransactionApi = accountAndTransactionApi;
-        PaymentInitiationApi = paymentInitiationApi;
-        VariableRecurringPaymentsApi = variableRecurringPaymentsApi;
+        _accountAndTransactionApi = accountAndTransactionApi;
+        _accountAndTransactionV4Api = accountAndTransactionV4Api;
+        _paymentInitiationApi = paymentInitiationApi;
+        _paymentInitiationV4Api = paymentInitiationV4Api;
+        _variableRecurringPaymentsApi = variableRecurringPaymentsApi;
+        _variableRecurringPaymentsV4Api = variableRecurringPaymentsV4Api;
         SupportsSca = supportsSca;
         ReplayApiClient = new ApiClient(new ReplayClient(this), instrumentationClient, null);
     }
@@ -209,21 +258,6 @@ public class BankProfile
     /// </summary>
     public DynamicClientRegistrationApiVersion DynamicClientRegistrationApiVersion { get; init; } =
         DynamicClientRegistrationApiVersion.Version3p2;
-
-    /// <summary>
-    ///     Account and Transaction (AISP) API version. May be null where API not supported or used/tested.
-    /// </summary>
-    public AccountAndTransactionApi? AccountAndTransactionApi { get; }
-
-    /// <summary>
-    ///     Payment Initiation (PISP) API version. May be null where API not supported or used/tested.
-    /// </summary>
-    public PaymentInitiationApi? PaymentInitiationApi { get; }
-
-    /// <summary>
-    ///     Variable Recurring Payments (VRP) API version. May be null where API not supported or used/tested.
-    /// </summary>
-    public VariableRecurringPaymentsApi? VariableRecurringPaymentsApi { get; }
 
     public OAuth2ResponseMode DefaultResponseMode
     {
@@ -274,18 +308,49 @@ public class BankProfile
 
     public required int AspspBrandId { get; init; }
 
-    public AccountAndTransactionApi GetRequiredAccountAndTransactionApi() =>
-        AccountAndTransactionApi ??
-        throw new InvalidOperationException(
-            $"No Open Banking Account and Transaction (AISP) API associated with BankProfile ${BankProfileEnum}.");
+    public bool AispUseV4ByDefault { get; init; } = false;
 
-    public PaymentInitiationApi GetRequiredPaymentInitiationApi() =>
-        PaymentInitiationApi ??
-        throw new InvalidOperationException(
-            $"No Open Banking Payment Initiation (PISP) API associated with BankProfile ${BankProfileEnum}.");
+    public bool PispUseV4ByDefault { get; init; } = false;
 
-    public VariableRecurringPaymentsApi GetRequiredVariableRecurringPaymentsApi() =>
-        VariableRecurringPaymentsApi ??
-        throw new InvalidOperationException(
-            $"No Open Banking Variable Recurring Payments (VRP) API associated with BankProfile ${BankProfileEnum}.");
+    public bool VrpUseV4ByDefault { get; init; } = false;
+
+    public AccountAndTransactionApi GetRequiredAccountAndTransactionApi(bool useV4) =>
+        useV4 switch
+        {
+            true =>
+                _accountAndTransactionV4Api
+                ?? throw new InvalidOperationException(
+                    $"No Open Banking Account and Transaction (AISP) v4.0 API associated with BankProfile ${BankProfileEnum}."),
+            false =>
+                _accountAndTransactionApi
+                ?? throw new InvalidOperationException(
+                    $"No Open Banking Account and Transaction (AISP) v3.1.11 API associated with BankProfile ${BankProfileEnum}.")
+        };
+
+    public PaymentInitiationApi GetRequiredPaymentInitiationApi(bool useV4) =>
+        useV4 switch
+        {
+            true =>
+                _paymentInitiationV4Api ??
+                throw new InvalidOperationException(
+                    $"No Open Banking Payment Initiation (PISP) v4.0 API associated with BankProfile ${BankProfileEnum}."),
+            false =>
+                _paymentInitiationApi ??
+                throw new InvalidOperationException(
+                    $"No Open Banking Payment Initiation (PISP) v3.1.11 API associated with BankProfile ${BankProfileEnum}.")
+        };
+
+
+    public VariableRecurringPaymentsApi GetRequiredVariableRecurringPaymentsApi(bool useV4) =>
+        useV4 switch
+        {
+            true =>
+                _variableRecurringPaymentsV4Api ??
+                throw new InvalidOperationException(
+                    $"No Open Banking Variable Recurring Payments (VRP) v4.0 API associated with BankProfile ${BankProfileEnum}."),
+            false =>
+                _variableRecurringPaymentsApi ??
+                throw new InvalidOperationException(
+                    $"No Open Banking Variable Recurring Payments (VRP) v3.1.11 API associated with BankProfile ${BankProfileEnum}.")
+        };
 }

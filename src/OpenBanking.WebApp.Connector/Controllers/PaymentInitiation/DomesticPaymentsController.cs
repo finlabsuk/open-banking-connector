@@ -78,7 +78,8 @@ public class DomesticPaymentsController : ControllerBase
     ///     Read domestic payment
     /// </summary>
     /// <param name="externalApiId">External (bank) API ID of Domestic Payment</param>
-    /// <param name="domesticPaymentConsentId"></param>
+    /// <param name="bankRegistrationId"></param>
+    /// <param name="useV4ExternalApi"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpGet("{externalApiId}")]
@@ -86,11 +87,19 @@ public class DomesticPaymentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<DomesticPaymentResponse>> GetAsync(
         string externalApiId,
-        [FromHeader(Name = "x-obc-domestic-payment-consent-id")]
-        Guid domesticPaymentConsentId,
+        [FromHeader(Name = "x-obc-bank-registration-id")]
+        Guid bankRegistrationId,
+        [FromHeader(Name = "x-obc-use-v4-external-api")]
+        bool? useV4ExternalApi,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
+        if (bankRegistrationId == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Required header x-obc-bank-registration-id either set to empty value or not provided.");
+        }
+
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
@@ -111,10 +120,10 @@ public class DomesticPaymentsController : ControllerBase
             .PaymentInitiation
             .DomesticPayments
             .ReadAsync(
-                new ConsentExternalEntityReadParams
+                new ExternalEntityReadParams
                 {
-                    ConsentId = domesticPaymentConsentId,
-                    ModifiedBy = null,
+                    BankRegistrationId = bankRegistrationId,
+                    UseV4ExternalApi = useV4ExternalApi,
                     ExtraHeaders = extraHeaders,
                     PublicRequestUrlWithoutQuery = requestUrlWithoutQuery,
                     ExternalApiId = externalApiId
@@ -127,18 +136,27 @@ public class DomesticPaymentsController : ControllerBase
     ///     Read domestic payment payment details
     /// </summary>
     /// <param name="externalApiId">External (bank) API ID of Domestic Payment</param>
-    /// <param name="domesticPaymentConsentId"></param>
+    /// <param name="bankRegistrationId"></param>
+    /// <param name="useV4ExternalApi"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpGet("{externalApiId}/payment-details")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<DomesticPaymentPaymentDetailsResponse>> GetPaymentDetailsAsync(
         string externalApiId,
-        [FromHeader(Name = "x-obc-domestic-payment-consent-id")]
-        Guid domesticPaymentConsentId,
+        [FromHeader(Name = "x-obc-bank-registration-id")]
+        Guid bankRegistrationId,
+        [FromHeader(Name = "x-obc-use-v4-external-api")]
+        bool? useV4ExternalApi,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
+        if (bankRegistrationId == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Required header x-obc-bank-registration-id either set to empty value or not provided.");
+        }
+
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
@@ -159,10 +177,10 @@ public class DomesticPaymentsController : ControllerBase
             .PaymentInitiation
             .DomesticPayments
             .ReadPaymentDetailsAsync(
-                new ConsentExternalEntityReadParams
+                new ExternalEntityReadParams
                 {
-                    ConsentId = domesticPaymentConsentId,
-                    ModifiedBy = null,
+                    BankRegistrationId = bankRegistrationId,
+                    UseV4ExternalApi = useV4ExternalApi,
                     ExtraHeaders = extraHeaders,
                     PublicRequestUrlWithoutQuery = requestUrlWithoutQuery,
                     ExternalApiId = externalApiId

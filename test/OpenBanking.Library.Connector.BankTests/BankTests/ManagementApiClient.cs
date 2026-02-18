@@ -51,7 +51,49 @@ public class ManagementApiClient(WebAppClient client)
                 uriPath,
                 deleteParams.ExcludeExternalApiOperation
                     ? [new KeyValuePair<string, IEnumerable<string>>("x-obc-exclude-external-api-operation", ["true"])]
-                    : []);
+                    :
+                    [
+                        new KeyValuePair<string, IEnumerable<string>>("x-obc-exclude-external-api-operation", ["false"])
+                    ]);
+
+        // Checks
+        response.Warnings.Should().BeNull();
+
+        return response;
+    }
+
+    public async Task<EncryptionKeyDescriptionResponse> EncryptionKeyDescriptionCreate(EncryptionKeyDescription request)
+    {
+        // Create object
+        var uriPath = "/manage/encryption-key-descriptions";
+        EncryptionKeyDescriptionResponse response =
+            await client.CreateAsync<EncryptionKeyDescriptionResponse, EncryptionKeyDescription>(uriPath, request);
+
+        // Checks
+        response.Warnings.Should().BeNull();
+
+        return response;
+    }
+
+    public async Task<EncryptionKeyDescriptionResponse> EncryptionKeyDescriptionRead(Guid id)
+    {
+        // Read object
+        var uriPath = $"/manage/encryption-key-descriptions/{id}";
+        var response =
+            await client.GetAsync<EncryptionKeyDescriptionResponse>(uriPath, []);
+
+        // Checks
+        response.Warnings.Should().BeNull();
+
+        return response;
+    }
+
+    public async Task<BaseResponse> EncryptionKeyDescriptionDelete(Guid id)
+    {
+        // Delete object
+        var uriPath = $"/manage/encryption-key-descriptions/{id}";
+        var response =
+            await client.DeleteAsync<BaseResponse>(uriPath, []);
 
         // Checks
         response.Warnings.Should().BeNull();
@@ -173,6 +215,16 @@ public class ManagementApiClient(WebAppClient client)
 
         // Checks
         response.Warnings.Should().BeNull();
+
+        return response;
+    }
+
+    public async Task<SoftwareStatementsResponse> SoftwareStatementReadAll()
+    {
+        // Read objects
+        var uriPath = "/manage/software-statements";
+        var response =
+            await client.GetAsync<SoftwareStatementsResponse>(uriPath, []);
 
         return response;
     }

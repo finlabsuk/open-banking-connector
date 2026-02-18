@@ -31,11 +31,14 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
             "https://sandbox-obp-api.danskebank.com/sandbox-open-banking/private", //from https://developers.danskebank.com/documentation#endpoints
             "0015800000jf7AeAAI", //from https://developers.danskebank.com/api_products/danske_bank_apis/pi?view=documentation
             null,
+            null,
             new PaymentInitiationApi
             {
                 BaseUrl =
                     "https://sandbox-obp-api.danskebank.com/sandbox-open-banking/v3.1/pisp" //from https://developers.danskebank.com/api_products/danske_bank_apis/pi?view=reference
             },
+            null,
+            null,
             null,
             false,
             instrumentationClient)

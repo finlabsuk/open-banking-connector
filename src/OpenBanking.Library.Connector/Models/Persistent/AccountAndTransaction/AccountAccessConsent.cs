@@ -21,11 +21,6 @@ internal class AccountAccessConsent :
         string? isDeletedModifiedBy,
         DateTimeOffset created,
         string? createdBy,
-        string? accessTokenAccessToken,
-        int accessTokenExpiresIn,
-        DateTimeOffset accessTokenModified,
-        string? accessTokenModifiedBy,
-        string? accessTokenRefreshToken,
         string? authContextState,
         string? authContextNonce,
         string? authContextCodeVerifier,
@@ -35,7 +30,8 @@ internal class AccountAccessConsent :
         DateTimeOffset externalApiUserIdModified,
         string? externalApiUserIdModifiedBy,
         Guid bankRegistrationId,
-        string externalApiId) : base(
+        string externalApiId,
+        bool createdWithV4) : base(
         id,
         reference,
         isDeleted,
@@ -43,11 +39,6 @@ internal class AccountAccessConsent :
         isDeletedModifiedBy,
         created,
         createdBy,
-        accessTokenAccessToken,
-        accessTokenExpiresIn,
-        accessTokenModified,
-        accessTokenModifiedBy,
-        accessTokenRefreshToken,
         authContextState,
         authContextNonce,
         authContextCodeVerifier,
@@ -57,7 +48,8 @@ internal class AccountAccessConsent :
         externalApiUserIdModified,
         externalApiUserIdModifiedBy,
         bankRegistrationId,
-        externalApiId) { }
+        externalApiId,
+        createdWithV4) { }
 
     /// <summary>
     ///     Associated access tokens
@@ -74,50 +66,4 @@ internal class AccountAccessConsent :
     protected override string GetConsentTypeString() => "aisp";
 
     public override ConsentType GetConsentType() => ConsentType.AccountAccessConsent;
-
-    public override AccessTokenEntity AddNewAccessToken(
-        Guid id,
-        string? reference,
-        bool isDeleted,
-        DateTimeOffset isDeletedModified,
-        string? isDeletedModifiedBy,
-        DateTimeOffset created,
-        string? createdBy)
-    {
-        var accountAccessConsentAccessToken =
-            new AccountAccessConsentAccessToken(
-                id,
-                reference,
-                isDeleted,
-                isDeletedModified,
-                isDeletedModifiedBy,
-                created,
-                createdBy,
-                Id);
-        AccountAccessConsentAccessTokensNavigation.Add(accountAccessConsentAccessToken);
-        return accountAccessConsentAccessToken;
-    }
-
-    public override RefreshTokenEntity AddNewRefreshToken(
-        Guid id,
-        string? reference,
-        bool isDeleted,
-        DateTimeOffset isDeletedModified,
-        string? isDeletedModifiedBy,
-        DateTimeOffset created,
-        string? createdBy)
-    {
-        var accountAccessConsentRefreshToken =
-            new AccountAccessConsentRefreshToken(
-                Guid.NewGuid(),
-                null,
-                false,
-                isDeletedModified,
-                isDeletedModifiedBy,
-                created,
-                createdBy,
-                Id);
-        AccountAccessConsentRefreshTokensNavigation.Add(accountAccessConsentRefreshToken);
-        return accountAccessConsentRefreshToken;
-    }
 }

@@ -3,13 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 using FsCheck;
+using FsCheck.Fluent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
 
 public static class NullWhitespaceStringArbitrary
 {
     public static Arbitrary<string> GetArbitrary() =>
-        Arb.Default.String().Generator
+        ArbMap.Default.ArbFor<string>().Generator
             .Where(string.IsNullOrWhiteSpace)
             .ToArbitrary();
 }

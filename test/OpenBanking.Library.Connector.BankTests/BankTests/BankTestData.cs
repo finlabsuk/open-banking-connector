@@ -22,9 +22,7 @@ public class BankTestData
 
     public required string BankRegistrationExternalApiId { get; init; }
 
-    public required string? BankRegistrationExternalApiSecretName { get; init; }
-
-    public required string? BankRegistrationRegistrationAccessTokenName { get; init; }
+    public required string BankRegistrationEnvName { get; init; }
 
     public required string? AccountAccessConsentExternalApiId { get; init; }
 

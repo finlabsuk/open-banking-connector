@@ -3,25 +3,54 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MongoDB.EntityFrameworkCore.Extensions;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration;
 
-internal class EncryptedObjectConfig<TEntity> : BaseConfig<TEntity>
+internal class EncryptedObjectConfig<TEntity>(
+    bool supportsGlobalQueryFilter,
+    DbProvider dbProvider,
+    bool isRelationalDatabase,
+    Formatting jsonFormatting)
+    : BaseConfig<TEntity>(supportsGlobalQueryFilter, dbProvider, isRelationalDatabase, jsonFormatting)
     where TEntity : EncryptedObject
 {
-    public EncryptedObjectConfig(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
-        base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
-
     public override void Configure(EntityTypeBuilder<TEntity> builder)
     {
         base.Configure(builder);
 
-        // Top-level property info: fields, read-only, JSON conversion, etc
-        builder.Property("_nonce");
-        builder.Property("_text");
-        builder.Property("_tag");
-        builder.Property("_text2");
+        // Set column names
+        if (_dbProvider is not DbProvider.MongoDb)
+        {
+            builder.Property("_nonce").HasColumnName("nonce");
+            builder.Property("_text").HasColumnName("text");
+            builder.Property("_tag").HasColumnName("tag");
+            builder.Property("_text2").HasColumnName("text2");
+        }
+
+        // Only set up relationships (foreign keys and navigations) if not MongoDB
+        if (_dbProvider is not DbProvider.MongoDb)
+        {
+            builder
+                .HasOne(e => e.EncryptionKeyDescriptionNavigation)
+                .WithMany()
+                .HasForeignKey(e => e.EncryptionKeyDescriptionId);
+        }
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.ToCollection("encryptedObject");
+            builder.Property(p => p.EncryptionKeyDescriptionId).HasElementName("encryptionKeyDescriptionId");
+            builder.Property(p => p.Modified).HasElementName("modified");
+            builder.Property(p => p.ModifiedBy).HasElementName("modifiedBy");
+            builder.Property("_nonce").HasElementName("nonce");
+            builder.Property("_text").HasElementName("text");
+            builder.Property("_tag").HasElementName("tag");
+            builder.Property("_text2").HasElementName("text2");
+        }
     }
 }

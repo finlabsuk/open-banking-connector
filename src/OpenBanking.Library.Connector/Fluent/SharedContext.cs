@@ -31,7 +31,8 @@ internal class SharedContext : ISharedContext
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
         ObSealCertificateMethods obSealCertificateMethods,
         ObWacCertificateMethods obWacCertificateMethods,
-        TppReportingMetrics tppReportingMetrics)
+        TppReportingMetrics tppReportingMetrics,
+        ISettingsService settingsService)
     {
         TimeProvider = timeProvider;
         ApiClient = apiClient;
@@ -46,6 +47,7 @@ internal class SharedContext : ISharedContext
         ObSealCertificateMethods = obSealCertificateMethods;
         ObWacCertificateMethods = obWacCertificateMethods;
         TppReportingMetrics = tppReportingMetrics;
+        SettingsService = settingsService;
     }
 
     public ITimeProvider TimeProvider { get; }
@@ -65,4 +67,6 @@ internal class SharedContext : ISharedContext
     public ObWacCertificateMethods ObWacCertificateMethods { get; }
 
     public TppReportingMetrics TppReportingMetrics { get; }
+
+    public ISettingsService SettingsService { get; }
 }

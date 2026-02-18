@@ -22,20 +22,24 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
     private readonly string _orgId;
     private readonly SoftwareStatementEntity _softwareStatementEntity;
     private readonly bool _useB64;
+    private readonly bool _usePutNotPost;
 
     public PaymentInitiationPostRequestProcessor(
         string orgId,
+        bool useB64,
         string accessToken,
         IInstrumentationClient instrumentationClient,
         SoftwareStatementEntity softwareStatement,
-        OBSealKey obSealKey)
+        OBSealKey obSealKey,
+        bool usePutNotPost = false)
     {
         _instrumentationClient = instrumentationClient;
         _orgId = orgId;
-        _useB64 = false; // was true before PISP v3.1.4 which is no longer supported
+        _useB64 = useB64; // was true before PISP v3.1.4 which is no longer supported
         _softwareStatementEntity = softwareStatement;
         _obSealKey = obSealKey;
         _accessToken = accessToken;
+        _usePutNotPost = usePutNotPost;
     }
 
     public async Task<(TResponse response, string? xFapiInteractionId)> PostAsync<TResponse>(
@@ -49,7 +53,7 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
         where TResponse : class
     {
         // Process request
-        var requestDescription = $"POST {uri})";
+        var requestDescription = $"{(_usePutNotPost ? "PUT" : "POST")} {uri})";
 
         // Create JWT and log
         var jsonSerializerSettings =
@@ -89,7 +93,7 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
 
         // Send request
         (TResponse response, string? xFapiInteractionId) = await new HttpRequestBuilder()
-            .SetMethod(HttpMethod.Post)
+            .SetMethod(_usePutNotPost ? HttpMethod.Put : HttpMethod.Post)
             .SetUri(uri)
             .SetHeaders(headers)
             .SetJsonContent(request, requestJsonSerializerSettings)
@@ -140,13 +144,13 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
             b64 = null;
         }
 
-        Dictionary<string, object> dict = JwtFactory.DefaultJwtHeadersExcludingTyp(signingId);
+        Dictionary<string, object> dict = JwtFactory.GetDefaultJwtHeaders(signingId, JwtType.Jose);
         dict.Add("cty", "application/json");
         dict.Add("crit", crit);
         dict.Add("http://openbanking.org.uk/iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
         dict.Add(
             "http://openbanking.org.uk/iss",
-            $"{orgId}/{softwareId}"); // TODO: adjust. See HSBC implementation guide
+            $"{orgId}/{softwareId}");
         dict.Add("http://openbanking.org.uk/tan", "openbanking.org.uk");
         if (!(b64 is null))
         {

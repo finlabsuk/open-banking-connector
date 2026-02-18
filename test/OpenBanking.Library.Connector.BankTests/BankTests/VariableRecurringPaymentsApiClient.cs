@@ -151,7 +151,7 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
     }
 
     public async Task<DomesticVrpResponse> DomesticVrpRead(
-        ConsentExternalEntityReadParams readParams,
+        ExternalEntityReadParams readParams,
         DomesticVrpCustomBehaviour? customBehaviour)
     {
         // Read object
@@ -161,8 +161,8 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
                 uriPath,
                 [
                     new KeyValuePair<string, IEnumerable<string>>(
-                        "x-obc-domestic-vrp-consent-id",
-                        [$"{readParams.ConsentId}"])
+                        "x-obc-bank-registration-id",
+                        [$"{readParams.BankRegistrationId}"])
                 ]);
 
         // Checks
@@ -170,15 +170,20 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
         response.ExternalApiResponse.Should().NotBeNull();
 
         // Check status
-        bool responseDataStatusMayBeWrong = customBehaviour?.ResponseDataStatusMayBeWrong ?? false;
+        bool responseDataStatusMayBeWrong = customBehaviour?.ResponseDataStatusMayBeMissingOrWrong ?? false;
         if (!responseDataStatusMayBeWrong)
         {
             response.ExternalApiResponse.Data.Status.Should()
                 .BeOneOf(
-                    VariableRecurringPaymentsModelsPublic.Data4Status.AcceptedCreditSettlementCompleted,
-                    VariableRecurringPaymentsModelsPublic.Data4Status.AcceptedSettlementCompleted,
-                    VariableRecurringPaymentsModelsPublic.Data4Status.AcceptedWithoutPosting,
-                    VariableRecurringPaymentsModelsPublic.Data4Status.AcceptedSettlementInProcess);
+                    VariableRecurringPaymentsModelsPublic.Data4Status.ACCC,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.ACCP,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.ACFC,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.ACSC,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.ACSP,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.ACTC,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.ACWC,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.ACWP,
+                    VariableRecurringPaymentsModelsPublic.Data4Status.PDNG);
         }
 
         // Check refund account
@@ -230,7 +235,7 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
     }
 
     public async Task<DomesticVrpPaymentDetailsResponse> DomesticVrpReadPaymentDetails(
-        ConsentExternalEntityReadParams readParams)
+        ExternalEntityReadParams readParams)
     {
         // Read object
         var uriPath = $"/vrp/domestic-vrps/{readParams.ExternalApiId}/payment-details";
@@ -239,8 +244,8 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
                 uriPath,
                 [
                     new KeyValuePair<string, IEnumerable<string>>(
-                        "x-obc-domestic-vrp-consent-id",
-                        [$"{readParams.ConsentId}"])
+                        "x-obc-bank-registration-id",
+                        [$"{readParams.BankRegistrationId}"])
                 ]);
 
         // Checks

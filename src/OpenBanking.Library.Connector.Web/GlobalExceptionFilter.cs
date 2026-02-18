@@ -2,28 +2,43 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
-using Microsoft.AspNetCore.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Web;
 
-public class GlobalExceptionFilter : IExceptionFilter
+public class GlobalExceptionFilter(ProblemDetailsFactory problemDetailsFactory) : IExceptionFilter
 {
     public void OnException(ExceptionContext context)
     {
-        var messages = new HttpResponseMessages
+        if (context.Exception is HttpResponseException exception)
         {
-            InformationMessages = null,
-            WarningMessages = null,
-            ErrorMessages = new List<string> { context.Exception.Message }
-        };
+            ProblemDetails problemDetails = problemDetailsFactory.CreateProblemDetails(
+                context.HttpContext,
+                exception.StatusCode,
+                GetTitleString(exception.Title),
+                null,
+                exception.Message);
+            if (exception.Extensions is not null)
+            {
+                problemDetails.Extensions = exception.Extensions;
+            }
 
-        // Catch unhandled input validation errors
-        if (context.Exception is ArgumentNullException)
-        {
-            context.Result = new ObjectResult(messages) { StatusCode = StatusCodes.Status400BadRequest };
+            context.Result = new ObjectResult(problemDetails) { StatusCode = exception.StatusCode };
+            context.ExceptionHandled = true;
         }
+    }
+
+    private static string GetTitleString(ProblemDetailsTitle title)
+    {
+        var titleString = title.ToString();
+        if (string.IsNullOrEmpty(titleString) ||
+            char.IsLower(titleString[0]))
+        {
+            return titleString;
+        }
+        return char.ToLower(titleString[0]) + titleString[1..];
     }
 }

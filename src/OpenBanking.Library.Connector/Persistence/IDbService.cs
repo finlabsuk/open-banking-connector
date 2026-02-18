@@ -8,8 +8,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 public interface IDbService
 {
-    IDbEntityMethods<TEntity> GetDbEntityMethodsClass<TEntity>()
+    IDbEntityMethods<TEntity> GetDbEntityMethods<TEntity>()
         where TEntity : class, IEntity;
 
-    IDbSaveChangesMethod GetDbSaveChangesMethodClass();
+    IDbMethods GetDbMethods();
+
+    IDbSettingsMethods GetDbSettingsMethods();
 }

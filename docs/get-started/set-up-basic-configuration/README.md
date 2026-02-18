@@ -22,7 +22,7 @@ used. So the configuration setting `OpenBankingConnector:Database:Provider` is s
 
 Database settings are documented [here](../../configuration/database-settings.md).
 
-Open Banking Connector requires connection to a PostgreSQL database.
+Open Banking Connector requires connection to a database.
 
 The following environment variables can be used to configure use of a PostgreSQL database:
 
@@ -33,23 +33,6 @@ OpenBankingConnector__Database__EnsureDatabaseCreated=true # suggest initially t
 OpenBankingConnector__Database__ConnectionStrings__PostgreSql="Host=localhost;Database=test;Username=postgres" # substitute your connection string without password
 OpenBankingConnector__Database__PasswordSettingNames__PostgreSql=OpenBankingConnector:Custom:PostgreSqlPassword # substitute name of environment variable providing database password
 OpenBankingConnector__Custom__PostgreSqlPassword=placeholder # example arbitrary environment variable that supplies database password
-```
-
-### Encryption key settings
-
-Note: this setting should be included
-after [adding an encryption key description](../add-software-statement-etc/README.md#add-an-encryption-key-description-to-open-banking-connector)
-so can be skipped for now but
-please include once you have added an encryption key description.
-
-Encryption key settings are documented [here](../../configuration/encryption-key-settings.md).
-
-Below is the environment variable necessary to configure which encryption key should be used for encryption of sensitive
-data added to the database.
-
-```bash
-# Encryption key settings
-OpenBankingConnector__Keys__CurrentEncryptionKeyId=MyKeyId # use encryption key description with ID "MyKeyId"
 ```
 
 ### Bank profile settings

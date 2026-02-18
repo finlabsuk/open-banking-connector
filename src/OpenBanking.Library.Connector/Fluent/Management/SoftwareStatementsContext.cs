@@ -7,12 +7,14 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Management;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Management;
 
 public interface ISoftwareStatementsContext :
     ILocalEntityContext<SoftwareStatement, ISoftwareStatementPublicQuery,
         SoftwareStatementResponse, SoftwareStatementResponse>,
+    IReadAllContext<SoftwareStatementsResponse>,
     IUpdateContext<SoftwareStatementUpdate, SoftwareStatementResponse> { }
 
 internal class SoftwareStatementsContext : LocalEntityContext<SoftwareStatementEntity, SoftwareStatement
@@ -22,13 +24,20 @@ internal class SoftwareStatementsContext : LocalEntityContext<SoftwareStatementE
 {
     public SoftwareStatementsContext(
         ISharedContext sharedContext,
-        IObjectCreate<SoftwareStatement, SoftwareStatementResponse, LocalCreateParams> postObject,
-        IObjectUpdate2<SoftwareStatementUpdate, SoftwareStatementResponse> updateObject) : base(
+        IObjectCreate<SoftwareStatement, SoftwareStatementResponse, LocalCreateParams> postObject) : base(
         sharedContext,
         postObject)
     {
-        UpdateObject = updateObject;
+        var softwareStatementOperations = new SoftwareStatementOperations(
+            sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+            sharedContext.DbService.GetDbMethods(),
+            sharedContext.TimeProvider,
+            sharedContext.Instrumentation);
+        UpdateObject = softwareStatementOperations;
+        ReadAllObject = softwareStatementOperations;
     }
 
     public IObjectUpdate2<SoftwareStatementUpdate, SoftwareStatementResponse> UpdateObject { get; }
+
+    public IObjectReadAll<SoftwareStatementsResponse, LocalReadAllParams> ReadAllObject { get; }
 }

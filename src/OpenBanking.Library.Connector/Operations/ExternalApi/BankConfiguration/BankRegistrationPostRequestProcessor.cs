@@ -52,7 +52,7 @@ internal class BankRegistrationPostRequestProcessor<TVariantApiRequest> :
             request,
             jsonSerializerSettings);
         string content = JwtFactory.CreateJwt(
-            JwtFactory.DefaultJwtHeadersIncludingTyp(_obSealKey.KeyId),
+            JwtFactory.GetDefaultJwtHeaders(_obSealKey.KeyId, JwtType.Jwt),
             payloadJson,
             _obSealKey.Key,
             null);

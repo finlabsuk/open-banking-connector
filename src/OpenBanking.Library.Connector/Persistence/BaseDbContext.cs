@@ -14,6 +14,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentIni
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using Newtonsoft.Json;
 using DomesticPaymentConsentAuthContextConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation.
@@ -33,15 +35,21 @@ using DomesticVrpConsentAuthContextConfig =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 // DB provider-independent DB context
-public abstract class BaseDbContext : DbContext
+public abstract class BaseDbContext(
+    DbContextOptions options,
+    DbProvider dbProvider,
+    bool isRelationalNotDocumentDatabase,
+    Formatting jsonFormatting = Formatting.None,
+    IMongoDatabase? mongoDatabase = null) : DbContext(options)
 {
-    protected BaseDbContext(DbContextOptions options) : base(options) { }
-
     // Formatting choice for JSON fields
-    protected virtual Formatting JsonFormatting { get; } = Formatting.None;
+    private readonly Formatting _jsonFormatting = jsonFormatting;
 
-    // Set DB Provider
-    protected abstract DbProvider DbProvider { get; }
+    private readonly IMongoDatabase? _mongoDatabase = mongoDatabase;
+
+    public bool IsRelationalNotDocumentDatabase { get; } = isRelationalNotDocumentDatabase;
+
+    public DbProvider DbProvider { get; } = dbProvider;
 
     // Management objects
     internal DbSet<BankRegistrationEntity> BankRegistration => Set<BankRegistrationEntity>();
@@ -102,40 +110,167 @@ public abstract class BaseDbContext : DbContext
     internal DbSet<RegistrationAccessTokenEntity> RegistrationAccessToken =>
         Set<RegistrationAccessTokenEntity>();
 
+    // Settings
+    internal DbSet<SettingsEntity> Settings => Set<SettingsEntity>();
+
+    public IMongoDatabase GetMongoDatabase()
+    {
+        if (DbProvider is not DbProvider.MongoDb)
+        {
+            throw new InvalidOperationException("MongoDB database " + "unavailable as different provider in use.");
+        }
+        if (_mongoDatabase is null)
+        {
+            throw new InvalidOperationException("MongoDB database not found.");
+        }
+        return _mongoDatabase;
+    }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        base.ConfigureConventions(configurationBuilder);
+
+        if (DbProvider is DbProvider.MongoDb)
+        {
+            configurationBuilder
+                .IgnoreAny(typeof(IList<>));
+            configurationBuilder.Properties<DateTimeOffset>().HaveBsonRepresentation(BsonType.DateTime);
+
+            //configurationBuilder.Conventions.Remove<RelationshipDiscoveryConvention>();
+        }
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         // Bank configuration
-        modelBuilder.ApplyConfiguration(new BankRegistrationConfig(DbProvider, true, JsonFormatting));
-        modelBuilder.ApplyConfiguration(new ObWacCertificateConfig(DbProvider, true, JsonFormatting));
-        modelBuilder.ApplyConfiguration(new ObSealCertificateConfig(DbProvider, true, JsonFormatting));
-        modelBuilder.ApplyConfiguration(new SoftwareStatementConfig(DbProvider, true, JsonFormatting));
-        modelBuilder.ApplyConfiguration(new EncryptionKeyDescriptionConfig(DbProvider, true, JsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new BankRegistrationConfig(true, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new ObWacCertificateConfig(true, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new ObSealCertificateConfig(true, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new SoftwareStatementConfig(true, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new EncryptionKeyDescriptionConfig(true, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
 
         // Auth contexts (note global query filter not supported for inherited types)
-        // var x = new AuthContextConfig(DbProvider, true, JsonFormatting);
-        modelBuilder.ApplyConfiguration(new AuthContextConfig(DbProvider, true, JsonFormatting));
-        modelBuilder.ApplyConfiguration(new AccountAccessConsentAuthContextConfig(DbProvider, false, JsonFormatting));
-        modelBuilder.ApplyConfiguration(new DomesticPaymentConsentAuthContextConfig(DbProvider, false, JsonFormatting));
-        modelBuilder.ApplyConfiguration(new DomesticVrpConsentAuthContextConfig(DbProvider, false, JsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new AuthContextConfig(true, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new AccountAccessConsentAuthContextConfig(
+                false,
+                DbProvider,
+                IsRelationalNotDocumentDatabase,
+                _jsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new DomesticPaymentConsentAuthContextConfig(
+                false,
+                DbProvider,
+                IsRelationalNotDocumentDatabase,
+                _jsonFormatting));
+
+        modelBuilder.ApplyConfiguration(
+            new DomesticVrpConsentAuthContextConfig(
+                false,
+                DbProvider,
+                IsRelationalNotDocumentDatabase,
+                _jsonFormatting));
 
         // Consents
-        modelBuilder.ApplyConfiguration(new AccountAccessConsentConfig(DbProvider, true, JsonFormatting));
-        modelBuilder.ApplyConfiguration(new DomesticPaymentConsentConfig(DbProvider, true, JsonFormatting));
-        modelBuilder.ApplyConfiguration(new DomesticVrpConsentConfig(DbProvider, true, JsonFormatting));
-
-        // Encrypted objects
-        modelBuilder.ApplyConfiguration(new EncryptedObjectConfig<EncryptedObject>(DbProvider, true, JsonFormatting));
-        modelBuilder.ApplyConfiguration(new AccountAccessConsentAccessTokenConfig(DbProvider, false, JsonFormatting));
-        modelBuilder.ApplyConfiguration(new AccountAccessConsentRefreshTokenConfig(DbProvider, false, JsonFormatting));
-        modelBuilder.ApplyConfiguration(new DomesticPaymentConsentAccessTokenConfig(DbProvider, false, JsonFormatting));
         modelBuilder.ApplyConfiguration(
-            new DomesticPaymentConsentRefreshTokenConfig(DbProvider, false, JsonFormatting));
-        modelBuilder.ApplyConfiguration(new DomesticVrpConsentAccessTokenConfig(DbProvider, false, JsonFormatting));
-        modelBuilder.ApplyConfiguration(new DomesticVrpConsentRefreshTokenConfig(DbProvider, false, JsonFormatting));
-        modelBuilder.ApplyConfiguration(new ExternalApiSecretConfig(DbProvider, false, JsonFormatting));
-        modelBuilder.ApplyConfiguration(new RegistrationAccessTokenConfig(DbProvider, false, JsonFormatting));
+            new AccountAccessConsentConfig(true, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new DomesticPaymentConsentConfig(true, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new DomesticVrpConsentConfig(true, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
 
-        base.OnModelCreating(modelBuilder);
+        // Encrypted objects (note global query filter not supported for inherited types)
+        modelBuilder.ApplyConfiguration(
+            new EncryptedObjectConfig<EncryptedObject>(
+                true,
+                DbProvider,
+                IsRelationalNotDocumentDatabase,
+                _jsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new AccountAccessConsentAccessTokenConfig(
+                false,
+                DbProvider,
+                IsRelationalNotDocumentDatabase,
+                _jsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new AccountAccessConsentRefreshTokenConfig(
+                false,
+                DbProvider,
+                IsRelationalNotDocumentDatabase,
+                _jsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new DomesticPaymentConsentAccessTokenConfig(
+                false,
+                DbProvider,
+                IsRelationalNotDocumentDatabase,
+                _jsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new DomesticPaymentConsentRefreshTokenConfig(
+                false,
+                DbProvider,
+                IsRelationalNotDocumentDatabase,
+                _jsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new DomesticVrpConsentAccessTokenConfig(
+                false,
+                DbProvider,
+                IsRelationalNotDocumentDatabase,
+                _jsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new DomesticVrpConsentRefreshTokenConfig(
+                false,
+                DbProvider,
+                IsRelationalNotDocumentDatabase,
+                _jsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new ExternalApiSecretConfig(false, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new RegistrationAccessTokenConfig(false, DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
+
+        // Settings
+        modelBuilder.ApplyConfiguration(
+            new SettingsConfig(DbProvider, IsRelationalNotDocumentDatabase, _jsonFormatting));
+
+        // In case of MongoDB, register discriminator property "_t" as shadow property so can filter on this as MongoDB
+        // provider doesn't do this automatically.
+        if (DbProvider is DbProvider.MongoDb)
+        {
+            modelBuilder.Entity<EncryptedObject>()
+                .HasDiscriminator<string>("_t")
+                .HasValue<AccountAccessConsentAccessToken>(
+                    nameof(Models.Persistent.AccountAndTransaction.AccountAccessConsentAccessToken))
+                .HasValue<AccountAccessConsentRefreshToken>(
+                    nameof(Models.Persistent.AccountAndTransaction.AccountAccessConsentRefreshToken))
+                .HasValue<DomesticPaymentConsentAccessToken>(
+                    nameof(Models.Persistent.PaymentInitiation.DomesticPaymentConsentAccessToken))
+                .HasValue<DomesticPaymentConsentRefreshToken>(
+                    nameof(Models.Persistent.PaymentInitiation.DomesticPaymentConsentRefreshToken))
+                .HasValue<DomesticVrpConsentAccessToken>(
+                    nameof(Models.Persistent.VariableRecurringPayments.DomesticVrpConsentAccessToken))
+                .HasValue<DomesticVrpConsentRefreshToken>(
+                    nameof(Models.Persistent.VariableRecurringPayments.DomesticVrpConsentRefreshToken))
+                .HasValue<ExternalApiSecretEntity>(nameof(ExternalApiSecretEntity))
+                .HasValue<RegistrationAccessTokenEntity>(nameof(RegistrationAccessTokenEntity))
+                .IsComplete();
+
+            modelBuilder.Entity<AuthContext>()
+                .HasDiscriminator<string>("_t")
+                .HasValue<AccountAccessConsentAuthContext>(
+                    nameof(Models.Persistent.AccountAndTransaction.AccountAccessConsentAuthContext))
+                .HasValue<DomesticPaymentConsentAuthContext>(
+                    nameof(Models.Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext))
+                .HasValue<DomesticVrpConsentAuthContext>(
+                    nameof(Models.Persistent.VariableRecurringPayments.DomesticVrpConsentAuthContext))
+                .IsComplete();
+        }
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -152,8 +287,12 @@ public abstract class BaseDbContext : DbContext
                     warnings.Ignore(CoreEventId.PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning);
 
                     //warnings.Throw(RelationalEventId.MultipleCollectionIncludeWarning);
-                })
-            .UseSnakeCaseNamingConvention();
+                });
+
+        if (DbProvider is not DbProvider.MongoDb)
+        {
+            optionsBuilder.UseSnakeCaseNamingConvention();
+        }
 
         base.OnConfiguring(optionsBuilder);
     }

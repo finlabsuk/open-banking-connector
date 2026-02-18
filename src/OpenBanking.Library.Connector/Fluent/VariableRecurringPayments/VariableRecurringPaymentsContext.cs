@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
@@ -33,7 +34,7 @@ public interface IVariableRecurringPaymentsContext
     /// </summary>
     IDomesticVrpContext<DomesticVrpRequest, DomesticVrpResponse, DomesticVrpPaymentDetailsResponse,
         ConsentExternalCreateParams,
-        ConsentExternalEntityReadParams> DomesticVrps { get; }
+        ExternalEntityReadParams> DomesticVrps { get; }
 }
 
 internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsContext
@@ -56,13 +57,13 @@ internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsCont
             sharedContext.MemoryCache,
             sharedContext.EncryptionKeyInfo);
         _domesticVrp = new DomesticVrpOperations(
-            _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
+            _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentPersisted>(),
             _sharedContext.Instrumentation,
             _sharedContext.ApiVariantMapper,
-            _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            _sharedContext.DbService.GetDbMethods(),
             _sharedContext.TimeProvider,
             new ConsentAccessTokenGet(
-                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.DbService.GetDbMethods(),
                 _sharedContext.TimeProvider,
                 grantPost,
                 _sharedContext.Instrumentation,
@@ -73,10 +74,20 @@ internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsCont
             _sharedContext.ObSealCertificateMethods,
             clientAccessTokenGet,
             new DomesticVrpConsentCommon(
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentAccessToken>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentRefreshToken>(),
-                _sharedContext.Instrumentation));
+                _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentPersisted>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentAccessToken>(),
+                _sharedContext.DbService.GetDbEntityMethods<DomesticVrpConsentRefreshToken>(),
+                _sharedContext.Instrumentation,
+                _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+                _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                _sharedContext.DbService.GetDbMethods()),
+            new ConsentCommon(
+                _sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+                _sharedContext.Instrumentation,
+                _sharedContext.DbService.GetDbMethods(),
+                _sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+                _sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>()));
     }
 
     public IDomesticVrpConsentsContext DomesticVrpConsents =>
@@ -84,6 +95,6 @@ internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsCont
 
     public IDomesticVrpContext<DomesticVrpRequest, DomesticVrpResponse, DomesticVrpPaymentDetailsResponse,
             ConsentExternalCreateParams,
-            ConsentExternalEntityReadParams>
+            ExternalEntityReadParams>
         DomesticVrps => _domesticVrp;
 }

@@ -8,11 +8,11 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Web;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Extensions;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using AccountAndTransactionModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAisp.Models;
 using ServiceCollectionExtensionsWeb =
     FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions.ServiceCollectionExtensions;
 using ServiceCollectionExtensionsGenericHost =
@@ -20,9 +20,6 @@ using ServiceCollectionExtensionsGenericHost =
 
 // Create builder
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
-// Update configuration
-builder.Host.AddGenericHostConfiguration(args);
 
 // Add services
 
@@ -169,6 +166,9 @@ app.UseSwaggerUI(
 
 // Add controller endpoints
 app.MapControllers();
+
+// Add health check endpoint
+app.MapHealthChecks("/healthz");
 
 // Run 
 app.Run();

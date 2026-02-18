@@ -202,12 +202,14 @@ internal class GrantPost : IGrantPost
         }
 
         // Validate response refresh token
-        if (response.RefreshToken is not null)
+        bool unexpectedResponseRefreshTokenMayBePresent =
+            clientCredentialsGrantPostCustomBehaviour?.UnexpectedResponseRefreshTokenMayBePresent ?? false;
+        if (!unexpectedResponseRefreshTokenMayBePresent &&
+            response.RefreshToken is not null)
         {
             throw new InvalidOperationException(
-                "Parameter refresh_token received when using client credentials grant.");
+                "Did not expect but received refresh token when using client credentials grant.");
         }
-
         return response;
     }
 
@@ -504,7 +506,7 @@ internal class GrantPost : IGrantPost
         };
         string payloadJson = claims.ToJsonString();
         string jwt = JwtFactory.CreateJwt(
-            JwtFactory.DefaultJwtHeadersExcludingTyp(obSealKey.KeyId),
+            JwtFactory.GetDefaultJwtHeaders(obSealKey.KeyId),
             payloadJson,
             obSealKey.Key,
             jwsAlgorithm);
@@ -542,7 +544,16 @@ internal class GrantPost : IGrantPost
             throw new Exception("Consent ID from ID token does not match expected consent ID.");
         }
 
-        if (!string.Equals(idToken.Nonce, expectedNonce))
+        bool idTokenMayNotHaveNonceClaim =
+            idTokenProcessingCustomBehaviour?.IdTokenMayNotHaveNonceClaim ?? false;
+        if (!idTokenMayNotHaveNonceClaim &&
+            idToken.Nonce is null)
+        {
+            throw new Exception("Nonce not provided in ID token.");
+        }
+
+        if (idToken.Nonce is not null &&
+            !string.Equals(idToken.Nonce, expectedNonce))
         {
             throw new Exception("Nonce from ID token does not match expected nonce.");
         }
@@ -583,7 +594,8 @@ internal class GrantPost : IGrantPost
             }
         }
 
-        if (!string.Equals(idToken.Issuer, bankIssuerUrl))
+        string issClaim = idTokenProcessingCustomBehaviour?.IssClaim ?? bankIssuerUrl;
+        if (!string.Equals(idToken.Issuer, issClaim))
         {
             throw new Exception("Issuer from ID token does not match expected issuer.");
         }
@@ -729,9 +741,11 @@ internal class GrantPost : IGrantPost
             new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
+#pragma warning disable SYSLIB0050 // see https://github.com/JamesNK/Newtonsoft.Json/issues/2953
                 Context = new StreamingContext(
                     StreamingContextStates.All,
                     optionsDict)
+#pragma warning restore SYSLIB0050
             };
 
         TIdToken idToken =

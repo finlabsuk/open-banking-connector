@@ -7,6 +7,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 public interface IConsentPublicQuery : IEntityBaseQuery
 {
     /// <summary>
+    ///     Created using v4 external (bank) API
+    /// </summary>
+    bool CreatedWithV4 { get; }
+
+    /// <summary>
     ///     Associated BankRegistration object
     /// </summary>
     Guid BankRegistrationId { get; }
@@ -29,6 +34,11 @@ public class ConsentBaseResponse : EntityBaseResponse, IConsentPublicQuery
     public required DateTimeOffset AuthContextModified { get; init; }
 
     public string? AuthContextModifiedBy { get; init; }
+
+    /// <summary>
+    ///     Created using v4 external (bank) API
+    /// </summary>
+    public required bool CreatedWithV4 { get; init; }
 
     /// <summary>
     ///     ID of associated BankRegistration object

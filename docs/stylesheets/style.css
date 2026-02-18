@@ -1,3 +1,19 @@
+:root  > * {
+  --md-primary-fg-color:  #512C80;
+  --md-primary-fg-color--dark: #512C80;
+  --md-accent-fg-color:  #901a85;
+}
+
+.md-header__button.md-logo img,.md-header__button.md-logo svg {
+  height: 55px !important;
+}
+
+@media screen and (max-width: 76.2344em) {
+  .md-nav--primary .md-nav__title {
+    height: 0px !important;
+  }
+}
+
 .md-grid {
-    max-width: 1560px; 
+  max-width: 1560px; 
 }

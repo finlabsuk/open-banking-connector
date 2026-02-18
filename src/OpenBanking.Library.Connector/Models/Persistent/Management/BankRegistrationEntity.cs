@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
@@ -27,14 +26,10 @@ internal class BankRegistrationEntity :
         string? isDeletedModifiedBy,
         DateTimeOffset created,
         string? createdBy,
-        string? externalApiSecret,
-        string? registrationAccessToken,
+        BankGroup bankGroup,
+        Guid softwareStatementId,
         OAuth2ResponseMode? defaultResponseModeOverride,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
-        BankGroup bankGroup,
-        Guid? softwareStatementId,
-        string softwareStatementProfileId,
-        string? softwareStatementProfileOverride,
         bool useSimulatedBank,
         string externalApiId,
         BankProfileEnum bankProfile,
@@ -42,6 +37,9 @@ internal class BankRegistrationEntity :
         string? registrationEndpoint,
         string tokenEndpoint,
         string authorizationEndpoint,
+        bool aispUseV4,
+        bool pispUseV4,
+        bool vrpUseV4,
         string defaultFragmentRedirectUri,
         string defaultQueryRedirectUri,
         IList<string> redirectUris,
@@ -54,15 +52,10 @@ internal class BankRegistrationEntity :
         created,
         createdBy)
     {
-        ExternalApiSecret = externalApiSecret;
-        RegistrationAccessToken = registrationAccessToken;
-        DefaultResponseModeOverride = defaultResponseModeOverride;
-        TokenEndpointAuthMethod = tokenEndpointAuthMethod;
         BankGroup = bankGroup;
         SoftwareStatementId = softwareStatementId;
-        SoftwareStatementProfileId = softwareStatementProfileId ??
-                                     throw new ArgumentNullException(nameof(softwareStatementProfileId));
-        SoftwareStatementProfileOverride = softwareStatementProfileOverride;
+        DefaultResponseModeOverride = defaultResponseModeOverride;
+        TokenEndpointAuthMethod = tokenEndpointAuthMethod;
         UseSimulatedBank = useSimulatedBank;
         ExternalApiId = externalApiId ?? throw new ArgumentNullException(nameof(externalApiId));
         BankProfile = bankProfile;
@@ -70,8 +63,12 @@ internal class BankRegistrationEntity :
         RegistrationEndpoint = registrationEndpoint;
         TokenEndpoint = tokenEndpoint ?? throw new ArgumentNullException(nameof(tokenEndpoint));
         AuthorizationEndpoint = authorizationEndpoint ?? throw new ArgumentNullException(nameof(authorizationEndpoint));
-        DefaultFragmentRedirectUri = defaultFragmentRedirectUri ??
-                                     throw new ArgumentNullException(nameof(defaultFragmentRedirectUri));
+        AispUseV4 = aispUseV4;
+        PispUseV4 = pispUseV4;
+        VrpUseV4 = vrpUseV4;
+        DefaultFragmentRedirectUri =
+            defaultFragmentRedirectUri ??
+            throw new ArgumentNullException(nameof(defaultFragmentRedirectUri));
         DefaultQueryRedirectUri =
             defaultQueryRedirectUri ?? throw new ArgumentNullException(nameof(defaultQueryRedirectUri));
         RedirectUris = redirectUris ?? throw new ArgumentNullException(nameof(redirectUris));
@@ -90,32 +87,20 @@ internal class BankRegistrationEntity :
     public IList<RegistrationAccessTokenEntity> RegistrationAccessTokensNavigation { get; } =
         new List<RegistrationAccessTokenEntity>();
 
-    /// <summary>
-    ///     External API secret. Present to allow use of legacy token auth method "client_secret_basic" in sandboxes etc.
-    /// </summary>
-    public string? ExternalApiSecret { get; set; }
+    public SoftwareStatementEntity SoftwareStatementNavigation { get; } = null!;
 
-    /// <summary>
-    ///     External API registration access token. Sometimes used to support registration adjustments etc.
-    /// </summary>
-    public string? RegistrationAccessToken { get; set; }
+    public Guid SoftwareStatementId { get; }
 
     /// <summary>
     ///     Bank group
     /// </summary>
-    public BankGroup BankGroup { get; set; }
+    public BankGroup BankGroup { get; }
 
-    [ForeignKey(nameof(SoftwareStatementId))]
-    public SoftwareStatementEntity? SoftwareStatementNavigation { get; private set; }
+    public bool AispUseV4 { get; }
 
-    public Guid? SoftwareStatementId { get; set; }
+    public bool PispUseV4 { get; }
 
-    /// <summary>
-    ///     ID of SoftwareStatementProfile to use in association with BankRegistration
-    /// </summary>
-    public string SoftwareStatementProfileId { get; }
-
-    public string? SoftwareStatementProfileOverride { get; }
+    public bool VrpUseV4 { get; }
 
     /// <summary>
     ///     Default OAuth2 response_mode override.
@@ -141,7 +126,7 @@ internal class BankRegistrationEntity :
     /// <summary>
     ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
     /// </summary>
-    public BankProfileEnum BankProfile { get; set; }
+    public BankProfileEnum BankProfile { get; }
 
     /// <summary>
     ///     JWK Set URI (normally supplied from OpenID Configuration)
@@ -166,17 +151,17 @@ internal class BankRegistrationEntity :
     /// <summary>
     ///     Default fragment redirect URI used for this registration.
     /// </summary>
-    public string DefaultFragmentRedirectUri { get; set; }
+    public string DefaultFragmentRedirectUri { get; }
 
     /// <summary>
     ///     Default query redirect URI used for this registration.
     /// </summary>
-    public string DefaultQueryRedirectUri { get; set; }
+    public string DefaultQueryRedirectUri { get; }
 
     /// <summary>
     ///     Redirect URIs used for registration.
     /// </summary>
-    public IList<string> RedirectUris { get; set; }
+    public IList<string> RedirectUris { get; }
 
     /// <summary>
     ///     Functional APIs used for bank registration.
@@ -190,50 +175,4 @@ internal class BankRegistrationEntity :
         Id.ToString(),
         ExternalApiId,
         BankProfile.ToString());
-
-    public ExternalApiSecretEntity AddNewClientSecret(
-        Guid id,
-        string? reference,
-        bool isDeleted,
-        DateTimeOffset isDeletedModified,
-        string? isDeletedModifiedBy,
-        DateTimeOffset created,
-        string? createdBy)
-    {
-        var externalApiSecret =
-            new ExternalApiSecretEntity(
-                id,
-                reference,
-                isDeleted,
-                isDeletedModified,
-                isDeletedModifiedBy,
-                created,
-                createdBy,
-                Id);
-        ExternalApiSecretsNavigation.Add(externalApiSecret);
-        return externalApiSecret;
-    }
-
-    public RegistrationAccessTokenEntity AddNewRegistrationAccessToken(
-        Guid id,
-        string? reference,
-        bool isDeleted,
-        DateTimeOffset isDeletedModified,
-        string? isDeletedModifiedBy,
-        DateTimeOffset created,
-        string? createdBy)
-    {
-        var registrationAccessToken =
-            new RegistrationAccessTokenEntity(
-                id,
-                reference,
-                isDeleted,
-                isDeletedModified,
-                isDeletedModifiedBy,
-                created,
-                createdBy,
-                Id);
-        RegistrationAccessTokensNavigation.Add(registrationAccessToken);
-        return registrationAccessToken;
-    }
 }

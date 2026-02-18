@@ -6,5 +6,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehav
 
 public class ClientCredentialsGrantPostCustomBehaviour : GrantPostCustomBehaviour
 {
+    public bool? UnexpectedResponseRefreshTokenMayBePresent { get; set; } = true;
+
     public IdTokenProcessingCustomBehaviour? IdTokenProcessingCustomBehaviour { get; set; }
 }

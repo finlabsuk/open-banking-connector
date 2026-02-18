@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.11")
+                .HasAnnotation("ProductVersion", "8.0.22")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -27,8 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasColumnOrder(0);
+                        .HasColumnName("id");
 
                     b.Property<string>("AuthContextCodeVerifier")
                         .HasColumnType("text")
@@ -36,28 +35,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
 
                     b.Property<DateTimeOffset>("AuthContextModified")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("auth_context_modified")
-                        .HasColumnOrder(103);
+                        .HasColumnName("auth_context_modified");
 
                     b.Property<string>("AuthContextModifiedBy")
                         .HasColumnType("text")
-                        .HasColumnName("auth_context_modified_by")
-                        .HasColumnOrder(104);
+                        .HasColumnName("auth_context_modified_by");
 
                     b.Property<string>("AuthContextNonce")
                         .HasColumnType("text")
-                        .HasColumnName("auth_context_nonce")
-                        .HasColumnOrder(102);
+                        .HasColumnName("auth_context_nonce");
 
                     b.Property<string>("AuthContextState")
                         .HasColumnType("text")
-                        .HasColumnName("auth_context_state")
-                        .HasColumnOrder(101);
+                        .HasColumnName("auth_context_state");
 
                     b.Property<Guid>("BankRegistrationId")
                         .HasColumnType("uuid")
-                        .HasColumnName("bank_registration_id")
-                        .HasColumnOrder(1);
+                        .HasColumnName("bank_registration_id");
 
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
@@ -67,11 +61,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                         .HasColumnType("text")
                         .HasColumnName("created_by");
 
+                    b.Property<bool>("CreatedWithV4")
+                        .HasColumnType("boolean")
+                        .HasColumnName("created_with_v4");
+
                     b.Property<string>("ExternalApiId")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("external_api_id")
-                        .HasColumnOrder(100);
+                        .HasColumnName("external_api_id");
 
                     b.Property<string>("ExternalApiUserId")
                         .HasColumnType("text")
@@ -100,31 +97,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                     b.Property<string>("Reference")
                         .HasColumnType("text")
                         .HasColumnName("reference");
-
-                    b.Property<string>("_accessTokenAccessToken")
-                        .HasColumnType("text")
-                        .HasColumnName("access_token_access_token")
-                        .HasColumnOrder(105);
-
-                    b.Property<int>("_accessTokenExpiresIn")
-                        .HasColumnType("integer")
-                        .HasColumnName("access_token_expires_in")
-                        .HasColumnOrder(106);
-
-                    b.Property<DateTimeOffset>("_accessTokenModified")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("access_token_modified")
-                        .HasColumnOrder(108);
-
-                    b.Property<string>("_accessTokenModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("access_token_modified_by")
-                        .HasColumnOrder(109);
-
-                    b.Property<string>("_accessTokenRefreshToken")
-                        .HasColumnType("text")
-                        .HasColumnName("access_token_refresh_token")
-                        .HasColumnOrder(107);
 
                     b.HasKey("Id")
                         .HasName("pk_account_access_consent");
@@ -254,10 +226,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                         .HasColumnType("text")
                         .HasColumnName("is_deleted_modified_by");
 
-                    b.Property<string>("KeyId")
-                        .HasColumnType("text")
-                        .HasColumnName("key_id");
-
                     b.Property<DateTimeOffset>("Modified")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("modified");
@@ -311,8 +279,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasColumnOrder(1);
+                        .HasColumnName("id");
+
+                    b.Property<bool>("AispUseV4")
+                        .HasColumnType("boolean")
+                        .HasColumnName("aisp_use_v4");
 
                     b.Property<string>("AuthorizationEndpoint")
                         .IsRequired()
@@ -356,10 +327,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                         .HasColumnType("text")
                         .HasColumnName("external_api_id");
 
-                    b.Property<string>("ExternalApiSecret")
-                        .HasColumnType("text")
-                        .HasColumnName("external_api_secret");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -377,6 +344,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                         .HasColumnType("text")
                         .HasColumnName("jwks_uri");
 
+                    b.Property<bool>("PispUseV4")
+                        .HasColumnType("boolean")
+                        .HasColumnName("pisp_use_v4");
+
                     b.Property<string>("RedirectUris")
                         .IsRequired()
                         .HasColumnType("jsonb")
@@ -385,10 +356,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                     b.Property<string>("Reference")
                         .HasColumnType("text")
                         .HasColumnName("reference");
-
-                    b.Property<string>("RegistrationAccessToken")
-                        .HasColumnType("text")
-                        .HasColumnName("registration_access_token");
 
                     b.Property<string>("RegistrationEndpoint")
                         .HasColumnType("text")
@@ -399,18 +366,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                         .HasColumnType("text")
                         .HasColumnName("registration_scope");
 
-                    b.Property<Guid?>("SoftwareStatementId")
+                    b.Property<Guid>("SoftwareStatementId")
                         .HasColumnType("uuid")
                         .HasColumnName("software_statement_id");
-
-                    b.Property<string>("SoftwareStatementProfileId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("software_statement_profile_id");
-
-                    b.Property<string>("SoftwareStatementProfileOverride")
-                        .HasColumnType("text")
-                        .HasColumnName("software_statement_profile_override");
 
                     b.Property<string>("TokenEndpoint")
                         .IsRequired()
@@ -425,6 +383,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                     b.Property<bool>("UseSimulatedBank")
                         .HasColumnType("boolean")
                         .HasColumnName("use_simulated_bank");
+
+                    b.Property<bool>("VrpUseV4")
+                        .HasColumnType("boolean")
+                        .HasColumnName("vrp_use_v4");
 
                     b.HasKey("Id")
                         .HasName("pk_bank_registration");
@@ -467,20 +429,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                         .HasColumnType("text")
                         .HasColumnName("key");
 
-                    b.Property<string>("LegacyName")
-                        .HasColumnType("text")
-                        .HasColumnName("legacy_name");
-
                     b.Property<string>("Reference")
                         .HasColumnType("text")
                         .HasColumnName("reference");
 
                     b.HasKey("Id")
                         .HasName("pk_encryption_key_description");
-
-                    b.HasIndex("LegacyName")
-                        .IsUnique()
-                        .HasDatabaseName("ix_encryption_key_description_legacy_name");
 
                     b.ToTable("encryption_key_description", (string)null);
                 });
@@ -668,8 +622,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasColumnOrder(0);
+                        .HasColumnName("id");
 
                     b.Property<string>("AuthContextCodeVerifier")
                         .HasColumnType("text")
@@ -677,28 +630,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
 
                     b.Property<DateTimeOffset>("AuthContextModified")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("auth_context_modified")
-                        .HasColumnOrder(103);
+                        .HasColumnName("auth_context_modified");
 
                     b.Property<string>("AuthContextModifiedBy")
                         .HasColumnType("text")
-                        .HasColumnName("auth_context_modified_by")
-                        .HasColumnOrder(104);
+                        .HasColumnName("auth_context_modified_by");
 
                     b.Property<string>("AuthContextNonce")
                         .HasColumnType("text")
-                        .HasColumnName("auth_context_nonce")
-                        .HasColumnOrder(102);
+                        .HasColumnName("auth_context_nonce");
 
                     b.Property<string>("AuthContextState")
                         .HasColumnType("text")
-                        .HasColumnName("auth_context_state")
-                        .HasColumnOrder(101);
+                        .HasColumnName("auth_context_state");
 
                     b.Property<Guid>("BankRegistrationId")
                         .HasColumnType("uuid")
-                        .HasColumnName("bank_registration_id")
-                        .HasColumnOrder(1);
+                        .HasColumnName("bank_registration_id");
 
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
@@ -708,11 +656,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                         .HasColumnType("text")
                         .HasColumnName("created_by");
 
+                    b.Property<bool>("CreatedWithV4")
+                        .HasColumnType("boolean")
+                        .HasColumnName("created_with_v4");
+
                     b.Property<string>("ExternalApiId")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("external_api_id")
-                        .HasColumnOrder(100);
+                        .HasColumnName("external_api_id");
 
                     b.Property<string>("ExternalApiUserId")
                         .HasColumnType("text")
@@ -741,31 +692,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                     b.Property<string>("Reference")
                         .HasColumnType("text")
                         .HasColumnName("reference");
-
-                    b.Property<string>("_accessTokenAccessToken")
-                        .HasColumnType("text")
-                        .HasColumnName("access_token_access_token")
-                        .HasColumnOrder(105);
-
-                    b.Property<int>("_accessTokenExpiresIn")
-                        .HasColumnType("integer")
-                        .HasColumnName("access_token_expires_in")
-                        .HasColumnOrder(106);
-
-                    b.Property<DateTimeOffset>("_accessTokenModified")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("access_token_modified")
-                        .HasColumnOrder(108);
-
-                    b.Property<string>("_accessTokenModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("access_token_modified_by")
-                        .HasColumnOrder(109);
-
-                    b.Property<string>("_accessTokenRefreshToken")
-                        .HasColumnType("text")
-                        .HasColumnName("access_token_refresh_token")
-                        .HasColumnOrder(107);
 
                     b.HasKey("Id")
                         .HasName("pk_domestic_payment_consent");
@@ -776,13 +702,48 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                     b.ToTable("domestic_payment_consent", (string)null);
                 });
 
+            modelBuilder.Entity("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.SettingsEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created");
+
+                    b.Property<Guid?>("CurrentEncryptionKeyDescriptionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("current_encryption_key_description_id");
+
+                    b.Property<bool>("DisableEncryption")
+                        .HasColumnType("boolean")
+                        .HasColumnName("disable_encryption");
+
+                    b.Property<DateTimeOffset>("Modified")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("modified");
+
+                    b.Property<long>("SchemaVersion")
+                        .HasColumnType("bigint")
+                        .HasColumnName("schema_version");
+
+                    b.HasKey("Id")
+                        .HasName("pk_settings");
+
+                    b.HasIndex("CurrentEncryptionKeyDescriptionId")
+                        .HasDatabaseName("ix_settings_current_encryption_key_description_id");
+
+                    b.ToTable("settings", (string)null);
+                });
+
             modelBuilder.Entity("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasColumnOrder(0);
+                        .HasColumnName("id");
 
                     b.Property<string>("AuthContextCodeVerifier")
                         .HasColumnType("text")
@@ -790,28 +751,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
 
                     b.Property<DateTimeOffset>("AuthContextModified")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("auth_context_modified")
-                        .HasColumnOrder(103);
+                        .HasColumnName("auth_context_modified");
 
                     b.Property<string>("AuthContextModifiedBy")
                         .HasColumnType("text")
-                        .HasColumnName("auth_context_modified_by")
-                        .HasColumnOrder(104);
+                        .HasColumnName("auth_context_modified_by");
 
                     b.Property<string>("AuthContextNonce")
                         .HasColumnType("text")
-                        .HasColumnName("auth_context_nonce")
-                        .HasColumnOrder(102);
+                        .HasColumnName("auth_context_nonce");
 
                     b.Property<string>("AuthContextState")
                         .HasColumnType("text")
-                        .HasColumnName("auth_context_state")
-                        .HasColumnOrder(101);
+                        .HasColumnName("auth_context_state");
 
                     b.Property<Guid>("BankRegistrationId")
                         .HasColumnType("uuid")
-                        .HasColumnName("bank_registration_id")
-                        .HasColumnOrder(1);
+                        .HasColumnName("bank_registration_id");
 
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
@@ -821,11 +777,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                         .HasColumnType("text")
                         .HasColumnName("created_by");
 
+                    b.Property<bool>("CreatedWithV4")
+                        .HasColumnType("boolean")
+                        .HasColumnName("created_with_v4");
+
                     b.Property<string>("ExternalApiId")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("external_api_id")
-                        .HasColumnOrder(100);
+                        .HasColumnName("external_api_id");
 
                     b.Property<string>("ExternalApiUserId")
                         .HasColumnType("text")
@@ -851,34 +810,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                         .HasColumnType("text")
                         .HasColumnName("is_deleted_modified_by");
 
+                    b.Property<bool>("MigratedToV4")
+                        .HasColumnType("boolean")
+                        .HasColumnName("migrated_to_v4");
+
+                    b.Property<DateTimeOffset>("MigratedToV4Modified")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("migrated_to_v4_modified");
+
                     b.Property<string>("Reference")
                         .HasColumnType("text")
                         .HasColumnName("reference");
-
-                    b.Property<string>("_accessTokenAccessToken")
-                        .HasColumnType("text")
-                        .HasColumnName("access_token_access_token")
-                        .HasColumnOrder(105);
-
-                    b.Property<int>("_accessTokenExpiresIn")
-                        .HasColumnType("integer")
-                        .HasColumnName("access_token_expires_in")
-                        .HasColumnOrder(106);
-
-                    b.Property<DateTimeOffset>("_accessTokenModified")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("access_token_modified")
-                        .HasColumnOrder(108);
-
-                    b.Property<string>("_accessTokenModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("access_token_modified_by")
-                        .HasColumnOrder(109);
-
-                    b.Property<string>("_accessTokenRefreshToken")
-                        .HasColumnType("text")
-                        .HasColumnName("access_token_refresh_token")
-                        .HasColumnOrder(107);
 
                     b.HasKey("Id")
                         .HasName("pk_domestic_vrp_consent");
@@ -1070,6 +1012,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                     b.HasOne("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management.SoftwareStatementEntity", "SoftwareStatementNavigation")
                         .WithMany()
                         .HasForeignKey("SoftwareStatementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("fk_bank_registration_software_statement_software_statement_id");
 
                     b.Navigation("SoftwareStatementNavigation");
@@ -1106,6 +1050,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                         .HasConstraintName("fk_domestic_payment_consent_bank_registration_bank_registratio");
 
                     b.Navigation("BankRegistrationNavigation");
+                });
+
+            modelBuilder.Entity("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.SettingsEntity", b =>
+                {
+                    b.HasOne("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management.EncryptionKeyDescriptionEntity", null)
+                        .WithMany()
+                        .HasForeignKey("CurrentEncryptionKeyDescriptionId")
+                        .HasConstraintName("fk_settings_encryption_key_description_current_encryption_key_");
                 });
 
             modelBuilder.Entity("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent", b =>
@@ -1158,26 +1110,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
 
             modelBuilder.Entity("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsentAccessToken", b =>
                 {
-                    b.HasOne("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent", "AccountAccessConsentNavigation")
+                    b.HasOne("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent", null)
                         .WithMany("AccountAccessConsentAccessTokensNavigation")
                         .HasForeignKey("AccountAccessConsentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_encrypted_object_account_access_consent_account_access_cons");
-
-                    b.Navigation("AccountAccessConsentNavigation");
                 });
 
             modelBuilder.Entity("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsentRefreshToken", b =>
                 {
-                    b.HasOne("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent", "AccountAccessConsentNavigation")
+                    b.HasOne("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent", null)
                         .WithMany("AccountAccessConsentRefreshTokensNavigation")
                         .HasForeignKey("AccountAccessConsentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_encrypted_object_account_access_consent_account_access_cons");
-
-                    b.Navigation("AccountAccessConsentNavigation");
                 });
 
             modelBuilder.Entity("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management.ExternalApiSecretEntity", b =>
@@ -1206,50 +1154,42 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
 
             modelBuilder.Entity("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsentAccessToken", b =>
                 {
-                    b.HasOne("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsent", "DomesticPaymentConsentNavigation")
+                    b.HasOne("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsent", null)
                         .WithMany("DomesticPaymentConsentAccessTokensNavigation")
                         .HasForeignKey("DomesticPaymentConsentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_encrypted_object_domestic_payment_consent_domestic_payment_");
-
-                    b.Navigation("DomesticPaymentConsentNavigation");
                 });
 
             modelBuilder.Entity("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsentRefreshToken", b =>
                 {
-                    b.HasOne("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsent", "DomesticPaymentConsentNavigation")
+                    b.HasOne("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsent", null)
                         .WithMany("DomesticPaymentConsentRefreshTokensNavigation")
                         .HasForeignKey("DomesticPaymentConsentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_encrypted_object_domestic_payment_consent_domestic_payment_");
-
-                    b.Navigation("DomesticPaymentConsentNavigation");
                 });
 
             modelBuilder.Entity("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsentAccessToken", b =>
                 {
-                    b.HasOne("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent", "DomesticVrpConsentNavigation")
+                    b.HasOne("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent", null)
                         .WithMany("DomesticVrpConsentAccessTokensNavigation")
                         .HasForeignKey("DomesticVrpConsentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_encrypted_object_domestic_vrp_consent_domestic_vrp_consent_");
-
-                    b.Navigation("DomesticVrpConsentNavigation");
                 });
 
             modelBuilder.Entity("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsentRefreshToken", b =>
                 {
-                    b.HasOne("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent", "DomesticVrpConsentNavigation")
+                    b.HasOne("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent", null)
                         .WithMany("DomesticVrpConsentRefreshTokensNavigation")
                         .HasForeignKey("DomesticVrpConsentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_encrypted_object_domestic_vrp_consent_domestic_vrp_consent_");
-
-                    b.Navigation("DomesticVrpConsentNavigation");
                 });
 
             modelBuilder.Entity("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent", b =>

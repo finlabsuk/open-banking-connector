@@ -42,6 +42,7 @@ public class BankProfileService : IBankProfileService
         _bankProfileGeneratorsDictionary = new BankProfileGeneratorsDictionary
         {
             [BankGroup.Barclays] = new BarclaysGenerator(bankProfilesSettingsProvider),
+            [BankGroup.Chase] = new ChaseGenerator(bankProfilesSettingsProvider),
             [BankGroup.Cooperative] = new CooperativeGenerator(bankProfilesSettingsProvider),
             [BankGroup.Danske] = new DanskeGenerator(bankProfilesSettingsProvider),
             [BankGroup.Hsbc] = new HsbcGenerator(bankProfilesSettingsProvider),
@@ -52,7 +53,8 @@ public class BankProfileService : IBankProfileService
             [BankGroup.NatWest] = new NatWestGenerator(bankProfilesSettingsProvider),
             [BankGroup.Revolut] = new RevolutGenerator(bankProfilesSettingsProvider),
             [BankGroup.Santander] = new SantanderGenerator(bankProfilesSettingsProvider),
-            [BankGroup.Starling] = new StarlingGenerator(bankProfilesSettingsProvider)
+            [BankGroup.Starling] = new StarlingGenerator(bankProfilesSettingsProvider),
+            [BankGroup.Tsb] = new TsbGenerator(bankProfilesSettingsProvider)
         };
     }
 
@@ -63,6 +65,7 @@ public class BankProfileService : IBankProfileService
                     () => profileEnum.GetBankGroup() switch
                     {
                         BankGroup.Barclays => GetBankProfile<BarclaysBank>(profileEnum, _instrumentationClient),
+                        BankGroup.Chase => GetBankProfile<ChaseBank>(profileEnum, _instrumentationClient),
                         BankGroup.Cooperative => GetBankProfile<CooperativeBank>(
                             profileEnum,
                             _instrumentationClient),
@@ -76,6 +79,7 @@ public class BankProfileService : IBankProfileService
                         BankGroup.Revolut => GetBankProfile<RevolutBank>(profileEnum, _instrumentationClient),
                         BankGroup.Santander => GetBankProfile<SantanderBank>(profileEnum, _instrumentationClient),
                         BankGroup.Starling => GetBankProfile<StarlingBank>(profileEnum, _instrumentationClient),
+                        BankGroup.Tsb => GetBankProfile<TsbBank>(profileEnum, _instrumentationClient),
                         _ => throw new ArgumentOutOfRangeException()
                     },
                     LazyThreadSafetyMode.ExecutionAndPublication))

@@ -77,7 +77,8 @@ public class DomesticVrpController : ControllerBase
     ///     Read domestic VRP
     /// </summary>
     /// <param name="externalApiId">External (bank) API ID of Domestic VRP</param>
-    /// <param name="domesticVrpConsentId"></param>
+    /// <param name="bankRegistrationId"></param>
+    /// <param name="useV4ExternalApi"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpGet("{externalApiId}")]
@@ -85,11 +86,19 @@ public class DomesticVrpController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<DomesticVrpResponse>> GetAsync(
         string externalApiId,
-        [FromHeader(Name = "x-obc-domestic-vrp-consent-id")]
-        Guid domesticVrpConsentId,
+        [FromHeader(Name = "x-obc-bank-registration-id")]
+        Guid bankRegistrationId,
+        [FromHeader(Name = "x-obc-use-v4-external-api")]
+        bool? useV4ExternalApi,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
+        if (bankRegistrationId == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Required header x-obc-bank-registration-id either set to empty value or not provided.");
+        }
+
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
@@ -110,10 +119,10 @@ public class DomesticVrpController : ControllerBase
             .VariableRecurringPayments
             .DomesticVrps
             .ReadAsync(
-                new ConsentExternalEntityReadParams
+                new ExternalEntityReadParams
                 {
-                    ConsentId = domesticVrpConsentId,
-                    ModifiedBy = null,
+                    BankRegistrationId = bankRegistrationId,
+                    UseV4ExternalApi = useV4ExternalApi,
                     ExtraHeaders = extraHeaders,
                     PublicRequestUrlWithoutQuery = requestUrlWithoutQuery,
                     ExternalApiId = externalApiId
@@ -126,18 +135,27 @@ public class DomesticVrpController : ControllerBase
     ///     Read domestic VRP payment details
     /// </summary>
     /// <param name="externalApiId">External (bank) API ID of Domestic VRP</param>
-    /// <param name="domesticVrpConsentId"></param>
+    /// <param name="bankRegistrationId"></param>
+    /// <param name="useV4ExternalApi"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpGet("{externalApiId}/payment-details")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<DomesticVrpPaymentDetailsResponse>> GetPaymentDetailsAsync(
         string externalApiId,
-        [FromHeader(Name = "x-obc-domestic-vrp-consent-id")]
-        Guid domesticVrpConsentId,
+        [FromHeader(Name = "x-obc-bank-registration-id")]
+        Guid bankRegistrationId,
+        [FromHeader(Name = "x-obc-use-v4-external-api")]
+        bool? useV4ExternalApi,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
         string? xFapiCustomerIpAddress)
     {
+        if (bankRegistrationId == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Required header x-obc-bank-registration-id either set to empty value or not provided.");
+        }
+
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
@@ -158,10 +176,10 @@ public class DomesticVrpController : ControllerBase
             .VariableRecurringPayments
             .DomesticVrps
             .ReadPaymentDetailsAsync(
-                new ConsentExternalEntityReadParams
+                new ExternalEntityReadParams
                 {
-                    ConsentId = domesticVrpConsentId,
-                    ModifiedBy = null,
+                    BankRegistrationId = bankRegistrationId,
+                    UseV4ExternalApi = useV4ExternalApi,
                     ExtraHeaders = extraHeaders,
                     PublicRequestUrlWithoutQuery = requestUrlWithoutQuery,
                     ExternalApiId = externalApiId

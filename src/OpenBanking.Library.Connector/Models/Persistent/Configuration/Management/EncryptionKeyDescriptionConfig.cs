@@ -5,19 +5,25 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MongoDB.EntityFrameworkCore.Extensions;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.Management;
 
-internal class EncryptionKeyDescriptionConfig : BaseConfig<EncryptionKeyDescriptionEntity>
+internal class EncryptionKeyDescriptionConfig(
+    bool supportsGlobalQueryFilter,
+    DbProvider dbProvider,
+    bool isRelationalDatabase,
+    Formatting jsonFormatting)
+    : BaseConfig<EncryptionKeyDescriptionEntity>(
+        supportsGlobalQueryFilter,
+        dbProvider,
+        isRelationalDatabase,
+        jsonFormatting)
 {
-    public EncryptionKeyDescriptionConfig(
-        DbProvider dbProvider,
-        bool supportsGlobalQueryFilter,
-        Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
-
     public override void Configure(EntityTypeBuilder<EncryptionKeyDescriptionEntity> builder)
     {
         base.Configure(builder);
@@ -33,7 +39,11 @@ internal class EncryptionKeyDescriptionConfig : BaseConfig<EncryptionKeyDescript
                 v => JsonConvert.DeserializeObject<SecretDescription>(v)!)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
 
-        builder.Property(e => e.LegacyName)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.ToCollection("encryptionKeyDescription");
+            builder.Property(p => p.Key).HasElementName("key");
+        }
     }
 }

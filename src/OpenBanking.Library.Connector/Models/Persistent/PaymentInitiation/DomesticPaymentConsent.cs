@@ -21,11 +21,6 @@ internal class DomesticPaymentConsent :
         string? isDeletedModifiedBy,
         DateTimeOffset created,
         string? createdBy,
-        string? accessTokenAccessToken,
-        int accessTokenExpiresIn,
-        DateTimeOffset accessTokenModified,
-        string? accessTokenModifiedBy,
-        string? accessTokenRefreshToken,
         string? authContextState,
         string? authContextNonce,
         string? authContextCodeVerifier,
@@ -35,7 +30,8 @@ internal class DomesticPaymentConsent :
         DateTimeOffset externalApiUserIdModified,
         string? externalApiUserIdModifiedBy,
         Guid bankRegistrationId,
-        string externalApiId) : base(
+        string externalApiId,
+        bool createdWithV4) : base(
         id,
         reference,
         isDeleted,
@@ -43,11 +39,6 @@ internal class DomesticPaymentConsent :
         isDeletedModifiedBy,
         created,
         createdBy,
-        accessTokenAccessToken,
-        accessTokenExpiresIn,
-        accessTokenModified,
-        accessTokenModifiedBy,
-        accessTokenRefreshToken,
         authContextState,
         authContextNonce,
         authContextCodeVerifier,
@@ -57,7 +48,8 @@ internal class DomesticPaymentConsent :
         externalApiUserIdModified,
         externalApiUserIdModifiedBy,
         bankRegistrationId,
-        externalApiId) { }
+        externalApiId,
+        createdWithV4) { }
 
     /// <summary>
     ///     Associated access tokens
@@ -75,50 +67,4 @@ internal class DomesticPaymentConsent :
     protected override string GetConsentTypeString() => "pisp_dom";
 
     public override ConsentType GetConsentType() => ConsentType.DomesticPaymentConsent;
-
-    public override AccessTokenEntity AddNewAccessToken(
-        Guid id,
-        string? reference,
-        bool isDeleted,
-        DateTimeOffset isDeletedModified,
-        string? isDeletedModifiedBy,
-        DateTimeOffset created,
-        string? createdBy)
-    {
-        var domesticPaymentConsentAccessToken =
-            new DomesticPaymentConsentAccessToken(
-                id,
-                reference,
-                isDeleted,
-                isDeletedModified,
-                isDeletedModifiedBy,
-                created,
-                createdBy,
-                Id);
-        DomesticPaymentConsentAccessTokensNavigation.Add(domesticPaymentConsentAccessToken);
-        return domesticPaymentConsentAccessToken;
-    }
-
-    public override RefreshTokenEntity AddNewRefreshToken(
-        Guid id,
-        string? reference,
-        bool isDeleted,
-        DateTimeOffset isDeletedModified,
-        string? isDeletedModifiedBy,
-        DateTimeOffset created,
-        string? createdBy)
-    {
-        var domesticPaymentConsentRefreshToken =
-            new DomesticPaymentConsentRefreshToken(
-                Guid.NewGuid(),
-                null,
-                false,
-                isDeletedModified,
-                isDeletedModifiedBy,
-                created,
-                createdBy,
-                Id);
-        DomesticPaymentConsentRefreshTokensNavigation.Add(domesticPaymentConsentRefreshToken);
-        return domesticPaymentConsentRefreshToken;
-    }
 }

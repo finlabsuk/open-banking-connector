@@ -34,14 +34,16 @@ internal class BankRegistrationsContext :
             sharedContext.MemoryCache,
             sharedContext.EncryptionKeyInfo);
         var bankRegistrationOperations = new BankRegistrationOperations(
-            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
-            sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+            sharedContext.DbService.GetDbMethods(),
             sharedContext.TimeProvider,
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
             new OpenIdConfigurationRead(sharedContext.ApiClient),
             sharedContext.BankProfileService,
-            sharedContext.DbService.GetDbEntityMethodsClass<SoftwareStatementEntity>(),
+            sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+            sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+            sharedContext.DbService.GetDbEntityMethods<RegistrationAccessTokenEntity>(),
             sharedContext.ObWacCertificateMethods,
             sharedContext.ObSealCertificateMethods,
             clientAccessTokenGet,
@@ -50,15 +52,18 @@ internal class BankRegistrationsContext :
             sharedContext.SecretProvider);
         ReadObject = bankRegistrationOperations;
         DeleteObject = new BankRegistrationDelete(
-            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
-            sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            sharedContext.DbService.GetDbEntityMethods<BankRegistrationEntity>(),
+            sharedContext.DbService.GetDbMethods(),
             sharedContext.TimeProvider,
             sharedContext.Instrumentation,
             sharedContext.BankProfileService,
             sharedContext.ObWacCertificateMethods,
             sharedContext.ObSealCertificateMethods,
             clientAccessTokenGet,
-            sharedContext.EncryptionKeyInfo);
+            sharedContext.EncryptionKeyInfo,
+            sharedContext.DbService.GetDbEntityMethods<SoftwareStatementEntity>(),
+            sharedContext.DbService.GetDbEntityMethods<ExternalApiSecretEntity>(),
+            sharedContext.DbService.GetDbEntityMethods<RegistrationAccessTokenEntity>());
         CreateObject = bankRegistrationOperations;
     }
 

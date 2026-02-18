@@ -5,28 +5,40 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.Management;
 
 internal class
-    RegistrationAccessTokenConfig : EncryptedObjectConfig<
-    RegistrationAccessTokenEntity>
-{
-    public RegistrationAccessTokenConfig(
-        DbProvider dbProvider,
+    RegistrationAccessTokenConfig(
         bool supportsGlobalQueryFilter,
-        Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
-
+        DbProvider dbProvider,
+        bool isRelationalDatabase,
+        Formatting jsonFormatting)
+    : EncryptedObjectConfig<
+        RegistrationAccessTokenEntity>(supportsGlobalQueryFilter, dbProvider, isRelationalDatabase, jsonFormatting)
+{
     public override void Configure(EntityTypeBuilder<RegistrationAccessTokenEntity> builder)
     {
         base.Configure(builder);
 
         // Top-level property info: read-only, JSON conversion, etc
-        builder.Property(e => e.BankRegistrationId)
-            .HasColumnName("bank_registration_id") // shared column
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.BankRegistrationId); // shared column
+
+        // Only set up relationships (foreign keys and navigations) if not MongoDB
+        if (_dbProvider is not DbProvider.MongoDb)
+        {
+            builder
+                .HasOne(e => e.BankRegistrationNavigation)
+                .WithMany(e => e.RegistrationAccessTokensNavigation)
+                .HasForeignKey(e => e.BankRegistrationId);
+        }
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.Property(p => p.BankRegistrationId).HasElementName("bankRegistrationId");
+        }
     }
 }

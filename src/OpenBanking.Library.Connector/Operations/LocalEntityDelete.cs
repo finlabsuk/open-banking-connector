@@ -23,8 +23,8 @@ internal class LocalEntityDelete<TEntity, TDeleteParams> : BaseDelete<TEntity, T
     /// <param name="timeProvider"></param>
     /// <param name="instrumentationClient"></param>
     public LocalEntityDelete(
-        IDbReadWriteEntityMethods<TEntity> entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<TEntity> entityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient) : base(
         entityMethods,

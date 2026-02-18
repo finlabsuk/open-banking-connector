@@ -18,16 +18,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Management;
 internal class ObSealCertificatePost : IObjectCreate<ObSealCertificate,
     ObSealCertificateResponse, LocalCreateParams>
 {
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
-    private readonly IDbReadWriteEntityMethods<ObSealCertificateEntity> _entityMethods;
+    private readonly IDbMethods _dbSaveChangesMethod;
+    private readonly IDbEntityMethods<ObSealCertificateEntity> _entityMethods;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IMemoryCache _memoryCache;
     private readonly ISecretProvider _secretProvider;
     private readonly ITimeProvider _timeProvider;
 
     public ObSealCertificatePost(
-        IDbReadWriteEntityMethods<ObSealCertificateEntity> entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<ObSealCertificateEntity> entityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IMemoryCache memoryCache,

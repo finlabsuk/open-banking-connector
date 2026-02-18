@@ -14,12 +14,13 @@ using Microsoft.EntityFrameworkCore;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Management;
 
 internal class SoftwareStatementOperations(
-    IDbReadWriteEntityMethods<SoftwareStatementEntity> entityMethods,
-    IDbSaveChangesMethod dbSaveChangesMethod,
+    IDbEntityMethods<SoftwareStatementEntity> entityMethods,
+    IDbMethods dbSaveChangesMethod,
     ITimeProvider timeProvider,
     IInstrumentationClient instrumentationClient)
     : IObjectCreate<SoftwareStatement, SoftwareStatementResponse, LocalCreateParams>,
-        IObjectUpdate2<SoftwareStatementUpdate, SoftwareStatementResponse>
+        IObjectUpdate2<SoftwareStatementUpdate, SoftwareStatementResponse>,
+        IObjectReadAll<SoftwareStatementsResponse, LocalReadAllParams>
 {
     private readonly IInstrumentationClient _instrumentationClient = instrumentationClient;
 
@@ -41,17 +42,15 @@ internal class SoftwareStatementOperations(
             utcNow,
             request.CreatedBy,
             utcNow,
-            request.CreatedBy)
-        {
-            OrganisationId = request.OrganisationId,
-            SoftwareId = request.SoftwareId,
-            SandboxEnvironment = request.SandboxEnvironment,
-            DefaultObWacCertificateId = request.DefaultObWacCertificateId,
-            DefaultObSealCertificateId = request.DefaultObSealCertificateId,
-            DefaultQueryRedirectUrl = request.DefaultQueryRedirectUrl,
-            DefaultFragmentRedirectUrl = request.DefaultFragmentRedirectUrl,
-            Modified = utcNow
-        };
+            request.CreatedBy,
+            utcNow,
+            request.OrganisationId,
+            request.SoftwareId,
+            request.SandboxEnvironment,
+            request.DefaultObWacCertificateId,
+            request.DefaultObSealCertificateId,
+            request.DefaultQueryRedirectUrl,
+            request.DefaultFragmentRedirectUrl);
 
         // Add entity
         await entityMethods.AddAsync(entity);
@@ -61,6 +60,45 @@ internal class SoftwareStatementOperations(
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
         await dbSaveChangesMethod.SaveChangesAsync();
+
+        return (response, nonErrorMessages);
+    }
+
+    public async Task<(SoftwareStatementsResponse response, IList<IFluentResponseInfoOrWarningMessage>
+            nonErrorMessages)>
+        ReadAllAsync(
+            LocalReadAllParams readParams)
+    {
+        // Create non-error list
+        var nonErrorMessages =
+            new List<IFluentResponseInfoOrWarningMessage>();
+
+
+        // Load entities
+        List<SoftwareStatementResponseItem> items = await entityMethods
+            .DbSetNoTracking
+            .Select(
+                x => new SoftwareStatementResponseItem
+                {
+                    OrganisationId = x.OrganisationId,
+                    SoftwareId = x.SoftwareId,
+                    SandboxEnvironment = x.SandboxEnvironment,
+                    DefaultObWacCertificateId = x.DefaultObWacCertificateId,
+                    DefaultObSealCertificateId = x.DefaultObSealCertificateId,
+                    DefaultQueryRedirectUrl = x.DefaultQueryRedirectUrl,
+                    DefaultFragmentRedirectUrl = x.DefaultFragmentRedirectUrl,
+                    Id = x.Id,
+                    Created = x.Created,
+                    CreatedBy = x.CreatedBy,
+                    Reference = x.Reference
+                })
+            .ToListAsync();
+
+        var response = new SoftwareStatementsResponse
+        {
+            Data = items,
+            Warnings = null
+        };
 
         return (response, nonErrorMessages);
     }
@@ -91,24 +129,13 @@ internal class SoftwareStatementOperations(
         }
 
         // Update entity
-        if (request.DefaultFragmentRedirectUrl is not null)
-        {
-            entity.DefaultFragmentRedirectUrl = request.DefaultFragmentRedirectUrl;
-        }
-        if (request.DefaultQueryRedirectUrl is not null)
-        {
-            entity.DefaultQueryRedirectUrl = request.DefaultQueryRedirectUrl;
-        }
-        if (request.DefaultObSealCertificateId is not null)
-        {
-            entity.DefaultObSealCertificateId = request.DefaultObSealCertificateId.Value;
-        }
-        if (request.DefaultObWacCertificateId is not null)
-        {
-            entity.DefaultObWacCertificateId = request.DefaultObWacCertificateId.Value;
-        }
         DateTimeOffset utcNow = timeProvider.GetUtcNow();
-        entity.Modified = utcNow;
+        entity.Update(
+            request.DefaultFragmentRedirectUrl,
+            request.DefaultQueryRedirectUrl,
+            request.DefaultObSealCertificateId,
+            request.DefaultObWacCertificateId,
+            utcNow);
 
         // Create response
         SoftwareStatementResponse response = entity.PublicGetLocalResponse;

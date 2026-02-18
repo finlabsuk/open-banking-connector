@@ -3,18 +3,24 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.EntityFrameworkCore.Extensions;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration;
 
-internal class AuthContextConfig<TEntity> : BaseConfig<TEntity>
+internal class AuthContextConfig<TEntity>(
+    bool supportsGlobalQueryFilter,
+    DbProvider dbProvider,
+    bool isRelationalDatabase,
+    Formatting jsonFormatting)
+    : BaseConfig<TEntity>(supportsGlobalQueryFilter, dbProvider, isRelationalDatabase, jsonFormatting)
     where TEntity : AuthContext
 {
-    public AuthContextConfig(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
-        base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
-
     public override void Configure(EntityTypeBuilder<TEntity> builder)
     {
         base.Configure(builder);
@@ -28,5 +34,29 @@ internal class AuthContextConfig<TEntity> : BaseConfig<TEntity>
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.AppSessionId)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.HasIndex(x => x.CodeVerifier)
+                .HasCreateIndexOptions(
+                    new CreateIndexOptions<BsonDocument>
+                    {
+                        PartialFilterExpression =
+                            Builders<BsonDocument>.Filter.And(
+                                Builders<BsonDocument>.Filter.Exists("CodeVerifier"),
+                                Builders<BsonDocument>.Filter.Type("CodeVerifier", BsonType.String))
+                    });
+        }
+
+        // Use camel case for MongoDB
+        if (_dbProvider is DbProvider.MongoDb)
+        {
+            builder.ToCollection("authContext");
+            builder.Property(p => p.AppSessionId).HasElementName("appSessionId");
+            builder.Property(p => p.CodeVerifier).HasElementName("codeVerifier");
+            builder.Property(p => p.Nonce).HasElementName("nonce");
+            builder.Property(p => p.Reference).HasElementName("reference");
+            builder.Property(p => p.State).HasElementName("state");
+        }
     }
 }

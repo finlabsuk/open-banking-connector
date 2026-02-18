@@ -19,9 +19,11 @@ public class DbService : IDbService
         _db = db;
     }
 
-    public IDbEntityMethods<TEntity> GetDbEntityMethodsClass<TEntity>()
+    public IDbEntityMethods<TEntity> GetDbEntityMethods<TEntity>()
         where TEntity : class, IEntity =>
         new DbEntityMethods<TEntity>(_db);
 
-    public IDbSaveChangesMethod GetDbSaveChangesMethodClass() => new DbSaveChangesMethod(_db);
+    public IDbMethods GetDbMethods() => new DbMethods(_db);
+
+    public IDbSettingsMethods GetDbSettingsMethods() => new DbMethods(_db);
 }

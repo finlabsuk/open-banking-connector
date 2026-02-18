@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FsCheck;
+using FsCheck.Fluent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
 
@@ -10,7 +11,7 @@ public static class InvalidUriArbitrary
 {
     public static Arbitrary<string> GetArbitrary()
     {
-        return Arb.Default.String().Generator
+        return ArbMap.Default.ArbFor<string>().Generator
             .Where(s => !string.IsNullOrEmpty(s) && !IsUrl(s))
             .ToArbitrary();
     }

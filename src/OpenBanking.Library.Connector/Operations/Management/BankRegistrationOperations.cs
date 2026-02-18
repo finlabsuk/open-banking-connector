@@ -50,27 +50,31 @@ internal class
     private readonly IBankProfileService _bankProfileService;
     private readonly ClientAccessTokenGet _clientAccessTokenGet;
     private readonly IOpenIdConfigurationRead _configurationRead;
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly IDbMethods _dbSaveChangesMethod;
     private readonly IEncryptionKeyDescription _encryptionKeyInfo;
-    private readonly IDbReadWriteEntityMethods<BankRegistrationEntity> _entityMethods;
+    private readonly IDbEntityMethods<BankRegistrationEntity> _entityMethods;
+    private readonly IDbEntityMethods<ExternalApiSecretEntity> _externalApiSecretMethods;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
+    private readonly IDbEntityMethods<RegistrationAccessTokenEntity> _registrationAccessTokenMethods;
     private readonly ISecretProvider _secretProvider;
-    private readonly IDbReadWriteEntityMethods<SoftwareStatementEntity> _softwareStatementEntityMethods;
+    private readonly IDbReadOnlyEntityMethods<SoftwareStatementEntity> _softwareStatementEntityMethods;
     private readonly ITimeProvider _timeProvider;
 
     public BankRegistrationOperations(
-        IDbReadWriteEntityMethods<BankRegistrationEntity> entityMethods,
-        IDbSaveChangesMethod dbSaveChangesMethod,
+        IDbEntityMethods<BankRegistrationEntity> entityMethods,
+        IDbMethods dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         IOpenIdConfigurationRead configurationRead,
         IBankProfileService bankProfileService,
-        IDbReadWriteEntityMethods<SoftwareStatementEntity> softwareStatementEntityMethods,
+        IDbReadOnlyEntityMethods<SoftwareStatementEntity> softwareStatementEntityMethods,
+        IDbEntityMethods<ExternalApiSecretEntity> externalApiSecretMethods,
+        IDbEntityMethods<RegistrationAccessTokenEntity> registrationAccessTokenMethods,
         ObWacCertificateMethods obWacCertificateMethods,
         ObSealCertificateMethods obSealCertificateMethods,
         ClientAccessTokenGet clientAccessTokenGet,
@@ -88,6 +92,8 @@ internal class
         _secretProvider = secretProvider;
         _configurationRead = configurationRead;
         _entityMethods = entityMethods;
+        _externalApiSecretMethods = externalApiSecretMethods;
+        _registrationAccessTokenMethods = registrationAccessTokenMethods;
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
         _instrumentationClient = instrumentationClient;
@@ -264,6 +270,7 @@ internal class
             bankGroup switch
             {
                 BankGroup.Barclays => GetExistingRegistration<BarclaysBank, BarclaysRegistrationGroup>,
+                BankGroup.Chase => GetExistingRegistration<ChaseBank, ChaseRegistrationGroup>,
                 BankGroup.Cooperative => GetExistingRegistration<CooperativeBank, CooperativeRegistrationGroup>,
                 BankGroup.Danske => GetExistingRegistration<DanskeBank, DanskeRegistrationGroup>,
                 BankGroup.Hsbc => GetExistingRegistration<HsbcBank, HsbcRegistrationGroup>,
@@ -276,6 +283,7 @@ internal class
                 BankGroup.Revolut => GetExistingRegistration<RevolutBank, RevolutRegistrationGroup>,
                 BankGroup.Santander => GetExistingRegistration<SantanderBank, SantanderRegistrationGroup>,
                 BankGroup.Starling => GetExistingRegistration<StarlingBank, StarlingRegistrationGroup>,
+                BankGroup.Tsb => GetExistingRegistration<TsbBank, TsbRegistrationGroup>,
                 _ => throw new ArgumentOutOfRangeException()
             };
         (BankRegistrationEntity? existingGroupRegistration,
@@ -366,7 +374,7 @@ internal class
             registrationAccessToken = externalApiResponse.RegistrationAccessToken;
         }
 
-        // Create persisted entity
+        // Add persisted entity
         DateTimeOffset utcNow = _timeProvider.GetUtcNow();
         var entity = new BankRegistrationEntity(
             Guid.NewGuid(),
@@ -376,14 +384,10 @@ internal class
             request.CreatedBy,
             utcNow,
             request.CreatedBy,
-            null,
-            null,
-            null,
-            tokenEndpointAuthMethod,
             bankGroup,
             softwareStatementId,
-            "",
             null,
+            tokenEndpointAuthMethod,
             useSimulatedBank,
             externalApiId,
             bankProfile.BankProfileEnum,
@@ -391,44 +395,52 @@ internal class
             registrationEndpoint,
             tokenEndpoint,
             authorizationEndpoint,
+            request.AispUseV4 ?? bankProfile.AispUseV4ByDefault,
+            request.PispUseV4 ?? bankProfile.PispUseV4ByDefault,
+            request.VrpUseV4 ?? bankProfile.VrpUseV4ByDefault,
             defaultFragmentRedirectUri,
             defaultQueryRedirectUri,
             redirectUris,
             registrationScope);
+        await _entityMethods.AddAsync(entity);
 
-        // Add client secret
+        // Add external API secret
+        Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
         if (externalApiSecret is not null)
         {
-            ExternalApiSecretEntity clientSecretEntity = entity.AddNewClientSecret(
-                Guid.NewGuid(),
-                request.Reference,
-                false,
-                utcNow,
-                request.CreatedBy,
-                utcNow,
-                request.CreatedBy);
-            Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
-            clientSecretEntity.UpdateClientSecret(
+            var externalApiSecretEntity =
+                new ExternalApiSecretEntity(
+                    Guid.NewGuid(),
+                    request.Reference,
+                    false,
+                    utcNow,
+                    request.CreatedBy,
+                    utcNow,
+                    request.CreatedBy,
+                    entity.Id);
+            externalApiSecretEntity.UpdateClientSecret(
                 externalApiSecret,
                 entity.GetAssociatedData(),
                 await _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
                 utcNow,
                 request.CreatedBy,
                 currentKeyId);
+            await _externalApiSecretMethods.AddAsync(externalApiSecretEntity);
         }
 
         // Add registration access token
         if (registrationAccessToken is not null)
         {
-            RegistrationAccessTokenEntity registrationAccessTokenEntity = entity.AddNewRegistrationAccessToken(
-                Guid.NewGuid(),
-                request.Reference,
-                false,
-                utcNow,
-                request.CreatedBy,
-                utcNow,
-                request.CreatedBy);
-            Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
+            var registrationAccessTokenEntity =
+                new RegistrationAccessTokenEntity(
+                    Guid.NewGuid(),
+                    request.Reference,
+                    false,
+                    utcNow,
+                    request.CreatedBy,
+                    utcNow,
+                    request.CreatedBy,
+                    entity.Id);
             registrationAccessTokenEntity.UpdateRegistrationAccessToken(
                 registrationAccessToken,
                 entity.GetAssociatedData(),
@@ -436,10 +448,8 @@ internal class
                 utcNow,
                 request.CreatedBy,
                 currentKeyId);
+            await _registrationAccessTokenMethods.AddAsync(registrationAccessTokenEntity);
         }
-
-        // Save entity
-        await _entityMethods.AddAsync(entity);
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
         await _dbSaveChangesMethod.SaveChangesAsync();
@@ -458,8 +468,9 @@ internal class
             CreatedBy = entity.CreatedBy,
             Reference = entity.Reference,
             ExternalApiResponse = externalApiResponse,
-            SoftwareStatementId = entity.SoftwareStatementId!.Value,
+            SoftwareStatementId = entity.SoftwareStatementId,
             BankProfile = entity.BankProfile,
+            BankGroup = entity.BankGroup,
             JwksUri = entity.JwksUri,
             RegistrationEndpoint = entity.RegistrationEndpoint,
             TokenEndpoint = entity.TokenEndpoint,
@@ -471,7 +482,10 @@ internal class
             ExternalApiId = entity.ExternalApiId,
             UseSimulatedBank = entity.UseSimulatedBank,
             DefaultResponseModeOverride = entity.DefaultResponseModeOverride,
-            TokenEndpointAuthMethod = entity.TokenEndpointAuthMethod
+            TokenEndpointAuthMethod = entity.TokenEndpointAuthMethod,
+            AispUseV4 = entity.AispUseV4,
+            PispUseV4 = entity.PispUseV4,
+            VrpUseV4 = entity.VrpUseV4
         };
 
         return (response, nonErrorMessages);
@@ -486,22 +500,47 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load BankRegistration
-        BankRegistrationEntity entity =
-            await _entityMethods
-                .DbSetNoTracking
-                .Include(o => o.SoftwareStatementNavigation)
-                .Include(o => o.ExternalApiSecretsNavigation)
-                .Include(o => o.RegistrationAccessTokensNavigation)
-                .AsSplitQuery()
-                .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
-            throw new KeyNotFoundException($"No record found for BankRegistration with ID {readParams.Id}.");
-        string externalApiId = entity.ExternalApiId;
-        SoftwareStatementEntity softwareStatement = entity.SoftwareStatementNavigation!;
-        ExternalApiSecretEntity? externalApiSecret =
-            entity.ExternalApiSecretsNavigation
+        BankRegistrationEntity entity;
+        SoftwareStatementEntity softwareStatement;
+        ExternalApiSecretEntity? externalApiSecret;
+        RegistrationAccessTokenEntity? registrationAccessTokenEntity;
+        if (_dbSaveChangesMethod.DbProvider is not DbProvider.MongoDb)
+        {
+            entity =
+                await _entityMethods
+                    .DbSetNoTracking
+                    .Include(o => o.SoftwareStatementNavigation)
+                    .Include(o => o.ExternalApiSecretsNavigation)
+                    .Include(o => o.RegistrationAccessTokensNavigation)
+                    .AsSplitQuery()
+                    .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
+                throw new KeyNotFoundException($"No record found for BankRegistration with ID {readParams.Id}.");
+            softwareStatement = entity.SoftwareStatementNavigation;
+            externalApiSecret = entity.ExternalApiSecretsNavigation
                 .SingleOrDefault(x => !x.IsDeleted);
-        RegistrationAccessTokenEntity? registrationAccessTokenEntity = entity.RegistrationAccessTokensNavigation
-            .SingleOrDefault(x => !x.IsDeleted);
+            registrationAccessTokenEntity = entity.RegistrationAccessTokensNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
+        }
+        else
+        {
+            entity =
+                await _entityMethods
+                    .DbSetNoTracking
+                    .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
+                throw new KeyNotFoundException($"No record found for BankRegistration with ID {readParams.Id}.");
+            softwareStatement = await _softwareStatementEntityMethods
+                .DbSetNoTracking
+                .SingleAsync(x => x.Id == entity.SoftwareStatementId);
+            externalApiSecret = await _externalApiSecretMethods
+                .DbSetNoTracking
+                .Where(x => EF.Property<string>(x, "_t") == nameof(ExternalApiSecretEntity))
+                .SingleOrDefaultAsync(x => x.BankRegistrationId == entity.Id && !x.IsDeleted);
+            registrationAccessTokenEntity = await _registrationAccessTokenMethods
+                .DbSetNoTracking
+                .Where(x => EF.Property<string>(x, "_t") == nameof(RegistrationAccessTokenEntity))
+                .SingleOrDefaultAsync(x => x.BankRegistrationId == entity.Id && !x.IsDeleted);
+        }
+        string externalApiId = entity.ExternalApiId;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
@@ -549,7 +588,11 @@ internal class
             }
             else
             {
-                string? scope = customBehaviour?.BankRegistrationPut?.CustomTokenScope;
+                string? scope = null;
+                if (customBehaviour?.BankRegistrationPut?.GetCustomTokenScope is not null)
+                {
+                    scope = customBehaviour.BankRegistrationPut.GetCustomTokenScope(entity.RegistrationScope);
+                }
                 accessToken =
                     await _clientAccessTokenGet.GetAccessToken(
                         scope,
@@ -607,8 +650,9 @@ internal class
             CreatedBy = entity.CreatedBy,
             Reference = entity.Reference,
             ExternalApiResponse = externalApiResponse,
-            SoftwareStatementId = entity.SoftwareStatementId!.Value,
+            SoftwareStatementId = entity.SoftwareStatementId,
             BankProfile = entity.BankProfile,
+            BankGroup = entity.BankGroup,
             JwksUri = entity.JwksUri,
             RegistrationEndpoint = entity.RegistrationEndpoint,
             TokenEndpoint = entity.TokenEndpoint,
@@ -620,7 +664,10 @@ internal class
             ExternalApiId = entity.ExternalApiId,
             UseSimulatedBank = entity.UseSimulatedBank,
             DefaultResponseModeOverride = entity.DefaultResponseModeOverride,
-            TokenEndpointAuthMethod = entity.TokenEndpointAuthMethod
+            TokenEndpointAuthMethod = entity.TokenEndpointAuthMethod,
+            AispUseV4 = entity.AispUseV4,
+            PispUseV4 = entity.PispUseV4,
+            VrpUseV4 = entity.VrpUseV4
         };
 
         return (response, nonErrorMessages);
@@ -652,8 +699,11 @@ internal class
         var registrationGroupString = registrationGroup.ToString()!;
 
         // Get existing registrations with same software statement, bank group, and bank registration group
-        IEnumerable<BankRegistrationEntity> existingRegistrationsFirstPass =
-            _entityMethods
+        IEnumerable<BankRegistrationEntity>
+            existingRegistrationsFirstPass; // force next where clause to run client-side as cannot be translated
+        if (_dbSaveChangesMethod.DbProvider is not DbProvider.MongoDb)
+        {
+            existingRegistrationsFirstPass = _entityMethods
                 .DbSetNoTracking
                 .Include(x => x.ExternalApiSecretsNavigation)
                 .Include(x => x.RegistrationAccessTokensNavigation)
@@ -662,7 +712,18 @@ internal class
                     x => x.SoftwareStatementId == softwareStatementId &&
                          x.BankGroup == bankGroupEnum)
                 .OrderByDescending(x => x.Created) // most recent first
-                .AsEnumerable(); // force next where clause to run client-side as cannot be translated
+                .AsEnumerable();
+        }
+        else
+        {
+            existingRegistrationsFirstPass = _entityMethods
+                .DbSetNoTracking
+                .Where(
+                    x => x.SoftwareStatementId == softwareStatementId &&
+                         x.BankGroup == bankGroupEnum)
+                .OrderByDescending(x => x.Created) // most recent first
+                .AsEnumerable();
+        }
         List<BankRegistrationEntity> existingRegistrations = existingRegistrationsFirstPass
             .Where(
                 x => EqualityComparer<TRegistrationGroup>.Default.Equals(
@@ -675,12 +736,27 @@ internal class
         if (existingRegistrations.Any())
         {
             existingRegistration = existingRegistrations.First();
-            ExternalApiSecretEntity? externalApiSecretEntity =
-                existingRegistration.ExternalApiSecretsNavigation
+            ExternalApiSecretEntity? externalApiSecretEntity;
+            RegistrationAccessTokenEntity? registrationAccessTokenEntity;
+            if (_dbSaveChangesMethod.DbProvider is not DbProvider.MongoDb)
+            {
+                externalApiSecretEntity = existingRegistration.ExternalApiSecretsNavigation
                     .SingleOrDefault(x => !x.IsDeleted);
-            RegistrationAccessTokenEntity? registrationAccessTokenEntity = existingRegistration
-                .RegistrationAccessTokensNavigation
-                .SingleOrDefault(x => !x.IsDeleted);
+                registrationAccessTokenEntity = existingRegistration
+                    .RegistrationAccessTokensNavigation
+                    .SingleOrDefault(x => !x.IsDeleted);
+            }
+            else
+            {
+                externalApiSecretEntity = await _externalApiSecretMethods
+                    .DbSetNoTracking
+                    .Where(x => EF.Property<string>(x, "_t") == nameof(ExternalApiSecretEntity))
+                    .SingleOrDefaultAsync(x => x.BankRegistrationId == existingRegistration.Id && !x.IsDeleted);
+                registrationAccessTokenEntity = await _registrationAccessTokenMethods
+                    .DbSetNoTracking
+                    .Where(x => EF.Property<string>(x, "_t") == nameof(RegistrationAccessTokenEntity))
+                    .SingleOrDefaultAsync(x => x.BankRegistrationId == existingRegistration.Id && !x.IsDeleted);
+            }
 
             IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2 =
                 await CheckExistingRegistrationCompatible(
@@ -1124,9 +1200,11 @@ internal class
 
             requestJsonSerializerSettings = new JsonSerializerSettings
             {
+#pragma warning disable SYSLIB0050 // see https://github.com/JamesNK/Newtonsoft.Json/issues/2953
                 Context = new StreamingContext(
                     StreamingContextStates.All,
                     optionsDict)
+#pragma warning restore SYSLIB0050
             };
         }
 
@@ -1160,9 +1238,11 @@ internal class
 
             responseJsonSerializerSettings = new JsonSerializerSettings
             {
+#pragma warning disable SYSLIB0050 // see https://github.com/JamesNK/Newtonsoft.Json/issues/2953
                 Context = new StreamingContext(
                     StreamingContextStates.All,
                     optionsDict)
+#pragma warning restore SYSLIB0050
             };
         }
 

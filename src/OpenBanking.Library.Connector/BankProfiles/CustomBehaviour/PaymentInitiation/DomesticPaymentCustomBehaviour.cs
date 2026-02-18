@@ -14,4 +14,6 @@ public class DomesticPaymentCustomBehaviour : ReadWritePostCustomBehaviour
     public bool? ResponseDataRefundMayBeMissingOrWrong { get; set; }
     public bool? ResponseDataRefundAccountSchemeNameMayBeMissingOrWrong { get; set; }
     public bool? ResponseDataRefundAccountIdentificationMayBeMissingOrWrong { get; set; }
+
+    public bool? UseB64JoseHeader { get; set; }
 }

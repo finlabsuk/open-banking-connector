@@ -10,7 +10,7 @@ using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 
-public class AccountAccessConsentAuthContext : EntityBase, ISupportsValidation
+public class AccountAccessConsentAuthContext : AuthContextBase, ISupportsValidation
 {
     [JsonProperty(Required = Required.Always)]
     public required Guid AccountAccessConsentId { get; init; }

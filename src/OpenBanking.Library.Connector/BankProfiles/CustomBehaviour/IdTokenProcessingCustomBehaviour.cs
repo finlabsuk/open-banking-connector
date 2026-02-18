@@ -20,5 +20,9 @@ public class IdTokenProcessingCustomBehaviour
 
     public bool? IdTokenMayNotHaveConsentIdClaim { get; set; }
 
+    public bool? IdTokenMayNotHaveNonceClaim { get; set; }
+
+    public string? IssClaim { get; set; }
+
     public DateTimeOffsetUnixConverterEnum? IdTokenExpirationTimeClaimJsonConverter { get; set; }
 }
