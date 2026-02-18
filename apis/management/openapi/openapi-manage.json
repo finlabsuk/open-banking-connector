@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "18.0.0"
+    "version": "18.1.0"
   },
   "paths": {
     "/manage/bank-registrations": {
@@ -549,6 +549,34 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Software Statements"
+        ],
+        "summary": "Read software statements",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoftwareStatementsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoftwareStatementsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoftwareStatementsResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/manage/software-statements/{softwareStatementId}": {
@@ -689,6 +717,7 @@
       "BankGroup": {
         "enum": [
           "Barclays",
+          "Chase",
           "Cooperative",
           "Danske",
           "Hsbc",
@@ -713,6 +742,7 @@
           "Barclays_Business",
           "Barclays_Corporate",
           "Barclays_BarclaycardCommercialPayments",
+          "Chase_Chase",
           "Cooperative_Cooperative",
           "Cooperative_CooperativeSandbox",
           "Cooperative_Smile",
@@ -1611,6 +1641,77 @@
         "additionalProperties": false,
         "description": "Response to SoftwareStatement read and create requests."
       },
+      "SoftwareStatementResponseItem": {
+        "required": [
+          "Created",
+          "DefaultFragmentRedirectUrl",
+          "DefaultObSealCertificateId",
+          "DefaultObWacCertificateId",
+          "DefaultQueryRedirectUrl",
+          "Id",
+          "OrganisationId",
+          "SandboxEnvironment",
+          "SoftwareId"
+        ],
+        "type": "object",
+        "properties": {
+          "OrganisationId": {
+            "type": "string",
+            "description": "Organisation ID from UK Open Banking directory as string.",
+            "nullable": true
+          },
+          "SoftwareId": {
+            "type": "string",
+            "description": "Software statement ID from UK Open Banking directory as string.",
+            "nullable": true
+          },
+          "SandboxEnvironment": {
+            "type": "boolean",
+            "description": "When true, denotes software statement is defined in UK OB directory sandbox (not production) environment."
+          },
+          "DefaultObWacCertificateId": {
+            "type": "string",
+            "description": "ID of default ObWacCertificate to use for mutual TLS with this software statement.",
+            "format": "uuid"
+          },
+          "DefaultObSealCertificateId": {
+            "type": "string",
+            "description": "ID of default ObSealCertificate to use for signing JWTs etc with this software statement.",
+            "format": "uuid"
+          },
+          "DefaultQueryRedirectUrl": {
+            "type": "string",
+            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = query.",
+            "nullable": true
+          },
+          "DefaultFragmentRedirectUrl": {
+            "type": "string",
+            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.",
+            "nullable": true
+          },
+          "Id": {
+            "type": "string",
+            "description": "Unique Open Banking Connector ID (used in local database).",
+            "format": "uuid"
+          },
+          "Created": {
+            "type": "string",
+            "description": "Created timestamp in local database.",
+            "format": "date-time"
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "SoftwareStatementUpdate": {
         "type": "object",
         "properties": {
@@ -1634,6 +1735,30 @@
           "DefaultFragmentRedirectUrl": {
             "type": "string",
             "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SoftwareStatementsResponse": {
+        "required": [
+          "Data"
+        ],
+        "type": "object",
+        "properties": {
+          "Data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SoftwareStatementResponseItem"
+            },
+            "nullable": true
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
             "nullable": true
           }
         },
