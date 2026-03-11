@@ -231,6 +231,10 @@ public class AppTests
                         bankProfileFromEnv,
                         registrationScope,
                         bankGroup),
+                    BankGroup.Tide => GetAllInRegistrationGroup<TideBank, TideRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
                     BankGroup.Tsb => GetAllInRegistrationGroup<TsbBank, TsbRegistrationGroup>(
                         bankProfileFromEnv,
                         registrationScope,

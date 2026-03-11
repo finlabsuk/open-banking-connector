@@ -283,6 +283,7 @@ internal class
                 BankGroup.Revolut => GetExistingRegistration<RevolutBank, RevolutRegistrationGroup>,
                 BankGroup.Santander => GetExistingRegistration<SantanderBank, SantanderRegistrationGroup>,
                 BankGroup.Starling => GetExistingRegistration<StarlingBank, StarlingRegistrationGroup>,
+                BankGroup.Tide => GetExistingRegistration<TideBank, TideRegistrationGroup>,
                 BankGroup.Tsb => GetExistingRegistration<TsbBank, TsbRegistrationGroup>,
                 _ => throw new ArgumentOutOfRangeException()
             };

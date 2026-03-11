@@ -50,6 +50,9 @@ public enum BankGroup
     [EnumMember(Value = "Starling")]
     Starling,
 
+    [EnumMember(Value = "Tide")]
+    Tide,
+
     [EnumMember(Value = "Tsb")]
     Tsb
 }

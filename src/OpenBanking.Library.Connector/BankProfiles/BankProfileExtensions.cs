@@ -64,6 +64,7 @@ public static class BankProfileExtensions
             BankProfileEnum.Santander_Business => BankGroup.Santander,
             BankProfileEnum.Santander_Corporate => BankGroup.Santander,
             BankProfileEnum.Starling_Starling => BankGroup.Starling,
+            BankProfileEnum.Tide_Tide => BankGroup.Tide,
             BankProfileEnum.Tsb_Tsb => BankGroup.Tsb,
             _ => throw new ArgumentOutOfRangeException(nameof(bankProfileEnum), bankProfileEnum, null)
         };
