@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "18.1.0"
+    "version": "18.2.0"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -4107,7 +4107,6 @@
         "required": [
           "AccountId",
           "Amount",
-          "BookingDateTime",
           "CreditDebitIndicator",
           "Status"
         ],
@@ -4148,7 +4147,8 @@
           },
           "BookingDateTime": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "ValueDateTime": {
             "type": "string",
