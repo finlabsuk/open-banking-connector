@@ -16,23 +16,31 @@ RUN dotnet publish -a $TARGETARCH "OpenBanking.WebApp.Connector/OpenBanking.WebA
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 
-# Get UK Open Banking sandbox and prod root CA certs
+# Get UK Open Banking sandbox and prod root/issuing CA certs
 WORKDIR /app/certs
-## Sandbox cert from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/252018873/OB+Root+and+Issuing+Certificates+for+Sandbox
+## Sandbox certs from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/252018873/OB+Root+and+Issuing+Certificates+for+Sandbox
 ADD "https://openbanking.atlassian.net/wiki/download/attachments/252018873/OB_SandBox_PP_Root%20CA.cer?version=1&modificationDate=1525354123970&cacheVersion=1&api=v2" open-banking-sandbox-root-ca.cer
-## Prod cert from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/80544075/OB+Root+and+Issuing+Certificates+for+Production
+ADD "https://openbanking.atlassian.net/wiki/download/attachments/252018873/OB_SandBox_PP_Issuing%20CA.cer?version=1&modificationDate=1525354091771&cacheVersion=1&api=v2" open-banking-sandbox-issuing-ca.cer
+## Prod certs from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/80544075/OB+Root+and+Issuing+Certificates+for+Production
 ADD "https://openbanking.atlassian.net/wiki/download/attachments/80544075/OpenBankingRootCA.cer?version=1&modificationDate=1516021348170&cacheVersion=1&api=v2" open-banking-prod-root-ca.cer
+ADD "https://openbanking.atlassian.net/wiki/download/attachments/80544075/OpenBankingIssuingCA.cer?version=1&modificationDate=1516021349129&cacheVersion=1&api=v2" open-banking-prod-issuing-ca.cer
 ## Check fingerprints
 RUN if openssl x509 -inform DER -in ./open-banking-sandbox-root-ca.cer -noout -fingerprint -sha1 | grep -q '3C:97:AD:3F:63:9B:21:EF:00:F3:39:93:90:61:6C:8A:7D:0D:5F:03'; then echo "success"; else echo "failure"; return 1; fi
+RUN if openssl x509 -inform DER -in ./open-banking-sandbox-issuing-ca.cer -noout -fingerprint -sha1 | grep -q '06:A0:6C:4C:45:77:A7:87:81:16:B1:CF:39:3E:7D:4F:9A:D7:B6:8E'; then echo "success"; else echo "failure"; return 1; fi
 RUN if openssl x509 -inform PEM -in ./open-banking-prod-root-ca.cer -noout -fingerprint -sha1 | grep -q 'BD:D9:DA:6C:21:B9:11:32:F8:0E:8B:09:D7:2C:43:F0:34:6B:E4:1F'; then echo "success"; else echo "failure"; return 1; fi
+RUN if openssl x509 -inform PEM -in ./open-banking-prod-issuing-ca.cer -noout -fingerprint -sha1 | grep -q '58:BE:4E:D3:45:FD:59:8F:89:02:80:57:04:2A:98:33:17:44:BB:F5'; then echo "success"; else echo "failure"; return 1; fi
 # Convert certs to standard PEM format
 RUN openssl x509 -inform DER -in ./open-banking-sandbox-root-ca.cer -out /usr/local/share/ca-certificates/open-banking-sandbox-root-ca.crt
+RUN openssl x509 -inform DER -in ./open-banking-sandbox-issuing-ca.cer -out /usr/local/share/ca-certificates/open-banking-sandbox-issuing-ca.crt
 RUN openssl x509 -inform PEM -in ./open-banking-prod-root-ca.cer -out /usr/local/share/ca-certificates/open-banking-prod-root-ca.crt
+RUN openssl x509 -inform PEM -in ./open-banking-prod-issuing-ca.cer -out /usr/local/share/ca-certificates/open-banking-prod-issuing-ca.crt
 # Adjust permissions and install certs
 WORKDIR /app
 RUN rm -rf /app/certs
 RUN chmod 644 /usr/local/share/ca-certificates/open-banking-sandbox-root-ca.crt
+RUN chmod 644 /usr/local/share/ca-certificates/open-banking-sandbox-issuing-ca.crt
 RUN chmod 644 /usr/local/share/ca-certificates/open-banking-prod-root-ca.crt
+RUN chmod 644 /usr/local/share/ca-certificates/open-banking-prod-issuing-ca.crt
 RUN update-ca-certificates
 
 EXPOSE 8080
