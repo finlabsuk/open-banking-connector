@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "18.1.0"
+    "version": "18.2.0"
   },
   "paths": {
     "/manage/bank-registrations": {
@@ -729,6 +729,7 @@
           "Revolut",
           "Santander",
           "Starling",
+          "Tide",
           "Tsb"
         ],
         "type": "string"
@@ -788,6 +789,7 @@
           "Santander_Business",
           "Santander_Corporate",
           "Starling_Starling",
+          "Tide_Tide",
           "Tsb_Tsb"
         ],
         "type": "string",
