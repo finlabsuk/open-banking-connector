@@ -283,6 +283,7 @@ internal class
                 BankGroup.Revolut => GetExistingRegistration<RevolutBank, RevolutRegistrationGroup>,
                 BankGroup.Santander => GetExistingRegistration<SantanderBank, SantanderRegistrationGroup>,
                 BankGroup.Starling => GetExistingRegistration<StarlingBank, StarlingRegistrationGroup>,
+                BankGroup.Tide => GetExistingRegistration<TideBank, TideRegistrationGroup>,
                 BankGroup.Tsb => GetExistingRegistration<TsbBank, TsbRegistrationGroup>,
                 _ => throw new ArgumentOutOfRangeException()
             };
@@ -913,6 +914,45 @@ internal class
             .SetUri(url)
             .SetHeaders(headers)
             .SendExpectingStringResponseAsync("application/jws+json", apiClient, null);
+
+        return response;
+    }
+
+    private async Task<string> GetAspsps(
+        SoftwareStatementEntity softwareStatement,
+        OBSealKey obSealKey,
+        IApiClient apiClient)
+    {
+        // Get access token
+        var scope = "ASPSPReadAccess TPPReadAccess AuthoritiesReadAccess";
+        string tokenEndpoint = softwareStatement.SandboxEnvironment
+            ? "https://matls-sso.openbankingtest.org.uk/as/token.oauth2"
+            : "https://matls-sso.openbanking.org.uk/as/token.oauth2";
+        string accessToken = (await _grantPost.PostClientCredentialsGrantAsync(
+            scope,
+            obSealKey,
+            TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt,
+            tokenEndpoint,
+            softwareStatement.SoftwareId,
+            null,
+            null,
+            null,
+            apiClient,
+            null,
+            new Dictionary<string, JsonNode?> { ["scope"] = scope },
+            true,
+            JwsAlgorithm.RS256)).AccessToken;
+
+        // Get ASPSPs
+        var headers = new List<HttpHeader> { new("Authorization", "Bearer " + accessToken) };
+        string url = softwareStatement.SandboxEnvironment
+            ? "https://matls-api.openbankingtest.org.uk/scim/v2"
+            : "https://matls-api.openbanking.org.uk/scim/v2";
+        url += "/OBAccountPaymentServiceProviders";
+        string response = await new HttpRequestBuilder()
+            .SetUri(url)
+            .SetHeaders(headers)
+            .SendExpectingStringResponseAsync("application/scim+json", apiClient, null);
 
         return response;
     }

@@ -2471,9 +2471,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public OBTransactionMutability1Code? TransactionMutability { get; set; } = default!;
 
-        [Newtonsoft.Json.JsonProperty("BookingDateTime", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public required System.DateTimeOffset BookingDateTime { get; set; }
+        [Newtonsoft.Json.JsonProperty("BookingDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? BookingDateTime { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("ValueDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? ValueDateTime { get; set; } = default!;

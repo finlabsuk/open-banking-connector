@@ -28,6 +28,10 @@ global using StarlingBank =
     FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.StarlingBank;
 global using StarlingRegistrationGroup =
     FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.StarlingBank;
+global using TideBank =
+    FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.TideBank;
+global using TideRegistrationGroup =
+    FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.TideBank;
 global using TsbBank =
     FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.TsbBank;
 global using TsbRegistrationGroup =

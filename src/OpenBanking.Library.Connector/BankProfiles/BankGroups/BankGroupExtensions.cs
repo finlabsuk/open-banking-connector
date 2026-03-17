@@ -23,6 +23,7 @@ public static class BankGroupExtensions
         [BankGroup.Revolut] = new Revolut(),
         [BankGroup.Santander] = new Santander(),
         [BankGroup.Starling] = new Starling(),
+        [BankGroup.Tide] = new Tide(),
         [BankGroup.Tsb] = new Tsb()
     };
 

@@ -35,7 +35,7 @@ public class OBTypesTests
         var obTransactionCashBalance = new AccountAndTransactionModelsPublic.OBTransactionCashBalance
         {
             CreditDebitIndicator = AccountAndTransactionModelsPublic.OBCreditDebitCode_2.Credit,
-            Type = AccountAndTransactionModelsPublic.OBBalanceType1Code.InterimBooked,
+            Type = AccountAndTransactionModelsPublic.OBBalanceType1CodeV4.ITBD,
             Amount = null
         };
 
@@ -77,7 +77,7 @@ public class OBTypesTests
         var initialValue = new AccountAndTransactionModelsPublic.OBAccount6
         {
             AccountId = "1234",
-            AccountSubType = AccountAndTransactionModelsPublic.OBExternalAccountSubType1Code.Wallet
+            V3AccountSubType = AccountAndTransactionModelsV3p1p11.OBExternalAccountSubType1Code.Wallet
         };
 
         string jsonString = JsonConvert.SerializeObject(

@@ -174,6 +174,9 @@ public enum BankProfileEnum
     [EnumMember(Value = "Starling_Starling")]
     Starling_Starling,
 
+    [EnumMember(Value = "Tide_Tide")]
+    Tide_Tide,
+
     [EnumMember(Value = "Tsb_Tsb")]
     Tsb_Tsb
 }

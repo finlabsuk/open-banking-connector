@@ -15,7 +15,7 @@ public class EntityTypeFinderTests
     {
         var finder = new ApiVariantMappingConfiguration();
 
-        Type publicType = typeof(PaymentInitiationModelsPublic.Data);
+        Type publicType = typeof(PaymentInitiationModelsV3p1p11.Data);
 
         List<TypeMapping> typePairs = finder.GetTypesWithSourceApiEquivalent(publicType).ToList();
 
