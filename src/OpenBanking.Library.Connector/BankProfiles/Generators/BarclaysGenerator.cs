@@ -199,9 +199,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                 DomesticVrp = new DomesticVrpCustomBehaviour
                 {
                     PostResponseLinksMayOmitId = true,
-                    PreferMisspeltContractPresentIndicator = true,
-                    ResponseDataStatusMayBeMissingOrWrong = true,
-                    ResponseDataRefundMayBeMissingOrWrong = true
+                    PreferMisspeltContractPresentIndicator = true
                 }
             },
             VariableRecurringPaymentsApiSettings = new VariableRecurringPaymentsApiSettings
