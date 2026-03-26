@@ -7,6 +7,7 @@ using AutoMapper;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Converters;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
+using Microsoft.Extensions.Logging.Abstractions;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
@@ -95,7 +96,8 @@ internal class ApiVariantMappingConfiguration
 
                 // Discovered mappings
                 ApplyApiVariantTypeMaps(cfg);
-            });
+            },
+            NullLoggerFactory.Instance);
     }
 
     private void ApplyGenericTypeMaps(IMapperConfigurationExpression cfg)
