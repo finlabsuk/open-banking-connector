@@ -27,7 +27,7 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
         IInstrumentationClient instrumentationClient) =>
         new(
             _bankGroupData.GetBankProfile(bank),
-            "https://oba.revolut.com", // from https://developer.revolut.com/docs/guides/build-banking-apps/register-your-application-using-dcr/open-id-configuration-urls
+            "https://oba-auth.revolut.com", // from https://developer.revolut.com/updates/2025/12/15/open-banking-minor-updates
             "001580000103UAvAAM", // from https://developer.revolut.com/docs/guides/build-banking-apps/tutorials/get-account-and-transaction-information
             new AccountAndTransactionApi { BaseUrl = GetBaseUrl() },
             null,
@@ -51,13 +51,7 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                     {
                         AddRedundantOAuth2NonceRequestParameter = true,
                         IdTokenProcessingCustomBehaviour =
-                            new IdTokenProcessingCustomBehaviour
-                            {
-                                IdTokenMayNotHaveAuthTimeClaim = true,
-                                IssClaim = "https://oba.revolut.com"
-                            },
-                        AudClaim =
-                            "https://oba-auth.revolut.com" // from https://developer.revolut.com/updates/2025-03-04-open-banking-fapi1-advanced#new-requirements-for-request-jwts
+                            new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
                     },
                 AccountAccessConsentAuthCodeGrantPost =
                     new AuthCodeGrantPostCustomBehaviour
@@ -69,8 +63,7 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                                 IdTokenMayNotHaveConsentIdClaim = true,
                                 IdTokenMayNotHaveAcrClaim = true,
                                 IdTokenExpirationTimeClaimJsonConverter =
-                                    DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat,
-                                IssClaim = "https://oba.revolut.com"
+                                    DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
                             }
                     },
                 AccountAccessConsentRefreshTokenGrantPost =
@@ -79,13 +72,7 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                 {
                     AddRedundantOAuth2NonceRequestParameter = true,
                     IdTokenProcessingCustomBehaviour =
-                        new IdTokenProcessingCustomBehaviour
-                        {
-                            IdTokenMayNotHaveAuthTimeClaim = true,
-                            IssClaim = "https://oba.revolut.com"
-                        },
-                    AudClaim =
-                        "https://oba-auth.revolut.com"
+                        new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
                 },
                 DomesticPaymentConsentAuthCodeGrantPost = new AuthCodeGrantPostCustomBehaviour
                 {
@@ -97,8 +84,7 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                             IdTokenMayNotHaveConsentIdClaim = true,
                             IdTokenMayNotHaveAcrClaim = true,
                             IdTokenExpirationTimeClaimJsonConverter =
-                                DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat,
-                            IssClaim = "https://oba.revolut.com"
+                                DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
                         }
                 },
                 DomesticPayment = new DomesticPaymentCustomBehaviour
@@ -107,7 +93,11 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                     ResponseDataDebtorMayBeMissingOrWrong = true
                 }
             },
-            BankConfigurationApiSettings = new BankConfigurationApiSettings { UseRegistrationDeleteEndpoint = true },
+            BankConfigurationApiSettings = new BankConfigurationApiSettings
+            {
+                UseRegistrationGetEndpoint = true,
+                UseRegistrationDeleteEndpoint = true
+            },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
                 AccountAccessConsentTemplateExternalApiRequestAdjustments = externalApiRequest =>
