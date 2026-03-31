@@ -178,5 +178,8 @@ public enum BankProfileEnum
     Tide_Tide,
 
     [EnumMember(Value = "Tsb_Tsb")]
-    Tsb_Tsb
+    Tsb_Tsb,
+
+    [EnumMember(Value = "Wise_Wise")]
+    Wise_Wise
 }

@@ -55,7 +55,8 @@ public class BankProfileService : IBankProfileService
             [BankGroup.Santander] = new SantanderGenerator(bankProfilesSettingsProvider),
             [BankGroup.Starling] = new StarlingGenerator(bankProfilesSettingsProvider),
             [BankGroup.Tide] = new TideGenerator(bankProfilesSettingsProvider),
-            [BankGroup.Tsb] = new TsbGenerator(bankProfilesSettingsProvider)
+            [BankGroup.Tsb] = new TsbGenerator(bankProfilesSettingsProvider),
+            [BankGroup.Wise] = new WiseGenerator(bankProfilesSettingsProvider)
         };
     }
 
@@ -82,6 +83,7 @@ public class BankProfileService : IBankProfileService
                         BankGroup.Starling => GetBankProfile<StarlingBank>(profileEnum, _instrumentationClient),
                         BankGroup.Tide => GetBankProfile<TideBank>(profileEnum, _instrumentationClient),
                         BankGroup.Tsb => GetBankProfile<TsbBank>(profileEnum, _instrumentationClient),
+                        BankGroup.Wise => GetBankProfile<WiseBank>(profileEnum, _instrumentationClient),
                         _ => throw new ArgumentOutOfRangeException()
                     },
                     LazyThreadSafetyMode.ExecutionAndPublication))

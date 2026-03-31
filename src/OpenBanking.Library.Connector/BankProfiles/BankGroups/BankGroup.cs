@@ -54,5 +54,8 @@ public enum BankGroup
     Tide,
 
     [EnumMember(Value = "Tsb")]
-    Tsb
+    Tsb,
+
+    [EnumMember(Value = "Wise")]
+    Wise
 }

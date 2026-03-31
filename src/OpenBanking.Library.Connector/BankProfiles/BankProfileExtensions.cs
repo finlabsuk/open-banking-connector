@@ -66,6 +66,7 @@ public static class BankProfileExtensions
             BankProfileEnum.Starling_Starling => BankGroup.Starling,
             BankProfileEnum.Tide_Tide => BankGroup.Tide,
             BankProfileEnum.Tsb_Tsb => BankGroup.Tsb,
+            BankProfileEnum.Wise_Wise => BankGroup.Wise,
             _ => throw new ArgumentOutOfRangeException(nameof(bankProfileEnum), bankProfileEnum, null)
         };
 }

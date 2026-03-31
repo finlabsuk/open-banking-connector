@@ -285,6 +285,7 @@ internal class
                 BankGroup.Starling => GetExistingRegistration<StarlingBank, StarlingRegistrationGroup>,
                 BankGroup.Tide => GetExistingRegistration<TideBank, TideRegistrationGroup>,
                 BankGroup.Tsb => GetExistingRegistration<TsbBank, TsbRegistrationGroup>,
+                BankGroup.Wise => GetExistingRegistration<WiseBank, WiseRegistrationGroup>,
                 _ => throw new ArgumentOutOfRangeException()
             };
         (BankRegistrationEntity? existingGroupRegistration,

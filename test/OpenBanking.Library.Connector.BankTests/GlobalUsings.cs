@@ -34,6 +34,10 @@ global using TideRegistrationGroup =
     FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.TideBank;
 global using TsbBank =
     FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.TsbBank;
+global using WiseBank =
+    FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.WiseBank;
+global using WiseRegistrationGroup =
+    FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.WiseBank;
 global using TsbRegistrationGroup =
     FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.TsbBank;
 

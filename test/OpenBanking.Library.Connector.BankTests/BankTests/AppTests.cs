@@ -239,6 +239,10 @@ public class AppTests
                         bankProfileFromEnv,
                         registrationScope,
                         bankGroup),
+                    BankGroup.Wise => GetAllInRegistrationGroup<WiseBank, WiseRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
                     _ => throw new ArgumentOutOfRangeException()
                 };
             }

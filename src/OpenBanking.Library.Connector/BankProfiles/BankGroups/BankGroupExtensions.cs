@@ -24,7 +24,8 @@ public static class BankGroupExtensions
         [BankGroup.Santander] = new Santander(),
         [BankGroup.Starling] = new Starling(),
         [BankGroup.Tide] = new Tide(),
-        [BankGroup.Tsb] = new Tsb()
+        [BankGroup.Tsb] = new Tsb(),
+        [BankGroup.Wise] = new Wise()
     };
 
     public static IBankGroupData<TBank> GetBankGroupData<TBank>(this BankGroup bankGroup)
