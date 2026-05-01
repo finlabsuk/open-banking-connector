@@ -1,4 +1,4 @@
-<Project Sdk="MSTest.Sdk/4.1.0">
+<Project Sdk="MSTest.Sdk/4.2.1">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
@@ -14,11 +14,11 @@
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
         <PackageReference Include="FluentAssertions" Version="7.2.0"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.14"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.14"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.14"/>
-        <PackageReference Include="Microsoft.Playwright" Version="1.58.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.15"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.15"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.15"/>
+        <PackageReference Include="Microsoft.Playwright" Version="1.59.0"/>
     </ItemGroup>
 
     <ItemGroup>
