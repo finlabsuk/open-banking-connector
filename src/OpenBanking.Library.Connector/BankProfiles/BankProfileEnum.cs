@@ -105,6 +105,9 @@ public enum BankProfileEnum
     [EnumMember(Value = "Nationwide_Nationwide")]
     Nationwide_Nationwide,
 
+    [EnumMember(Value = "Nationwide_VirginMerged")]
+    Nationwide_VirginMerged,
+
     [EnumMember(Value = "NatWest_NatWestSandbox")]
     NatWest_NatWestSandbox,
 

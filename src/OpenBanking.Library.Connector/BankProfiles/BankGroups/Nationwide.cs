@@ -9,13 +9,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
 public enum NationwideBank
 {
-    Nationwide
+    Nationwide,
+    VirginMerged
 }
 
 public class Nationwide() : BankGroupBase<NationwideBank, NationwideRegistrationGroup>(BankGroup.Nationwide)
 {
     protected override ConcurrentDictionary<BankProfileEnum, NationwideBank> BankProfileToBank { get; } =
-        new() { [BankProfileEnum.Nationwide_Nationwide] = NationwideBank.Nationwide };
+        new()
+        {
+            [BankProfileEnum.Nationwide_Nationwide] = NationwideBank.Nationwide,
+            [BankProfileEnum.Nationwide_VirginMerged] = NationwideBank.VirginMerged
+        };
 
     public override NationwideRegistrationGroup GetRegistrationGroup(
         NationwideBank bank,

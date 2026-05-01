@@ -41,6 +41,7 @@ public static class BankProfileExtensions
             BankProfileEnum.Monzo_Monzo => BankGroup.Monzo,
             BankProfileEnum.Monzo_Sandbox => BankGroup.Monzo,
             BankProfileEnum.Nationwide_Nationwide => BankGroup.Nationwide,
+            BankProfileEnum.Nationwide_VirginMerged => BankGroup.Nationwide,
             BankProfileEnum.NatWest_NatWestSandbox => BankGroup.NatWest,
             BankProfileEnum.NatWest_NatWest => BankGroup.NatWest,
             BankProfileEnum.NatWest_NatWestBankline => BankGroup.NatWest,

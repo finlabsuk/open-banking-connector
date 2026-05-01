@@ -12,6 +12,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
@@ -31,108 +32,184 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
         IInstrumentationClient instrumentationClient) =>
         new(
             _bankGroupData.GetBankProfile(bank),
-            "https://obonline.nationwide.co.uk/open-banking/", // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
+            bank switch
+            {
+                NationwideBank.Nationwide =>
+                    "https://obonline.nationwide.co.uk/open-banking/", // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
+                NationwideBank
+                        .VirginMerged =>
+                    "https://api.openbanking.virginmoney.com", // from https://developer.virginmoney.com/merged/dynamic-registration/
+                _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+            },
             "0015800000jf8aKAAQ", // from https://developer.nationwide.co.uk/open-banking/how-to?page=1
-            new AccountAndTransactionApi { BaseUrl = GetAccountAndTransactionBaseUrl("v3.1") },
-            new AccountAndTransactionApi
-            {
-                BaseUrl = GetAccountAndTransactionBaseUrl("v4.0"),
-                ApiVersion = AccountAndTransactionApiVersion.Version4p0
-            },
-            new PaymentInitiationApi
-            {
-                BaseUrl =
-                    GetPaymentsBaseUrl("v3.1")
-            },
-            new PaymentInitiationApi
-            {
-                BaseUrl =
-                    GetPaymentsBaseUrl("v4.0"),
-                ApiVersion = PaymentInitiationApiVersion.Version4p0
-            },
-            new VariableRecurringPaymentsApi
-            {
-                BaseUrl =
-                    GetPaymentsBaseUrl("v3.1")
-            },
-            new VariableRecurringPaymentsApi
-            {
-                BaseUrl =
-                    GetPaymentsBaseUrl("v4.0"),
-                ApiVersion = VariableRecurringPaymentsApiVersion.Version4p0
-            },
+            new AccountAndTransactionApi { BaseUrl = GetApiBaseUrl(bank, "v3.1/aisp") },
+            bank is NationwideBank.Nationwide
+                ? new AccountAndTransactionApi
+                {
+                    BaseUrl = GetApiBaseUrl(bank, "v4.0/aisp"),
+                    ApiVersion = AccountAndTransactionApiVersion.Version4p0
+                }
+                : null,
+            new PaymentInitiationApi { BaseUrl = GetApiBaseUrl(bank, "v3.1/pisp") },
+            bank is NationwideBank.Nationwide
+                ? new PaymentInitiationApi
+                {
+                    BaseUrl = GetApiBaseUrl(bank, "v4.0/pisp"),
+                    ApiVersion = PaymentInitiationApiVersion.Version4p0
+                }
+                : null,
+            bank is NationwideBank.Nationwide
+                ? new VariableRecurringPaymentsApi { BaseUrl = GetApiBaseUrl(bank, "v3.1/pisp") }
+                : null,
+            bank is NationwideBank.Nationwide
+                ? new VariableRecurringPaymentsApi
+                {
+                    BaseUrl = GetApiBaseUrl(bank, "v4.0/pisp"),
+                    ApiVersion = VariableRecurringPaymentsApiVersion.Version4p0
+                }
+                : null,
             true,
             instrumentationClient)
         {
-            DynamicClientRegistrationApiVersion = DynamicClientRegistrationApiVersion.Version3p3,
+            DynamicClientRegistrationApiVersion = bank switch
+            {
+                NationwideBank.Nationwide => DynamicClientRegistrationApiVersion.Version3p3,
+                NationwideBank.VirginMerged => DynamicClientRegistrationApiVersion.Version3p2,
+                _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+            },
             CustomBehaviour = new CustomBehaviourClass
             {
                 BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                 {
                     TransportCertificateSubjectDnOrgIdEncoding =
-                        SubjectDnOrgIdEncoding.DottedDecimalAttributeTypeWithStringValue,
+                        bank is NationwideBank.Nationwide
+                            ? SubjectDnOrgIdEncoding.DottedDecimalAttributeTypeWithStringValue
+                            : null,
                     UseApplicationJoseNotApplicationJwtContentTypeHeader =
                         true,
+                    IssuedAtClaimResponseJsonConverter =
+                        bank is NationwideBank.VirginMerged
+                            ? DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
+                            : null,
+                    ExpirationTimeClaimResponseJsonConverter =
+                        bank is NationwideBank.VirginMerged
+                            ? DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
+                            : null,
                     ClientIdIssuedAtClaimResponseJsonConverter =
-                        DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
+                        bank is NationwideBank.Nationwide
+                            ? DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
+                            : null
                 },
                 OpenIdConfigurationGet = new OpenIdConfigurationGetCustomBehaviour
                 {
-                    Url =
-                        "https://obonline.nationwide.co.uk/open-banking/.well-known/openid-configuration" // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
+                    Url = bank switch
+                    {
+                        NationwideBank.Nationwide =>
+                            "https://obonline.nationwide.co.uk/open-banking/.well-known/openid-configuration", // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
+                        NationwideBank.VirginMerged =>
+                            "https://api.openbanking.virginmoney.com/open-banking/v3.0/.well-known/openid-configuration", // from https://developer.virginmoney.com/merged/dynamic-registration/
+                        _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+                    }
                 },
-                AccountAccessConsentAuthGet = new ConsentAuthGetCustomBehaviour
-                {
-                    IdTokenProcessingCustomBehaviour =
-                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
-                },
-                AccountAccessConsentAuthCodeGrantPost = new AuthCodeGrantPostCustomBehaviour
-                {
-                    IdTokenProcessingCustomBehaviour =
-                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
-                },
+                AccountAccessConsentAuthGet =
+                    new ConsentAuthGetCustomBehaviour
+                    {
+                        IdTokenProcessingCustomBehaviour = new IdTokenProcessingCustomBehaviour
+                        {
+                            IdTokenSubClaimType =
+                                bank is NationwideBank.VirginMerged ? IdTokenSubClaimType.ClientId : null,
+                            IdTokenMayNotHaveAuthTimeClaim = bank is NationwideBank.VirginMerged,
+                            DoNotValidateIdTokenAcrClaim = bank is NationwideBank.Nationwide,
+                            IdTokenMayNotHaveAcrClaim = bank is NationwideBank.VirginMerged
+                        }
+                    },
+                AccountAccessConsentAuthCodeGrantPost =
+                    new AuthCodeGrantPostCustomBehaviour
+                    {
+                        UseScopeInRequest = bank is NationwideBank.VirginMerged,
+                        Scope = bank is NationwideBank.VirginMerged ? "accounts" : null,
+                        IdTokenProcessingCustomBehaviour =
+                            new IdTokenProcessingCustomBehaviour
+                            {
+                                IdTokenMayNotHaveNonceClaim = bank is NationwideBank.VirginMerged,
+                                IdTokenMayNotHaveAuthTimeClaim = bank is NationwideBank.VirginMerged,
+                                DoNotValidateIdTokenAcrClaim = bank is NationwideBank.Nationwide
+                            }
+                    },
                 AccountAccessConsentRefreshTokenGrantPost = new RefreshTokenGrantPostCustomBehaviour
                 {
+                    UseScopeInRequest = bank is NationwideBank.VirginMerged,
+                    Scope = bank is NationwideBank.VirginMerged ? "accounts" : null,
                     IdTokenProcessingCustomBehaviour = new IdTokenProcessingCustomBehaviour
                     {
+                        IdTokenMayNotHaveNonceClaim = bank is NationwideBank.VirginMerged,
                         IdTokenMayNotHaveAuthTimeClaim = true,
-                        DoNotValidateIdTokenAcrClaim = true
+                        DoNotValidateIdTokenAcrClaim = bank is NationwideBank.Nationwide
                     }
                 },
                 AccountAccessConsentPost =
                     new ReadWritePostCustomBehaviour { PostResponseLinksMayOmitId = true },
+                BankRegistrationPut = bank is NationwideBank.VirginMerged
+                    ? new BankRegistrationPutCustomBehaviour
+                    {
+                        GetCustomTokenScope = registrationScope =>
+                        {
+                            if ((registrationScope & RegistrationScopeEnum.AccountAndTransaction) ==
+                                RegistrationScopeEnum.AccountAndTransaction)
+                            {
+                                return "accounts";
+                            }
+                            if ((registrationScope & RegistrationScopeEnum.PaymentInitiation) ==
+                                RegistrationScopeEnum.PaymentInitiation)
+                            {
+                                return "payments";
+                            }
+                            if ((registrationScope & RegistrationScopeEnum.FundsConfirmation) ==
+                                RegistrationScopeEnum.FundsConfirmation)
+                            {
+                                return "fundsconfirmations";
+                            }
+                            throw new Exception("Cannot determine custom token scope.");
+                        }
+                    }
+                    : null,
                 DomesticPaymentConsentAuthGet = new ConsentAuthGetCustomBehaviour
                 {
                     IdTokenProcessingCustomBehaviour = new IdTokenProcessingCustomBehaviour
                     {
+                        IdTokenSubClaimType =
+                            bank is NationwideBank.VirginMerged ? IdTokenSubClaimType.ClientId : null,
+                        IdTokenMayNotHaveAuthTimeClaim = bank is NationwideBank.VirginMerged,
                         DoNotValidateIdTokenAcrClaim = true
                     }
                 },
-                DomesticPaymentConsentAuthCodeGrantPost = new AuthCodeGrantPostCustomBehaviour
-                {
-                    ExpectedResponseRefreshTokenMayBeAbsent = true,
-                    IdTokenProcessingCustomBehaviour =
-                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
-                },
-                DomesticPaymentConsentRefreshTokenGrantPost =
-                    new RefreshTokenGrantPostCustomBehaviour
+                DomesticPaymentConsentAuthCodeGrantPost =
+                    new AuthCodeGrantPostCustomBehaviour
                     {
-                        IdTokenProcessingCustomBehaviour = new IdTokenProcessingCustomBehaviour
-                        {
-                            IdTokenMayNotHaveAuthTimeClaim = true,
-                            DoNotValidateIdTokenAcrClaim = true
-                        }
+                        ExpectedResponseRefreshTokenMayBeAbsent = true,
+                        UseScopeInRequest = bank is NationwideBank.VirginMerged,
+                        Scope = bank is NationwideBank.VirginMerged ? "payments" : null,
+                        IdTokenProcessingCustomBehaviour =
+                            new IdTokenProcessingCustomBehaviour
+                            {
+                                IdTokenMayNotHaveNonceClaim = bank is NationwideBank.VirginMerged,
+                                IdTokenMayNotHaveAuthTimeClaim = bank is NationwideBank.VirginMerged,
+                                DoNotValidateIdTokenAcrClaim = true
+                            }
                     },
                 DomesticPaymentConsent = new DomesticPaymentConsentCustomBehaviour
                 {
                     PostResponseLinksMayOmitId = true,
-                    PreferMisspeltContractPresentIndicator = true
+                    PreferMisspeltContractPresentIndicator = true,
+                    UseB64JoseHeader = bank is NationwideBank.VirginMerged
                 },
                 DomesticPayment = new DomesticPaymentCustomBehaviour
                 {
                     PostResponseLinksMayOmitId = true,
                     PreferMisspeltContractPresentIndicator = true,
-                    ResponseDataDebtorMayBeMissingOrWrong = true
+                    ResponseDataDebtorMayBeMissingOrWrong = true,
+                    ResponseDataRefundMayBeMissingOrWrong = bank is NationwideBank.VirginMerged,
+                    UseB64JoseHeader = bank is NationwideBank.VirginMerged
                 },
                 DomesticVrpConsentAuthGet =
                     new ConsentAuthGetCustomBehaviour
@@ -169,14 +246,33 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                     ResponseLinksMayHaveIncorrectUrlBeforeQuery = true
                 }
             },
+            BankConfigurationApiSettings = new BankConfigurationApiSettings
+            {
+                UseRegistrationDeleteEndpoint = bank is NationwideBank.VirginMerged,
+                UseRegistrationGetEndpoint = bank is NationwideBank.VirginMerged,
+                TokenEndpointAuthMethod = bank switch
+                {
+                    NationwideBank.Nationwide => TokenEndpointAuthMethodSupportedValues.TlsClientAuth,
+                    NationwideBank.VirginMerged => TokenEndpointAuthMethodSupportedValues.ClientSecretBasic,
+                    _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+                }
+            },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
                 AccountAccessConsentTemplateExternalApiRequestAdjustments = externalApiRequest =>
                 {
-                    var elementsToRemove = new List<AccountAndTransactionModelsPublic.Permissions>
-                    {
-                        AccountAndTransactionModelsPublic.Permissions.ReadPartyPSU
-                    };
+                    List<AccountAndTransactionModelsPublic.Permissions> elementsToRemove =
+                            bank is NationwideBank.VirginMerged
+                                ? new List<AccountAndTransactionModelsPublic.Permissions>
+                                {
+                                    AccountAndTransactionModelsPublic.Permissions.ReadOffers,
+                                    AccountAndTransactionModelsPublic.Permissions.ReadProducts
+                                }
+                                : new List<AccountAndTransactionModelsPublic.Permissions>
+                                {
+                                    AccountAndTransactionModelsPublic.Permissions.ReadPartyPSU
+                                }
+                        ;
                     foreach (AccountAndTransactionModelsPublic.Permissions element in
                              elementsToRemove)
                     {
@@ -185,17 +281,31 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
 
                     return externalApiRequest;
                 },
-                UseGetPartyEndpoint = false
+                AccountAccessConsentPostCreateDelaySeconds = bank is NationwideBank.VirginMerged ? 30 : 0,
+                UseGetParty2Endpoint = bank is NationwideBank.Nationwide,
+                UseGetPartyEndpoint = bank is NationwideBank.VirginMerged
             },
-            AispUseV4ByDefault = true,
-            PispUseV4ByDefault = true,
-            VrpUseV4ByDefault = true
+            PaymentInitiationApiSettings = new PaymentInitiationApiSettings
+            {
+                PreferPartyToPartyPaymentContextCode = bank is NationwideBank.VirginMerged,
+                UseContractPresentIndicator = bank is NationwideBank.Nationwide,
+                UseReadRefundAccount = bank is NationwideBank.Nationwide
+            },
+            DefaultResponseMode =
+                bank is NationwideBank.VirginMerged ? OAuth2ResponseMode.Query : OAuth2ResponseMode.Fragment,
+            AispUseV4ByDefault = bank is NationwideBank.Nationwide,
+            PispUseV4ByDefault = bank is NationwideBank.Nationwide,
+            VrpUseV4ByDefault = bank is NationwideBank.Nationwide
         };
 
-    private static string GetAccountAndTransactionBaseUrl(string version) =>
-        $"https://api.nationwide.co.uk/open-banking/{version}/aisp"; // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
-
-
-    private static string GetPaymentsBaseUrl(string version) =>
-        $"https://api.nationwide.co.uk/open-banking/{version}/pisp"; // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
+    private static string GetApiBaseUrl(NationwideBank bank, string suffix) =>
+        bank switch
+        {
+            NationwideBank.Nationwide =>
+                $"https://api.nationwide.co.uk/open-banking/{suffix}", // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
+            NationwideBank.VirginMerged =>
+                $"https://api.openbanking.virginmoney.com/open-banking/{suffix}", // from https://developer.virginmoney.com/merged/account-access-consents/,
+            // https://developer.virginmoney.com/merged/dip/
+            _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+        };
 }
