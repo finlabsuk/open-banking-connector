@@ -1260,9 +1260,28 @@ internal class
         {
             var optionsDict = new Dictionary<JsonConverterLabel, int>();
 
+
+            DateTimeOffsetUnixConverterEnum? issuedAtClaimResponseJsonConverter =
+                bankRegistrationPostCustomBehaviour
+                    .IssuedAtClaimResponseJsonConverter;
+            DateTimeOffsetUnixConverterEnum? expirationTimeClaimResponseJsonConverter =
+                bankRegistrationPostCustomBehaviour
+                    .ExpirationTimeClaimResponseJsonConverter;
             DateTimeOffsetUnixConverterEnum? clientIdIssuedAtClaimResponseJsonConverter =
                 bankRegistrationPostCustomBehaviour
                     .ClientIdIssuedAtClaimResponseJsonConverter;
+            if (issuedAtClaimResponseJsonConverter is not null)
+            {
+                optionsDict.Add(
+                    JsonConverterLabel.DcrRegIssuedAt,
+                    (int) issuedAtClaimResponseJsonConverter);
+            }
+            if (expirationTimeClaimResponseJsonConverter is not null)
+            {
+                optionsDict.Add(
+                    JsonConverterLabel.DcrRegExpirationTime,
+                    (int) expirationTimeClaimResponseJsonConverter);
+            }
             if (clientIdIssuedAtClaimResponseJsonConverter is not null)
             {
                 optionsDict.Add(

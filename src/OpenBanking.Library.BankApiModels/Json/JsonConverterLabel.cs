@@ -14,6 +14,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
     /// </summary>
     public enum JsonConverterLabel
     {
+        DcrRegIssuedAt,
+        DcrRegExpirationTime,
         DcrRegClientIdIssuedAt,
         DcrRegScope,
         IdTokenExpirationTimeClaim,

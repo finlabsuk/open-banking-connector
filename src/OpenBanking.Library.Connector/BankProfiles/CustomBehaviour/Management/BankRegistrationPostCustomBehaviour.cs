@@ -16,6 +16,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehav
 /// </summary>
 public class BankRegistrationPostCustomBehaviour
 {
+    // JsonConverter to use for IssuedAt claim response
+    public DateTimeOffsetUnixConverterEnum? IssuedAtClaimResponseJsonConverter { get; set; }
+
+    // JsonConverter to use for ExpirationTime claim response
+    public DateTimeOffsetUnixConverterEnum? ExpirationTimeClaimResponseJsonConverter { get; set; }
+
     // JsonConverter to use for ClientIdIssuedAt claim response
     public DateTimeOffsetUnixConverterEnum? ClientIdIssuedAtClaimResponseJsonConverter { get; set; }
 

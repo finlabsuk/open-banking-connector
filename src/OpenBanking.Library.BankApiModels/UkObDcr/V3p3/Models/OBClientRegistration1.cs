@@ -124,7 +124,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models
         /// expressed as seconds since 1970-01-01T00:00:00Z as measured in UTC
         /// </summary>
         [JsonProperty(PropertyName = "iat")]
-        [JsonConverter(typeof(DateTimeOffsetUnixConverter))]
+        [JsonConverter(
+            typeof(DateTimeOffsetUnixConverter),
+            JsonConverterLabel.DcrRegIssuedAt)]
         public DateTimeOffset Iat { get; set; }
         
         /// <summary>
@@ -132,7 +134,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models
         /// seconds since 1970-01-01T00:00:00Z as measured in UTC
         /// </summary>
         [JsonProperty(PropertyName = "exp")]
-        [JsonConverter(typeof(DateTimeOffsetUnixConverter))]
+        [JsonConverter(
+            typeof(DateTimeOffsetUnixConverter),
+            JsonConverterLabel.DcrRegExpirationTime)]
         public DateTimeOffset Exp { get; set; }
 
 
