@@ -88,8 +88,7 @@ public class StarlingGenerator : BankProfileGeneratorBase<StarlingBank>
                 PreferPartyToPartyPaymentContextCode = true,
                 UseContractPresentIndicator = false
             },
-            DefaultResponseMode = OAuth2ResponseMode.Query,
-            AspspBrandId = 1510
+            DefaultResponseMode = OAuth2ResponseMode.Query
         };
 
     private static string GetApiBaseUrl(string suffix) =>

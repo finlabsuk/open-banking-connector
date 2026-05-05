@@ -133,8 +133,7 @@ public class CooperativeGenerator : BankProfileGeneratorBase<CooperativeBank>
                     return externalApiRequest;
                 },
                 UseReauth = bank is not CooperativeBank.CooperativeSandbox
-            },
-            AspspBrandId = 0
+            }
         };
 
     private static string GetIssuer(CooperativeBank bank) =>

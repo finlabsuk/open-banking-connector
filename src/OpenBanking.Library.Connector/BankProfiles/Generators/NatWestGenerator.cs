@@ -278,27 +278,6 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                         bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
                 }
             },
-            AspspBrandId = bank switch
-            {
-                NatWestBank.NatWestSandbox => 100001, // sandbox
-                NatWestBank.NatWest
-                    or NatWestBank.NatWestBankline
-                    or NatWestBank.NatWestClearSpend
-                    or NatWestBank.Mettle => 13,
-                NatWestBank.RoyalBankOfScotlandSandbox => 100002, // sandbox
-                NatWestBank.RoyalBankOfScotland
-                    or NatWestBank.RoyalBankOfScotlandBankline
-                    or NatWestBank.RoyalBankOfScotlandClearSpend
-                    or NatWestBank.TheOne
-                    or NatWestBank.NatWestOne
-                    or NatWestBank.VirginOne => 14,
-                NatWestBank.UlsterBankNi
-                    or NatWestBank.UlsterBankNiBankline
-                    or NatWestBank.UlsterBankNiClearSpend =>
-                    13,
-                NatWestBank.Coutts => 13,
-                _ => throw new ArgumentOutOfRangeException()
-            },
             AispUseV4ByDefault = true,
             PispUseV4ByDefault = true,
             VrpUseV4ByDefault = true

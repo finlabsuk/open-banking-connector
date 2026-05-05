@@ -78,7 +78,6 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
                     ResponseDataDebtorIdentificationMayBeMissingOrWrong = true,
                     ResponseDataRefundMayBeMissingOrWrong = true
                 }
-            },
-            AspspBrandId = 10007 // sandbox
+            }
         };
 }

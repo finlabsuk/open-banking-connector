@@ -150,16 +150,6 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
             DefaultResponseMode = bank is HsbcBank.Sandbox or HsbcBank.UkBusiness
                 ? OAuth2ResponseMode.Query
                 : OAuth2ResponseMode.Fragment,
-            AspspBrandId = bank switch
-            {
-                HsbcBank.FirstDirect => 7,
-                HsbcBank.Sandbox => 10005, // sandbox
-                HsbcBank.UkBusiness => 17,
-                HsbcBank.UkKinetic => 20,
-                HsbcBank.UkPersonal => 9,
-                HsbcBank.HsbcNetUk => 9,
-                _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
-            },
             AispUseV4ByDefault = true,
             PispUseV4ByDefault = true,
             VrpUseV4ByDefault = true

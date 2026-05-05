@@ -211,9 +211,6 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                 },
                 UseDomesticVrpConsentPutEndpoint = true
             },
-            AspspBrandId = bank is BarclaysBank.Sandbox
-                ? 10006 // sandbox
-                : 5,
             AispUseV4ByDefault = true,
             PispUseV4ByDefault = true,
             VrpUseV4ByDefault = true

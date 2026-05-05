@@ -129,8 +129,7 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                 PreferPartyToPartyPaymentContextCode = true,
                 UseContractPresentIndicator = false
             },
-            DefaultResponseMode = OAuth2ResponseMode.Query,
-            AspspBrandId = 1470
+            DefaultResponseMode = OAuth2ResponseMode.Query
         };
 
     private static string GetBaseUrl() =>

@@ -306,8 +306,6 @@ public class BankProfile
 
     public IApiClient ReplayApiClient { get; }
 
-    public required int AspspBrandId { get; init; }
-
     public bool AispUseV4ByDefault { get; init; } = false;
 
     public bool PispUseV4ByDefault { get; init; } = false;

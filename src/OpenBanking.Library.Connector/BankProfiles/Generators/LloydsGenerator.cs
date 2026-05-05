@@ -247,19 +247,6 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                     return externalApiRequest;
                 }
             },
-            AspspBrandId = bank switch
-            {
-                LloydsBank.Sandbox => 10004, // sandbox
-                LloydsBank.LloydsPersonal
-                    or LloydsBank.LloydsBusiness
-                    or LloydsBank.LloydsCommerical => 10,
-                LloydsBank.HalifaxPersonal => 8,
-                LloydsBank.BankOfScotlandPersonal
-                    or LloydsBank.BankOfScotlandBusiness
-                    or LloydsBank.BankOfScotlandCommerical => 4,
-                LloydsBank.MbnaPersonal => 18,
-                _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
-            },
             AispUseV4ByDefault = true,
             PispUseV4ByDefault = true,
             VrpUseV4ByDefault = true

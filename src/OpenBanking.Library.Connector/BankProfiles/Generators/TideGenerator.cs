@@ -66,8 +66,7 @@ public class TideGenerator : BankProfileGeneratorBase<TideBank>
                 UseReadRefundAccount = false,
                 PreferPartyToPartyPaymentContextCode = true,
                 UseContractPresentIndicator = false
-            },
-            AspspBrandId = 0
+            }
         };
 
     private static string GetApiBaseUrl(string suffix) =>

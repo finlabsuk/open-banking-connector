@@ -82,8 +82,7 @@ public class TsbGenerator : BankProfileGeneratorBase<TsbBank>
                         ResponseDataRefundMayBeMissingOrWrong = true,
                         ResponseDataDebtorMayBeMissingOrWrong = true
                     }
-            },
-            AspspBrandId = 0
+            }
         };
 
     private static string GetApiBaseUrl(bool isAisp) =>

@@ -95,8 +95,7 @@ public class ChaseGenerator : BankProfileGeneratorBase<ChaseBank>
                     ResponseDataRefundMayBeMissingOrWrong = true
                 },
                 ClientCredentialsGrantPost = new ClientCredentialsGrantPostCustomBehaviour()
-            },
-            AspspBrandId = 0
+            }
         };
 
     private static string GetApiBaseUrl(string suffix) =>

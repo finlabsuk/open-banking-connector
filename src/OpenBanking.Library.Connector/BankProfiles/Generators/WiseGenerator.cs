@@ -109,8 +109,7 @@ public class WiseGenerator : BankProfileGeneratorBase<WiseBank>
                     ResponseDataDebtorMayBeMissingOrWrong = true
                 }
             },
-            DefaultResponseMode = OAuth2ResponseMode.Query,
-            AspspBrandId = 0
+            DefaultResponseMode = OAuth2ResponseMode.Query
         };
     }
 

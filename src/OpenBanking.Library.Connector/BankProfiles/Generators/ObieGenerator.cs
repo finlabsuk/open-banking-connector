@@ -62,8 +62,7 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
                     ResponseDataDebtorAccountMayBeMissingOrWrong = true
                 }
             },
-            BankConfigurationApiSettings = new BankConfigurationApiSettings { UseRegistrationDeleteEndpoint = true },
-            AspspBrandId = 10000 // sandbox
+            BankConfigurationApiSettings = new BankConfigurationApiSettings { UseRegistrationDeleteEndpoint = true }
         };
 
     private static PaymentInitiationApi GetPaymentInitiationApi(ObieBank bank) =>

@@ -148,8 +148,7 @@ public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistration
             },
             AispUseV4ByDefault = bank is not SantanderBank.Santander,
             PispUseV4ByDefault = bank is not SantanderBank.Santander,
-            VrpUseV4ByDefault = bank is not SantanderBank.Santander,
-            AspspBrandId = 15
+            VrpUseV4ByDefault = bank is not SantanderBank.Santander
         };
 
     private static string GetV4ApiBaseUrl(SantanderBank bank, string suffix) => bank switch
