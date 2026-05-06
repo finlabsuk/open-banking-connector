@@ -14,4 +14,6 @@ public class RefreshTokenGrantPostCustomBehaviour : GrantPostCustomBehaviour
     ///     Use to specify custom scope.
     /// </summary>
     public string? Scope { get; init; }
+
+    public bool? UseScopeInRequest { get; init; }
 }

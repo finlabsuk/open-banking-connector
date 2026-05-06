@@ -246,6 +246,12 @@ internal class GrantPost : IGrantPost
             { "code", authCode }
         };
 
+        bool useScopeInRequest = authCodeGrantPostCustomBehaviour?.UseScopeInRequest ?? false;
+        if (useScopeInRequest)
+        {
+            keyValuePairs["scope"] = requestScope;
+        }
+
         if (codeVerifier is not null)
         {
             keyValuePairs["code_verifier"] = codeVerifier;
@@ -379,6 +385,12 @@ internal class GrantPost : IGrantPost
             { "grant_type", "refresh_token" },
             { "refresh_token", refreshToken }
         };
+
+        bool useScopeInRequest = refreshTokenGrantPostCustomBehaviour?.UseScopeInRequest ?? false;
+        if (useScopeInRequest)
+        {
+            keyValuePairs["scope"] = refreshTokenScope;
+        }
 
         if (tokenEndpointAuthMethod is
             TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt)
