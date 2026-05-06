@@ -136,6 +136,8 @@ public class AccountAndTransactionApiSettings
         AccountAccessConsentTemplateExternalApiRequestAdjustments { get; set; } = x => x;
 
     public bool UseBalancesNotAccountEndpointInSecondSession { get; init; }
+
+    public int AccountAccessConsentPostCreateDelaySeconds { get; init; } = 0;
 }
 
 public class PaymentInitiationApiSettings

@@ -68,6 +68,13 @@ public class AccountAccessConsentSubtest(
         AccountAccessConsentCreateResponse accountAccessConsentCreateResponseTmp =
             await accountAndTransactionApiClient.AccountAccessConsentCreate(accountAccessConsentRequest);
 
+        if (bankProfile.AccountAndTransactionApiSettings.AccountAccessConsentPostCreateDelaySeconds > 0)
+        {
+            await Task.Delay(
+                TimeSpan.FromSeconds(
+                    bankProfile.AccountAndTransactionApiSettings.AccountAccessConsentPostCreateDelaySeconds));
+        }
+
         // Read fresh AccountAccessConsent
         AccountAccessConsentCreateResponse accountAccessConsentReadResponse =
             await accountAndTransactionApiClient.AccountAccessConsentRead(
