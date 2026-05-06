@@ -8,7 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using Jose;
 using Newtonsoft.Json;
 
@@ -48,12 +47,12 @@ internal interface IGrantPost
         bool supportsSca,
         bool expectRefreshToken,
         BankProfileEnum? bankProfileForTppReportingMetrics,
-        IdTokenSubClaimType idTokenSubClaimType,
         string? codeVerifier,
         JsonSerializerSettings? jsonSerializerSettings,
         AuthCodeGrantPostCustomBehaviour? authCodeGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
-        IApiClient mtlsApiClient);
+        IApiClient mtlsApiClient,
+        IdTokenProcessingCustomBehaviour? baseIdTokenProcessingCustomBehaviour);
 
     Task<TokenEndpointResponse> PostRefreshTokenGrantAsync(
         string refreshToken,
@@ -70,17 +69,18 @@ internal interface IGrantPost
         string tokenEndpoint,
         bool supportsSca,
         BankProfileEnum? bankProfileForTppReportingMetrics,
-        IdTokenSubClaimType idTokenSubClaimType,
         JsonSerializerSettings? jsonSerializerSettings,
         RefreshTokenGrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
-        IApiClient mtlsApiClient);
+        IApiClient mtlsApiClient,
+        IdTokenProcessingCustomBehaviour? baseIdTokenProcessingCustomBehaviour);
 
     Task<string?> ValidateIdTokenAuthEndpoint(
         string idToken,
         string code,
         string state,
         IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour,
+        IdTokenProcessingCustomBehaviour? baseIdTokenProcessingCustomBehaviour,
         string jwksUri,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         string bankIssuerUrl,
@@ -89,7 +89,6 @@ internal interface IGrantPost
         string expectedNonce,
         bool supportsSca,
         BankProfileEnum? bankProfileForTppReportingMetrics,
-        IdTokenSubClaimType idTokenSubClaimType,
         string? externalApiUserId);
 
     TimeSpan GetTokenAdjustedDuration(int expiresInSeconds);

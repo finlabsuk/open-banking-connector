@@ -14,7 +14,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
@@ -128,7 +127,6 @@ internal class
         string bankFinancialId =
             bankProfile.VariableRecurringPaymentsApiSettings.FinancialId ?? bankProfile.FinancialId;
         string issuerUrl = bankProfile.IssuerUrl;
-        IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
         RefreshTokenGrantPostCustomBehaviour? domesticVrpConsentRefreshTokenGrantPostCustomBehaviour =
             bankProfile.CustomBehaviour?.DomesticVrpConsentRefreshTokenGrantPost;
         JwksGetCustomBehaviour? jwksGetCustomBehaviour = bankProfile.CustomBehaviour?.JwksGet;
@@ -165,10 +163,10 @@ internal class
                 obSealKey,
                 supportsSca,
                 bankProfile.BankProfileEnum,
-                idTokenSubClaimType,
                 domesticVrpConsentRefreshTokenGrantPostCustomBehaviour,
                 jwksGetCustomBehaviour,
-                createParams.Request.ModifiedBy);
+                createParams.Request.ModifiedBy,
+                bankProfile.CustomBehaviour?.BaseIdTokenProcessingCustomBehaviour);
 
         // Read object from external API
         var externalApiUrl = new Uri(

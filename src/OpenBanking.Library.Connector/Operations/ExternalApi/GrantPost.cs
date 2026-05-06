@@ -51,6 +51,7 @@ internal class GrantPost : IGrantPost
         string code,
         string state,
         IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour,
+        IdTokenProcessingCustomBehaviour? baseIdTokenProcessingCustomBehaviour,
         string jwksUri,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         string bankIssuerUrl,
@@ -59,7 +60,6 @@ internal class GrantPost : IGrantPost
         string expectedNonce,
         bool supportsSca,
         BankProfileEnum? bankProfileForTppReportingMetrics,
-        IdTokenSubClaimType idTokenSubClaimType,
         string? externalApiUserId)
     {
         // Check for empty token
@@ -72,6 +72,7 @@ internal class GrantPost : IGrantPost
         var idTokenObject = await DeserialiseIdToken<IdTokenAuthEndpoint>(
             idTokenEncoded,
             idTokenProcessingCustomBehaviour,
+            baseIdTokenProcessingCustomBehaviour,
             jwksUri,
             bankProfileForTppReportingMetrics,
             jwksGetCustomBehaviour);
@@ -83,9 +84,14 @@ internal class GrantPost : IGrantPost
             externalApiConsentId,
             expectedNonce,
             supportsSca,
-            idTokenProcessingCustomBehaviour);
+            idTokenProcessingCustomBehaviour,
+            baseIdTokenProcessingCustomBehaviour);
 
         // Validate ID token subject claim
+        IdTokenSubClaimType idTokenSubClaimType =
+            IdTokenProcessingCustomBehaviour.GetIdTokenSubClaimType(
+                idTokenProcessingCustomBehaviour,
+                baseIdTokenProcessingCustomBehaviour);
         string? outputExternalApiUserId = externalApiUserId; // unchanged by default
         switch (idTokenSubClaimType)
         {
@@ -112,6 +118,13 @@ internal class GrantPost : IGrantPost
                 if (!string.Equals(idTokenObject.Subject, externalApiConsentId))
                 {
                     throw new Exception("Subject from ID token does not match consent ID.");
+                }
+
+                break;
+            case IdTokenSubClaimType.ClientId:
+                if (!string.Equals(idTokenObject.Subject, externalApiClientId))
+                {
+                    throw new Exception("Subject from ID token does not match client ID.");
                 }
 
                 break;
@@ -230,12 +243,12 @@ internal class GrantPost : IGrantPost
         bool supportsSca,
         bool expectRefreshToken,
         BankProfileEnum? bankProfileForTppReportingMetrics,
-        IdTokenSubClaimType idTokenSubClaimType,
         string? codeVerifier,
         JsonSerializerSettings? jsonSerializerSettings,
         AuthCodeGrantPostCustomBehaviour? authCodeGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
-        IApiClient mtlsApiClient)
+        IApiClient mtlsApiClient,
+        IdTokenProcessingCustomBehaviour? baseIdTokenProcessingCustomBehaviour)
     {
         bool useOpenIdConnect = requestScope.Split(' ').ToList().Contains("openid");
 
@@ -331,16 +344,17 @@ internal class GrantPost : IGrantPost
             }
 
             // Perform validation
-            IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour =
-                authCodeGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour;
             bool doNotValidateIdToken =
-                idTokenProcessingCustomBehaviour?.DoNotValidateIdToken ?? false;
+                IdTokenProcessingCustomBehaviour.GetDoNotValidateIdToken(
+                    authCodeGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour,
+                    baseIdTokenProcessingCustomBehaviour);
             if (doNotValidateIdToken is false)
             {
                 await ValidateIdTokenTokenEndpoint(
                     response.IdToken,
                     response.AccessToken,
-                    idTokenProcessingCustomBehaviour,
+                    authCodeGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour,
+                    baseIdTokenProcessingCustomBehaviour,
                     jwksUri,
                     jwksGetCustomBehaviour,
                     bankIssuerUrl,
@@ -349,7 +363,6 @@ internal class GrantPost : IGrantPost
                     expectedNonce,
                     bankProfileForTppReportingMetrics,
                     supportsSca,
-                    idTokenSubClaimType,
                     externalApiUserId);
             }
         }
@@ -372,11 +385,11 @@ internal class GrantPost : IGrantPost
         string tokenEndpoint,
         bool supportsSca,
         BankProfileEnum? bankProfileForTppReportingMetrics,
-        IdTokenSubClaimType idTokenSubClaimType,
         JsonSerializerSettings? jsonSerializerSettings,
         RefreshTokenGrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
-        IApiClient mtlsApiClient)
+        IApiClient mtlsApiClient,
+        IdTokenProcessingCustomBehaviour? baseIdTokenProcessingCustomBehaviour)
     {
         bool useOpenIdConnect = refreshTokenScope.Split(' ').ToList().Contains("openid");
 
@@ -445,16 +458,17 @@ internal class GrantPost : IGrantPost
             }
 
             // Perform validation
-            IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour =
-                refreshTokenGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour;
             bool doNotValidateIdToken =
-                idTokenProcessingCustomBehaviour?.DoNotValidateIdToken ?? false;
+                IdTokenProcessingCustomBehaviour.GetDoNotValidateIdToken(
+                    refreshTokenGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour,
+                    baseIdTokenProcessingCustomBehaviour);
             if (doNotValidateIdToken is false)
             {
                 await ValidateIdTokenTokenEndpoint(
                     response.IdToken,
                     response.AccessToken,
-                    idTokenProcessingCustomBehaviour,
+                    refreshTokenGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour,
+                    baseIdTokenProcessingCustomBehaviour,
                     jwksUri,
                     jwksGetCustomBehaviour,
                     bankIssuerUrl,
@@ -463,7 +477,6 @@ internal class GrantPost : IGrantPost
                     expectedNonce,
                     bankProfileForTppReportingMetrics,
                     supportsSca,
-                    idTokenSubClaimType,
                     externalApiUserId);
             }
         }
@@ -536,7 +549,8 @@ internal class GrantPost : IGrantPost
         string externalApiConsentId,
         string expectedNonce,
         bool supportsSca,
-        IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour)
+        IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour,
+        IdTokenProcessingCustomBehaviour? baseIdTokenProcessingCustomBehaviour)
     {
         if (idToken.Exp < DateTimeOffset.UtcNow)
         {
@@ -544,7 +558,9 @@ internal class GrantPost : IGrantPost
         }
 
         bool idTokenMayNotHaveConsentIdClaim =
-            idTokenProcessingCustomBehaviour?.IdTokenMayNotHaveConsentIdClaim ?? false;
+            IdTokenProcessingCustomBehaviour.GetIdTokenMayNotHaveConsentIdClaim(
+                idTokenProcessingCustomBehaviour,
+                baseIdTokenProcessingCustomBehaviour);
         if (!idTokenMayNotHaveConsentIdClaim &&
             idToken.ConsentId is null)
         {
@@ -557,7 +573,9 @@ internal class GrantPost : IGrantPost
         }
 
         bool idTokenMayNotHaveNonceClaim =
-            idTokenProcessingCustomBehaviour?.IdTokenMayNotHaveNonceClaim ?? false;
+            IdTokenProcessingCustomBehaviour.GetIdTokenMayNotHaveNonceClaim(
+                idTokenProcessingCustomBehaviour,
+                baseIdTokenProcessingCustomBehaviour);
         if (!idTokenMayNotHaveNonceClaim &&
             idToken.Nonce is null)
         {
@@ -570,7 +588,10 @@ internal class GrantPost : IGrantPost
             throw new Exception("Nonce from ID token does not match expected nonce.");
         }
 
-        bool idTokenMayNotHaveAuthTimeClaim = idTokenProcessingCustomBehaviour?.IdTokenMayNotHaveAuthTimeClaim ?? false;
+        bool idTokenMayNotHaveAuthTimeClaim =
+            IdTokenProcessingCustomBehaviour.GetIdTokenMayNotHaveAuthTimeClaim(
+                idTokenProcessingCustomBehaviour,
+                baseIdTokenProcessingCustomBehaviour);
         if (!idTokenMayNotHaveAuthTimeClaim &&
             idToken.AuthTime is null)
         {
@@ -578,8 +599,9 @@ internal class GrantPost : IGrantPost
         }
 
         bool idTokenMayNotHaveAcrClaim =
-            idTokenProcessingCustomBehaviour?.IdTokenMayNotHaveAcrClaim
-            ?? false;
+            IdTokenProcessingCustomBehaviour.GetIdTokenMayNotHaveAcrClaim(
+                idTokenProcessingCustomBehaviour,
+                baseIdTokenProcessingCustomBehaviour);
         if (!idTokenMayNotHaveAcrClaim &&
             idToken.Acr is null)
         {
@@ -587,8 +609,9 @@ internal class GrantPost : IGrantPost
         }
 
         bool doNotValidateIdTokenAcrClaim =
-            idTokenProcessingCustomBehaviour?.DoNotValidateIdTokenAcrClaim
-            ?? false;
+            IdTokenProcessingCustomBehaviour.GetDoNotValidateIdTokenAcrClaim(
+                idTokenProcessingCustomBehaviour,
+                baseIdTokenProcessingCustomBehaviour);
         if (idToken.Acr is not null)
         {
             if (supportsSca &&
@@ -606,7 +629,9 @@ internal class GrantPost : IGrantPost
             }
         }
 
-        string issClaim = idTokenProcessingCustomBehaviour?.IssClaim ?? bankIssuerUrl;
+        string issClaim = IdTokenProcessingCustomBehaviour.GetIssClaim(
+            idTokenProcessingCustomBehaviour,
+            baseIdTokenProcessingCustomBehaviour) ?? bankIssuerUrl;
         if (!string.Equals(idToken.Issuer, issClaim))
         {
             throw new Exception("Issuer from ID token does not match expected issuer.");
@@ -653,6 +678,7 @@ internal class GrantPost : IGrantPost
         string idTokenEncoded,
         string accessToken,
         IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour,
+        IdTokenProcessingCustomBehaviour? baseIdTokenProcessingCustomBehaviour,
         string jwksUri,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         string bankIssuerUrl,
@@ -661,7 +687,6 @@ internal class GrantPost : IGrantPost
         string expectedNonce,
         BankProfileEnum? bankProfileForTppReportingMetrics,
         bool supportsSca,
-        IdTokenSubClaimType idTokenSubClaimType,
         string? externalApiUserId)
     {
         // Check for empty token
@@ -674,6 +699,7 @@ internal class GrantPost : IGrantPost
         var idToken = await DeserialiseIdToken<IdTokenTokenEndpoint>(
             idTokenEncoded,
             idTokenProcessingCustomBehaviour,
+            baseIdTokenProcessingCustomBehaviour,
             jwksUri,
             bankProfileForTppReportingMetrics,
             jwksGetCustomBehaviour);
@@ -685,9 +711,14 @@ internal class GrantPost : IGrantPost
             externalApiConsentId,
             expectedNonce,
             supportsSca,
-            idTokenProcessingCustomBehaviour);
+            idTokenProcessingCustomBehaviour,
+            baseIdTokenProcessingCustomBehaviour);
 
         // Validate ID token subject claim
+        IdTokenSubClaimType idTokenSubClaimType =
+            IdTokenProcessingCustomBehaviour.GetIdTokenSubClaimType(
+                idTokenProcessingCustomBehaviour,
+                baseIdTokenProcessingCustomBehaviour);
         switch (idTokenSubClaimType)
         {
             case IdTokenSubClaimType.EndUserId:
@@ -709,6 +740,13 @@ internal class GrantPost : IGrantPost
                 }
 
                 break;
+            case IdTokenSubClaimType.ClientId:
+                if (!string.Equals(idToken.Subject, externalApiClientId))
+                {
+                    throw new Exception("Subject from ID token does not match client ID.");
+                }
+
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(idTokenSubClaimType), idTokenSubClaimType, null);
         }
@@ -726,6 +764,7 @@ internal class GrantPost : IGrantPost
     private async Task<TIdToken> DeserialiseIdToken<TIdToken>(
         string idTokenEncoded,
         IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour,
+        IdTokenProcessingCustomBehaviour? baseIdTokenProcessingCustomBehaviour,
         string jwksUri,
         BankProfileEnum? bankProfileForTppReportingMetrics,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour)
@@ -742,7 +781,9 @@ internal class GrantPost : IGrantPost
         // Deserialise IT token claims
         var optionsDict = new Dictionary<JsonConverterLabel, int>();
         DateTimeOffsetUnixConverterEnum? idTokenExpirationTimeClaimJsonConverter =
-            idTokenProcessingCustomBehaviour?.IdTokenExpirationTimeClaimJsonConverter;
+            IdTokenProcessingCustomBehaviour.GetIdTokenExpirationTimeClaimJsonConverter(
+                idTokenProcessingCustomBehaviour,
+                baseIdTokenProcessingCustomBehaviour);
         if (idTokenExpirationTimeClaimJsonConverter is not null)
         {
             optionsDict.Add(

@@ -77,8 +77,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {
                 UseRegistrationEndpoint = false,
-                TokenEndpointAuthMethod = TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt,
-                IdTokenSubClaimType = IdTokenSubClaimType.EndUserId
+                TokenEndpointAuthMethod = TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
@@ -151,6 +150,8 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             },
             CustomBehaviour = new CustomBehaviourClass
             {
+                BaseIdTokenProcessingCustomBehaviour =
+                    new IdTokenProcessingCustomBehaviour { IdTokenSubClaimType = IdTokenSubClaimType.EndUserId },
                 AccountAccessConsentPost =
                     new ReadWritePostCustomBehaviour { PostResponseLinksMayOmitId = true },
                 AccountAccessConsentAuthGet = bank is BarclaysBank.Sandbox

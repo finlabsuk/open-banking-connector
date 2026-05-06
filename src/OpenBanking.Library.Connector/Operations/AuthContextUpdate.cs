@@ -14,7 +14,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAnd
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
@@ -339,7 +338,6 @@ internal class AuthContextUpdate :
             bankRegistration.DefaultResponseModeOverride ?? bankProfile.DefaultResponseMode;
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
-        IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
         string redirectUrl = softwareStatement.GetRedirectUri(
             defaultResponseMode,
@@ -403,7 +401,9 @@ internal class AuthContextUpdate :
             _ => throw new ArgumentOutOfRangeException()
         };
         bool nonceClaimIsInitialValue =
-            consentAuthGetCustomBehaviour?.IdTokenProcessingCustomBehaviour?.IdTokenNonceClaimIsPreviousValue ?? false;
+            IdTokenProcessingCustomBehaviour.GetIdTokenNonceClaimIsPreviousValue(
+                consentAuthGetCustomBehaviour?.IdTokenProcessingCustomBehaviour,
+                customBehaviour?.BaseIdTokenProcessingCustomBehaviour);
         string nonce = nonceClaimIsInitialValue && consent.AuthContextNonce is not null
             ? consent.AuthContextNonce
             : authContextNonce;
@@ -417,7 +417,9 @@ internal class AuthContextUpdate :
         if (idToken is not null)
         {
             bool doNotValidateIdToken =
-                consentAuthGetCustomBehaviour?.IdTokenProcessingCustomBehaviour?.DoNotValidateIdToken ?? false;
+                IdTokenProcessingCustomBehaviour.GetDoNotValidateIdToken(
+                    consentAuthGetCustomBehaviour?.IdTokenProcessingCustomBehaviour,
+                    customBehaviour?.BaseIdTokenProcessingCustomBehaviour);
             if (doNotValidateIdToken is false)
             {
                 string? newExternalApiUserId = await _grantPost.ValidateIdTokenAuthEndpoint(
@@ -425,6 +427,7 @@ internal class AuthContextUpdate :
                     code,
                     state,
                     consentAuthGetCustomBehaviour?.IdTokenProcessingCustomBehaviour,
+                    customBehaviour?.BaseIdTokenProcessingCustomBehaviour,
                     jwksUri,
                     customBehaviour?.JwksGet,
                     bankTokenIssuerClaim,
@@ -433,7 +436,6 @@ internal class AuthContextUpdate :
                     nonce,
                     supportsSca,
                     bankProfile.BankProfileEnum,
-                    idTokenSubClaimType,
                     consent.ExternalApiUserId);
                 if (newExternalApiUserId != consent.ExternalApiUserId)
                 {
@@ -522,12 +524,12 @@ internal class AuthContextUpdate :
                     supportsSca,
                     expectRefreshToken,
                     bankProfile.BankProfileEnum,
-                    idTokenSubClaimType,
                     authContext.CodeVerifier,
                     jsonSerializerSettings,
                     consentAuthCodeGrantPostCustomBehaviour,
                     customBehaviour?.JwksGet,
-                    apiClient);
+                    apiClient,
+                    customBehaviour?.BaseIdTokenProcessingCustomBehaviour);
 
             // Cache new access token
             MemoryCacheEntryOptions cacheEntryOptions =

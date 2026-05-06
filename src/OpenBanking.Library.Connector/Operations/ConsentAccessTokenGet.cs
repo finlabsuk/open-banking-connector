@@ -11,7 +11,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -88,10 +87,10 @@ internal class ConsentAccessTokenGet
         OBSealKey obSealKey,
         bool supportsSca,
         BankProfileEnum bankProfile,
-        IdTokenSubClaimType idTokenSubClaimType,
         RefreshTokenGrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
-        string? modifiedBy)
+        string? modifiedBy,
+        IdTokenProcessingCustomBehaviour? baseIdTokenProcessingCustomBehaviour = null)
         where TConsentEntity : BaseConsent
     {
         string consentAssociatedData = consent.GetAssociatedData(bankRegistration);
@@ -199,11 +198,11 @@ internal class ConsentAccessTokenGet
                     tokenEndpoint,
                     supportsSca,
                     bankProfile,
-                    idTokenSubClaimType,
                     jsonSerializerSettings,
                     refreshTokenGrantPostCustomBehaviour,
                     jwksGetCustomBehaviour,
-                    apiClient);
+                    apiClient,
+                    baseIdTokenProcessingCustomBehaviour);
 
             // Conditionally store new access token
             var newAccessToken = new AccessToken(tokenEndpointResponse.AccessToken, tokenEndpointResponse.ExpiresIn);

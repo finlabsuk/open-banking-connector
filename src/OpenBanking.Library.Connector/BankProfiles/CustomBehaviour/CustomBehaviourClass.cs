@@ -24,6 +24,12 @@ public class CustomBehaviourClass
     // Client auth 
     public ClientCredentialsGrantPostCustomBehaviour? ClientCredentialsGrantPost { get; set; }
 
+    /// <summary>
+    ///     Base ID token processing behaviour used when no endpoint-specific behaviour specified
+    ///     (overridden on per-property basis).
+    /// </summary>
+    public IdTokenProcessingCustomBehaviour? BaseIdTokenProcessingCustomBehaviour { get; init; }
+
     // Consent auth endpoints
     public JwksGetCustomBehaviour? JwksGet { get; set; }
     public ConsentAuthGetCustomBehaviour? AccountAccessConsentAuthGet { get; set; }

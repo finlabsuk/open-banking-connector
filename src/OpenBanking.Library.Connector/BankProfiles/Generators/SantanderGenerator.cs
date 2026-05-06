@@ -83,6 +83,8 @@ public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistration
                     : DynamicClientRegistrationApiVersion.Version3p2,
             CustomBehaviour = new CustomBehaviourClass
             {
+                BaseIdTokenProcessingCustomBehaviour =
+                    new IdTokenProcessingCustomBehaviour { IdTokenSubClaimType = IdTokenSubClaimType.EndUserId },
                 BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                 {
                     UseApplicationJoseNotApplicationJwtContentTypeHeader =
@@ -128,7 +130,6 @@ public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistration
                     bank is not SantanderBank.Santander
                         ? TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt
                         : TokenEndpointAuthMethodSupportedValues.TlsClientAuth,
-                IdTokenSubClaimType = IdTokenSubClaimType.EndUserId,
                 UseRegistrationGetEndpoint = bank is not SantanderBank.Santander,
                 UseRegistrationDeleteEndpoint = bank is not SantanderBank.Santander
             },

@@ -15,5 +15,8 @@ public enum IdTokenSubClaimType
     EndUserId,
 
     [EnumMember(Value = "ConsentId")]
-    ConsentId
+    ConsentId,
+
+    [EnumMember(Value = "ClientId")]
+    ClientId
 }

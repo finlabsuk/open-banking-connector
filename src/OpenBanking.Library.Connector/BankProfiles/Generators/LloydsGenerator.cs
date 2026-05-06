@@ -135,6 +135,9 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                         OAuth2ResponseMode.Fragment
                     }
                 },
+                BaseIdTokenProcessingCustomBehaviour = bank is LloydsBank.Sandbox
+                    ? new IdTokenProcessingCustomBehaviour { IdTokenSubClaimType = IdTokenSubClaimType.EndUserId }
+                    : null,
                 AccountAccessConsentAuthGet = bank is LloydsBank.Sandbox
                     ? null
                     : new ConsentAuthGetCustomBehaviour { AddRedundantOAuth2NonceRequestParameter = true },
@@ -226,9 +229,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
             {
                 UseRegistrationDeleteEndpoint = true,
                 UseRegistrationGetEndpoint = true,
-                UseRegistrationAccessToken = bank is LloydsBank.Sandbox,
-                IdTokenSubClaimType =
-                    bank is LloydsBank.Sandbox ? IdTokenSubClaimType.EndUserId : IdTokenSubClaimType.ConsentId
+                UseRegistrationAccessToken = bank is LloydsBank.Sandbox
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {

@@ -14,7 +14,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -271,7 +270,6 @@ internal class DomesticPayment :
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
         string bankFinancialId = bankProfile.PaymentInitiationApiSettings.FinancialId ?? bankProfile.FinancialId;
-        IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
         ConsentAuthGetCustomBehaviour? domesticPaymentConsentAuthGetCustomBehaviour = bankProfile.CustomBehaviour
             ?.DomesticPaymentConsentAuthGet;
         DomesticPaymentCustomBehaviour? readWritePostCustomBehaviour =
@@ -308,10 +306,10 @@ internal class DomesticPayment :
                 obSealKey,
                 supportsSca,
                 bankProfile.BankProfileEnum,
-                idTokenSubClaimType,
                 domesticPaymentConsentRefreshTokenGrantPostCustomBehaviour,
                 jwksGetCustomBehaviour,
-                request.ModifiedBy);
+                request.ModifiedBy,
+                bankProfile.CustomBehaviour?.BaseIdTokenProcessingCustomBehaviour);
 
         // Create new object at external API
         var externalApiUrl = new Uri(paymentInitiationApi.BaseUrl + RelativePathBeforeId);

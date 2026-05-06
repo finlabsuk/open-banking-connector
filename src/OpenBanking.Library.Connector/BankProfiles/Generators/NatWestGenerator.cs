@@ -122,9 +122,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 {
                     NatWestBank.Mettle => TokenEndpointAuthMethodSupportedValues.TlsClientAuth,
                     _ => TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt
-                },
-                IdTokenSubClaimType =
-                    bank is NatWestBank.Coutts ? IdTokenSubClaimType.EndUserId : IdTokenSubClaimType.ConsentId
+                }
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
@@ -160,6 +158,9 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
             },
             CustomBehaviour = new CustomBehaviourClass
             {
+                BaseIdTokenProcessingCustomBehaviour = bank is NatWestBank.Coutts
+                    ? new IdTokenProcessingCustomBehaviour { IdTokenSubClaimType = IdTokenSubClaimType.EndUserId }
+                    : null,
                 BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                 {
                     TransportCertificateSubjectDnOrgIdEncoding = bank switch

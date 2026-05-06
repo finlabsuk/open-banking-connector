@@ -112,11 +112,6 @@ public class BankConfigurationApiSettings
 
     public TokenEndpointAuthMethodSupportedValues TokenEndpointAuthMethod { get; set; } =
         TokenEndpointAuthMethodSupportedValues.TlsClientAuth;
-
-    /// <summary>
-    ///     ID token "sub" claim type.
-    /// </summary>
-    public IdTokenSubClaimType IdTokenSubClaimType { get; set; } = IdTokenSubClaimType.ConsentId;
 }
 
 public delegate string? GetFinancialId(bool useV4NotV3);

@@ -42,8 +42,7 @@ public class TsbGenerator : BankProfileGeneratorBase<TsbBank>
             {
                 TokenEndpointAuthMethod = TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt,
                 UseRegistrationGetEndpoint = true,
-                UseRegistrationDeleteEndpoint = true,
-                IdTokenSubClaimType = IdTokenSubClaimType.EndUserId
+                UseRegistrationDeleteEndpoint = true
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
@@ -71,6 +70,8 @@ public class TsbGenerator : BankProfileGeneratorBase<TsbBank>
             },
             CustomBehaviour = new CustomBehaviourClass
             {
+                BaseIdTokenProcessingCustomBehaviour =
+                    new IdTokenProcessingCustomBehaviour { IdTokenSubClaimType = IdTokenSubClaimType.EndUserId },
                 AccountAccessConsentRefreshTokenGrantPost =
                     new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
                 DomesticPaymentConsent =

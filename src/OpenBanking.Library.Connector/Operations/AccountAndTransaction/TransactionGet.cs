@@ -14,7 +14,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using Newtonsoft.Json;
@@ -76,7 +75,6 @@ internal class
         string bankFinancialId =
             bankProfile.AccountAndTransactionApiSettings.GetFinancialId?.Invoke(aispUseV4) ??
             bankProfile.FinancialId;
-        IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
 
         // Get IApiClient
         IApiClient apiClient = bankRegistration.UseSimulatedBank
@@ -107,10 +105,10 @@ internal class
                 obSealKey,
                 supportsSca,
                 bankProfile.BankProfileEnum,
-                idTokenSubClaimType,
                 customBehaviour?.AccountAccessConsentRefreshTokenGrantPost,
                 customBehaviour?.JwksGet,
-                readParams.ModifiedBy);
+                readParams.ModifiedBy,
+                customBehaviour?.BaseIdTokenProcessingCustomBehaviour);
 
         // Retrieve endpoint URL
         string urlStringWihoutQuery = (externalAccountId: readParams.ExternalApiAccountId,
