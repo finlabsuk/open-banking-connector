@@ -19,7 +19,9 @@ public static class JwtFactory
         Dictionary<string, object> headers,
         string payloadJson,
         string signingKey,
-        JwsAlgorithm? jwsAlgorithm)
+        JwsAlgorithm? jwsAlgorithm,
+        bool encodePayload = true,
+        bool detachPayload = false)
     {
         signingKey.ArgNotNull(nameof(signingKey));
 
@@ -28,11 +30,18 @@ public static class JwtFactory
         {
             CertificateFactories.ImportPrivateKey(signingKey, ref rsa);
 
+            var options = new JwtOptions
+            {
+                EncodePayload = encodePayload,
+                DetachPayload = detachPayload
+            };
+
             string result = JWT.Encode(
                 payloadJson,
                 rsa,
                 jwsAlgorithm ?? JwsAlgorithm.PS256,
-                headers);
+                headers,
+                options: options);
             return result;
         }
         finally

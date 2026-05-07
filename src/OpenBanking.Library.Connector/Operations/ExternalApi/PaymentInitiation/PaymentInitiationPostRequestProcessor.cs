@@ -69,7 +69,9 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
                 _useB64),
             payloadJson,
             _obSealKey.Key,
-            null);
+            null,
+            !_useB64,
+            true);
         StringBuilder requestTraceSb = new StringBuilder()
             .AppendLine($"#### JWT ({requestDescription})")
             .Append(jwt);
@@ -81,7 +83,7 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
             new("x-fapi-financial-id", _orgId),
             new("Authorization", "Bearer " + _accessToken),
             new("x-idempotency-key", Guid.NewGuid().ToString()),
-            CreateJwsSignatureHeader(jwt)
+            new("x-jws-signature", jwt)
         };
         if (extraHeaders is not null)
         {
@@ -103,14 +105,6 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
                 responseJsonSerializerSettings);
 
         return (response, xFapiInteractionId);
-    }
-
-    private static HttpHeader CreateJwsSignatureHeader(string jwt)
-    {
-        // Create headers
-        string[] jwsComponents = jwt.Split('.');
-        var jwsSignature = $"{jwsComponents[0]}..{jwsComponents[2]}";
-        return new HttpHeader("x-jws-signature", jwsSignature);
     }
 
     private static Dictionary<string, object> GetJoseHeaders(
