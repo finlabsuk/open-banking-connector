@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "18.3.0"
+    "version": "18.4.0"
   },
   "paths": {
     "/manage/bank-registrations": {
@@ -767,6 +767,7 @@
           "Monzo_Monzo",
           "Monzo_Sandbox",
           "Nationwide_Nationwide",
+          "Nationwide_VirginMerged",
           "NatWest_NatWestSandbox",
           "NatWest_NatWest",
           "NatWest_NatWestBankline",
