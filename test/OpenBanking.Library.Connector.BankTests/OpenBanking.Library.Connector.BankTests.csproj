@@ -9,6 +9,7 @@
         <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.BankTests</RootNamespace>
         <Copyright>Finnovation Labs Limited</Copyright>
         <Company>Finnovation Labs Limited</Company>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
