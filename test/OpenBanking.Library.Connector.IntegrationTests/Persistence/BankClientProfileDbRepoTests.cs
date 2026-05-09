@@ -7,7 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FsCheck;
 using FsCheck.Fluent;
 using FsCheck.Xunit;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persistence;
 

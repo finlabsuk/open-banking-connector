@@ -39,7 +39,7 @@ public class ApiClientTests
         HttpResponseMessage response = await apiClient.LowLevelSendAsync(req);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        string responseContent = await response.Content.ReadAsStringAsync();
+        string responseContent = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
         responseContent.Should().Be(content);
         response.Content.Headers.ContentType?.ToString().Should().Be(contentType + "; charset=utf-8");
     }

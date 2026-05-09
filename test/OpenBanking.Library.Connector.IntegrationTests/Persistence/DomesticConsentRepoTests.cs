@@ -4,7 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persistence;
 

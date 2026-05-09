@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
@@ -12,7 +13,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http;
 
 public class HttpRequestInfoPropertyAttribute : PropertyAttribute
 {
-    public HttpRequestInfoPropertyAttribute()
+    public HttpRequestInfoPropertyAttribute(
+        [CallerFilePath]
+        string? sourceFile = null,
+        [CallerLineNumber]
+        int sourceLine = 0)
     {
         Verbose = PropertyTests.VerboseTests;
         Arbitrary = new[]
