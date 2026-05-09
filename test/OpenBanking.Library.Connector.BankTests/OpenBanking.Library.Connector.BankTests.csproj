@@ -1,4 +1,4 @@
-<Project Sdk="MSTest.Sdk/4.2.1">
+<Project Sdk="MSTest.Sdk/4.2.2">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
