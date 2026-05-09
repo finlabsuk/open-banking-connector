@@ -4,7 +4,6 @@
 
 using System.Net.Http.Headers;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
-using FluentAssertions;
 using Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http;
@@ -24,6 +23,6 @@ public class HttpRequestInfoExtensionsTests
         MediaTypeHeaderValue? resultContentTypes =
             result.Content?.Headers.ContentType;
 
-        resultContentTypes?.MediaType.Should().Be(contentType);
+        Assert.Equal(contentType, resultContentTypes?.MediaType);
     }
 }

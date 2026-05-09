@@ -23,7 +23,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Res
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
-using FluentAssertions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.DependencyInjection;
@@ -811,11 +810,11 @@ public class AppTests
         // Checks
         if (bankRegistrationRequest.ExternalApiId is not null)
         {
-            bankRegistrationCreateResponse.ExternalApiResponse.Should().BeNull();
+            Assert.IsNull(bankRegistrationCreateResponse.ExternalApiResponse);
         }
         else
         {
-            bankRegistrationCreateResponse.ExternalApiResponse.Should().NotBeNull();
+            Assert.IsNotNull(bankRegistrationCreateResponse.ExternalApiResponse);
         }
 
         // Read BankRegistration
@@ -848,11 +847,11 @@ public class AppTests
             !bankProfileUseRegistrationGetEndpoint;
         if (noExternalApiOperation)
         {
-            bankRegistrationReadResponse.ExternalApiResponse.Should().BeNull();
+            Assert.IsNull(bankRegistrationReadResponse.ExternalApiResponse);
         }
         else
         {
-            bankRegistrationReadResponse.ExternalApiResponse.Should().NotBeNull();
+            Assert.IsNotNull(bankRegistrationReadResponse.ExternalApiResponse);
         }
 
         return bankRegistrationReadResponse;

@@ -4,7 +4,6 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using FluentAssertions;
 using Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Payments;
@@ -42,7 +41,7 @@ public class GeneratedModelImplementationTests
             {
                 var r = instance.ToString();
 
-                r.Should().NotBeNullOrWhiteSpace();
+                Assert.False(string.IsNullOrWhiteSpace(r));
             }
         }
     }

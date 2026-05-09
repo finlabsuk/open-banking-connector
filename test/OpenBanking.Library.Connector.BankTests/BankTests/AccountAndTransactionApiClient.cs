@@ -6,7 +6,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTran
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-using FluentAssertions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
@@ -24,14 +23,14 @@ public class AccountAndTransactionApiClient(WebAppClient client)
                     : []);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
         if (readParams.ExcludeExternalApiOperation)
         {
-            response.ExternalApiResponse.Should().BeNull();
+            Assert.IsNull(response.ExternalApiResponse);
         }
         else
         {
-            response.ExternalApiResponse.Should().NotBeNull();
+            Assert.IsNotNull(response.ExternalApiResponse);
         }
 
         return response;
@@ -46,14 +45,14 @@ public class AccountAndTransactionApiClient(WebAppClient client)
             await client.CreateAsync<AccountAccessConsentCreateResponse, AccountAccessConsentRequest>(uriPath, request);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
         if (request.ExternalApiObject is not null)
         {
-            response.ExternalApiResponse.Should().BeNull();
+            Assert.IsNull(response.ExternalApiResponse);
         }
         else
         {
-            response.ExternalApiResponse.Should().NotBeNull();
+            Assert.IsNotNull(response.ExternalApiResponse);
         }
 
         return response;
@@ -71,7 +70,7 @@ public class AccountAndTransactionApiClient(WebAppClient client)
                     : []);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -87,8 +86,8 @@ public class AccountAndTransactionApiClient(WebAppClient client)
                 request);
 
         // Checks
-        response.Warnings.Should().BeNull();
-        response.AuthUrl.Should().NotBeNull();
+        Assert.IsNull(response.Warnings);
+        Assert.IsNotNull(response.AuthUrl);
 
         return response;
     }
@@ -102,7 +101,7 @@ public class AccountAndTransactionApiClient(WebAppClient client)
             await client.GetAsync<AccountAccessConsentAuthContextReadResponse>(uriPath, []);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -126,8 +125,8 @@ public class AccountAndTransactionApiClient(WebAppClient client)
                 GetExtraHeaders(readParams));
 
         // Checks
-        response.Warnings.Should().BeNull();
-        response.ExternalApiResponse.Should().NotBeNull();
+        Assert.IsNull(response.Warnings);
+        Assert.IsNotNull(response.ExternalApiResponse);
 
         return response;
     }
@@ -167,8 +166,8 @@ public class AccountAndTransactionApiClient(WebAppClient client)
                 GetExtraHeaders(readParams));
 
         // Checks
-        response.Warnings.Should().BeNull();
-        response.ExternalApiResponse.Should().NotBeNull();
+        Assert.IsNull(response.Warnings);
+        Assert.IsNotNull(response.ExternalApiResponse);
 
         return response;
     }
@@ -193,8 +192,8 @@ public class AccountAndTransactionApiClient(WebAppClient client)
                 GetExtraHeaders(readParams));
 
         // Checks
-        response.Warnings.Should().BeNull();
-        response.ExternalApiResponse.Should().NotBeNull();
+        Assert.IsNull(response.Warnings);
+        Assert.IsNotNull(response.ExternalApiResponse);
 
         return response;
     }
@@ -219,8 +218,8 @@ public class AccountAndTransactionApiClient(WebAppClient client)
                 GetExtraHeaders(readParams));
 
         // Checks
-        response.Warnings.Should().BeNull();
-        response.ExternalApiResponse.Should().NotBeNull();
+        Assert.IsNull(response.Warnings);
+        Assert.IsNotNull(response.ExternalApiResponse);
 
         return response;
     }
@@ -245,8 +244,8 @@ public class AccountAndTransactionApiClient(WebAppClient client)
                 GetExtraHeaders(readParams));
 
         // Checks
-        response.Warnings.Should().BeNull();
-        response.ExternalApiResponse.Should().NotBeNull();
+        Assert.IsNull(response.Warnings);
+        Assert.IsNotNull(response.ExternalApiResponse);
 
         return response;
     }
@@ -275,8 +274,8 @@ public class AccountAndTransactionApiClient(WebAppClient client)
                 GetExtraHeaders(readParams));
 
         // Checks
-        response.Warnings.Should().BeNull();
-        response.ExternalApiResponse.Should().NotBeNull();
+        Assert.IsNull(response.Warnings);
+        Assert.IsNotNull(response.ExternalApiResponse);
 
         return response;
     }
@@ -301,8 +300,8 @@ public class AccountAndTransactionApiClient(WebAppClient client)
                 GetExtraHeaders(readParams));
 
         // Checks
-        response.Warnings.Should().BeNull();
-        response.ExternalApiResponse.Should().NotBeNull();
+        Assert.IsNull(response.Warnings);
+        Assert.IsNotNull(response.ExternalApiResponse);
 
         return response;
     }
@@ -327,8 +326,8 @@ public class AccountAndTransactionApiClient(WebAppClient client)
                 GetExtraHeaders(readParams));
 
         // Checks
-        response.Warnings.Should().BeNull();
-        response.ExternalApiResponse.Should().NotBeNull();
+        Assert.IsNull(response.Warnings);
+        Assert.IsNotNull(response.ExternalApiResponse);
 
         return response;
     }

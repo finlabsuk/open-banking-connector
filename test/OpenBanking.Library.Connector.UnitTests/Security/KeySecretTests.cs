@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
-using FluentAssertions;
 using FsCheck;
 using FsCheck.Fluent;
 using FsCheck.Xunit;
@@ -22,7 +21,7 @@ public class KeySecretTests
     {
         Func<KeySecret> a = () => new KeySecret(vault!, key!, value!);
 
-        a.Should().Throw<ArgumentNullException>();
+        Assert.Throws<ArgumentNullException>(() => a());
     }
 
     [Property(Verbose = PropertyTests.VerboseTests)]

@@ -8,7 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-using FluentAssertions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
@@ -26,14 +25,14 @@ public class PaymentInitiationApiClient(WebAppClient client)
                     : []);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
         if (readParams.ExcludeExternalApiOperation)
         {
-            response.ExternalApiResponse.Should().BeNull();
+            Assert.IsNull(response.ExternalApiResponse);
         }
         else
         {
-            response.ExternalApiResponse.Should().NotBeNull();
+            Assert.IsNotNull(response.ExternalApiResponse);
         }
 
         return response;
@@ -51,17 +50,16 @@ public class PaymentInitiationApiClient(WebAppClient client)
                 []);
 
         // Checks
-        response.Warnings.Should().BeNull();
-        response.ExternalApiResponse.Should().NotBeNull();
-        response.ExternalApiResponse.Data.FundsAvailableResult.Should().NotBeNull();
+        Assert.IsNull(response.Warnings);
+        Assert.IsNotNull(response.ExternalApiResponse);
+        Assert.IsNotNull(response.ExternalApiResponse.Data.FundsAvailableResult);
 
         // Check funds available
         bool responseDataFundsAvailableResultFundsAvailableMayBeWrong =
             customBehaviour?.ResponseDataFundsAvailableResultFundsAvailableMayBeWrong ?? false;
         if (!responseDataFundsAvailableResultFundsAvailableMayBeWrong)
         {
-            response.ExternalApiResponse.Data.FundsAvailableResult!.FundsAvailable.Should()
-                .Be(true);
+            Assert.IsTrue(response.ExternalApiResponse.Data.FundsAvailableResult!.FundsAvailable);
         }
 
         return response;
@@ -79,24 +77,27 @@ public class PaymentInitiationApiClient(WebAppClient client)
                 request);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
         if (request.ExternalApiObject is not null)
         {
-            response.ExternalApiResponse.Should().BeNull();
+            Assert.IsNull(response.ExternalApiResponse);
         }
         else
         {
-            response.ExternalApiResponse.Should().NotBeNull();
-            response.ExternalApiResponse!.Risk.PaymentContextCode.Should()
-                .Be(request.ExternalApiRequest!.Risk.PaymentContextCode);
-            response.ExternalApiResponse!.Risk.V3PaymentContextCode.Should()
-                .Be(request.ExternalApiRequest!.Risk.V3PaymentContextCode);
+            Assert.IsNotNull(response.ExternalApiResponse);
+            Assert.AreEqual(
+                request.ExternalApiRequest!.Risk.PaymentContextCode,
+                response.ExternalApiResponse!.Risk.PaymentContextCode);
+            Assert.AreEqual(
+                request.ExternalApiRequest!.Risk.V3PaymentContextCode,
+                response.ExternalApiResponse!.Risk.V3PaymentContextCode);
             bool responseRiskContractPresentIndicatorMayBeMissingOrWrong =
                 customBehaviour?.ResponseRiskContractPresentIndicatorMayBeMissingOrWrong ?? false;
             if (!responseRiskContractPresentIndicatorMayBeMissingOrWrong)
             {
-                response.ExternalApiResponse!.Risk.ContractPresentIndicator.Should()
-                    .Be(request.ExternalApiRequest!.Risk.ContractPresentIndicator);
+                Assert.AreEqual(
+                    request.ExternalApiRequest!.Risk.ContractPresentIndicator,
+                    response.ExternalApiResponse!.Risk.ContractPresentIndicator);
             }
         }
 
@@ -113,7 +114,7 @@ public class PaymentInitiationApiClient(WebAppClient client)
                 []);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -130,8 +131,8 @@ public class PaymentInitiationApiClient(WebAppClient client)
                     request);
 
         // Checks
-        response.Warnings.Should().BeNull();
-        response.AuthUrl.Should().NotBeNull();
+        Assert.IsNull(response.Warnings);
+        Assert.IsNotNull(response.AuthUrl);
 
         return response;
     }
@@ -145,7 +146,7 @@ public class PaymentInitiationApiClient(WebAppClient client)
             await client.GetAsync<DomesticPaymentConsentAuthContextReadResponse>(uriPath, []);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -166,45 +167,45 @@ public class PaymentInitiationApiClient(WebAppClient client)
                 ]);
 
         // Checks
-        response.Warnings.Should().BeNull();
-        response.ExternalApiResponse.Should().NotBeNull();
+        Assert.IsNull(response.Warnings);
+        Assert.IsNotNull(response.ExternalApiResponse);
 
         // Check status
         bool responseDataStatusMayBeWrong = customBehaviour?.ResponseDataStatusMayBeWrong ?? false;
         if (!responseDataStatusMayBeWrong)
         {
-            response.ExternalApiResponse.Data.Status.Should()
-                .BeOneOf(
-                    PaymentInitiationModelsPublic.Data4Status.ACCC,
-                    PaymentInitiationModelsPublic.Data4Status.ACCP,
-                    PaymentInitiationModelsPublic.Data4Status.ACFC,
-                    PaymentInitiationModelsPublic.Data4Status.ACSC,
-                    PaymentInitiationModelsPublic.Data4Status.ACSP,
-                    PaymentInitiationModelsPublic.Data4Status.ACTC,
-                    PaymentInitiationModelsPublic.Data4Status.ACWC,
-                    PaymentInitiationModelsPublic.Data4Status.ACWP,
-                    PaymentInitiationModelsPublic.Data4Status.PDNG);
+            CollectionAssert.Contains(
+                new[]
+                {
+                    PaymentInitiationModelsPublic.Data4Status.ACCC, PaymentInitiationModelsPublic.Data4Status.ACCP,
+                    PaymentInitiationModelsPublic.Data4Status.ACFC, PaymentInitiationModelsPublic.Data4Status.ACSC,
+                    PaymentInitiationModelsPublic.Data4Status.ACSP, PaymentInitiationModelsPublic.Data4Status.ACTC,
+                    PaymentInitiationModelsPublic.Data4Status.ACWC, PaymentInitiationModelsPublic.Data4Status.ACWP,
+                    PaymentInitiationModelsPublic.Data4Status.PDNG
+                },
+                response.ExternalApiResponse.Data.Status);
         }
 
         // Check refund account
         bool responseDataRefundMayBeMissingOrWrong = customBehaviour?.ResponseDataRefundMayBeMissingOrWrong ?? false;
         if (!responseDataRefundMayBeMissingOrWrong)
         {
-            response.ExternalApiResponse.Data.Refund.Should().NotBeNull();
+            Assert.IsNotNull(response.ExternalApiResponse.Data.Refund);
 
             bool responseDataRefundAccountSchemeNameMayBeMissingOrWrong =
                 customBehaviour?.ResponseDataRefundAccountSchemeNameMayBeMissingOrWrong ?? false;
             if (!responseDataRefundAccountSchemeNameMayBeMissingOrWrong)
             {
-                response.ExternalApiResponse.Data.Refund!.Account.SchemeName.Should()
-                    .Be("UK.OBIE.SortCodeAccountNumber");
+                Assert.AreEqual(
+                    "UK.OBIE.SortCodeAccountNumber",
+                    response.ExternalApiResponse.Data.Refund!.Account.SchemeName);
             }
 
             bool responseDataRefundAccountIdentificationMayBeMissingOrWrong =
                 customBehaviour?.ResponseDataRefundAccountIdentificationMayBeMissingOrWrong ?? false;
             if (!responseDataRefundAccountIdentificationMayBeMissingOrWrong)
             {
-                response.ExternalApiResponse.Data.Refund!.Account.Identification.Should().HaveLength(14);
+                Assert.AreEqual(14, response.ExternalApiResponse.Data.Refund!.Account.Identification.Length);
             }
         }
 
@@ -212,20 +213,22 @@ public class PaymentInitiationApiClient(WebAppClient client)
         bool responseDataDebtorMayBeMissingOrWrong = customBehaviour?.ResponseDataDebtorMayBeMissingOrWrong ?? false;
         if (!responseDataDebtorMayBeMissingOrWrong)
         {
-            response.ExternalApiResponse.Data.Debtor.Should().NotBeNull();
+            Assert.IsNotNull(response.ExternalApiResponse.Data.Debtor);
 
             bool responseDataDebtorSchemeNameMayBeMissingOrWrong =
                 customBehaviour?.ResponseDataDebtorSchemeNameMayBeMissingOrWrong ?? false;
             if (!responseDataDebtorSchemeNameMayBeMissingOrWrong)
             {
-                response.ExternalApiResponse.Data.Debtor!.SchemeName.Should().Be("UK.OBIE.SortCodeAccountNumber");
+                Assert.AreEqual(
+                    "UK.OBIE.SortCodeAccountNumber",
+                    response.ExternalApiResponse.Data.Debtor!.SchemeName);
             }
 
             bool responseDataDebtorIdentificationMayBeMissingOrWrong =
                 customBehaviour?.ResponseDataDebtorIdentificationMayBeMissingOrWrong ?? false;
             if (!responseDataDebtorIdentificationMayBeMissingOrWrong)
             {
-                response.ExternalApiResponse.Data.Debtor!.Identification.Should().HaveLength(14);
+                Assert.AreEqual(14, response.ExternalApiResponse.Data.Debtor!.Identification!.Length);
             }
         }
 
@@ -247,8 +250,8 @@ public class PaymentInitiationApiClient(WebAppClient client)
                 ]);
 
         // Checks
-        response.Warnings.Should().BeNull();
-        response.ExternalApiResponse.Should().NotBeNull();
+        Assert.IsNull(response.Warnings);
+        Assert.IsNotNull(response.ExternalApiResponse);
 
         return response;
     }
@@ -266,28 +269,29 @@ public class PaymentInitiationApiClient(WebAppClient client)
                 request);
 
         // Checks
-        response.Warnings.Should().BeNull();
-        response.ExternalApiResponse.Should().NotBeNull();
+        Assert.IsNull(response.Warnings);
+        Assert.IsNotNull(response.ExternalApiResponse);
 
         // Check refund account
         bool responseDataRefundMayBeMissingOrWrong = customBehaviour?.ResponseDataRefundMayBeMissingOrWrong ?? false;
         if (!responseDataRefundMayBeMissingOrWrong)
         {
-            response.ExternalApiResponse.Data.Refund.Should().NotBeNull();
+            Assert.IsNotNull(response.ExternalApiResponse.Data.Refund);
 
             bool responseDataRefundAccountSchemeNameMayBeMissingOrWrong =
                 customBehaviour?.ResponseDataRefundAccountSchemeNameMayBeMissingOrWrong ?? false;
             if (!responseDataRefundAccountSchemeNameMayBeMissingOrWrong)
             {
-                response.ExternalApiResponse.Data.Refund!.Account.SchemeName.Should()
-                    .Be("UK.OBIE.SortCodeAccountNumber");
+                Assert.AreEqual(
+                    "UK.OBIE.SortCodeAccountNumber",
+                    response.ExternalApiResponse.Data.Refund!.Account.SchemeName);
             }
 
             bool responseDataRefundAccountIdentificationMayBeMissingOrWrong =
                 customBehaviour?.ResponseDataRefundAccountIdentificationMayBeMissingOrWrong ?? false;
             if (!responseDataRefundAccountIdentificationMayBeMissingOrWrong)
             {
-                response.ExternalApiResponse.Data.Refund!.Account.Identification.Should().HaveLength(14);
+                Assert.AreEqual(14, response.ExternalApiResponse.Data.Refund!.Account.Identification.Length);
             }
         }
 
@@ -295,20 +299,22 @@ public class PaymentInitiationApiClient(WebAppClient client)
         bool responseDataDebtorMayBeMissingOrWrong = customBehaviour?.ResponseDataDebtorMayBeMissingOrWrong ?? false;
         if (!responseDataDebtorMayBeMissingOrWrong)
         {
-            response.ExternalApiResponse.Data.Debtor.Should().NotBeNull();
+            Assert.IsNotNull(response.ExternalApiResponse.Data.Debtor);
 
             bool responseDataDebtorSchemeNameMayBeMissingOrWrong =
                 customBehaviour?.ResponseDataDebtorSchemeNameMayBeMissingOrWrong ?? false;
             if (!responseDataDebtorSchemeNameMayBeMissingOrWrong)
             {
-                response.ExternalApiResponse.Data.Debtor!.SchemeName.Should().Be("UK.OBIE.SortCodeAccountNumber");
+                Assert.AreEqual(
+                    "UK.OBIE.SortCodeAccountNumber",
+                    response.ExternalApiResponse.Data.Debtor!.SchemeName);
             }
 
             bool responseDataDebtorIdentificationMayBeMissingOrWrong =
                 customBehaviour?.ResponseDataDebtorIdentificationMayBeMissingOrWrong ?? false;
             if (!responseDataDebtorIdentificationMayBeMissingOrWrong)
             {
-                response.ExternalApiResponse.Data.Debtor!.Identification.Should().HaveLength(14);
+                Assert.AreEqual(14, response.ExternalApiResponse.Data.Debtor!.Identification!.Length);
             }
         }
 

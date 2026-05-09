@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
-using FluentAssertions;
 using Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Extensions;
@@ -26,6 +25,6 @@ public class StringExtensionTests
         string output = input.PascalOrCamelToKebabCase();
 
         // Assert 
-        output.Should().Be(expectedOutput);
+        Assert.Equal(expectedOutput, output);
     }
 }

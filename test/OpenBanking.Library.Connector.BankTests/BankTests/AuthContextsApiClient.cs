@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using FluentAssertions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
@@ -20,7 +19,7 @@ public class AuthContextsApiClient(WebAppClient client)
                 formCollection);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }

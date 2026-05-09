@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -26,7 +25,7 @@ public class OBTypesTests
 
         var result = JsonConvert.DeserializeObject<AccountAndTransactionModelsPublic.OBCurrencyExchange5>(jsonString);
 
-        result.Should().BeEquivalentTo(obCurrencyExchange5);
+        Assert.Equivalent(obCurrencyExchange5, result);
     }
 
     [Fact]
@@ -47,7 +46,7 @@ public class OBTypesTests
         var result =
             JsonConvert.DeserializeObject<AccountAndTransactionModelsPublic.OBTransactionCashBalance>(jsonString);
 
-        result.Should().BeEquivalentTo(obTransactionCashBalance);
+        Assert.Equivalent(obTransactionCashBalance, result);
     }
 
     [Fact]
@@ -68,7 +67,7 @@ public class OBTypesTests
             JsonConvert
                 .DeserializeObject<AccountAndTransactionModelsPublic.OBBankTransactionCodeStructure1>(jsonString);
 
-        result.Should().BeEquivalentTo(bankTransactionCode);
+        Assert.Equivalent(bankTransactionCode, result);
     }
 
     [Fact]
@@ -88,6 +87,6 @@ public class OBTypesTests
         var result =
             JsonConvert.DeserializeObject<AccountAndTransactionModelsPublic.OBAccount6>(jsonString);
 
-        result.Should().BeEquivalentTo(initialValue);
+        Assert.Equivalent(initialValue, result);
     }
 }

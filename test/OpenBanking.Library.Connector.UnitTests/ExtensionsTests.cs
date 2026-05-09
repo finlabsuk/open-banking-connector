@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
-using FluentAssertions;
 using Xunit;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
@@ -26,7 +25,7 @@ public class ExtensionsTests
     {
         int result = value.DelimiterCount('.');
 
-        result.Should().Be(expectedCount);
+        Assert.Equal(expectedCount, result);
     }
 
     [Fact]
@@ -42,10 +41,10 @@ public class ExtensionsTests
 
         Dictionary<string, object?> result = value.ToObjectDictionary();
 
-        result.Should().NotBeNull();
-        result["aud"].Should().Be(value.Aud);
-        result["application_type"].Should().Be(value.ApplicationType);
-        result["client_id"].Should().Be(value.ClientId);
-        result["token_endpoint_auth_signing_alg"].Should().BeNull();
+        Assert.NotNull(result);
+        Assert.Equal(value.Aud, result["aud"]);
+        Assert.Equal(value.ApplicationType, result["application_type"]);
+        Assert.Equal(value.ClientId, result["client_id"]);
+        Assert.Null(result["token_endpoint_auth_signing_alg"]);
     }
 }

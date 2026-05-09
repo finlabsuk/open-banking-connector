@@ -5,7 +5,6 @@
 using System.Net;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
@@ -31,7 +30,7 @@ public class ApiClientTests
 
             HttpResponseMessage r = await api.LowLevelSendAsync(req);
 
-            r.StatusCode.Should().Be(HttpStatusCode.OK);
+            Assert.Equal(HttpStatusCode.OK, r.StatusCode);
         }
     }
 
@@ -53,28 +52,28 @@ public class ApiClientTests
 
             HttpResponseMessage r = await api.LowLevelSendAsync(req);
 
-            r.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, r.StatusCode);
         }
     }
 
     [Theory]
     [InlineData("https://a5b2a8a9-1220-4aa4-aa83-0036a7bd1e69.com/stuff")]
-    public void ApiClient_SendAsync_Failure(string url)
+    public async Task ApiClient_SendAsync_Failure(string url)
     {
         HttpRequestMessage req = new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
             .SetUri(url)
             .CreateHttpRequestMessage();
 
-        using var http = new HttpClient();
         Func<Task> a = async () =>
         {
+            using var http = new HttpClient();
             var api = new ApiClient(
                 Substitute.For<IInstrumentationClient>(),
                 http);
             HttpResponseMessage r = await api.LowLevelSendAsync(req);
         };
 
-        a.Should().ThrowAsync<HttpRequestException>();
+        await Assert.ThrowsAsync<HttpRequestException>(a);
     }
 }

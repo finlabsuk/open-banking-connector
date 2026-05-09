@@ -5,7 +5,6 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Validators;
-using FluentAssertions;
 using FluentValidation.Results;
 using Xunit;
 
@@ -27,7 +26,7 @@ public class AuthorisationCallbackDataValidatorTests
 
         IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
-        results.Should().HaveCount(1);
+        Assert.Single(results);
     }
 
 
@@ -49,7 +48,7 @@ public class AuthorisationCallbackDataValidatorTests
 
         IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
-        results.Should().HaveCount(1);
+        Assert.Single(results);
     }
 
 
@@ -71,6 +70,6 @@ public class AuthorisationCallbackDataValidatorTests
 
         IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
-        results.Should().HaveCount(0);
+        Assert.Empty(results);
     }
 }

@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FluentAssertions;
 using Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Instrumentation;
@@ -27,7 +26,7 @@ public class ConsoleInstrumentationClientTests
 
             string result = new StreamReader(ms).ReadToEnd();
 
-            result.Should().Contain(message);
+            Assert.Contains(message, result);
         }
     }
 
@@ -48,7 +47,7 @@ public class ConsoleInstrumentationClientTests
 
             string result = new StreamReader(ms).ReadToEnd();
 
-            result.Should().Contain(message);
+            Assert.Contains(message, result);
         }
     }
 
@@ -70,7 +69,7 @@ public class ConsoleInstrumentationClientTests
 
             string result = new StreamReader(ms).ReadToEnd();
 
-            result.Should().Contain(message);
+            Assert.Contains(message, result);
         }
     }
 
@@ -95,8 +94,8 @@ public class ConsoleInstrumentationClientTests
             string result = new StreamReader(ms).ReadToEnd();
 
 
-            result.Should().Contain(exceptionMessage);
-            result.Should().Contain(message);
+            Assert.Contains(exceptionMessage, result);
+            Assert.Contains(message, result);
         }
     }
 
@@ -122,8 +121,8 @@ public class ConsoleInstrumentationClientTests
 
             result = result.Trim(Environment.NewLine.ToCharArray());
 
-            result.Should().StartWith(startMsg);
-            result.Should().EndWith(endMsg);
+            Assert.StartsWith(startMsg, result);
+            Assert.EndsWith(endMsg, result);
         }
     }
 
@@ -154,10 +153,10 @@ public class ConsoleInstrumentationClientTests
 
             result = result.Trim(Environment.NewLine.ToCharArray());
 
-            result.Should().StartWith(msg);
+            Assert.StartsWith(msg, result);
             foreach (string m in msgs)
             {
-                result.Should().Contain(m);
+                Assert.Contains(m, result);
             }
         }
     }

@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using FluentAssertions;
 using Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security;
@@ -23,7 +22,7 @@ public class CertificateExtensionsTests
     {
         bool result = tp.IsPemThumbprint();
 
-        result.Should().BeFalse();
+        Assert.False(result);
     }
 
     [Theory]
@@ -33,6 +32,6 @@ public class CertificateExtensionsTests
     {
         bool result = tp.IsPemThumbprint();
 
-        result.Should().BeTrue();
+        Assert.True(result);
     }
 }

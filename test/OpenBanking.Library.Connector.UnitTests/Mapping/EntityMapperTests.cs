@@ -5,7 +5,6 @@
 using AutoMapper;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FluentAssertions;
 using Xunit;
 using OBClientRegistration1 =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p1.Models.OBClientRegistration1;
@@ -67,7 +66,7 @@ public class EntityMapperTests
 
         var output = mapper.Map<OBClientRegistration1Response>(input);
 
-        output.Scope.Should().Be("Value1 Value2");
+        Assert.Equal("Value1 Value2", output.Scope);
     }
 
 
@@ -97,13 +96,14 @@ public class EntityMapperTests
 
         var output = mapper.Map<OBClientRegistration1>(input);
 
-        output.Scope.Should().NotBeNull();
+        Assert.NotNull(output.Scope);
 
-        output.Scope.Should().Equal(
+        Assert.Equal(
             new List<string>
             {
                 "Value1",
                 "Value2"
-            });
+            },
+            output.Scope);
     }
 }

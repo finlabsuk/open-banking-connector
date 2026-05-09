@@ -5,7 +5,6 @@
 using System.Net;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
-using FluentAssertions;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
@@ -27,7 +26,7 @@ public class WebAppClient(HttpClient client)
         using HttpResponseMessage httpResponse = await client.SendAsync(httpRequestMessage);
 
         // Check status code
-        httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        Assert.AreEqual(HttpStatusCode.OK, httpResponse.StatusCode);
 
         // De-serialise content
         string responseContentString = await httpResponse.Content.ReadAsStringAsync();
@@ -55,7 +54,7 @@ public class WebAppClient(HttpClient client)
             requestContent);
 
         // Check status code
-        httpResponse.StatusCode.Should().Be(expectedResponseStatusCode);
+        Assert.AreEqual(expectedResponseStatusCode, httpResponse.StatusCode);
 
         // De-serialise content
         string responseContentString = await httpResponse.Content.ReadAsStringAsync();
@@ -77,7 +76,7 @@ public class WebAppClient(HttpClient client)
             requestContent);
 
         // Check status code
-        httpResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        Assert.AreEqual(HttpStatusCode.Created, httpResponse.StatusCode);
 
         // De-serialise content
         string responseContentString = await httpResponse.Content.ReadAsStringAsync();
@@ -103,7 +102,7 @@ public class WebAppClient(HttpClient client)
         using HttpResponseMessage httpResponse = await client.SendAsync(httpRequestMessage);
 
         // Check status code
-        httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        Assert.AreEqual(HttpStatusCode.OK, httpResponse.StatusCode);
 
         // De-serialise content
         string responseContentString = await httpResponse.Content.ReadAsStringAsync();

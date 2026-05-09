@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FluentAssertions;
 using Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Mapping;
@@ -19,6 +18,6 @@ public class EntityTypeFinderTests
 
         List<TypeMapping> typePairs = finder.GetTypesWithSourceApiEquivalent(publicType).ToList();
 
-        typePairs.Should().HaveCount(1);
+        Assert.Single(typePairs);
     }
 }

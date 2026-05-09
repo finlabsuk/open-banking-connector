@@ -6,7 +6,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Req
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-using FluentAssertions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
@@ -24,7 +23,7 @@ public class ManagementApiClient(WebAppClient client)
                     : []);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -37,7 +36,7 @@ public class ManagementApiClient(WebAppClient client)
             await client.CreateAsync<BankRegistrationResponse, BankRegistration>(uriPath, request);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -57,7 +56,7 @@ public class ManagementApiClient(WebAppClient client)
                     ]);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -70,7 +69,7 @@ public class ManagementApiClient(WebAppClient client)
             await client.CreateAsync<EncryptionKeyDescriptionResponse, EncryptionKeyDescription>(uriPath, request);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -83,7 +82,7 @@ public class ManagementApiClient(WebAppClient client)
             await client.GetAsync<EncryptionKeyDescriptionResponse>(uriPath, []);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -96,7 +95,7 @@ public class ManagementApiClient(WebAppClient client)
             await client.DeleteAsync<BaseResponse>(uriPath, []);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -109,7 +108,7 @@ public class ManagementApiClient(WebAppClient client)
             await client.CreateAsync<ObWacCertificateResponse, ObWacCertificate>(uriPath, request);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -122,7 +121,7 @@ public class ManagementApiClient(WebAppClient client)
             await client.GetAsync<ObWacCertificateResponse>(uriPath, []);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -135,7 +134,7 @@ public class ManagementApiClient(WebAppClient client)
             await client.DeleteAsync<BaseResponse>(uriPath, []);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -148,7 +147,7 @@ public class ManagementApiClient(WebAppClient client)
             await client.DeleteAsync<BaseResponse>(uriPath, []);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -161,7 +160,7 @@ public class ManagementApiClient(WebAppClient client)
             await client.DeleteAsync<BaseResponse>(uriPath, []);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -175,7 +174,7 @@ public class ManagementApiClient(WebAppClient client)
             await client.CreateAsync<ObSealCertificateResponse, ObSealCertificate>(uriPath, request);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -188,7 +187,7 @@ public class ManagementApiClient(WebAppClient client)
             await client.GetAsync<ObSealCertificateResponse>(uriPath, []);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -201,7 +200,7 @@ public class ManagementApiClient(WebAppClient client)
             await client.CreateAsync<SoftwareStatementResponse, SoftwareStatement>(uriPath, request);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }
@@ -214,7 +213,7 @@ public class ManagementApiClient(WebAppClient client)
             await client.GetAsync<SoftwareStatementResponse>(uriPath, []);
 
         // Checks
-        response.Warnings.Should().BeNull();
+        Assert.IsNull(response.Warnings);
 
         return response;
     }

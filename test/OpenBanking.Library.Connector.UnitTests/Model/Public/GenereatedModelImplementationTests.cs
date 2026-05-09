@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Reflection;
-using FluentAssertions;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -44,7 +43,7 @@ public class GenereatedModelImplementationTests
             {
                 var r = instance.ToString();
 
-                r.Should().NotBeNullOrWhiteSpace();
+                Assert.False(string.IsNullOrWhiteSpace(r));
             }
         }
     }
