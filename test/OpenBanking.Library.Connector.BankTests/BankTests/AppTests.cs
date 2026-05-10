@@ -242,6 +242,10 @@ public class AppTests
                         bankProfileFromEnv,
                         registrationScope,
                         bankGroup),
+                    BankGroup.Zopa => GetAllInRegistrationGroup<ZopaBank, ZopaRegistrationGroup>(
+                        bankProfileFromEnv,
+                        registrationScope,
+                        bankGroup),
                     _ => throw new ArgumentOutOfRangeException()
                 };
             }

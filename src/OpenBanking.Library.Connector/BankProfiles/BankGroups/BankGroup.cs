@@ -57,5 +57,8 @@ public enum BankGroup
     Tsb,
 
     [EnumMember(Value = "Wise")]
-    Wise
+    Wise,
+
+    [EnumMember(Value = "Zopa")]
+    Zopa
 }

@@ -40,6 +40,10 @@ global using WiseRegistrationGroup =
     FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.WiseBank;
 global using TsbRegistrationGroup =
     FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.TsbBank;
+global using ZopaBank =
+    FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.ZopaBank;
+global using ZopaRegistrationGroup =
+    FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.ZopaBank;
 
 // UK Open Banking API models
 global using AccountAndTransactionModelsV3p1p11 =

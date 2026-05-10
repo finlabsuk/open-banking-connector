@@ -184,5 +184,8 @@ public enum BankProfileEnum
     Tsb_Tsb,
 
     [EnumMember(Value = "Wise_Wise")]
-    Wise_Wise
+    Wise_Wise,
+
+    [EnumMember(Value = "Zopa_Zopa")]
+    Zopa_Zopa
 }
