@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ServiceCollectionExtensions =
@@ -59,7 +60,8 @@ public class AppContextFixture : IDisposable
 
         builder
             .Logging
-            .AddWebHostLogging(builder.Configuration, null);
+            .ClearProviders()
+            .AddConsole();
 
         // Build app
         WebApplication app = builder.Build();
