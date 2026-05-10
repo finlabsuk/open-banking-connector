@@ -34,6 +34,11 @@ public class ConsentAuthGetCustomBehaviour
 
     public string? SingleBase64EncodedParameterName { get; init; }
 
+    /// <summary>
+    ///     Overrides authorization endpoint URL for this consent type.
+    /// </summary>
+    public string? AuthorizationEndpoint { get; init; }
+
     public bool? AddRedundantOAuth2StateRequestParameter { get; set; }
 
     public bool? AddRedundantOAuth2NonceRequestParameter { get; set; }

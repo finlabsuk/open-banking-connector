@@ -69,6 +69,11 @@ public static class CreateAuthUrl
         string appSessionId = GenerateRandomString(32);
         string responseTypeString = JsonConvert.SerializeObject(responseType).Replace("\"", "");
 
+        if (customBehaviourConsentAuthGet?.AuthorizationEndpoint is not null)
+        {
+            authorisationEndpoint = customBehaviourConsentAuthGet.AuthorizationEndpoint;
+        }
+
         // Add common parameters
         var keyValuePairs = new Dictionary<string, string>
         {
