@@ -130,6 +130,8 @@ builder.Services
 
 builder
     .Logging
+    .ClearProviders()
+    .AddConsole()
     .AddWebHostLogging(builder.Configuration, serviceVersion);
 
 // Build app
