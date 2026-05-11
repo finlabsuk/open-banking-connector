@@ -60,9 +60,14 @@ public class ConsentAuth
         {
             // Perform email auth
             waitForRedirect = redirectObserver.WaitForRedirect(TimeSpan.FromMinutes(5));
-            SendEmail(
-                "Open Banking Connector Test",
-                "This is the auth URL: " + authUrl);
+            var htmlBody = // language=html
+                $"""
+                 <p>Please click or tap to authorise:</p>
+                 <p>
+                 <a href="{authUrl}">Authorise</a>
+                 </p>
+                 """;
+            SendEmail("Open Banking Connector Test", htmlBody);
         }
         else
         {
@@ -153,13 +158,14 @@ public class ConsentAuth
         }
     }
 
-    private void SendEmail(string subject, string body)
+    private void SendEmail(string subject, string htmlBody)
     {
         using var mailMessage = new MailMessage(
             new MailAddress(_emailOptions.FromEmailAddress, _emailOptions.FromEmailName),
             new MailAddress(_emailOptions.ToEmailAddress, _emailOptions.ToEmailName));
         mailMessage.Subject = subject;
-        mailMessage.Body = body;
+        mailMessage.Body = htmlBody;
+        mailMessage.IsBodyHtml = true;
         _smtpClient.Send(mailMessage);
     }
 }
