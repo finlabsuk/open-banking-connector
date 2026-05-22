@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -15,30 +16,23 @@ public class GlobalExceptionFilter(ProblemDetailsFactory problemDetailsFactory) 
     {
         if (context.Exception is HttpResponseException exception)
         {
+            ServerError serverError = exception.ServerError;
             ProblemDetails problemDetails = problemDetailsFactory.CreateProblemDetails(
                 context.HttpContext,
-                exception.StatusCode,
-                GetTitleString(exception.Title),
+                serverError.StatusCode,
+                serverError.Title,
                 null,
-                exception.Message);
-            if (exception.Extensions is not null)
+                serverError.Detail);
+
+            foreach ((string key, object? value) in serverError.Extensions)
             {
-                problemDetails.Extensions = exception.Extensions;
+                problemDetails.Extensions[key.ToCamelCase()] = value;
             }
 
-            context.Result = new ObjectResult(problemDetails) { StatusCode = exception.StatusCode };
+            problemDetails.Extensions["serverErrorType"] = serverError.ServerErrorType.ToString().ToCamelCase();
+
+            context.Result = new ObjectResult(problemDetails) { StatusCode = serverError.StatusCode };
             context.ExceptionHandled = true;
         }
-    }
-
-    private static string GetTitleString(ProblemDetailsTitle title)
-    {
-        var titleString = title.ToString();
-        if (string.IsNullOrEmpty(titleString) ||
-            char.IsLower(titleString[0]))
-        {
-            return titleString;
-        }
-        return char.ToLower(titleString[0]) + titleString[1..];
     }
 }

@@ -23,4 +23,14 @@ public static class StringExtensions
         string returnString = string.Join("-", stringMatches).ToLower();
         return returnString;
     }
+
+    public static string ToCamelCase(this string value)
+    {
+        if (string.IsNullOrEmpty(value) ||
+            char.IsLower(value[0]))
+        {
+            return value;
+        }
+        return char.ToLower(value[0]) + value[1..];
+    }
 }

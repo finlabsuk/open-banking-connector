@@ -2,26 +2,35 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Immutable;
+
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
-public enum ProblemDetailsTitle
+public enum ServerErrorType
 {
     AuthContextNotFound,
     AuthContextStale
 }
 
+public abstract record ServerError
+{
+    public abstract ServerErrorType ServerErrorType { get; }
+
+    public abstract string Title { get; }
+
+    public abstract string Detail { get; }
+
+    public abstract int StatusCode { get; }
+
+    public virtual IReadOnlyDictionary<string, object?> Extensions =>
+        ImmutableDictionary<string, object?>.Empty;
+}
+
 /// <summary>
 ///     Exception exposed via HTTP response
 /// </summary>
-public class HttpResponseException(
-    ProblemDetailsTitle title,
-    string detail,
-    int statusCode,
-    IDictionary<string, object?>? extensions = null) : Exception(detail)
+public class HttpResponseException(ServerError serverError)
+    : Exception(serverError.Detail)
 {
-    public ProblemDetailsTitle Title { get; } = title;
-
-    public int StatusCode { get; } = statusCode;
-
-    public IDictionary<string, object?>? Extensions { get; } = extensions;
+    public ServerError ServerError { get; } = serverError;
 }

@@ -148,11 +148,7 @@ internal class AuthContextUpdate :
                             .DomesticVrpConsentRefreshTokensNavigation)
                     .AsSplitQuery() // Load collections in separate SQL queries
                     .SingleOrDefault(x => x.State == state) ??
-                throw new HttpResponseException(
-                    ProblemDetailsTitle.AuthContextNotFound,
-                    "No record found for Auth Context with specified state.",
-                    400,
-                    new Dictionary<string, object?> { ["state"] = $"{state}" });
+                throw new HttpResponseException(new AuthContextNotFoundServerError(state));
         }
         else
         {
@@ -160,11 +156,7 @@ internal class AuthContextUpdate :
                 _authContextMethods
                     .DbSet
                     .SingleOrDefault(x => x.State == state) ??
-                throw new HttpResponseException(
-                    ProblemDetailsTitle.AuthContextNotFound,
-                    "No record found for Auth Context with specified state.",
-                    400,
-                    new Dictionary<string, object?> { ["state"] = $"{state}" });
+                throw new HttpResponseException(new AuthContextNotFoundServerError(state));
         }
 
         // Only accept redirects within 10 mins of auth context (session) creation
@@ -173,12 +165,7 @@ internal class AuthContextUpdate :
             .AddSeconds(authContextExpiryIntervalInSeconds);
         if (_timeProvider.GetUtcNow() > authContextExpiryTime)
         {
-            throw new HttpResponseException(
-                ProblemDetailsTitle.AuthContextStale,
-                "Auth context exists but now stale (more than ten minutes old) so will not process redirect. " +
-                "Please create a new auth context and authenticate again.",
-                400,
-                new Dictionary<string, object?> { ["state"] = $"{state}" });
+            throw new HttpResponseException(new AuthContextStaleServerError(state));
         }
 
         // Validate error parameter
