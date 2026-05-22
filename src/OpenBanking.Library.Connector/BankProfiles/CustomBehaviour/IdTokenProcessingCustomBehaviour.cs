@@ -14,8 +14,6 @@ public class IdTokenProcessingCustomBehaviour
     /// </summary>
     public IdTokenSubClaimType? IdTokenSubClaimType { get; set; }
 
-    public bool? DoNotValidateIdToken { get; set; }
-
     public bool? IdTokenNonceClaimIsPreviousValue { get; set; }
 
     public bool? IdTokenMayNotHaveAcrClaim { get; set; }
@@ -31,11 +29,6 @@ public class IdTokenProcessingCustomBehaviour
     public string? IssClaim { get; set; }
 
     public DateTimeOffsetUnixConverterEnum? IdTokenExpirationTimeClaimJsonConverter { get; set; }
-
-    public static bool GetDoNotValidateIdToken(
-        IdTokenProcessingCustomBehaviour? customBehaviour,
-        IdTokenProcessingCustomBehaviour? baseCustomBehaviour) =>
-        customBehaviour?.DoNotValidateIdToken ?? baseCustomBehaviour?.DoNotValidateIdToken ?? false;
 
     public static bool GetIdTokenNonceClaimIsPreviousValue(
         IdTokenProcessingCustomBehaviour? customBehaviour,

@@ -9,6 +9,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
 public enum BarclaysBank
 {
+    [Obsolete("Not supported.")]
     Sandbox,
     Personal,
     Wealth,
@@ -20,6 +21,7 @@ public enum BarclaysBank
 
 public enum BarclaysRegistrationGroup
 {
+    [Obsolete("Not supported.")]
     Sandbox,
     Production
 }
@@ -29,7 +31,9 @@ public class Barclays() : BankGroupBase<BarclaysBank, BarclaysRegistrationGroup>
     protected override ConcurrentDictionary<BankProfileEnum, BarclaysBank> BankProfileToBank { get; } =
         new()
         {
+#pragma warning disable CS0618
             [BankProfileEnum.Barclays_Sandbox] = BarclaysBank.Sandbox,
+#pragma warning restore CS0618
             [BankProfileEnum.Barclays_Personal] = BarclaysBank.Personal,
             [BankProfileEnum.Barclays_Wealth] = BarclaysBank.Wealth,
             [BankProfileEnum.Barclays_Barclaycard] = BarclaysBank.Barclaycard,
@@ -41,7 +45,9 @@ public class Barclays() : BankGroupBase<BarclaysBank, BarclaysRegistrationGroup>
     public override BarclaysRegistrationGroup GetRegistrationGroup(
         BarclaysBank bank,
         RegistrationScopeEnum registrationScopeEnum) =>
+#pragma warning disable CS0618
         bank is BarclaysBank.Sandbox
             ? BarclaysRegistrationGroup.Sandbox
             : BarclaysRegistrationGroup.Production;
+#pragma warning restore CS0618
 }

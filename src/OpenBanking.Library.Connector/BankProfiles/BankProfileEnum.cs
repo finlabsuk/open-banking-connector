@@ -15,6 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 [JsonConverter(typeof(StringEnumConverter))]
 public enum BankProfileEnum
 {
+    [Obsolete("Not supported.")]
     [EnumMember(Value = "Barclays_Sandbox")]
     Barclays_Sandbox,
 

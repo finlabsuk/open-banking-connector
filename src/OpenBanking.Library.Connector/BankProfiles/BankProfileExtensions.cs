@@ -11,7 +11,9 @@ public static class BankProfileExtensions
     public static BankGroup GetBankGroup(this BankProfileEnum bankProfileEnum) =>
         bankProfileEnum switch
         {
+#pragma warning disable CS0618
             BankProfileEnum.Barclays_Sandbox => BankGroup.Barclays,
+#pragma warning restore CS0618
             BankProfileEnum.Barclays_Personal => BankGroup.Barclays,
             BankProfileEnum.Barclays_Wealth => BankGroup.Barclays,
             BankProfileEnum.Barclays_Barclaycard => BankGroup.Barclays,

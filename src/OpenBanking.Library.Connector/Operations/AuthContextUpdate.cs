@@ -406,34 +406,27 @@ internal class AuthContextUpdate :
         DateTimeOffset modified = _timeProvider.GetUtcNow();
         if (idToken is not null)
         {
-            bool doNotValidateIdToken =
-                IdTokenProcessingCustomBehaviour.GetDoNotValidateIdToken(
-                    consentAuthGetCustomBehaviour?.IdTokenProcessingCustomBehaviour,
-                    customBehaviour?.BaseIdTokenProcessingCustomBehaviour);
-            if (doNotValidateIdToken is false)
+            string? newExternalApiUserId = await _grantPost.ValidateIdTokenAuthEndpoint(
+                idToken,
+                code,
+                state,
+                consentAuthGetCustomBehaviour?.IdTokenProcessingCustomBehaviour,
+                customBehaviour?.BaseIdTokenProcessingCustomBehaviour,
+                jwksUri,
+                customBehaviour?.JwksGet,
+                bankTokenIssuerClaim,
+                externalApiClientId,
+                externalApiConsentId,
+                nonce,
+                supportsSca,
+                bankProfile.BankProfileEnum,
+                consent.ExternalApiUserId);
+            if (newExternalApiUserId != consent.ExternalApiUserId)
             {
-                string? newExternalApiUserId = await _grantPost.ValidateIdTokenAuthEndpoint(
-                    idToken,
-                    code,
-                    state,
-                    consentAuthGetCustomBehaviour?.IdTokenProcessingCustomBehaviour,
-                    customBehaviour?.BaseIdTokenProcessingCustomBehaviour,
-                    jwksUri,
-                    customBehaviour?.JwksGet,
-                    bankTokenIssuerClaim,
-                    externalApiClientId,
-                    externalApiConsentId,
-                    nonce,
-                    supportsSca,
-                    bankProfile.BankProfileEnum,
-                    consent.ExternalApiUserId);
-                if (newExternalApiUserId != consent.ExternalApiUserId)
-                {
-                    consent.UpdateExternalApiUserId(
-                        newExternalApiUserId,
-                        modified,
-                        modifiedBy);
-                }
+                consent.UpdateExternalApiUserId(
+                    newExternalApiUserId,
+                    modified,
+                    modifiedBy);
             }
         }
 

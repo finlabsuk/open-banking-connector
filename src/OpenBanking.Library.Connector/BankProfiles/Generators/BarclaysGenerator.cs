@@ -34,9 +34,6 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             _bankGroupData.GetBankProfile(bank),
             bank switch
             {
-                BarclaysBank
-                        .Sandbox =>
-                    "https://token.sandbox.barclays.com", // from https://developer.barclays.com/apis/account-and-transactions/20e74071-13fb-44eb-b98f-2c89d6251ad8.bdn/documentation#barclays-identity-provider-(idp)-authentication-types
                 BarclaysBank.Personal =>
                     "https://oauth.tiaa.barclays.com/BarclaysPersonal", // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/998342986/Barclays+Bank+UK+Plc
                 BarclaysBank.Wealth =>
@@ -71,7 +68,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                 ApiVersion = VariableRecurringPaymentsApiVersion.Version4p0,
                 BaseUrl = GetApiBaseUrl("v4.0/pisp")
             },
-            bank is not BarclaysBank.Sandbox,
+            true,
             instrumentationClient)
         {
             BankConfigurationApiSettings = new BankConfigurationApiSettings
@@ -126,18 +123,6 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                         elementsToRemove.Add(AccountAndTransactionModelsPublic.Permissions.ReadDirectDebits);
                     }
 
-                    if (bank is BarclaysBank.Sandbox)
-                    {
-                        elementsToRemove.Add(AccountAndTransactionModelsPublic.Permissions.ReadParty);
-                        elementsToRemove.Add(AccountAndTransactionModelsPublic.Permissions.ReadDirectDebits);
-                        elementsToRemove.Add(
-                            AccountAndTransactionModelsPublic.Permissions
-                                .ReadStandingOrdersBasic);
-                        elementsToRemove.Add(
-                            AccountAndTransactionModelsPublic.Permissions
-                                .ReadStandingOrdersDetail);
-                    }
-
                     foreach (AccountAndTransactionModelsPublic.Permissions element in
                              elementsToRemove)
                     {
@@ -154,20 +139,6 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                     new IdTokenProcessingCustomBehaviour { IdTokenSubClaimType = IdTokenSubClaimType.EndUserId },
                 AccountAccessConsentPost =
                     new ReadWritePostCustomBehaviour { PostResponseLinksMayOmitId = true },
-                AccountAccessConsentAuthGet = bank is BarclaysBank.Sandbox
-                    ? new ConsentAuthGetCustomBehaviour
-                    {
-                        IdTokenProcessingCustomBehaviour =
-                            new IdTokenProcessingCustomBehaviour { DoNotValidateIdToken = true }
-                    }
-                    : null,
-                AccountAccessConsentAuthCodeGrantPost = bank is BarclaysBank.Sandbox
-                    ? new AuthCodeGrantPostCustomBehaviour
-                    {
-                        IdTokenProcessingCustomBehaviour =
-                            new IdTokenProcessingCustomBehaviour { DoNotValidateIdToken = true }
-                    }
-                    : null,
                 AccountAccessConsentRefreshTokenGrantPost =
                     new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
                 BankRegistrationPost =

@@ -344,27 +344,20 @@ internal class GrantPost : IGrantPost
             }
 
             // Perform validation
-            bool doNotValidateIdToken =
-                IdTokenProcessingCustomBehaviour.GetDoNotValidateIdToken(
-                    authCodeGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour,
-                    baseIdTokenProcessingCustomBehaviour);
-            if (doNotValidateIdToken is false)
-            {
-                await ValidateIdTokenTokenEndpoint(
-                    response.IdToken,
-                    response.AccessToken,
-                    authCodeGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour,
-                    baseIdTokenProcessingCustomBehaviour,
-                    jwksUri,
-                    jwksGetCustomBehaviour,
-                    bankIssuerUrl,
-                    externalApiClientId,
-                    externalApiConsentId,
-                    expectedNonce,
-                    bankProfileForTppReportingMetrics,
-                    supportsSca,
-                    externalApiUserId);
-            }
+            await ValidateIdTokenTokenEndpoint(
+                response.IdToken,
+                response.AccessToken,
+                authCodeGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour,
+                baseIdTokenProcessingCustomBehaviour,
+                jwksUri,
+                jwksGetCustomBehaviour,
+                bankIssuerUrl,
+                externalApiClientId,
+                externalApiConsentId,
+                expectedNonce,
+                bankProfileForTppReportingMetrics,
+                supportsSca,
+                externalApiUserId);
         }
 
         return response;
@@ -458,27 +451,20 @@ internal class GrantPost : IGrantPost
             }
 
             // Perform validation
-            bool doNotValidateIdToken =
-                IdTokenProcessingCustomBehaviour.GetDoNotValidateIdToken(
-                    refreshTokenGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour,
-                    baseIdTokenProcessingCustomBehaviour);
-            if (doNotValidateIdToken is false)
-            {
-                await ValidateIdTokenTokenEndpoint(
-                    response.IdToken,
-                    response.AccessToken,
-                    refreshTokenGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour,
-                    baseIdTokenProcessingCustomBehaviour,
-                    jwksUri,
-                    jwksGetCustomBehaviour,
-                    bankIssuerUrl,
-                    externalApiClientId,
-                    externalApiConsentId,
-                    expectedNonce,
-                    bankProfileForTppReportingMetrics,
-                    supportsSca,
-                    externalApiUserId);
-            }
+            await ValidateIdTokenTokenEndpoint(
+                response.IdToken,
+                response.AccessToken,
+                refreshTokenGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour,
+                baseIdTokenProcessingCustomBehaviour,
+                jwksUri,
+                jwksGetCustomBehaviour,
+                bankIssuerUrl,
+                externalApiClientId,
+                externalApiConsentId,
+                expectedNonce,
+                bankProfileForTppReportingMetrics,
+                supportsSca,
+                externalApiUserId);
         }
 
         return response;
