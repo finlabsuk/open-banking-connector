@@ -68,7 +68,10 @@ internal class
         // Load DomesticPaymentConsent and related
         (DomesticPaymentConsentPersisted domesticPaymentConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? _) =
-            await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(request.DomesticPaymentConsentId, false);
+            await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(
+                request.DomesticPaymentConsentId,
+                false,
+                ConsentIdSource.RequestBody);
         string authorizationEndpoint =
             bankRegistration.AuthorizationEndpoint;
 

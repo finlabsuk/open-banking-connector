@@ -60,7 +60,10 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, A
         // Get consent and associated data
         (AccountAccessConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
-            await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.ConsentId, true);
+            await _accountAccessConsentCommon.GetAccountAccessConsent(
+                readParams.ConsentId,
+                true,
+                ConsentIdSource.RequestHeader);
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);

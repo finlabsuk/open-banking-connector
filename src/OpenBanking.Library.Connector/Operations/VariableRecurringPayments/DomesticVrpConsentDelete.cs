@@ -64,7 +64,7 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
         // Load object
         (DomesticVrpConsent persistedObject, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
-            await _domesticVrpConsentCommon.GetDomesticVrpConsent(deleteParams.Id, true);
+            await _domesticVrpConsentCommon.GetDomesticVrpConsent(deleteParams.Id, true, ConsentIdSource.UrlPath);
 
         if (!deleteParams.ExcludeExternalApiOperation)
         {

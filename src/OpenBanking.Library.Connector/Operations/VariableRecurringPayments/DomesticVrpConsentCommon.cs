@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using DomesticVrpConsentPersisted =
@@ -47,7 +48,7 @@ internal class DomesticVrpConsentCommon
     public async
         Task<(DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
             SoftwareStatementEntity softwareStatementEntity, ExternalApiSecretEntity? externalApiSecret)>
-        GetDomesticVrpConsent(Guid consentId, bool dbTracking)
+        GetDomesticVrpConsent(Guid consentId, bool dbTracking, ConsentIdSource consentIdSource)
     {
         IQueryable<DomesticVrpConsent> db = dbTracking
             ? _entityMethods.DbSet
@@ -66,7 +67,10 @@ internal class DomesticVrpConsentCommon
                     .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
                     .AsSplitQuery() // Load collections in separate SQL queries
                     .SingleOrDefaultAsync(x => x.Id == consentId) ??
-                throw new KeyNotFoundException($"No record found for Domestic VRP Consent with ID {consentId}.");
+                throw ConsentServerErrors.ConsentNotFoundException(
+                    ConsentType.DomesticVrpConsent,
+                    consentIdSource,
+                    consentId);
             bankRegistration = persistedConsent.BankRegistrationNavigation;
             softwareStatement = persistedConsent.BankRegistrationNavigation.SoftwareStatementNavigation;
             externalApiSecret = bankRegistration.ExternalApiSecretsNavigation
@@ -77,7 +81,10 @@ internal class DomesticVrpConsentCommon
             persistedConsent =
                 await db
                     .SingleOrDefaultAsync(x => x.Id == consentId) ??
-                throw new KeyNotFoundException($"No record found for Domestic VRP Consent with ID {consentId}.");
+                throw ConsentServerErrors.ConsentNotFoundException(
+                    ConsentType.DomesticVrpConsent,
+                    consentIdSource,
+                    consentId);
             bankRegistration = await _bankRegistrationMethods
                 .DbSetNoTracking
                 .SingleAsync(x => x.Id == persistedConsent.BankRegistrationId);

@@ -64,7 +64,7 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
         // Load object
         (AccountAccessConsent persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
-            await _accountAccessConsentCommon.GetAccountAccessConsent(deleteParams.Id, true);
+            await _accountAccessConsentCommon.GetAccountAccessConsent(deleteParams.Id, true, ConsentIdSource.UrlPath);
         if (!deleteParams.ExcludeExternalApiOperation)
         {
             string bankApiId = persistedConsent.ExternalApiId;

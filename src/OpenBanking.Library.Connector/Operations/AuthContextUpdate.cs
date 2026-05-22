@@ -209,7 +209,8 @@ internal class AuthContextUpdate :
                     SoftwareStatementEntity softwareStatementEntity, ExternalApiSecretEntity? externalApiSecret) =
                 await _accountAccessConsentCommon.GetAccountAccessConsent(
                     ac.AccountAccessConsentId,
-                    true);
+                    true,
+                    ConsentIdSource.DatabaseForeignKey);
 
             AccessTokenEntity? accessToken =
                 await _accountAccessConsentCommon.GetAccessToken(persistedConsent.Id, true);
@@ -229,7 +230,8 @@ internal class AuthContextUpdate :
                     SoftwareStatementEntity softwareStatementEntity, ExternalApiSecretEntity? externalApiSecret) =
                 await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(
                     ac.DomesticPaymentConsentId,
-                    true);
+                    true,
+                    ConsentIdSource.DatabaseForeignKey);
             AccessTokenEntity? accessToken =
                 await _domesticPaymentConsentCommon.GetAccessToken(persistedConsent.Id, true);
             RefreshTokenEntity? refreshToken =
@@ -249,7 +251,8 @@ internal class AuthContextUpdate :
                     SoftwareStatementEntity softwareStatementEntity, ExternalApiSecretEntity? externalApiSecret) =
                 await _domesticVrpConsentCommon.GetDomesticVrpConsent(
                     ac.DomesticVrpConsentId,
-                    true);
+                    true,
+                    ConsentIdSource.DatabaseForeignKey);
             AccessTokenEntity? accessToken =
                 await _domesticVrpConsentCommon.GetAccessToken(persistedConsent.Id, true);
             RefreshTokenEntity? refreshToken =

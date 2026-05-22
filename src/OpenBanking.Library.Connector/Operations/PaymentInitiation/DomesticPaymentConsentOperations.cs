@@ -356,7 +356,10 @@ internal class
         // Load DomesticPaymentConsent and related
         (DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
-            await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id, false);
+            await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(
+                readParams.Id,
+                false,
+                ConsentIdSource.UrlPath);
         string externalApiConsentId = persistedConsent.ExternalApiId;
         bool pispUseV4 = persistedConsent.CreatedWithV4;
 
@@ -529,7 +532,7 @@ internal class
         // Load DomesticPaymentConsent and related
         (DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
-            await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id, true);
+            await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id, true, ConsentIdSource.UrlPath);
         string externalApiConsentId = persistedConsent.ExternalApiId;
         bool pispUseV4 = persistedConsent.CreatedWithV4;
 

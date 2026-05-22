@@ -101,7 +101,10 @@ internal class
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
-            await _domesticVrpConsentCommon.GetDomesticVrpConsent(createParams.ConsentId, true);
+            await _domesticVrpConsentCommon.GetDomesticVrpConsent(
+                createParams.ConsentId,
+                true,
+                ConsentIdSource.UrlPath);
         string externalApiConsentId = persistedConsent.ExternalApiId;
         bool vrpUseV4 = persistedConsent.CreatedWithV4 || persistedConsent.MigratedToV4;
 
@@ -541,7 +544,7 @@ internal class
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
-            await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id, false);
+            await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id, false, ConsentIdSource.UrlPath);
         string externalApiConsentId = persistedConsent.ExternalApiId;
         bool vrpUseV4 = persistedConsent.CreatedWithV4 || persistedConsent.MigratedToV4;
 
@@ -730,7 +733,7 @@ internal class
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
-            await _domesticVrpConsentCommon.GetDomesticVrpConsent(updateParams.Id, true);
+            await _domesticVrpConsentCommon.GetDomesticVrpConsent(updateParams.Id, true, ConsentIdSource.UrlPath);
         string externalApiConsentId = persistedConsent.ExternalApiId;
         var vrpUseV4 = true; // only v4 APIs support consent migration
 

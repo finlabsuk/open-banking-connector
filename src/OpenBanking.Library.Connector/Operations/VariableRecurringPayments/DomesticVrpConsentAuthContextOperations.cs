@@ -66,7 +66,10 @@ internal class
         // Load DomesticVrpConsent and related
         (DomesticVrpConsent domesticVrpConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? _) =
-            await _domesticVrpConsentCommon.GetDomesticVrpConsent(request.DomesticVrpConsentId, false);
+            await _domesticVrpConsentCommon.GetDomesticVrpConsent(
+                request.DomesticVrpConsentId,
+                false,
+                ConsentIdSource.RequestBody);
         string authorizationEndpoint =
             bankRegistration.AuthorizationEndpoint;
 

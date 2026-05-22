@@ -63,7 +63,10 @@ internal class
         // Get consent and associated data
         (AccountAccessConsent persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
-            await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.ConsentId, true);
+            await _accountAccessConsentCommon.GetAccountAccessConsent(
+                readParams.ConsentId,
+                true,
+                ConsentIdSource.RequestHeader);
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);

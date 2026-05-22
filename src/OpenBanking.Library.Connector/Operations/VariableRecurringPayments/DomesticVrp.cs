@@ -97,7 +97,10 @@ internal class DomesticVrp :
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
-            await _domesticVrpConsentCommon.GetDomesticVrpConsent(request.DomesticVrpConsentId, true);
+            await _domesticVrpConsentCommon.GetDomesticVrpConsent(
+                request.DomesticVrpConsentId,
+                true,
+                ConsentIdSource.RequestBody);
         string externalApiConsentId = persistedConsent.ExternalApiId;
         bool vrpUseV4 = persistedConsent.CreatedWithV4 || persistedConsent.MigratedToV4;
 

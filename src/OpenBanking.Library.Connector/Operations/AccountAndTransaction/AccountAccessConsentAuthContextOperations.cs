@@ -84,7 +84,10 @@ internal class
         // Load AccountAccessConsent and related
         (AccountAccessConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 SoftwareStatementEntity softwareStatement, ExternalApiSecretEntity? externalApiSecret) =
-            await _accountAccessConsentCommon.GetAccountAccessConsent(request.AccountAccessConsentId, false);
+            await _accountAccessConsentCommon.GetAccountAccessConsent(
+                request.AccountAccessConsentId,
+                false,
+                ConsentIdSource.RequestBody);
         string authorizationEndpoint = bankRegistration.AuthorizationEndpoint;
         string externalApiConsentId = persistedConsent.ExternalApiId;
 

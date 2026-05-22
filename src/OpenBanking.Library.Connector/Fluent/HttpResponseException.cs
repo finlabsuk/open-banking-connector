@@ -9,7 +9,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 public enum ServerErrorType
 {
     AuthContextNotFound,
-    AuthContextStale
+    AuthContextStale,
+    ConsentNotFound,
+    ConsentFromRequestNotFound
 }
 
 public abstract record ServerError

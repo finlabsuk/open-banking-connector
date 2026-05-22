@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using DomesticPaymentConsentPersisted =
@@ -49,7 +50,8 @@ internal class DomesticPaymentConsentCommon
             SoftwareStatementEntity softwareStatementEntity, ExternalApiSecretEntity? externalApiSecret)>
         GetDomesticPaymentConsent(
             Guid consentId,
-            bool dbTracking)
+            bool dbTracking,
+            ConsentIdSource consentIdSource)
     {
         IQueryable<DomesticPaymentConsent> db = dbTracking
             ? _entityMethods.DbSet
@@ -68,7 +70,10 @@ internal class DomesticPaymentConsentCommon
                     .Include(o => o.BankRegistrationNavigation.ExternalApiSecretsNavigation)
                     .AsSplitQuery() // Load collections in separate SQL queries
                     .SingleOrDefaultAsync(x => x.Id == consentId) ??
-                throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {consentId}.");
+                throw ConsentServerErrors.ConsentNotFoundException(
+                    ConsentType.DomesticPaymentConsent,
+                    consentIdSource,
+                    consentId);
             bankRegistration = persistedConsent.BankRegistrationNavigation;
             softwareStatement = persistedConsent.BankRegistrationNavigation.SoftwareStatementNavigation;
             externalApiSecret = bankRegistration.ExternalApiSecretsNavigation
@@ -79,7 +84,10 @@ internal class DomesticPaymentConsentCommon
             persistedConsent =
                 await db
                     .SingleOrDefaultAsync(x => x.Id == consentId) ??
-                throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {consentId}.");
+                throw ConsentServerErrors.ConsentNotFoundException(
+                    ConsentType.DomesticPaymentConsent,
+                    consentIdSource,
+                    consentId);
             bankRegistration = await _bankRegistrationMethods
                 .DbSetNoTracking
                 .SingleAsync(x => x.Id == persistedConsent.BankRegistrationId);
