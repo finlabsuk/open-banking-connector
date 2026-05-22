@@ -175,15 +175,28 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 {
                     AudClaim = GetAudClaim(bank),
                     IdTokenProcessingCustomBehaviour =
-                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
+                        new IdTokenProcessingCustomBehaviour
+                        {
+                            DoNotValidateIdTokenAcrClaim = true,
+                            IssClaim = GetAudClaim(bank)
+                        }
                 },
                 AccountAccessConsentAuthCodeGrantPost = new AuthCodeGrantPostCustomBehaviour
                 {
                     IdTokenProcessingCustomBehaviour =
-                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
+                        new IdTokenProcessingCustomBehaviour
+                        {
+                            DoNotValidateIdTokenAcrClaim = true,
+                            IssClaim = GetAudClaim(bank)
+                        }
                 },
                 AccountAccessConsentRefreshTokenGrantPost =
-                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
+                    new RefreshTokenGrantPostCustomBehaviour
+                    {
+                        IdTokenMayBeAbsent = true,
+                        IdTokenProcessingCustomBehaviour =
+                            new IdTokenProcessingCustomBehaviour { IssClaim = GetAudClaim(bank) }
+                    },
                 AccountAccessConsentPost = bank is NatWestBank.Coutts
                     ? new ReadWritePostCustomBehaviour { ResponseLinksMayAddSlash = true }
                     : null,
@@ -218,28 +231,54 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 {
                     AudClaim = GetAudClaim(bank),
                     IdTokenProcessingCustomBehaviour =
-                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
+                        new IdTokenProcessingCustomBehaviour
+                        {
+                            DoNotValidateIdTokenAcrClaim = true,
+                            IssClaim = GetAudClaim(bank)
+                        }
                 },
                 DomesticPaymentConsentAuthCodeGrantPost = new AuthCodeGrantPostCustomBehaviour
                 {
                     IdTokenProcessingCustomBehaviour =
-                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
+                        new IdTokenProcessingCustomBehaviour
+                        {
+                            DoNotValidateIdTokenAcrClaim = true,
+                            IssClaim = GetAudClaim(bank)
+                        }
                 },
                 DomesticPaymentConsentRefreshTokenGrantPost =
-                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
+                    new RefreshTokenGrantPostCustomBehaviour
+                    {
+                        IdTokenMayBeAbsent = true,
+                        IdTokenProcessingCustomBehaviour =
+                            new IdTokenProcessingCustomBehaviour { IssClaim = GetAudClaim(bank) }
+                    },
                 DomesticVrpConsentAuthGet = new ConsentAuthGetCustomBehaviour
                 {
                     AudClaim = GetAudClaim(bank),
                     IdTokenProcessingCustomBehaviour =
-                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
+                        new IdTokenProcessingCustomBehaviour
+                        {
+                            DoNotValidateIdTokenAcrClaim = true,
+                            IssClaim = GetAudClaim(bank)
+                        }
                 },
                 DomesticVrpConsentAuthCodeGrantPost = new AuthCodeGrantPostCustomBehaviour
                 {
                     IdTokenProcessingCustomBehaviour =
-                        new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
+                        new IdTokenProcessingCustomBehaviour
+                        {
+                            DoNotValidateIdTokenAcrClaim = true,
+                            IssClaim = GetAudClaim(bank)
+                        }
                 },
                 DomesticVrpConsentRefreshTokenGrantPost =
-                    new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
+                    new RefreshTokenGrantPostCustomBehaviour
+                    {
+                        IdTokenMayBeAbsent = true,
+                        IdTokenProcessingCustomBehaviour =
+                            new IdTokenProcessingCustomBehaviour { IssClaim = GetAudClaim(bank) }
+                    },
                 DomesticPaymentConsent =
                     new DomesticPaymentConsentCustomBehaviour
                     {

@@ -399,10 +399,6 @@ internal class AuthContextUpdate :
             : authContextNonce;
 
         // Validate ID token including nonce
-        string? requestObjectAudClaim = consentAuthGetCustomBehaviour?.AudClaim;
-        string bankTokenIssuerClaim =
-            requestObjectAudClaim ??
-            issuerUrl;
         DateTimeOffset modified = _timeProvider.GetUtcNow();
         if (idToken is not null)
         {
@@ -414,7 +410,7 @@ internal class AuthContextUpdate :
                 customBehaviour?.BaseIdTokenProcessingCustomBehaviour,
                 jwksUri,
                 customBehaviour?.JwksGet,
-                bankTokenIssuerClaim,
+                issuerUrl,
                 externalApiClientId,
                 externalApiConsentId,
                 nonce,
@@ -493,7 +489,7 @@ internal class AuthContextUpdate :
                 await _grantPost.PostAuthCodeGrantAsync(
                     code,
                     redirectUrl,
-                    bankTokenIssuerClaim,
+                    issuerUrl,
                     externalApiClientId,
                     clientSecret,
                     externalApiConsentId,

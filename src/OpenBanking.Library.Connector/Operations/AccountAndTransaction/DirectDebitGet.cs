@@ -91,13 +91,10 @@ internal class
             (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
 
         // Get access token
-        string bankTokenIssuerClaim = AccountAccessConsentCommon.GetBankTokenIssuerClaim(
-            customBehaviour,
-            issuerUrl); // Get bank token issuer ("iss") claim
         string accessToken =
             await _consentAccessTokenGet.GetAccessTokenAndUpdateConsent(
                 persistedConsent,
-                bankTokenIssuerClaim,
+                issuerUrl,
                 "accounts",
                 bankRegistration,
                 _accountAccessConsentCommon.GetAccessToken,

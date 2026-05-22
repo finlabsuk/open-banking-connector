@@ -141,12 +141,10 @@ internal class DomesticVrp :
             (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
 
         // Get access token
-        string bankTokenIssuerClaim = domesticVrpConsentAuthGetCustomBehaviour
-            ?.AudClaim ?? issuerUrl; // Get bank token issuer ("iss") claim
         string accessToken =
             await _consentAccessTokenGet.GetAccessTokenAndUpdateConsent(
                 persistedConsent,
-                bankTokenIssuerClaim,
+                issuerUrl,
                 "payments",
                 bankRegistration,
                 _domesticVrpConsentCommon.GetAccessToken,
