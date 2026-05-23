@@ -6,9 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
-using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
@@ -19,6 +17,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using DomesticVrpConsentAuthContext =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.
     DomesticVrpConsentAuthContext;
@@ -227,11 +226,10 @@ public class DomesticVrpConsentSubtest(
             {
                 {
                     // Get new application services scope
-                    using IServiceScopeContainer serviceScopeContainer =
-                        new ServiceScopeFromDependencyInjection(appServiceProvider);
+                    using IServiceScope scope = appServiceProvider.CreateScope();
 
                     // Get consent
-                    IDbService dbService = serviceScopeContainer.DbService;
+                    var dbService = scope.ServiceProvider.GetRequiredService<IDbService>();
                     IDbMethods dbMethods = dbService.GetDbMethods();
                     IDbEntityMethods<Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent>
                         consentEntityMethods =

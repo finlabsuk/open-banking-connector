@@ -14,8 +14,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.
     DomesticVrpConsent;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
@@ -26,6 +24,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.Playwright;
 using ObSealCertificateRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.ObSealCertificate;
@@ -361,14 +360,11 @@ public class AppTests
 
         // Get bank test settings
         BankTestSettings bankTestSettings =
-            testServiceProvider.GetRequiredService<ISettingsProvider<BankTestSettings>>().GetSettings();
-
-        // Get logger
-        var instrumentationClient = testServiceProvider.GetRequiredService<IInstrumentationClient>();
+            testServiceProvider.GetRequiredService<IOptions<BankTestSettings>>().Value;
 
         // Get bank profile definitions
         var bankProfileDefinitions =
-            testServiceProvider.GetRequiredService<IBankProfileService>();
+            appServiceProvider.GetRequiredService<IBankProfileService>();
         BankProfile bankProfile =
             bankProfileDefinitions.GetBankProfile(testData.BankProfile);
 

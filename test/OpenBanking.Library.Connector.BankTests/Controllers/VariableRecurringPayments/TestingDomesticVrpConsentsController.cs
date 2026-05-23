@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +14,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Controllers.Va
 [Route("vrp/domestic-vrp-consents")]
 public class TestingDomesticVrpConsentsController : ControllerBase
 {
-    private readonly IRequestBuilder _requestBuilder;
-
-    public TestingDomesticVrpConsentsController(IRequestBuilder requestBuilder)
-    {
-        _requestBuilder = requestBuilder;
-    }
-
     public static string BrowserCookieKey => "__Host-Session-Id";
 
     /// <summary>
@@ -43,28 +34,12 @@ public class TestingDomesticVrpConsentsController : ControllerBase
         string? reference)
     {
         // Create auth context
-
-        // Register state parameter
-        DomesticVrpConsentAuthContextCreateResponse authContextResponse;
-        if (TestingMethods.Instance.CreateDomesticVrpConsentAuthContext is not null)
+        if (TestingMethods.Instance.CreateDomesticVrpConsentAuthContext is null)
         {
-            authContextResponse =
-                await TestingMethods.Instance.CreateDomesticVrpConsentAuthContext(domesticVrpConsentId);
+            throw new InvalidOperationException();
         }
-        else
-        {
-            var authContextRequest = new DomesticVrpConsentAuthContext
-            {
-                DomesticVrpConsentId = domesticVrpConsentId,
-                Reference = reference,
-                CreatedBy = modifiedBy
-            };
-            authContextResponse = await _requestBuilder
-                .VariableRecurringPayments
-                .DomesticVrpConsents
-                .AuthContexts
-                .CreateLocalAsync(authContextRequest);
-        }
+        DomesticVrpConsentAuthContextCreateResponse authContextResponse =
+            await TestingMethods.Instance.CreateDomesticVrpConsentAuthContext(domesticVrpConsentId);
 
         // Set cookie
         Response.Cookies.Append(

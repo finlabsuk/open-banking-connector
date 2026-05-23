@@ -4,9 +4,6 @@
 
 using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Controllers.AccountAndTransaction;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,13 +16,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Controllers.Au
 [Route("auth")]
 public class TestingRedirectsController : ControllerBase
 {
-    private readonly IRequestBuilder _requestBuilder;
-
-    public TestingRedirectsController(IRequestBuilder requestBuilder)
-    {
-        _requestBuilder = requestBuilder;
-    }
-
     /// <summary>
     ///     OAuth2 query redirect endpoint
     /// </summary>
@@ -47,41 +37,25 @@ public class TestingRedirectsController : ControllerBase
     {
         if (TestingMethods.Instance.ProcessRedirect is null)
         {
-            var authResult =
-                new AuthResult
-                {
-                    ResponseMode = OAuth2ResponseMode.Query,
-                    State = state,
-                    OAuth2RedirectOptionalParameters = new OAuth2RedirectOptionalParameters
-                    {
-                        Error = error,
-                        IdToken = idToken,
-                        Code = code
-                    }
-                };
-            _ = await _requestBuilder
-                .AuthContexts
-                .UpdateAuthResultAsync(authResult, "Redirect to /auth/query-redirect");
+            throw new InvalidOperationException();
         }
-        else
-        {
-            // Create form collection from query parameters
-            List<KeyValuePair<string, string?>> formCollection = Request.Query
-                .SelectMany(
-                    pair => pair.Value,
-                    (pair, value) => new KeyValuePair<string, string?>(pair.Key, value))
-                .ToList();
 
-            // Add response_mode
-            formCollection.Add(new KeyValuePair<string, string?>("response_mode", "query"));
-            var authResult =
-                new TestingAuthResult
-                {
-                    State = state,
-                    RedirectParameters = formCollection
-                };
-            await TestingMethods.Instance.ProcessRedirect(authResult);
-        }
+        // Create form collection from query parameters
+        List<KeyValuePair<string, string?>> formCollection = Request.Query
+            .SelectMany(
+                pair => pair.Value,
+                (pair, value) => new KeyValuePair<string, string?>(pair.Key, value))
+            .ToList();
+
+        // Add response_mode
+        formCollection.Add(new KeyValuePair<string, string?>("response_mode", "query"));
+        var authResult =
+            new TestingAuthResult
+            {
+                State = state,
+                RedirectParameters = formCollection
+            };
+        await TestingMethods.Instance.ProcessRedirect(authResult);
 
         return Ok(); // We do not return data to bank following query redirect
     }
@@ -118,63 +92,30 @@ public class TestingRedirectsController : ControllerBase
         string cookieKey = TestingAccountAccessConsentsController.BrowserCookieKey;
         Request.Cookies.TryGetValue(cookieKey, out string? appSessionId);
 
-        AuthContextUpdateAuthResultResponse fluentResponse;
         if (TestingMethods.Instance.ProcessRedirect is null)
         {
-            // Parse response_mode (ASP.NET model binding will only do simple conversion)
-            OAuth2ResponseMode? oAuth2ResponseMode = responseMode switch
-            {
-                null => null,
-                "query" => OAuth2ResponseMode.Query,
-                "fragment" => OAuth2ResponseMode.Fragment,
-                "form_post" => OAuth2ResponseMode.FormPost,
-                _ => throw new ArgumentOutOfRangeException(
-                    nameof(responseMode),
-                    responseMode,
-                    "Unknown value for response_mode.")
-            };
-
-            // Operation
-            var authResult =
-                new AuthResult
-                {
-                    ResponseMode = oAuth2ResponseMode,
-                    RedirectUrl = redirectUrl,
-                    AppSessionId = appSessionId,
-                    State = state,
-                    OAuth2RedirectOptionalParameters = new OAuth2RedirectOptionalParameters
-                    {
-                        Error = error,
-                        IdToken = idToken,
-                        Code = code
-                    }
-                };
-            fluentResponse = await _requestBuilder
-                .AuthContexts
-                .UpdateAuthResultAsync(authResult);
+            throw new InvalidOperationException();
         }
-        else
+
+        // Create form collection
+        List<KeyValuePair<string, string?>> formCollection = Request.Form
+            .SelectMany(
+                pair => pair.Value,
+                (pair, value) => new KeyValuePair<string, string?>(pair.Key, value)).ToList();
+
+        // Add app session ID to form collection
+        if (appSessionId is not null)
         {
-            // Create form collection
-            List<KeyValuePair<string, string?>> formCollection = Request.Form
-                .SelectMany(
-                    pair => pair.Value,
-                    (pair, value) => new KeyValuePair<string, string?>(pair.Key, value)).ToList();
-
-            // Add app session ID to form collection
-            if (appSessionId is not null)
-            {
-                formCollection.Add(new KeyValuePair<string, string?>("app_session_id", appSessionId));
-            }
-
-            var authResult =
-                new TestingAuthResult
-                {
-                    State = state,
-                    RedirectParameters = formCollection
-                };
-            fluentResponse = await TestingMethods.Instance.ProcessRedirect(authResult);
+            formCollection.Add(new KeyValuePair<string, string?>("app_session_id", appSessionId));
         }
+
+        var authResult =
+            new TestingAuthResult
+            {
+                State = state,
+                RedirectParameters = formCollection
+            };
+        AuthContextUpdateAuthResultResponse fluentResponse = await TestingMethods.Instance.ProcessRedirect(authResult);
 
         return Created("about:blank", fluentResponse);
     }

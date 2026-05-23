@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
@@ -115,8 +114,10 @@ public class ExecutablePath
     public string? Linux { get; set; }
 }
 
-public class BankTestSettings : ISettings<BankTestSettings>
+public class BankTestSettings
 {
+    public const string ConfigSectionName = "OpenBankingConnector:BankTests";
+
     public ConsentAuthoriserOptions Auth { get; set; } = new();
 
     /// <summary>
@@ -128,38 +129,6 @@ public class BankTestSettings : ISettings<BankTestSettings>
     ///     Log external API requests/responses. Off by default.
     /// </summary>
     public bool LogExternalApiData { get; set; } = false;
-
-    public string SettingsGroupName => "OpenBankingConnector:BankTests";
-
-    public BankTestSettings Validate()
-    {
-        if (!Directory.Exists(GetDataDirectoryForCurrentOs()))
-        {
-            throw new DirectoryNotFoundException(
-                "Can't locate data path specified in bank test setting DataDirectory:" +
-                $"{GetDataDirectoryForCurrentOs()}. Please update app settings.");
-        }
-
-        // Check executable path in the case where this is not ignored
-        if (!Auth.PlaywrightLaunch.IgnoreExecutablePathAndArgs)
-        {
-            // Check executable path is not null
-            if (Auth.PlaywrightLaunch.GetExecutablePathForCurrentOs() is null)
-            {
-                throw new ArgumentException("Please specify an executable path in app settings.");
-            }
-
-            // Check executable path exists
-            if (!File.Exists(Auth.PlaywrightLaunch.GetExecutablePathForCurrentOs()))
-            {
-                throw new DirectoryNotFoundException(
-                    "Can't locate executable path specified in bank test setting ExecutablePath:" +
-                    $"{Auth.PlaywrightLaunch.GetExecutablePathForCurrentOs()}. Please update app settings.");
-            }
-        }
-
-        return this;
-    }
 
     // Gets data directory for current OS platform
     public string GetDataDirectoryForCurrentOs() =>

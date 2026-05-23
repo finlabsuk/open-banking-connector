@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +14,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Controllers.Ac
 [Route("aisp/account-access-consents")]
 public class TestingAccountAccessConsentsController : ControllerBase
 {
-    private readonly IRequestBuilder _requestBuilder;
-
-    public TestingAccountAccessConsentsController(IRequestBuilder requestBuilder)
-    {
-        _requestBuilder = requestBuilder;
-    }
-
     public static string BrowserCookieKey => "__Host-Session-Id";
 
     /// <summary>
@@ -43,26 +34,12 @@ public class TestingAccountAccessConsentsController : ControllerBase
         string? reference)
     {
         // Create auth context
-        AccountAccessConsentAuthContextCreateResponse authContextResponse;
-        if (TestingMethods.Instance.CreateAccountAccessConsentAuthContext is not null)
+        if (TestingMethods.Instance.CreateAccountAccessConsentAuthContext is null)
         {
-            authContextResponse =
-                await TestingMethods.Instance.CreateAccountAccessConsentAuthContext(accountAccessConsentId);
+            throw new InvalidOperationException();
         }
-        else
-        {
-            var authContextRequest = new AccountAccessConsentAuthContext
-            {
-                AccountAccessConsentId = accountAccessConsentId,
-                Reference = reference,
-                CreatedBy = modifiedBy
-            };
-            authContextResponse = await _requestBuilder
-                .AccountAndTransaction
-                .AccountAccessConsents
-                .AuthContexts
-                .CreateLocalAsync(authContextRequest);
-        }
+        AccountAccessConsentAuthContextCreateResponse authContextResponse =
+            await TestingMethods.Instance.CreateAccountAccessConsentAuthContext(accountAccessConsentId);
 
         // Set cookie
         Response.Cookies.Append(

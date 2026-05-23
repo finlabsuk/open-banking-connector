@@ -4,8 +4,6 @@
 
 using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.UserSecrets;
@@ -49,8 +47,4 @@ public static class AppConfiguration
     public static string RequestsDirectory { get; }
 
     public static IConfiguration Configuration { get; }
-
-    public static TSettings GetSettings<TSettings>()
-        where TSettings : class, ISettings<TSettings>, new() =>
-        ServiceCollectionExtensions.GetSettings<TSettings>(Configuration);
 }

@@ -4,7 +4,6 @@
 
 using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,12 +36,10 @@ public class AppContextFixture : IDisposable
         Assembly webHostAssembly = typeof(ServiceCollectionExtensions).Assembly;
 
         builder.Services
-            // Add .NET generic host app services 
-            .AddGenericHostServices(builder.Configuration)
             // Add .NET web host app services
             .AddWebHostServices(builder.Configuration, null)
             // Add bank testing services
-            .AddBankTestingServices(builder.Configuration)
+            .AddBankTestingServices()
             // Add memory cache
             .AddMemoryCache()
             // Add controllers
@@ -67,12 +64,10 @@ public class AppContextFixture : IDisposable
         WebApplication app = builder.Build();
         Host = app;
 
-        // Errors
-        if (!app.Environment.IsDevelopment())
-        {
-            app.UseExceptionHandler("/error");
-            app.UseHsts();
-        }
+        // Errors: always suppress exception details (including in development)
+        app.UseExceptionHandler("/error");
+
+        app.UseHsts();
 
         // Add static files
         app.UseWebHostStaticFiles();

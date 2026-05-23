@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +14,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Controllers.Pa
 [Route("pisp/domestic-payment-consents")]
 public class TestingDomesticPaymentConsentsController : ControllerBase
 {
-    private readonly IRequestBuilder _requestBuilder;
-
-    public TestingDomesticPaymentConsentsController(IRequestBuilder requestBuilder)
-    {
-        _requestBuilder = requestBuilder;
-    }
-
     public static string BrowserCookieKey => "__Host-Session-Id";
 
     /// <summary>
@@ -43,28 +34,12 @@ public class TestingDomesticPaymentConsentsController : ControllerBase
         string? reference)
     {
         // Create auth context
-
-        // Register state parameter
-        DomesticPaymentConsentAuthContextCreateResponse authContextResponse;
-        if (TestingMethods.Instance.CreateDomesticPaymentConsentAuthContext is not null)
+        if (TestingMethods.Instance.CreateDomesticPaymentConsentAuthContext is null)
         {
-            authContextResponse = await TestingMethods.Instance.CreateDomesticPaymentConsentAuthContext(
-                domesticPaymentConsentId);
+            throw new InvalidOperationException();
         }
-        else
-        {
-            var authContextRequest = new DomesticPaymentConsentAuthContext
-            {
-                DomesticPaymentConsentId = domesticPaymentConsentId,
-                Reference = reference,
-                CreatedBy = modifiedBy
-            };
-            authContextResponse = await _requestBuilder
-                .PaymentInitiation
-                .DomesticPaymentConsents
-                .AuthContexts
-                .CreateLocalAsync(authContextRequest);
-        }
+        DomesticPaymentConsentAuthContextCreateResponse authContextResponse =
+            await TestingMethods.Instance.CreateDomesticPaymentConsentAuthContext(domesticPaymentConsentId);
 
         // Set cookie
         Response.Cookies.Append(
