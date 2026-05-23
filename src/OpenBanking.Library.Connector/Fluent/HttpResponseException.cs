@@ -11,7 +11,8 @@ public enum ServerErrorType
     AuthContextNotFound,
     AuthContextStale,
     ConsentNotFound,
-    ConsentFromRequestNotFound
+    ConsentFromRequestNotFound,
+    IdTokenValidationError
 }
 
 public abstract record ServerError

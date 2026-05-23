@@ -9,6 +9,7 @@ using System.Text.Json.Nodes;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
@@ -88,6 +89,11 @@ internal class GrantPost : IGrantPost
             baseIdTokenProcessingCustomBehaviour);
 
         // Validate ID token subject claim
+        if (string.IsNullOrEmpty(idTokenObject.Subject))
+        {
+            throw new HttpResponseException(
+                new IdTokenValidationError(idTokenObject, IdTokenValidationErrorType.SubjectEmpty));
+        }
         IdTokenSubClaimType idTokenSubClaimType =
             IdTokenProcessingCustomBehaviour.GetIdTokenSubClaimType(
                 idTokenProcessingCustomBehaviour,
@@ -98,18 +104,16 @@ internal class GrantPost : IGrantPost
             case IdTokenSubClaimType.EndUserId:
                 if (externalApiUserId is null)
                 {
-                    if (string.IsNullOrEmpty(idTokenObject.Subject))
-                    {
-                        throw new Exception("Subject from ID token is null or empty.");
-                    }
-
                     outputExternalApiUserId = idTokenObject.Subject;
                 }
                 else
                 {
                     if (!string.Equals(idTokenObject.Subject, externalApiUserId))
                     {
-                        throw new Exception("Subject from ID token does not match user ID.");
+                        throw new HttpResponseException(
+                            new IdTokenValidationError(
+                                idTokenObject,
+                                IdTokenValidationErrorType.SubjectEndUserIdMismatch));
                     }
                 }
 
@@ -117,14 +121,16 @@ internal class GrantPost : IGrantPost
             case IdTokenSubClaimType.ConsentId:
                 if (!string.Equals(idTokenObject.Subject, externalApiConsentId))
                 {
-                    throw new Exception("Subject from ID token does not match consent ID.");
+                    throw new HttpResponseException(
+                        new IdTokenValidationError(idTokenObject, IdTokenValidationErrorType.SubjectConsentIdMismatch));
                 }
 
                 break;
             case IdTokenSubClaimType.ClientId:
                 if (!string.Equals(idTokenObject.Subject, externalApiClientId))
                 {
-                    throw new Exception("Subject from ID token does not match client ID.");
+                    throw new HttpResponseException(
+                        new IdTokenValidationError(idTokenObject, IdTokenValidationErrorType.SubjectClientIdMismatch));
                 }
 
                 break;
@@ -132,16 +138,20 @@ internal class GrantPost : IGrantPost
                 throw new ArgumentOutOfRangeException(nameof(idTokenSubClaimType), idTokenSubClaimType, null);
         }
 
+        // Validate ID token code hash claim
         string codeHash = ComputeHash(code);
         if (!string.Equals(idTokenObject.CodeHash, codeHash))
         {
-            throw new Exception("Code hash from ID token does not match code hash.");
+            throw new HttpResponseException(
+                new IdTokenValidationError(idTokenObject, IdTokenValidationErrorType.CodeHashMismatch));
         }
 
+        // Validate ID token state hash claim
         string stateHash = ComputeHash(state);
         if (!string.Equals(idTokenObject.StateHash, stateHash))
         {
-            throw new Exception("State hash from ID token does not match state hash.");
+            throw new HttpResponseException(
+                new IdTokenValidationError(idTokenObject, IdTokenValidationErrorType.StateHashMismatch));
         }
 
         return outputExternalApiUserId;
@@ -540,7 +550,8 @@ internal class GrantPost : IGrantPost
     {
         if (idToken.Exp < DateTimeOffset.UtcNow)
         {
-            throw new Exception("ID token has expired.");
+            throw new HttpResponseException(
+                new IdTokenValidationError(idToken, IdTokenValidationErrorType.IdTokenExpired));
         }
 
         bool idTokenMayNotHaveConsentIdClaim =
@@ -550,12 +561,14 @@ internal class GrantPost : IGrantPost
         if (!idTokenMayNotHaveConsentIdClaim &&
             idToken.ConsentId is null)
         {
-            throw new Exception("Consent ID not provided in ID token.");
+            throw new HttpResponseException(
+                new IdTokenValidationError(idToken, IdTokenValidationErrorType.ConsentIdMissing));
         }
         if (idToken.ConsentId is not null &&
             !string.Equals(idToken.ConsentId, externalApiConsentId))
         {
-            throw new Exception("Consent ID from ID token does not match expected consent ID.");
+            throw new HttpResponseException(
+                new IdTokenValidationError(idToken, IdTokenValidationErrorType.ConsentIdMismatch));
         }
 
         bool idTokenMayNotHaveNonceClaim =
@@ -565,13 +578,15 @@ internal class GrantPost : IGrantPost
         if (!idTokenMayNotHaveNonceClaim &&
             idToken.Nonce is null)
         {
-            throw new Exception("Nonce not provided in ID token.");
+            throw new HttpResponseException(
+                new IdTokenValidationError(idToken, IdTokenValidationErrorType.NonceMissing));
         }
 
         if (idToken.Nonce is not null &&
             !string.Equals(idToken.Nonce, expectedNonce))
         {
-            throw new Exception("Nonce from ID token does not match expected nonce.");
+            throw new HttpResponseException(
+                new IdTokenValidationError(idToken, IdTokenValidationErrorType.NonceMismatch));
         }
 
         bool idTokenMayNotHaveAuthTimeClaim =
@@ -581,7 +596,8 @@ internal class GrantPost : IGrantPost
         if (!idTokenMayNotHaveAuthTimeClaim &&
             idToken.AuthTime is null)
         {
-            throw new Exception("Auth time not provided in ID token.");
+            throw new HttpResponseException(
+                new IdTokenValidationError(idToken, IdTokenValidationErrorType.AuthTimeMissing));
         }
 
         bool idTokenMayNotHaveAcrClaim =
@@ -591,7 +607,7 @@ internal class GrantPost : IGrantPost
         if (!idTokenMayNotHaveAcrClaim &&
             idToken.Acr is null)
         {
-            throw new Exception("Acr not provided in ID token.");
+            throw new HttpResponseException(new IdTokenValidationError(idToken, IdTokenValidationErrorType.AcrMissing));
         }
 
         bool doNotValidateIdTokenAcrClaim =
@@ -601,17 +617,11 @@ internal class GrantPost : IGrantPost
         if (idToken.Acr is not null)
         {
             if (supportsSca &&
-                idToken.Acr is not Acr.Sca)
+                idToken.Acr is not Acr.Sca &&
+                !doNotValidateIdTokenAcrClaim)
             {
-                var message = $"Acr from ID token is {idToken.Acr} rather than expected {Acr.Sca}.";
-                if (doNotValidateIdTokenAcrClaim)
-                {
-                    _instrumentationClient.Info(message);
-                }
-                else
-                {
-                    throw new Exception(message);
-                }
+                throw new HttpResponseException(
+                    new IdTokenValidationError(idToken, IdTokenValidationErrorType.AcrMismatch));
             }
         }
 
@@ -620,12 +630,14 @@ internal class GrantPost : IGrantPost
             baseIdTokenProcessingCustomBehaviour) ?? bankIssuerUrl;
         if (!string.Equals(idToken.Issuer, issClaim))
         {
-            throw new Exception("Issuer from ID token does not match expected issuer.");
+            throw new HttpResponseException(
+                new IdTokenValidationError(idToken, IdTokenValidationErrorType.IssuerMismatch));
         }
 
         if (!string.Equals(idToken.Audience, externalApiClientId))
         {
-            throw new Exception("Audience from ID token does not match expected audience.");
+            throw new HttpResponseException(
+                new IdTokenValidationError(idToken, IdTokenValidationErrorType.AudienceMismatch));
         }
     }
 
@@ -701,6 +713,11 @@ internal class GrantPost : IGrantPost
             baseIdTokenProcessingCustomBehaviour);
 
         // Validate ID token subject claim
+        if (string.IsNullOrEmpty(idToken.Subject))
+        {
+            throw new HttpResponseException(
+                new IdTokenValidationError(idToken, IdTokenValidationErrorType.SubjectEmpty));
+        }
         IdTokenSubClaimType idTokenSubClaimType =
             IdTokenProcessingCustomBehaviour.GetIdTokenSubClaimType(
                 idTokenProcessingCustomBehaviour,
@@ -710,26 +727,30 @@ internal class GrantPost : IGrantPost
             case IdTokenSubClaimType.EndUserId:
                 if (externalApiUserId is null)
                 {
-                    throw new Exception("No user ID available to use in ID token validation.");
+                    throw new HttpResponseException(
+                        new IdTokenValidationError(idToken, IdTokenValidationErrorType.SubjectEndUserIdNotFound));
                 }
 
                 if (!string.Equals(idToken.Subject, externalApiUserId))
                 {
-                    throw new Exception("Subject from ID token does not match user ID.");
+                    throw new HttpResponseException(
+                        new IdTokenValidationError(idToken, IdTokenValidationErrorType.SubjectEndUserIdMismatch));
                 }
 
                 break;
             case IdTokenSubClaimType.ConsentId:
                 if (!string.Equals(idToken.Subject, externalApiConsentId))
                 {
-                    throw new Exception("Subject from ID token does not match consent ID.");
+                    throw new HttpResponseException(
+                        new IdTokenValidationError(idToken, IdTokenValidationErrorType.SubjectConsentIdMismatch));
                 }
 
                 break;
             case IdTokenSubClaimType.ClientId:
                 if (!string.Equals(idToken.Subject, externalApiClientId))
                 {
-                    throw new Exception("Subject from ID token does not match client ID.");
+                    throw new HttpResponseException(
+                        new IdTokenValidationError(idToken, IdTokenValidationErrorType.SubjectClientIdMismatch));
                 }
 
                 break;
@@ -737,12 +758,14 @@ internal class GrantPost : IGrantPost
                 throw new ArgumentOutOfRangeException(nameof(idTokenSubClaimType), idTokenSubClaimType, null);
         }
 
+        // Validate ID token access token hash claim
         if (idToken.AccessTokenHash is not null)
         {
             string accessTokenHash = ComputeHash(accessToken);
             if (!string.Equals(idToken.AccessTokenHash, accessTokenHash))
             {
-                throw new Exception("Access token hash from ID token does not match access token.");
+                throw new HttpResponseException(
+                    new IdTokenValidationError(idToken, IdTokenValidationErrorType.AccessTokenHashMismatch));
             }
         }
     }

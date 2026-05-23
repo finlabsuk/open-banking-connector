@@ -171,8 +171,7 @@ internal class AuthContextUpdate :
         // Validate error parameter
         if (request.OAuth2RedirectOptionalParameters.Error is not null)
         {
-            throw new InvalidOperationException(
-                $"OAuth2 error parameter received: {request.OAuth2RedirectOptionalParameters.Error}");
+            throw new InvalidOperationException("OAuth2 error parameter received.");
         }
 
         // Validate code parameter
