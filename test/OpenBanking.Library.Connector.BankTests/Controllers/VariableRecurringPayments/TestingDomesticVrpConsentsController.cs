@@ -1,24 +1,24 @@
-﻿// Licensed to Finnovation Labs Limited under one or more agreements.
+// Licensed to Finnovation Labs Limited under one or more agreements.
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers.AccountAndTransaction;
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Controllers.VariableRecurringPayments;
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "test")]
-[Tags("Account Access Consent Auth Contexts")]
-[Route("aisp/account-access-consents")]
-public class TestingAccountAccessConsentsController : ControllerBase
+[Tags("Domestic VRP Consent Auth Contexts")]
+[Route("vrp/domestic-vrp-consents")]
+public class TestingDomesticVrpConsentsController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
 
-    public TestingAccountAccessConsentsController(IRequestBuilder requestBuilder)
+    public TestingDomesticVrpConsentsController(IRequestBuilder requestBuilder)
     {
         _requestBuilder = requestBuilder;
     }
@@ -26,40 +26,42 @@ public class TestingAccountAccessConsentsController : ControllerBase
     public static string BrowserCookieKey => "__Host-Session-Id";
 
     /// <summary>
-    ///     Create account access consent auth context and redirect to auth URL
+    ///     Create domestic VRP consent auth context and redirect to auth URL
     /// </summary>
-    /// <param name="accountAccessConsentId">ID of account access consent</param>
+    /// <param name="domesticVrpConsentId">ID of domestic VRP consent</param>
     /// <param name="modifiedBy"></param>
     /// <param name="reference"></param>
     /// <returns></returns>
-    [HttpGet("{accountAccessConsentId:guid}/auth")]
+    [HttpGet("{domesticVrpConsentId:guid}/auth")]
     [ActionName(nameof(GetAsync))]
     [ProducesResponseType(StatusCodes.Status302Found)]
     public async Task<ActionResult> GetAsync(
-        Guid accountAccessConsentId,
+        Guid domesticVrpConsentId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
         [FromHeader(Name = "reference")]
         string? reference)
     {
         // Create auth context
-        AccountAccessConsentAuthContextCreateResponse authContextResponse;
-        if (TestingMethods.Instance.CreateAccountAccessConsentAuthContext is not null)
+
+        // Register state parameter
+        DomesticVrpConsentAuthContextCreateResponse authContextResponse;
+        if (TestingMethods.Instance.CreateDomesticVrpConsentAuthContext is not null)
         {
             authContextResponse =
-                await TestingMethods.Instance.CreateAccountAccessConsentAuthContext(accountAccessConsentId);
+                await TestingMethods.Instance.CreateDomesticVrpConsentAuthContext(domesticVrpConsentId);
         }
         else
         {
-            var authContextRequest = new AccountAccessConsentAuthContext
+            var authContextRequest = new DomesticVrpConsentAuthContext
             {
-                AccountAccessConsentId = accountAccessConsentId,
+                DomesticVrpConsentId = domesticVrpConsentId,
                 Reference = reference,
                 CreatedBy = modifiedBy
             };
             authContextResponse = await _requestBuilder
-                .AccountAndTransaction
-                .AccountAccessConsents
+                .VariableRecurringPayments
+                .DomesticVrpConsents
                 .AuthContexts
                 .CreateLocalAsync(authContextRequest);
         }

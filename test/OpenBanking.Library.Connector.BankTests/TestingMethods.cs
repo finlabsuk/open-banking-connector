@@ -1,4 +1,4 @@
-﻿// Licensed to Finnovation Labs Limited under one or more agreements.
+// Licensed to Finnovation Labs Limited under one or more agreements.
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -7,7 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Web;
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests;
 
 public class TestingMethods
 {
@@ -52,7 +52,6 @@ public class TestingMethods
     {
         CreateDomesticVrpConsentAuthContext = createDomesticVrpConsentAuthContext;
     }
-
 
     public void RegisterProcessRedirect(
         Func<TestingAuthResult, Task<AuthContextUpdateAuthResultResponse>> processRedirect)

@@ -8,7 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTran
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Web;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests;
 

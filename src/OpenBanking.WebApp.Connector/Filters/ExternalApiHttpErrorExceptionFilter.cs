@@ -1,4 +1,4 @@
-﻿// Licensed to Finnovation Labs Limited under one or more agreements.
+// Licensed to Finnovation Labs Limited under one or more agreements.
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Net.Http.Headers;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Web;
+namespace FinnovationLabs.OpenBanking.WebApp.Connector.Filters;
 
 public class ExternalApiHttpErrorExceptionFilter : IActionFilter, IOrderedFilter
 {

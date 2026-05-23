@@ -17,7 +17,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurr
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Web;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using DomesticVrpConsentAuthContext =

@@ -74,7 +74,7 @@ public class AppContextFixture : IDisposable
             app.UseHsts();
         }
 
-        // Add web host static files
+        // Add static files
         app.UseWebHostStaticFiles();
 
         // Add controller endpoints

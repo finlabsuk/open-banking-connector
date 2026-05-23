@@ -4,7 +4,6 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
         <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.Web</AssemblyName>
         <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.Web</RootNamespace>
         <Copyright>Finnovation Labs Limited and Contributors</Copyright>
@@ -25,8 +24,6 @@
 
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.15"/>
-        <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="9.0.15"/>
         <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.15.3"/>
         <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3"/>
         <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.15.3"/>
@@ -37,10 +34,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\OpenBanking.Library.Connector.GenericHost\OpenBanking.Library.Connector.GenericHost.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <EmbeddedResource Include="wwwroot\**"/>
     </ItemGroup>
 
     <PropertyGroup>

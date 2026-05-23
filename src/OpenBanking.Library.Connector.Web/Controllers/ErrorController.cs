@@ -12,24 +12,6 @@ public class ErrorController : ControllerBase
 {
     [Route("/error")]
     public IActionResult HandleError() =>
-        // Exception exception =
-        //     HttpContext.Features.Get<IExceptionHandlerFeature>()!.Error;
-
-        // Catch unhandled input validation errors
-        // if (exception is ArgumentNullException)
-        // {
-        //     var problemDetails = new ProblemDetails
-        //     {
-        //         Detail = exception.Message,
-        //         Status = StatusCodes.Status400BadRequest,
-        //         Title = "An input argument was null."
-        //     };
-        //
-        //     return new ObjectResult(problemDetails)
-        //     {
-        //         StatusCode = StatusCodes.Status400BadRequest
-        //     };
-        // }
 
         // Default to returning no details
         Problem();

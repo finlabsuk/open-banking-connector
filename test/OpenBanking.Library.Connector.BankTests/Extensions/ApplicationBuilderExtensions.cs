@@ -1,4 +1,4 @@
-﻿// Licensed to Finnovation Labs Limited under one or more agreements.
+// Licensed to Finnovation Labs Limited under one or more agreements.
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.FileProviders;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions;
 
 public static class ApplicationBuilderExtensions
 {
@@ -25,12 +25,12 @@ public static class ApplicationBuilderExtensions
         app.UseRewriter(rewriterOptions);
 
         // Add shared static files from this assembly
-        var webHostAssembly = Assembly.GetAssembly(typeof(ApplicationBuilderExtensions))!;
+        var bankTestsAssembly = Assembly.GetAssembly(typeof(ApplicationBuilderExtensions))!;
         app.UseStaticFiles(
             new StaticFileOptions
             {
                 FileProvider = new ManifestEmbeddedFileProvider(
-                    webHostAssembly,
+                    bankTestsAssembly,
                     "wwwroot")
             });
 
