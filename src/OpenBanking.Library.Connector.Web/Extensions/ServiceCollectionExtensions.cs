@@ -28,7 +28,10 @@ public static class ServiceCollectionExtensions
         services.AddOpenTelemetry(serviceVersion, openTelemetrySettings);
 
         // Startup tasks
-        services.AddHostedService<WebAppInformationHostedService>();
+        services.AddHostedService(
+            sp => serviceVersion is not null
+                ? ActivatorUtilities.CreateInstance<WebAppInformationHostedService>(sp, serviceVersion)
+                : ActivatorUtilities.CreateInstance<WebAppInformationHostedService>(sp));
 
         services.AddHealthChecks();
 

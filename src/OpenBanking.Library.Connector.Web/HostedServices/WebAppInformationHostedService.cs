@@ -17,26 +17,38 @@ public class WebAppInformationHostedService : IHostedService
     private readonly ApplicationPartManager _applicationPartManager;
     private readonly IConfigurationRoot _configurationRoot;
     private readonly EndpointDataSource _endpointDataSource;
+    private readonly IHostApplicationLifetime _hostApplicationLifetime;
     private readonly IHostEnvironment _hostEnvironment;
     private readonly ILogger<WebAppInformationHostedService> _logger;
+    private readonly string? _serviceVersion;
 
     public WebAppInformationHostedService(
         ILogger<WebAppInformationHostedService> logger,
         ApplicationPartManager applicationPartManager,
         EndpointDataSource endpointDataSource,
         IConfiguration configuration,
-        IHostEnvironment hostEnvironment)
+        IHostEnvironment hostEnvironment,
+        IHostApplicationLifetime hostApplicationLifetime,
+        string? serviceVersion = null)
     {
         _logger = logger;
         _applicationPartManager = applicationPartManager;
         _endpointDataSource = endpointDataSource;
         _hostEnvironment = hostEnvironment;
+        _hostApplicationLifetime = hostApplicationLifetime;
         _configurationRoot = (IConfigurationRoot) configuration;
+        _serviceVersion = serviceVersion;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        // Log Operating System
+        // Log web app version
+        if (_serviceVersion is not null)
+        {
+            _logger.LogInformation("Open Banking Connector Web App version: {Version}", _serviceVersion);
+        }
+
+        // Log operating system
         string osName = OsPlatformEnumHelper.GetCurrentOsPlatform() switch
         {
             OsPlatformEnum.MacOs => "macOS",
@@ -45,7 +57,7 @@ public class WebAppInformationHostedService : IHostedService
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        _logger.LogInformation("Operating System detected:" + Environment.NewLine + $"{osName}");
+        _logger.LogInformation("Operating system detected: {OsName}", osName);
 
         if (_hostEnvironment.IsDevelopment())
         {
@@ -59,11 +71,10 @@ public class WebAppInformationHostedService : IHostedService
             IEnumerable<string> controllerNames = feature.Controllers.Select(x => x.Name);
             _logger.LogInformation(string.Join(Environment.NewLine, controllerNames.Prepend("Controllers found:")));
 
-            // Log endpoints found
-            Task.Run(
-                async () =>
+            // Log endpoints found (once middleware is fully built)
+            _hostApplicationLifetime.ApplicationStarted.Register(
+                () =>
                 {
-                    await Task.Delay(3000); // wait 3 seconds for middleware to be built
                     IEnumerable<string?> endpointNames = _endpointDataSource.Endpoints.Select(x => x.DisplayName);
                     _logger.LogInformation(string.Join(Environment.NewLine, endpointNames.Prepend("Endpoints found:")));
                 });
