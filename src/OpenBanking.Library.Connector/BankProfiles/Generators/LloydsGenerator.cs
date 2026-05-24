@@ -85,11 +85,13 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                 BaseUrl = GetPaymentsApiBaseUrl(bank, true)
             },
             new VariableRecurringPaymentsApi { BaseUrl = GetPaymentsApiBaseUrl(bank, false) },
-            new VariableRecurringPaymentsApi
-            {
-                ApiVersion = VariableRecurringPaymentsApiVersion.Version4p0,
-                BaseUrl = GetPaymentsApiBaseUrl(bank, true)
-            },
+            bank is not LloydsBank.MbnaPersonal
+                ? new VariableRecurringPaymentsApi
+                {
+                    ApiVersion = VariableRecurringPaymentsApiVersion.Version4p0,
+                    BaseUrl = GetPaymentsApiBaseUrl(bank, true)
+                }
+                : null,
             bank is not LloydsBank.Sandbox,
             instrumentationClient)
         {
