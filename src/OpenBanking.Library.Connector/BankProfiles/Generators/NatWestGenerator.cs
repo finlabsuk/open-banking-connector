@@ -106,13 +106,11 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
             bank is NatWestBank.Coutts
                 ? null
                 : new VariableRecurringPaymentsApi { BaseUrl = GetPaymentsBaseUrl(bank, "v3.1") },
-            bank is NatWestBank.Coutts
-                ? null
-                : new VariableRecurringPaymentsApi
-                {
-                    BaseUrl = GetPaymentsBaseUrl(bank, "v4.0"),
-                    ApiVersion = VariableRecurringPaymentsApiVersion.Version4p0
-                },
+            new VariableRecurringPaymentsApi
+            {
+                BaseUrl = GetPaymentsBaseUrl(bank, "v4.0"),
+                ApiVersion = VariableRecurringPaymentsApiVersion.Version4p0
+            },
             bank is not (NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox),
             instrumentationClient)
         {
@@ -248,7 +246,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                         PreferMisspeltContractPresentIndicator = true,
                         ResponseDataFundsAvailableResultFundsAvailableMayBeWrong =
                             bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox,
-                        ResponseLinksMayAddSlash = bank is NatWestBank.Coutts,
+                        ResponseLinksMayHaveIncorrectUrlBeforeQuery = bank is NatWestBank.Coutts,
                         ResponseRiskContractPresentIndicatorMayBeMissingOrWrong = bank is NatWestBank.Coutts
                     },
                 DomesticPayment =
@@ -261,7 +259,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                             bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox,
                         ResponseDataDebtorIdentificationMayBeMissingOrWrong =
                             bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox,
-                        ResponseLinksMayAddSlash = bank is NatWestBank.Coutts
+                        ResponseLinksMayHaveIncorrectUrlBeforeQuery = bank is NatWestBank.Coutts
                     },
                 DomesticVrpConsent =
                     new DomesticVrpConsentCustomBehaviour
@@ -270,13 +268,15 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                         ResponseRiskContractPresentIndicatorMayBeMissingOrWrong =
                             bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox,
                         ResponseDataFundsAvailableResultFundsAvailableMayBeWrong =
-                            bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
+                            bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox,
+                        ResponseLinksMayHaveIncorrectUrlBeforeQuery = bank is NatWestBank.Coutts
                     },
                 DomesticVrp = new DomesticVrpCustomBehaviour
                 {
                     PreferMisspeltContractPresentIndicator = true,
                     ResponseDataStatusMayBeMissingOrWrong =
-                        bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
+                        bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox,
+                    ResponseLinksMayHaveIncorrectUrlBeforeQuery = bank is NatWestBank.Coutts
                 }
             },
             AispUseV4ByDefault = true,
