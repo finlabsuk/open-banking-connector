@@ -11,6 +11,7 @@ using FinnovationLabs.OpenBanking.WebApp.Connector.Filters;
 using Microsoft.OpenApi;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using OpenTelemetry.Trace;
 using AccountAndTransactionModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAisp.Models;
 using ServiceCollectionExtensionsGenericHost =
@@ -31,9 +32,9 @@ serviceVersion = serviceVersion.Remove(serviceVersion.LastIndexOf('.'));
 
 builder.Services
     // Add .NET generic host app services 
-    .AddGenericHostServices(builder.Configuration)
+    .AddGenericHostServices(builder.Configuration, serviceVersion, b => b.AddAspNetCoreInstrumentation())
     // Add .NET web host app services
-    .AddWebHostServices(builder.Configuration, serviceVersion)
+    .AddWebHostServices(serviceVersion)
     // Configure Swagger
     .AddSwaggerGen(
         options =>
@@ -117,7 +118,7 @@ builder
     .Logging
     .ClearProviders()
     .AddConsole()
-    .AddWebHostLogging(builder.Configuration, serviceVersion);
+    .AddGenericHostLogging(builder.Configuration, serviceVersion);
 
 // Build app
 WebApplication app = builder.Build();

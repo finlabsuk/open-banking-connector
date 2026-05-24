@@ -20,12 +20,16 @@ public class TracingSettings
 {
     public string OtlpExporterUrl { get; set; } = string.Empty;
 
+    public string? OtlpExporterUrlProcessed => string.IsNullOrWhiteSpace(OtlpExporterUrl) ? null : OtlpExporterUrl;
+
     public ProviderFilter ProviderFilter { get; set; } = ProviderFilter.AspNetCore | ProviderFilter.HttpClient;
 }
 
 public class LoggingSettings
 {
     public string OtlpExporterUrl { get; set; } = string.Empty;
+
+    public string? OtlpExporterUrlProcessed => string.IsNullOrWhiteSpace(OtlpExporterUrl) ? null : OtlpExporterUrl;
 }
 
 /// <summary>
@@ -39,13 +43,19 @@ public class OpenTelemetrySettings : ISettings<OpenTelemetrySettings>
 
     public string ServiceInstanceId { get; set; } = "Default";
 
-    public bool UseConsoleExporter { get; set; } = false;
+    public bool UseConsoleExporter { get; set; }
 
     public LoggingSettings Logging { get; set; } = new();
 
     public TracingSettings Tracing { get; set; } = new();
 
     public MetricsSettings Metrics { get; set; } = new();
+
+    public bool HasAnyTracingExporter =>
+        UseConsoleExporter || Tracing.OtlpExporterUrlProcessed is not null;
+
+    public bool HasAnyMetricsExporter =>
+        UseConsoleExporter || Metrics.OtlpExporterUrlProcessed is not null;
 
     public string SettingsGroupName => "OpenBankingConnector:OpenTelemetry";
 
@@ -55,6 +65,8 @@ public class OpenTelemetrySettings : ISettings<OpenTelemetrySettings>
 public class MetricsSettings
 {
     public string OtlpExporterUrl { get; set; } = string.Empty;
+
+    public string? OtlpExporterUrlProcessed => string.IsNullOrWhiteSpace(OtlpExporterUrl) ? null : OtlpExporterUrl;
 
     public int MetricReaderExportIntervalMilliseconds { get; set; } = 30000;
 

@@ -26,6 +26,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.2"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\OpenBanking.Library.Connector.GenericHost\OpenBanking.Library.Connector.GenericHost.csproj"/>
         <ProjectReference Include="..\OpenBanking.Library.Connector.Web\OpenBanking.Library.Connector.Web.csproj"/>
     </ItemGroup>
 

@@ -18,7 +18,14 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using TimeProvider = FinnovationLabs.OpenBanking.Library.Connector.Services.TimeProvider;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
@@ -27,7 +34,9 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddGenericHostServices(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        string? serviceVersion = null,
+        Action<TracerProviderBuilder>? addAspNetCoreTracingInstrumentation = null)
     {
         // Add settings groups
         services
@@ -132,6 +141,10 @@ public static class ServiceCollectionExtensions
         // Startup tasks
         services.AddHostedService<StartupTasksHostedService>();
 
+        // Add OpenTelemetry services
+        var openTelemetrySettings = GetSettings<OpenTelemetrySettings>(configuration);
+        services.AddOpenTelemetryServices(serviceVersion, openTelemetrySettings, addAspNetCoreTracingInstrumentation);
+
         return services;
     }
 
@@ -163,5 +176,154 @@ public static class ServiceCollectionExtensions
                 ConfigurationSettingsProvider<TSettings>>();
 
         return services;
+    }
+
+    public static ILoggingBuilder AddGenericHostLogging(
+        this ILoggingBuilder loggingBuilder,
+        IConfiguration configuration,
+        string? serviceVersion)
+    {
+        var openTelemetrySettings = GetSettings<OpenTelemetrySettings>(configuration);
+        loggingBuilder.AddOpenTelemetryLogging(serviceVersion, openTelemetrySettings);
+        return loggingBuilder;
+    }
+
+    private static void AddOpenTelemetryServices(
+        this IServiceCollection services,
+        string? serviceVersion,
+        OpenTelemetrySettings openTelemetrySettings,
+        Action<TracerProviderBuilder>? addAspNetCoreTracingInstrumentation = null)
+    {
+        bool useConsoleExporter = openTelemetrySettings.UseConsoleExporter;
+
+        ProviderFilter tracingProviderFilter = openTelemetrySettings.Tracing.ProviderFilter;
+
+        string? tracingOtlpExporterUrlProcessed = openTelemetrySettings.Tracing.OtlpExporterUrlProcessed;
+
+        void ConfigureTracing(TracerProviderBuilder builder)
+        {
+            if (tracingProviderFilter.HasFlag(ProviderFilter.HttpClient))
+            {
+                builder.AddHttpClientInstrumentation();
+            }
+
+            if (tracingProviderFilter.HasFlag(ProviderFilter.EfCore))
+            {
+                builder.AddEntityFrameworkCoreInstrumentation();
+            }
+
+            if (tracingProviderFilter.HasFlag(ProviderFilter.AspNetCore) &&
+                addAspNetCoreTracingInstrumentation is not null)
+            {
+                addAspNetCoreTracingInstrumentation(builder);
+            }
+
+            if (useConsoleExporter)
+            {
+                builder.AddConsoleExporter();
+            }
+
+            if (tracingOtlpExporterUrlProcessed is not null)
+            {
+                builder.AddOtlpExporter(opt => opt.Endpoint = new Uri(tracingOtlpExporterUrlProcessed));
+            }
+        }
+
+        string? metricsOtlpExporterUrlProcessed = openTelemetrySettings.Metrics.OtlpExporterUrlProcessed;
+
+        void ConfigureMetrics(MeterProviderBuilder builder)
+        {
+            //builder.AddMeter("System.Net.Http");
+            builder.AddMeter("TppReportingMetrics");
+
+            if (useConsoleExporter)
+            {
+                builder.AddConsoleExporter(
+                    (_, metricReaderOptions) =>
+                    {
+                        metricReaderOptions.PeriodicExportingMetricReaderOptions =
+                            new PeriodicExportingMetricReaderOptions
+                            {
+                                ExportIntervalMilliseconds = openTelemetrySettings.Metrics
+                                    .MetricReaderExportIntervalMilliseconds
+                            };
+                        metricReaderOptions.TemporalityPreference =
+                            openTelemetrySettings.Metrics.MetricReaderTemporality;
+                    });
+            }
+
+            if (metricsOtlpExporterUrlProcessed is not null)
+            {
+                builder.AddOtlpExporter(
+                    (otlpExporterOptions, metricReaderOptions) =>
+                    {
+                        otlpExporterOptions.Endpoint = new Uri(metricsOtlpExporterUrlProcessed);
+                        metricReaderOptions.PeriodicExportingMetricReaderOptions =
+                            new PeriodicExportingMetricReaderOptions
+                            {
+                                ExportIntervalMilliseconds = openTelemetrySettings.Metrics
+                                    .MetricReaderExportIntervalMilliseconds
+                            };
+                        metricReaderOptions.TemporalityPreference =
+                            openTelemetrySettings.Metrics.MetricReaderTemporality;
+                    });
+            }
+        }
+
+
+        Sdk.SetDefaultTextMapPropagator(
+            new CompositeTextMapPropagator(
+                Array.Empty<TextMapPropagator>())); // See https://github.com/dotnet/runtime/issues/90407
+
+        bool anyTracingExporter = openTelemetrySettings.HasAnyTracingExporter;
+        bool anyMetricsExporter = openTelemetrySettings.HasAnyMetricsExporter;
+
+        if (anyTracingExporter || anyMetricsExporter)
+        {
+            OpenTelemetryBuilder otelBuilder = services.AddOpenTelemetry()
+                .ConfigureResource(
+                    resource => resource.AddService(
+                        openTelemetrySettings.ServiceName,
+                        openTelemetrySettings.ServiceNamespace,
+                        serviceVersion,
+                        false,
+                        openTelemetrySettings.ServiceInstanceId));
+
+            if (anyTracingExporter)
+            {
+                otelBuilder.WithTracing(ConfigureTracing);
+            }
+
+            if (anyMetricsExporter)
+            {
+                otelBuilder.WithMetrics(ConfigureMetrics);
+            }
+        }
+    }
+
+    private static void AddOpenTelemetryLogging(
+        this ILoggingBuilder loggingBuilder,
+        string? serviceVersion,
+        OpenTelemetrySettings openTelemetrySettings)
+    {
+        if (openTelemetrySettings.Logging.OtlpExporterUrlProcessed is not null)
+        {
+            loggingBuilder.AddOpenTelemetry(
+                options =>
+                {
+                    options
+                        .SetResourceBuilder(
+                            ResourceBuilder.CreateDefault()
+                                .AddService(
+                                    openTelemetrySettings.ServiceName,
+                                    openTelemetrySettings.ServiceNamespace,
+                                    serviceVersion,
+                                    false,
+                                    openTelemetrySettings.ServiceInstanceId))
+                        .AddOtlpExporter(
+                            otlpExporterOptions => otlpExporterOptions.Endpoint =
+                                new Uri(openTelemetrySettings.Logging.OtlpExporterUrlProcessed));
+                });
+        }
     }
 }

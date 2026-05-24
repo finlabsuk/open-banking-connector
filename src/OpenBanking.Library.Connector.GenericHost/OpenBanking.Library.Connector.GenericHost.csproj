@@ -32,6 +32,11 @@
         <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.15"/>
         <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.15"/>
         <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="9.0.15"/>
+        <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.15.3"/>
+        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3"/>
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.15.3"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.0.0-beta.8"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1"/>
     </ItemGroup>
 
     <ItemGroup>

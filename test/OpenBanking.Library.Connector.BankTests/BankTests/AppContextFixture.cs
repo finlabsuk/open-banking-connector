@@ -37,7 +37,7 @@ public class AppContextFixture : IDisposable
 
         builder.Services
             // Add .NET web host app services
-            .AddWebHostServices(builder.Configuration, null)
+            .AddWebHostServices()
             // Add bank testing services
             .AddBankTestingServices()
             // Add memory cache
