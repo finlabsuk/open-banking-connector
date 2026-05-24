@@ -119,15 +119,19 @@ internal class LinksUrlOperations
         bool responseLinksMayAddSlash = readWriteGetCustomBehaviour?.ResponseLinksMayAddSlash ?? false;
         if (responseLinksMayAddSlash)
         {
-            expectedLinkUrls.Add(new Uri(expectedLinkUrl + "/"));
+            int count = expectedLinkUrls.Count;
+            for (var idx = 0; idx < count; idx++)
+            {
+                expectedLinkUrls.Add(new Uri($"{expectedLinkUrls[idx]}/"));
+            }
         }
         (string oldValue, string newValue)? responseLinksAllowReplace =
             readWriteGetCustomBehaviour?.GetResponseLinksAllowReplace?.Invoke(useV4NotV3);
         if (responseLinksAllowReplace is not null)
         {
             (string oldValue, string newValue) = responseLinksAllowReplace.Value;
-            int noUrls = expectedLinkUrls.Count;
-            for (var idx = 0; idx < noUrls; idx++)
+            int count = expectedLinkUrls.Count;
+            for (var idx = 0; idx < count; idx++)
             {
                 expectedLinkUrls.Add(new Uri($"{expectedLinkUrls[idx]}".Replace(oldValue, newValue)));
             }
