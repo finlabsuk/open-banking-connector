@@ -16,16 +16,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.15"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.15">
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.16"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.16">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7"/>
         <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="10.1.7"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.2"/>
     </ItemGroup>
 
