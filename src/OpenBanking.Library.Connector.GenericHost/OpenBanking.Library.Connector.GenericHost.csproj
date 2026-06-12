@@ -24,17 +24,17 @@
 
     <ItemGroup>
         <PackageReference Include="Google.Cloud.SecretManager.V1" Version="2.7.0"/>
-        <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="4.0.7.18"/>
-        <PackageReference Include="AWSSDK.SSO" Version="4.0.2.31"/>
-        <PackageReference Include="AWSSDK.SSOOIDC" Version="4.0.4"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.16"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.16"/>
-        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.16"/>
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.16"/>
-        <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="9.0.16"/>
-        <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.15.3"/>
-        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3"/>
-        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.15.3"/>
+        <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="4.0.8.5"/>
+        <PackageReference Include="AWSSDK.SSO" Version="4.0.3.5"/>
+        <PackageReference Include="AWSSDK.SSOOIDC" Version="4.0.4.7"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.17"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.17"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.17"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.17"/>
+        <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="9.0.17"/>
+        <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.16.0"/>
+        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.16.0"/>
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.16.0"/>
         <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.0.0-beta.8"/>
         <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1"/>
     </ItemGroup>
