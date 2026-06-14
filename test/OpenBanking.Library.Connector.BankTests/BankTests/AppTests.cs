@@ -383,22 +383,6 @@ public class AppTests
         // Get application memory cache
         var memoryCache = appServiceProvider.GetRequiredService<IMemoryCache>();
 
-        // Create test data writers
-        var topLevelFolderName = "genericAppTests";
-        var testDataProcessorFluentRequestLogging = new FilePathBuilder(
-            Path.Combine(bankTestSettings.GetDataDirectoryForCurrentOs(), $"{topLevelFolderName}/fluent"),
-            testName,
-            ".json");
-
-        FilePathBuilder? testDataProcessorApiLogging = null;
-        if (bankTestSettings.LogExternalApiData)
-        {
-            testDataProcessorApiLogging = new FilePathBuilder(
-                Path.Combine(bankTestSettings.GetDataDirectoryForCurrentOs(), $"{topLevelFolderName}/api"),
-                testName,
-                ".json");
-        }
-
         // Create consent auth
         PlaywrightLaunchOptions launchOptions =
             bankTestSettings.Auth.PlaywrightLaunch;
@@ -544,9 +528,7 @@ public class AppTests
                     testData.TestAuth,
                     testNameUnique,
                     ModifiedBy,
-                    testDataProcessorFluentRequestLogging
-                        .AppendToPath("aisp")
-                        .AppendToPath($"{subTest.ToString()}"),
+                    null,
                     consentAuth,
                     authUrlLeftPart,
                     bankUser,
@@ -598,9 +580,7 @@ public class AppTests
                         paymentsEnv,
                         testNameUnique,
                         ModifiedBy,
-                        testDataProcessorFluentRequestLogging
-                            .AppendToPath("pisp")
-                            .AppendToPath($"{subTest.ToString()}"),
+                        null,
                         consentAuth,
                         authUrlLeftPart,
                         bankUser);
@@ -629,9 +609,7 @@ public class AppTests
                         paymentsEnv,
                         testNameUnique,
                         ModifiedBy,
-                        testDataProcessorFluentRequestLogging
-                            .AppendToPath("vrp")
-                            .AppendToPath($"{subTest.ToString()}"),
+                        null,
                         consentAuth,
                         authUrlLeftPart,
                         bankUser,

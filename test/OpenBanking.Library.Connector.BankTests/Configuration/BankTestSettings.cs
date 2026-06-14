@@ -119,24 +119,4 @@ public class BankTestSettings
     public const string ConfigSectionName = "OpenBankingConnector:BankTests";
 
     public ConsentAuthoriserOptions Auth { get; set; } = new();
-
-    /// <summary>
-    ///     Path to data folder used for logging, "API overrides", and bank user information.
-    /// </summary>
-    public OsSpecificDirectory DataDirectory { get; set; } = new();
-
-    /// <summary>
-    ///     Log external API requests/responses. Off by default.
-    /// </summary>
-    public bool LogExternalApiData { get; set; } = false;
-
-    // Gets data directory for current OS platform
-    public string GetDataDirectoryForCurrentOs() =>
-        OsPlatformEnumHelper.GetCurrentOsPlatform() switch
-        {
-            OsPlatformEnum.MacOs => DataDirectory.MacOs,
-            OsPlatformEnum.Linux => DataDirectory.Linux,
-            OsPlatformEnum.Windows => DataDirectory.Windows,
-            _ => throw new ArgumentOutOfRangeException()
-        };
 }

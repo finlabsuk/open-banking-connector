@@ -36,7 +36,7 @@ public class DomesticPaymentConsentSubtest(
         PaymentsEnv paymentsEnv,
         string testNameUnique,
         string modifiedBy,
-        FilePathBuilder pispFluentRequestLogging,
+        FilePathBuilder? pispFluentRequestLogging,
         ConsentAuth consentAuth,
         string authUrlLeftPart,
         BankUser? bankUser)
@@ -222,7 +222,7 @@ public class DomesticPaymentConsentSubtest(
         Guid domesticPaymentConsentId,
         bool pispUseV4,
         string modifiedBy,
-        FilePathBuilder pispFluentRequestLogging,
+        FilePathBuilder? pispFluentRequestLogging,
         string instructionIdentification,
         string endToEndIdentification,
         string amount,
@@ -288,10 +288,13 @@ public class DomesticPaymentConsentSubtest(
                     externalApiRequest), // customise external API request using bank profile
             ModifiedBy = "placeholder" // logging placeholder
         };
-        await pispFluentRequestLogging
-            .AppendToPath("domesticPayment")
-            .AppendToPath("postRequest")
-            .WriteFile(domesticPaymentRequest);
+        if (pispFluentRequestLogging is not null)
+        {
+            await pispFluentRequestLogging
+                .AppendToPath("domesticPayment")
+                .AppendToPath("postRequest")
+                .WriteFile(domesticPaymentRequest);
+        }
 
         domesticPaymentRequest.DomesticPaymentConsentId = domesticPaymentConsentId; // replace logging placeholder
         domesticPaymentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification =
@@ -327,7 +330,7 @@ public class DomesticPaymentConsentSubtest(
         bool pispUseV4,
         string testNameUnique,
         string modifiedBy,
-        FilePathBuilder pispFluentRequestLogging,
+        FilePathBuilder? pispFluentRequestLogging,
         string instructionIdentification,
         string endToEndIdentification,
         string amount,
@@ -398,10 +401,13 @@ public class DomesticPaymentConsentSubtest(
             CreatedBy = "placeholder" // logging placeholder
         };
 
-        await pispFluentRequestLogging
-            .AppendToPath("domesticPaymentConsent")
-            .AppendToPath("postRequest")
-            .WriteFile(domesticPaymentConsentRequest);
+        if (pispFluentRequestLogging is not null)
+        {
+            await pispFluentRequestLogging
+                .AppendToPath("domesticPaymentConsent")
+                .AppendToPath("postRequest")
+                .WriteFile(domesticPaymentConsentRequest);
+        }
 
         domesticPaymentConsentRequest.BankRegistrationId = bankRegistrationId; // replace logging placeholder
         domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification =

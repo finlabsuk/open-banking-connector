@@ -43,7 +43,7 @@ public class AccountAccessConsentSubtest(
         bool testAuth,
         string testNameUnique,
         string modifiedBy,
-        FilePathBuilder aispFluentRequestLogging,
+        FilePathBuilder? aispFluentRequestLogging,
         ConsentAuth consentAuth,
         string authUrlLeftPart,
         BankUser? bankUser,
@@ -478,7 +478,7 @@ public class AccountAccessConsentSubtest(
             Guid bankRegistrationId,
             string testNameUnique,
             string modifiedBy,
-            FilePathBuilder aispFluentRequestLogging)
+            FilePathBuilder? aispFluentRequestLogging)
     {
         var accountAccessConsentRequest =
             new AccountAccessConsentRequest
@@ -508,10 +508,13 @@ public class AccountAccessConsentSubtest(
                 default(DateTimeOffset); // substitute logging placeholder
         }
 
-        await aispFluentRequestLogging
-            .AppendToPath("accountAccessConsent")
-            .AppendToPath("postRequest")
-            .WriteFile(accountAccessConsentRequest);
+        if (aispFluentRequestLogging is not null)
+        {
+            await aispFluentRequestLogging
+                .AppendToPath("accountAccessConsent")
+                .AppendToPath("postRequest")
+                .WriteFile(accountAccessConsentRequest);
+        }
         accountAccessConsentRequest.BankRegistrationId = bankRegistrationId; // remove logging placeholder
         if (expDateTime is not null)
         {

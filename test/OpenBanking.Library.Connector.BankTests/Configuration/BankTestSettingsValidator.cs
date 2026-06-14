@@ -12,13 +12,6 @@ public class BankTestSettingsValidator : IValidateOptions<BankTestSettings>
     {
         var failures = new List<string>();
 
-        if (!Directory.Exists(settings.GetDataDirectoryForCurrentOs()))
-        {
-            failures.Add(
-                $"Can't locate data path specified in bank test setting DataDirectory: " +
-                $"{settings.GetDataDirectoryForCurrentOs()}. Please update app settings.");
-        }
-
         if (!settings.Auth.PlaywrightLaunch.IgnoreExecutablePathAndArgs)
         {
             string? executablePath = settings.Auth.PlaywrightLaunch.GetExecutablePathForCurrentOs();
