@@ -22,7 +22,7 @@ internal record ExternalApiHttpRequestIoError(
 
     public override IReadOnlyDictionary<string, object?> Extensions { get; } = new Dictionary<string, object?>
     {
-        ["requestUrlWithoutQuery"] = new Uri(RequestUrl).GetLeftPart(UriPartial.Path),
+        ["requestUrl"] = RequestUrl,
         ["requestHttpMethod"] = RequestHttpMethod,
         ["httpRequestError"] = HttpRequestError.ToString().ToCamelCase()
     };
@@ -39,7 +39,7 @@ internal record ExternalApiHttpRequestTimeout(
 
     public override IReadOnlyDictionary<string, object?> Extensions { get; } = new Dictionary<string, object?>
     {
-        ["requestUrlWithoutQuery"] = new Uri(RequestUrl).GetLeftPart(UriPartial.Path),
+        ["requestUrl"] = RequestUrl,
         ["requestHttpMethod"] = RequestHttpMethod
     };
 }
@@ -59,12 +59,21 @@ internal record ExternalApiHttpRequestFailure(
 
     public override int StatusCode => 502;
 
-    public override IReadOnlyDictionary<string, object?> Extensions { get; } = new Dictionary<string, object?>
-    {
-        ["requestUrlWithoutQuery"] = new Uri(RequestUrl).GetLeftPart(UriPartial.Path),
-        ["requestHttpMethod"] = RequestHttpMethod,
-        ["responseStatusCode"] = ResponseStatusCode,
-        ["responseBody"] = ParsedResponseBody,
-        ["xFapiInteractionId"] = XFapiInteractionId
-    };
+    public override IReadOnlyDictionary<string, object?> Extensions { get; } =
+        XFapiInteractionId is null
+            ? new Dictionary<string, object?>
+            {
+                ["requestUrl"] = RequestUrl,
+                ["requestHttpMethod"] = RequestHttpMethod,
+                ["responseStatusCode"] = ResponseStatusCode,
+                ["responseBody"] = ParsedResponseBody
+            }
+            : new Dictionary<string, object?>
+            {
+                ["requestUrl"] = RequestUrl,
+                ["requestHttpMethod"] = RequestHttpMethod,
+                ["responseStatusCode"] = ResponseStatusCode,
+                ["responseBody"] = ParsedResponseBody,
+                ["xFapiInteractionId"] = XFapiInteractionId
+            };
 }
