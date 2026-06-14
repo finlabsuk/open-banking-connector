@@ -14,7 +14,8 @@ public enum ServerErrorType
     ConsentFromRequestNotFound,
     IdTokenValidationError,
     ExternalApiHttpRequestIoError,
-    ExternalApiHttpRequestTimeout
+    ExternalApiHttpRequestTimeout,
+    ExternalApiHttpRequestFailure
 }
 
 public abstract record ServerError

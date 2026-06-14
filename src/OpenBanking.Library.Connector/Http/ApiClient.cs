@@ -14,6 +14,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using Microsoft.Extensions.Http.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http;
 
@@ -306,12 +307,24 @@ public class ApiClient(
 
         if (!isSuccess)
         {
-            throw new ExternalApiHttpErrorException(
-                statusCode,
-                requestMethod,
-                requestUri,
-                responseBody,
-                xFapiInteractionId);
+            // Try to parse response body as JSON
+            object parsedResponseBody;
+            try
+            {
+                parsedResponseBody = JToken.Parse(responseBody);
+            }
+            catch (JsonException)
+            {
+                parsedResponseBody = responseBody;
+            }
+
+            throw new HttpResponseException(
+                new ExternalApiHttpRequestFailure(
+                    requestMethod,
+                    requestUri,
+                    statusCode,
+                    parsedResponseBody,
+                    xFapiInteractionId));
         }
 
         return (statusCode, responseBody, xFapiInteractionId);

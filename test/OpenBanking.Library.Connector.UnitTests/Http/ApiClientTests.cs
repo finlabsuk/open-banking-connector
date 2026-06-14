@@ -4,6 +4,7 @@
 
 using System.Net;
 using System.Text;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using Newtonsoft.Json;
@@ -185,7 +186,7 @@ public class ApiClientTests
                 null,
                 null);
 
-        await Assert.ThrowsAsync<ExternalApiHttpErrorException>(a);
+        await Assert.ThrowsAsync<HttpResponseException>(a);
     }
 
 
@@ -222,7 +223,7 @@ public class ApiClientTests
                 null,
                 null);
 
-        await Assert.ThrowsAsync<ExternalApiHttpErrorException>(a);
+        await Assert.ThrowsAsync<HttpResponseException>(a);
         instrumentationClient.Received(1).Trace(Arg.Any<string>());
     }
 

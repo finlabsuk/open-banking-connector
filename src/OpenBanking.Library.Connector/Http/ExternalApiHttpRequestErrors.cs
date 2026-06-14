@@ -43,3 +43,28 @@ internal record ExternalApiHttpRequestTimeout(
         ["requestHttpMethod"] = RequestHttpMethod
     };
 }
+
+internal record ExternalApiHttpRequestFailure(
+    string RequestHttpMethod,
+    string RequestUrl,
+    int ResponseStatusCode,
+    object ParsedResponseBody,
+    string? XFapiInteractionId) : ServerError
+{
+    public override ServerErrorType ServerErrorType => ServerErrorType.ExternalApiHttpRequestFailure;
+    public override string Title => "External API HTTP request failure";
+
+    public override string Detail =>
+        $"An HTTP request to an external API endpoint returned an error response with HTTP status code {ResponseStatusCode}.";
+
+    public override int StatusCode => 502;
+
+    public override IReadOnlyDictionary<string, object?> Extensions { get; } = new Dictionary<string, object?>
+    {
+        ["requestUrlWithoutQuery"] = new Uri(RequestUrl).GetLeftPart(UriPartial.Path),
+        ["requestHttpMethod"] = RequestHttpMethod,
+        ["responseStatusCode"] = ResponseStatusCode,
+        ["responseBody"] = ParsedResponseBody,
+        ["xFapiInteractionId"] = XFapiInteractionId
+    };
+}
