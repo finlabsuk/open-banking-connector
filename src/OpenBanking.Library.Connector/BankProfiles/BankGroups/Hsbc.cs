@@ -14,7 +14,8 @@ public enum HsbcBank
     UkBusiness,
     UkKinetic,
     UkPersonal,
-    HsbcNetUk
+    HsbcNetUk,
+    MAndS
 }
 
 public class Hsbc() : BankGroupBase<HsbcBank, HsbcRegistrationGroup>(BankGroup.Hsbc)
@@ -27,7 +28,8 @@ public class Hsbc() : BankGroupBase<HsbcBank, HsbcRegistrationGroup>(BankGroup.H
             [BankProfileEnum.Hsbc_UkBusiness] = HsbcBank.UkBusiness,
             [BankProfileEnum.Hsbc_UkKinetic] = HsbcBank.UkKinetic,
             [BankProfileEnum.Hsbc_UkPersonal] = HsbcBank.UkPersonal,
-            [BankProfileEnum.Hsbc_HsbcNetUk] = HsbcBank.HsbcNetUk
+            [BankProfileEnum.Hsbc_HsbcNetUk] = HsbcBank.HsbcNetUk,
+            [BankProfileEnum.Hsbc_MAndS] = HsbcBank.MAndS
         };
 
     public override HsbcRegistrationGroup GetRegistrationGroup(

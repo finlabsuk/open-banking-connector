@@ -50,26 +50,35 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
             HsbcBank.HsbcNetUk =>
                 // from: https://develop.hsbc.com/sites/default/files/open_banking/HSBC%20Open%20Banking%20TPP%20Implementation%20Guide%20(v3.1).pdf
                 "https://api.ob.hsbcnet.com",
+            HsbcBank.MAndS =>
+                // from: https://develop.hsbc.com/ob-api-documentation/account-information-ms-bank
+                "https://api.ob.mandsbank.com",
             _ => throw new ArgumentOutOfRangeException()
         };
         return new BankProfile(
             _bankGroupData.GetBankProfile(bank),
             issuerUrl,
             GetFinancialId(bank),
-            GetAccountAndTransactionApi(bank),
+            bank is not HsbcBank.MAndS ? GetAccountAndTransactionApi(bank) : null,
             GetAccountAndTransactionV4Api(bank),
-            new PaymentInitiationApi { BaseUrl = GetPaymentsBaseUrl(bank, "v3.1") },
-            new PaymentInitiationApi
-            {
-                BaseUrl = GetPaymentsBaseUrl(bank, "v4.0"),
-                ApiVersion = PaymentInitiationApiVersion.Version4p0
-            },
-            new VariableRecurringPaymentsApi { BaseUrl = GetPaymentsBaseUrl(bank, "v3.1") },
-            new VariableRecurringPaymentsApi
-            {
-                BaseUrl = GetPaymentsBaseUrl(bank, "v4.0"),
-                ApiVersion = VariableRecurringPaymentsApiVersion.Version4p0
-            },
+            bank is not HsbcBank.MAndS ? new PaymentInitiationApi { BaseUrl = GetPaymentsBaseUrl(bank, "v3.1") } : null,
+            bank is not HsbcBank.MAndS
+                ? new PaymentInitiationApi
+                {
+                    BaseUrl = GetPaymentsBaseUrl(bank, "v4.0"),
+                    ApiVersion = PaymentInitiationApiVersion.Version4p0
+                }
+                : null,
+            bank is not HsbcBank.MAndS
+                ? new VariableRecurringPaymentsApi { BaseUrl = GetPaymentsBaseUrl(bank, "v3.1") }
+                : null,
+            bank is not HsbcBank.MAndS
+                ? new VariableRecurringPaymentsApi
+                {
+                    BaseUrl = GetPaymentsBaseUrl(bank, "v4.0"),
+                    ApiVersion = VariableRecurringPaymentsApiVersion.Version4p0
+                }
+                : null,
             bank is not HsbcBank.Sandbox,
             instrumentationClient)
         {
@@ -199,6 +208,8 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                 "https://api.ob.hsbc.co.uk/obie/open-banking/v4.0/aisp",
             HsbcBank.HsbcNetUk =>
                 "https://api.ob.hsbcnet.com/obie/open-banking/v4.0/aisp",
+            HsbcBank.MAndS =>
+                "https://api.ob.mandsbank.com/obie/open-banking/v4.0/aisp",
             _ => throw new ArgumentOutOfRangeException()
         }
     };

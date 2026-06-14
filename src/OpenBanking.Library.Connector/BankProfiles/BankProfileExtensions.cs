@@ -31,6 +31,7 @@ public static class BankProfileExtensions
             BankProfileEnum.Hsbc_UkKinetic => BankGroup.Hsbc,
             BankProfileEnum.Hsbc_UkPersonal => BankGroup.Hsbc,
             BankProfileEnum.Hsbc_HsbcNetUk => BankGroup.Hsbc,
+            BankProfileEnum.Hsbc_MAndS => BankGroup.Hsbc,
             BankProfileEnum.Lloyds_Sandbox => BankGroup.Lloyds,
             BankProfileEnum.Lloyds_LloydsPersonal => BankGroup.Lloyds,
             BankProfileEnum.Lloyds_LloydsBusiness => BankGroup.Lloyds,

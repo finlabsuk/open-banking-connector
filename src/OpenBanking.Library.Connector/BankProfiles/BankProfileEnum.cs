@@ -70,6 +70,9 @@ public enum BankProfileEnum
     [EnumMember(Value = "Hsbc_HsbcNetUk")]
     Hsbc_HsbcNetUk,
 
+    [EnumMember(Value = "Hsbc_MAndS")]
+    Hsbc_MAndS,
+
     [EnumMember(Value = "Lloyds_Sandbox")]
     Lloyds_Sandbox,
 
