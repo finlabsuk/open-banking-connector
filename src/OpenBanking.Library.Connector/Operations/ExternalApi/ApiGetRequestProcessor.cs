@@ -49,7 +49,8 @@ internal class ApiGetRequestProcessor : IGetRequestProcessor
             .SendExpectingJsonResponseAsync<TResponse>(
                 apiClient,
                 tppReportingRequestInfo,
-                jsonSerializerSettings);
+                jsonSerializerSettings,
+                true);
 
         return (response, xFapiInteractionId);
     }

@@ -12,7 +12,8 @@ public class ExternalApiResponseDeserialisationException : ExternalApiAccessExce
         string requestUrl,
         string responseMessage,
         string? xFapiInteractionId,
-        string deserialisationErrorMessage) : base(
+        string deserialisationErrorMessage,
+        bool exposeSuccessResponseBody) : base(
         "De-serialisation error when converting data from external API endpoint",
         responseStatusCode,
         requestHttpMethod,
@@ -21,7 +22,10 @@ public class ExternalApiResponseDeserialisationException : ExternalApiAccessExce
         xFapiInteractionId)
     {
         DeserialisationErrorMessage = deserialisationErrorMessage;
+        ExposeSuccessResponseBody = exposeSuccessResponseBody;
     }
 
     public string DeserialisationErrorMessage { get; }
+
+    public bool ExposeSuccessResponseBody { get; }
 }

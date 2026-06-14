@@ -89,7 +89,8 @@ internal class BankRegistrationPostRequestProcessor<TVariantApiRequest> :
             .SendExpectingJsonResponseAsync<TResponse>(
                 apiClient,
                 tppReportingRequestInfo,
-                responseJsonSerializerSettings);
+                responseJsonSerializerSettings,
+                false);
 
         return (response, xFapiInteractionId);
     }

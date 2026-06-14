@@ -116,7 +116,8 @@ public class ApiClientTests
                     req,
                     "",
                     null,
-                    null);
+                    null,
+                    true);
 
             Assert.Equal(entity.Message, result.Message);
         }
@@ -147,7 +148,8 @@ public class ApiClientTests
                 req,
                 "",
                 null,
-                null);
+                null,
+                true);
 
         await Assert.ThrowsAsync<HttpRequestException>(a);
     }
@@ -184,7 +186,8 @@ public class ApiClientTests
                 req,
                 "",
                 null,
-                null);
+                null,
+                true);
 
         await Assert.ThrowsAsync<HttpResponseException>(a);
     }
@@ -221,7 +224,8 @@ public class ApiClientTests
                 req,
                 "",
                 null,
-                null);
+                null,
+                true);
 
         await Assert.ThrowsAsync<HttpResponseException>(a);
         instrumentationClient.Received(1).Trace(Arg.Any<string>());

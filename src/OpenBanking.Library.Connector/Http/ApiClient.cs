@@ -69,7 +69,8 @@ public class ApiClient(
         HttpRequestMessage request,
         string? requestContentForLog,
         TppReportingRequestInfo? tppReportingRequestInfo,
-        JsonSerializerSettings? jsonSerializerSettings)
+        JsonSerializerSettings? jsonSerializerSettings,
+        bool exposeSuccessResponseBodyInError)
         where T : class
     {
         ArgumentNullException.ThrowIfNull(request);
@@ -97,7 +98,8 @@ public class ApiClient(
                 request.RequestUri!.ToString(),
                 responseBody,
                 xFapiInteractionId,
-                ex.Message);
+                ex.Message,
+                exposeSuccessResponseBodyInError);
         }
 
         if (responseBodyTyped is null)

@@ -13,7 +13,8 @@ public interface IApiClient
         HttpRequestMessage request,
         string? requestContentForLog,
         TppReportingRequestInfo? tppReportingRequestInfo,
-        JsonSerializerSettings? jsonSerializerSettings)
+        JsonSerializerSettings? jsonSerializerSettings,
+        bool exposeSuccessResponseBodyInError)
         where T : class;
 
     Task SendExpectingNoResponseAsync(

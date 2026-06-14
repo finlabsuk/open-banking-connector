@@ -38,17 +38,20 @@ public class ExternalApiHttpErrorExceptionFilter : IActionFilter, IOrderedFilter
 
             jsonObject["deserialisationError"] = httpResponseException.DeserialisationErrorMessage;
 
-            JsonNode? responseMessage;
-            try
+            if (httpResponseException.ExposeSuccessResponseBody)
             {
-                responseMessage = JsonNode.Parse(httpResponseException.ResponseMessage);
-            }
-            catch
-            {
-                responseMessage = httpResponseException.ResponseMessage;
-            }
+                JsonNode? responseMessage;
+                try
+                {
+                    responseMessage = JsonNode.Parse(httpResponseException.ResponseMessage);
+                }
+                catch (JsonException)
+                {
+                    responseMessage = httpResponseException.ResponseMessage;
+                }
 
-            jsonObject["endpointResponse"] = responseMessage;
+                jsonObject["endpointResponse"] = responseMessage;
+            }
 
             string jsonString = JsonSerializer.Serialize(jsonObject);
 

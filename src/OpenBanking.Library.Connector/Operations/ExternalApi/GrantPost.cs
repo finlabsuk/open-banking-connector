@@ -665,9 +665,15 @@ internal class GrantPost : IGrantPost
             {
                 Keys = (await message.SendExpectingJsonResponseAsync<List<JsonWebKey>>(
                     _apiClient,
-                    tppReportingRequestInfo)).response
+                    tppReportingRequestInfo,
+                    null,
+                    true)).response
             }
-            : (await message.SendExpectingJsonResponseAsync<Jwks>(_apiClient, tppReportingRequestInfo)).response;
+            : (await message.SendExpectingJsonResponseAsync<Jwks>(
+                _apiClient,
+                tppReportingRequestInfo,
+                null,
+                true)).response;
 
         return jwks;
     }

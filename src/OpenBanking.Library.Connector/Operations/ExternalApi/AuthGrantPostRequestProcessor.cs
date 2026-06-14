@@ -82,7 +82,8 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
             .SendExpectingJsonResponseAsync<TResponse>(
                 apiClient,
                 tppReportingRequestInfo,
-                responseJsonSerializerSettings);
+                responseJsonSerializerSettings,
+                false);
 
         return (response, xFapiInteractionId);
     }

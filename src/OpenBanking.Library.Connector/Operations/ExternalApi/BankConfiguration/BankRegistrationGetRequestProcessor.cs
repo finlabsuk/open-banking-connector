@@ -43,7 +43,8 @@ internal class BankRegistrationGetRequestProcessor : IGetRequestProcessor
             .SendExpectingJsonResponseAsync<TResponse>(
                 apiClient,
                 tppReportingRequestInfo,
-                jsonSerializerSettings);
+                jsonSerializerSettings,
+                false);
 
         return (response, xFapiInteractionId);
     }

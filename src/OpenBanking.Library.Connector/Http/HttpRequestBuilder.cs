@@ -81,7 +81,8 @@ public class HttpRequestBuilder
     public async Task<(T response, string? xFapiInteractionId)> SendExpectingJsonResponseAsync<T>(
         IApiClient client,
         TppReportingRequestInfo? tppReportingRequestInfo,
-        JsonSerializerSettings? jsonSerializerSettings = null)
+        JsonSerializerSettings? jsonSerializerSettings,
+        bool exposeSuccessResponseBodyInError)
         where T : class
     {
         client.ArgNotNull(nameof(client));
@@ -97,7 +98,8 @@ public class HttpRequestBuilder
             message,
             requestData.RequestContentForLog,
             tppReportingRequestInfo,
-            jsonSerializerSettings);
+            jsonSerializerSettings,
+            exposeSuccessResponseBodyInError);
     }
 
     public async Task<string> SendExpectingStringResponseAsync(

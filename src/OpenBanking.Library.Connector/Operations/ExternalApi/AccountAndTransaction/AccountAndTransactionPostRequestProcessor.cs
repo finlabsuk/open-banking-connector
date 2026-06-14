@@ -61,7 +61,8 @@ internal class
             .SendExpectingJsonResponseAsync<TResponse>(
                 apiClient,
                 tppReportingRequestInfo,
-                responseJsonSerializerSettings);
+                responseJsonSerializerSettings,
+                true);
 
         return (response, xFapiInteractionId);
     }

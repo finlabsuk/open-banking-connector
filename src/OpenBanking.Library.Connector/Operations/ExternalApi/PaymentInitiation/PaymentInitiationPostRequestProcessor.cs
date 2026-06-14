@@ -102,7 +102,8 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
             .SendExpectingJsonResponseAsync<TResponse>(
                 apiClient,
                 tppReportingRequestInfo,
-                responseJsonSerializerSettings);
+                responseJsonSerializerSettings,
+                true);
 
         return (response, xFapiInteractionId);
     }
