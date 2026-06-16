@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "19.0.0"
+    "version": "20.0.0"
   },
   "paths": {
     "/manage/bank-registrations": {
@@ -756,6 +756,7 @@
           "Hsbc_UkKinetic",
           "Hsbc_UkPersonal",
           "Hsbc_HsbcNetUk",
+          "Hsbc_MAndS",
           "Lloyds_Sandbox",
           "Lloyds_LloydsPersonal",
           "Lloyds_LloydsBusiness",
