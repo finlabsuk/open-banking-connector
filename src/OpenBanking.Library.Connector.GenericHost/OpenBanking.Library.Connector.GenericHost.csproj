@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.GenericHost</AssemblyName>
@@ -23,20 +23,20 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Google.Cloud.SecretManager.V1" Version="2.7.0"/>
-        <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="4.0.8.5"/>
-        <PackageReference Include="AWSSDK.SSO" Version="4.0.3.5"/>
-        <PackageReference Include="AWSSDK.SSOOIDC" Version="4.0.4.7"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.17"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.17"/>
-        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.17"/>
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.17"/>
-        <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="9.0.17"/>
-        <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.16.0"/>
-        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.16.0"/>
-        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.16.0"/>
+        <PackageReference Include="Google.Cloud.SecretManager.V1" Version="2.8.0"/>
+        <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="4.0.103.1"/>
+        <PackageReference Include="AWSSDK.SSO" Version="4.0.100.6"/>
+        <PackageReference Include="AWSSDK.SSOOIDC" Version="4.0.100.6"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.10"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.10"/>
+        <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.10"/>
+        <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.17.0"/>
+        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.17.0"/>
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.17.0"/>
         <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.0.0-beta.8"/>
-        <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.17.0"/>
     </ItemGroup>
 
     <ItemGroup>

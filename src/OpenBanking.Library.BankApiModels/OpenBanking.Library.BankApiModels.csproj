@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <Nullable>annotations</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <AssemblyName>FinnovationLabs.OpenBanking.Library.BankApiModels</AssemblyName>
@@ -23,7 +23,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="16.1.1"/>
+        <PackageReference Include="AutoMapper" Version="16.2.0"/>
         <PackageReference Include="FluentValidation" Version="12.1.1"/>
         <PackageReference Include="jose-jwt" Version="5.3.0"/>
         <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.24"/>
