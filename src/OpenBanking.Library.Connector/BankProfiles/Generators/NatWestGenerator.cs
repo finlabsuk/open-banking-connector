@@ -312,6 +312,10 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     },
                 DomesticVrp = new DomesticVrpCustomBehaviour
                 {
+                    RefundResponseJsonConverter =
+                        bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
+                            ? DomesticVrpRefundConverterOptions.ContainsNestedAccountProperty
+                            : null,
                     PreferMisspeltContractPresentIndicator = true,
                     ResponseDataStatusMayBeMissingOrWrong =
                         bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox,
