@@ -5,7 +5,6 @@
 #nullable enable
 
 using System.Runtime.Serialization;
-using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagVrp.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -23,16 +22,17 @@ public enum DomesticVrpRefundConverterOptions
     ContainsNestedAccountProperty = 1
 }
 
-public class DomesticVrpRefundConverter : JsonConverterWithOptions<OBCashAccountDebtorWithName?,
+public class DomesticVrpRefundConverter<TRefund> : JsonConverterWithOptions<TRefund?,
     DomesticVrpRefundConverterOptions>
-
+    where TRefund : class
 {
     public DomesticVrpRefundConverter() : base(null) { } // required for case where no label used
 
     public DomesticVrpRefundConverter(JsonConverterLabel jsonConverterLabel) :
-        base(jsonConverterLabel) { }
+        base(jsonConverterLabel)
+    { }
 
-    public override void WriteJson(JsonWriter writer, OBCashAccountDebtorWithName? value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, TRefund? value, JsonSerializer serializer)
     {
         if (value is null)
         {
@@ -42,24 +42,16 @@ public class DomesticVrpRefundConverter : JsonConverterWithOptions<OBCashAccount
         {
             JToken jt = JToken.FromObject(value);
             jt.WriteTo(writer);
-        }    
+        }
     }
 
-    public override OBCashAccountDebtorWithName? ReadJson(
+    public override TRefund? ReadJson(
         JsonReader reader,
         Type objectType,
-        OBCashAccountDebtorWithName? existingValue,
+        TRefund? existingValue,
         bool hasExistingValue,
         JsonSerializer serializer)
     {
-        
-        // Validate objectType
-        if (objectType != typeof(OBCashAccountDebtorWithName))
-        {
-            throw new NotSupportedException($"The type {objectType} is not supported.");
-        }
-
-        // Handle JSON null value
         if (reader.TokenType is JsonToken.Null)
         {
             return null;
@@ -68,7 +60,7 @@ public class DomesticVrpRefundConverter : JsonConverterWithOptions<OBCashAccount
         // Perform de-serialisation
         var options = GetOptions(serializer);
         var token = JToken.Load(reader);
-        OBCashAccountDebtorWithName? refund;
+        TRefund? refund;
         if (options is DomesticVrpRefundConverterOptions.ContainsNestedAccountProperty)
         {
             if (token.Type is not JTokenType.Object)
@@ -80,18 +72,18 @@ public class DomesticVrpRefundConverter : JsonConverterWithOptions<OBCashAccount
             {
                 throw new Exception("Refund does not contain nested property Account.");
             }
-            refund = accountToken.ToObject<OBCashAccountDebtorWithName>();
+            refund = accountToken.ToObject<TRefund>(serializer);
         }
         else
         {
-            refund = token.ToObject<OBCashAccountDebtorWithName>();
+            refund = token.ToObject<TRefund>(serializer);
         }
 
         if (refund is null)
         {
             throw new Exception("Could not deserialise Refund account.");
         }
-        
+
         return refund;
     }
 }

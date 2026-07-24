@@ -3133,6 +3133,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagVrp
         /// Only included in the response if `Data.ReadRefundAccount` is set to `Yes` in the consent.
         /// <br/>
         /// </summary>
+        [Newtonsoft.Json.JsonConverter(
+            typeof(DomesticVrpRefundConverter<OBCashAccountDebtorWithName>),
+            JsonConverterLabel.DomesticVrpRefund)]
         [Newtonsoft.Json.JsonProperty("Refund", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBCashAccountDebtorWithName? Refund { get; set; } = default!;
 

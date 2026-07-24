@@ -1287,7 +1287,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// <br/>
         /// </summary>
         [Newtonsoft.Json.JsonConverter(
-            typeof(DomesticVrpRefundConverter),
+            typeof(DomesticVrpRefundConverter<OBCashAccountDebtorWithName>),
             JsonConverterLabel.DomesticVrpRefund)]
         [Newtonsoft.Json.JsonProperty("Refund", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBCashAccountDebtorWithName? Refund { get; set; } = default!;
