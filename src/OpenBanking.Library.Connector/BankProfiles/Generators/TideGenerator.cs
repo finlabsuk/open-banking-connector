@@ -66,6 +66,11 @@ public class TideGenerator : BankProfileGeneratorBase<TideBank>
                 UseReadRefundAccount = false,
                 PreferPartyToPartyPaymentContextCode = true,
                 UseContractPresentIndicator = false
+            },
+            BankConfigurationApiSettings = new BankConfigurationApiSettings
+            {
+                UseRegistrationGetEndpoint = true,
+                UseRegistrationDeleteEndpoint = true
             }
         };
 
