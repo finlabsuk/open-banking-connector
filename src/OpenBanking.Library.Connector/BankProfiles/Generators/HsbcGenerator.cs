@@ -123,7 +123,7 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                 DomesticPayment =
                     new DomesticPaymentCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
                 DomesticVrpConsentAuthCodeGrantPost =
-                    new AuthCodeGrantPostCustomBehaviour { ExpectedResponseRefreshTokenMayBeAbsent = true },
+                    new AuthCodeGrantPostCustomBehaviour(),
                 DomesticVrpConsent =
                     new DomesticVrpConsentCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
                 DomesticVrp = new DomesticVrpCustomBehaviour
