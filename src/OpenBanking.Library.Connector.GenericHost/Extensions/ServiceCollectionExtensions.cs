@@ -71,16 +71,6 @@ public static class ServiceCollectionExtensions
         // Configure DB
         switch (databaseSettings.Provider)
         {
-            case DbProvider.Sqlite:
-                services
-                    // See e.g. https://jasonwatmore.com/post/2020/01/03/aspnet-core-ef-core-migrations-for-multiple-databases-sqlite-and-sql-server 
-                    .AddDbContext<BaseDbContext, SqliteDbContext>(
-                        (sp, optionsBuilder) =>
-                        {
-                            var connectionStringService = sp.GetRequiredService<IDbConnectionString>();
-                            optionsBuilder.UseSqlite(connectionStringService.GetConnectionString());
-                        });
-                break;
             case DbProvider.PostgreSql:
                 services.AddDbContext<BaseDbContext, PostgreSqlDbContext>(
                     (sp, optionsBuilder) =>

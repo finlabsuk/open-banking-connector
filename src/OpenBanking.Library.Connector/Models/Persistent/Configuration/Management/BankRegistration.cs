@@ -86,11 +86,6 @@ internal class BankRegistrationConfig(
             builder.Property(e => e.RedirectUris).HasColumnType("jsonb");
         }
 
-        if (_dbProvider is DbProvider.Sqlite)
-        {
-            builder.Property(e => e.Created).HasConversion(new DateTimeOffsetToBinaryConverter());
-        }
-
         // Only set up relationships (foreign keys and navigations) if not MongoDB
         if (_dbProvider is not DbProvider.MongoDb)
         {

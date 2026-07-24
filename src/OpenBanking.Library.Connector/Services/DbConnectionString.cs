@@ -56,7 +56,6 @@ public class DbConnectionString : IDbConnectionString
 
                 return settings.Provider switch
                 {
-                    DbProvider.Sqlite => connectionString,
                     DbProvider.PostgreSql => connectionString + (password is not null ? $";Password={password}" : ""),
                     DbProvider.MongoDb => AddMongoDbPassword(connectionString, password),
                     _ => throw new ArgumentOutOfRangeException(nameof(settings.Provider), settings.Provider, null)

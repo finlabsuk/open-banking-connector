@@ -28,7 +28,6 @@ public class DatabaseSettings : ISettings<DatabaseSettings>
     public Dictionary<DbProvider, string> ConnectionStrings { get; set; } =
         new()
         {
-            [DbProvider.Sqlite] = string.Empty,
             [DbProvider.PostgreSql] = string.Empty,
             [DbProvider.MongoDb] = string.Empty
         };
@@ -39,7 +38,6 @@ public class DatabaseSettings : ISettings<DatabaseSettings>
     public Dictionary<DbProvider, string> Names { get; set; } =
         new()
         {
-            [DbProvider.Sqlite] = string.Empty,
             [DbProvider.PostgreSql] = string.Empty,
             [DbProvider.MongoDb] = string.Empty
         };
@@ -47,7 +45,6 @@ public class DatabaseSettings : ISettings<DatabaseSettings>
     public Dictionary<DbProvider, SecretSource> PasswordSources { get; set; } =
         new()
         {
-            [DbProvider.Sqlite] = SecretSource.Configuration,
             [DbProvider.PostgreSql] = SecretSource.Configuration,
             [DbProvider.MongoDb] = SecretSource.Configuration
         };

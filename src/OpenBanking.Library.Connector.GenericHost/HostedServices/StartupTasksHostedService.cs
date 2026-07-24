@@ -70,7 +70,7 @@ public class StartupTasksHostedService : IHostedService
     {
         _bankProfileService = bankProfileService ?? throw new ArgumentNullException(nameof(bankProfileService));
         _configurationRoot =
-            (IConfigurationRoot) (configuration ?? throw new ArgumentNullException(nameof(configuration)));
+            (IConfigurationRoot)(configuration ?? throw new ArgumentNullException(nameof(configuration)));
         _databaseSettingsProvider = databaseSettingsProvider ??
                                     throw new ArgumentNullException(nameof(databaseSettingsProvider));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
@@ -101,25 +101,6 @@ public class StartupTasksHostedService : IHostedService
             // Database startup tasks
             switch (databaseSettings.Provider)
             {
-                case DbProvider.Sqlite:
-                    var sqliteDbContext = scope.ServiceProvider.GetRequiredService<SqliteDbContext>();
-                    bool sqliteDbExists =
-                        sqliteDbContext.Database.GetService<IRelationalDatabaseCreator>().Exists();
-                    if (!sqliteDbExists)
-                    {
-                        if (databaseSettings.EnsureDatabaseCreated)
-                        {
-                            // Create database
-                            sqliteDbContext.Database.EnsureCreated();
-                        }
-                        else
-                        {
-                            throw new ApplicationException(
-                                "No database found. Note: set \"Database:EnsureDatabaseCreated\" to \"true\" to create database at application start-up.");
-                        }
-                    }
-
-                    break;
                 case DbProvider.PostgreSql:
                     var postgreSqlDbContext = scope.ServiceProvider.GetRequiredService<PostgreSqlDbContext>();
                     bool postgreSqlExists =

@@ -6,7 +6,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 public enum DbProvider
 {
-    Sqlite,
     PostgreSql,
     MongoDb
 }
