@@ -1,5 +1,6 @@
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG TARGETARCH
+ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 # Restore Open Banking Connector
 WORKDIR /src
@@ -14,7 +15,7 @@ RUN dotnet restore -a $TARGETARCH "OpenBanking.WebApp.Connector/OpenBanking.WebA
 COPY src/. ./
 RUN dotnet publish -a $TARGETARCH "OpenBanking.WebApp.Connector/OpenBanking.WebApp.Connector.csproj" -c Release --no-restore -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 
 # Get UK Open Banking sandbox and prod root/issuing CA certs
 WORKDIR /app/certs
