@@ -198,34 +198,34 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                             new IdTokenProcessingCustomBehaviour { IssClaim = GetAudClaim(bank) }
                     },
                 AccountAccessConsentPost = bank is NatWestBank.Coutts
-                    ? new ReadWritePostCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    ? new ReadWritePostCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true }
                     : null,
                 AccountAccessConsentGet = bank is NatWestBank.Coutts
-                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true }
                     : null,
                 AccountGet = bank is NatWestBank.Coutts
-                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true }
                     : null,
                 BalanceGet = bank is NatWestBank.Coutts
-                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true }
                     : null,
                 DirectDebitGet = bank is NatWestBank.Coutts
-                    ? new DirectDebitGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    ? new DirectDebitGetCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true }
                     : null,
                 MonzoPotGet = bank is NatWestBank.Coutts
-                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true }
                     : null,
                 Party2Get = bank is NatWestBank.Coutts
-                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true }
                     : null,
                 PartyGet = bank is NatWestBank.Coutts
-                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true }
                     : null,
                 StandingOrderGet = bank is NatWestBank.Coutts
-                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true }
                     : null,
                 TransactionGet = bank is NatWestBank.Coutts
-                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayAddSlash = true }
+                    ? new ReadWriteGetCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true }
                     : null,
                 DomesticPaymentConsentAuthGet = new ConsentAuthGetCustomBehaviour
                 {
