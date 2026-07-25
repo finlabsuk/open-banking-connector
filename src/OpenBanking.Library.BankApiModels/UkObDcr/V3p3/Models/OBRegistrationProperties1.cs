@@ -157,6 +157,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models
         /// 'tls_client_auth'
         /// </summary>
         [JsonProperty(PropertyName = "token_endpoint_auth_method")]
+        [JsonConverter(typeof(SingleOrArrayConverter<OBRegistrationProperties1tokenEndpointAuthMethodEnum>))]
         public OBRegistrationProperties1tokenEndpointAuthMethodEnum TokenEndpointAuthMethod { get; set; }
 
         /// <summary>
@@ -203,6 +204,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models
         /// Gets or sets possible values include: 'RS256', 'PS256', 'ES256'
         /// </summary>
         [JsonProperty(PropertyName = "request_object_signing_alg")]
+        [JsonConverter(typeof(SingleOrArrayConverter<SupportedAlgorithmsEnum>))]
         public SupportedAlgorithmsEnum RequestObjectSigningAlg { get; set; }
 
         /// <summary>
