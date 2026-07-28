@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "18.3.0"
+    "version": "18.3.1"
   },
   "paths": {
     "/manage/bank-registrations": {

@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "18.3.0"
+    "version": "18.3.1"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -2081,7 +2081,14 @@
           "QUOT",
           "SBIN",
           "SPRR",
-          "TISH"
+          "TISH",
+          "AROI",
+          "BOLD",
+          "CMCN",
+          "SOAC",
+          "TSUT",
+          "USAR",
+          "VCHR"
         ],
         "type": "string",
         "description": "Specifies the document type as published in an external document type code list. For more information see `ExternalDocumentType1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)"
@@ -3316,7 +3323,8 @@
           "CPEN",
           "DEPD",
           "RETL",
-          "DEBT"
+          "DEBT",
+          "CRYP"
         ],
         "type": "string",
         "description": "For a full list of enumeration values refer to `ExternalPurpose1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)"
@@ -3342,7 +3350,9 @@
           "MIAN",
           "TEND",
           "MOVE",
-          "WEEK"
+          "WEEK",
+          "NONE",
+          "SLCT"
         ],
         "type": "string",
         "description": "For a full list of enumeration values refer to `OBFrequency2Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_internal_CodeSets)"
@@ -3961,9 +3971,8 @@
             "nullable": true
           },
           "ReferredDocumentAmount": {
-            "type": "integer",
+            "type": "string",
             "description": "Provides details on the amounts of the referred document.",
-            "format": "int32",
             "nullable": true
           },
           "CreditorReferenceInformation": {
