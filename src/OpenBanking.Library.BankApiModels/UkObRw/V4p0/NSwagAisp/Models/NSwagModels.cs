@@ -108,6 +108,27 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
         [System.Runtime.Serialization.EnumMember(Value = @"TISH")]
         TISH = 15,
 
+        [System.Runtime.Serialization.EnumMember(Value = @"AROI")]
+        AROI = 16,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BOLD")]
+        BOLD = 17,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CMCN")]
+        CMCN = 18,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SOAC")]
+        SOAC = 19,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TSUT")]
+        TSUT = 20,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"USAR")]
+        USAR = 21,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"VCHR")]
+        VCHR = 22,
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -191,7 +212,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
         /// Provides details on the amounts of the referred document.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("ReferredDocumentAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int? ReferredDocumentAmount { get; set; } = default!;
+        [Newtonsoft.Json.JsonConverter(typeof(FinnovationLabs.OpenBanking.Library.BankApiModels.Json.NullableAmountStringConverter))]
+        public string? ReferredDocumentAmount { get; set; } = default!;
 
         /// <summary>
         /// Reference information provided by the creditor to allow the identification of the underlying documents.
@@ -401,6 +423,15 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
 
         [System.Runtime.Serialization.EnumMember(Value = @"NONE")]
         NONE = 15,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LWMH")]
+        LWMH = 16,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LXMH")]
+        LXMH = 17,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TWYR")]
+        TWYR = 18,
 
     }
 
@@ -3197,6 +3228,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
         [System.Runtime.Serialization.EnumMember(Value = @"DEBT")]
         DEBT = 327,
 
+        [System.Runtime.Serialization.EnumMember(Value = @"CRYP")]
+        CRYP = 328,
+
     }
 
     /// <summary>
@@ -3292,6 +3326,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAis
 
         [System.Runtime.Serialization.EnumMember(Value = @"WEEK")]
         WEEK = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"NONE")]
+        NONE = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SLCT")]
+        SLCT = 10,
 
     }
 
