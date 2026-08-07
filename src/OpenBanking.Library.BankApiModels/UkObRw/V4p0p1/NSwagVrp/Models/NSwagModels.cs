@@ -1403,7 +1403,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagV
         public System.Collections.Generic.IList<OBReferredDocumentInformation>? ReferredDocumentInformation { get; set; }
 
         [Newtonsoft.Json.JsonProperty("ReferredDocumentAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^\d{1,13}$|^\d{1,13}\.\d{1,5}$")]
+        [Newtonsoft.Json.JsonConverter(typeof(ReferredDocumentAmountConverter))]
         public string? ReferredDocumentAmount { get; set; }
 
         /// <summary>
