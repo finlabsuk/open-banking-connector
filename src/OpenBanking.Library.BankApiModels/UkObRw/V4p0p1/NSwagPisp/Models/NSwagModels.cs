@@ -2395,7 +2395,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagP
         /// </summary>
         [Newtonsoft.Json.JsonProperty("PaymentContextCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public OBRisk1PaymentContextCode? PaymentContextCode { get; set; }
+        public OBRisk1PaymentContextCodeV4? PaymentContextCode { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("V3PaymentContextCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public V3p1p11.NSwagPisp.Models.OBRisk1PaymentContextCode? V3PaymentContextCode { get; set; }
 
         /// <summary>
         /// Category code conform to ISO 18245, related to the type of services or goods the merchant provides for the transaction.
@@ -2416,6 +2420,37 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagP
         /// </summary>
         [Newtonsoft.Json.JsonProperty("ContractPresentIndicator", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool? ContractPresentIndicator { get; set; }
+
+        /// <summary>
+        /// Indicates if Payee has a contractual relationship with the PISP.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("ContractPresentInidicator", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? ContractPresentInidicator { get; set; }
+
+        public void AdjustBeforeSendToBank(bool preferMisspelt)
+        {
+            if (preferMisspelt)
+            {
+                ContractPresentInidicator = ContractPresentIndicator;
+                ContractPresentIndicator = null;
+            }
+
+        }
+
+        public void AdjustAfterReceiveFromBank()
+        {
+            if (ContractPresentIndicator is not null &&
+                ContractPresentInidicator is not null)
+            {
+                throw new Exception("Both ContractPresentIndicator and ContractPresentInidicator received.");
+            }
+
+            if (ContractPresentInidicator is not null)
+            {
+                ContractPresentIndicator = ContractPresentInidicator;
+                ContractPresentInidicator = null;
+            }
+        }
 
         /// <summary>
         /// Indicates if PISP has immutably prepopulated payment details in for the PSU.
@@ -3141,6 +3176,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagP
             set { _additionalProperties = value; }
         }
 
+        [Newtonsoft.Json.JsonProperty("V3Status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public V3p1p11.NSwagPisp.Models.PaymentStatusStatus? V3Status { get; set; }
     }
 
     /// <summary>
@@ -3411,7 +3449,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagP
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OBRisk1PaymentContextCode
+    public enum OBRisk1PaymentContextCodeV4
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"BillingGoodsAndServicesInAdvance")]
@@ -3499,8 +3537,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagP
         /// OB: Unique identification as assigned by the ASPSP to uniquely identify the consent resource.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("ConsentId", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(128, MinimumLength = 1)]
         public required string ConsentId { get; set; }
 
         /// <summary>
@@ -5128,6 +5164,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagP
             set { _additionalProperties = value; }
         }
 
+        [Newtonsoft.Json.JsonProperty("V3Status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string? V3Status { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("V3StatusReason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public V3p1p11.NSwagPisp.Models.StatusDetailStatusReason? V3StatusReason { get; set; }
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -5393,10 +5435,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagP
         /// <summary>
         /// Type of authorisation flow requested. For a full list of values refer to `OBInternalAuthorisation1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("AuthorisationType", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [Newtonsoft.Json.JsonProperty("AuthorisationType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required Authorisation2AuthorisationType AuthorisationType { get; set; }
+        public Authorisation2AuthorisationType? AuthorisationType { get; set; }
 
         /// <summary>
         /// Date and time at which the requested authorisation flow must be completed. All dates in the JSON payloads are represented in ISO 8601 date-time format. 

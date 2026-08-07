@@ -6,6 +6,8 @@
 
 #nullable enable
 
+using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
+
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
 #pragma warning disable 114 // Disable "CS0114 '{derivedDto}.RaisePropertyChanged(String)' hides inherited member 'dtoBase.RaisePropertyChanged(String)'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword."
 #pragma warning disable 472 // Disable "CS0472 The result of the expression is always 'false' since a value of type 'Int32' is never equal to 'null' of type 'Int32?'
@@ -2965,6 +2967,36 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagV
         public bool? ContractPresentIndicator { get; set; }
 
         /// <summary>
+        /// Indicates if Payee has a contractual relationship with the PISP.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("ContractPresentInidicator", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? ContractPresentInidicator { get; set; }
+
+        public void AdjustBeforeSendToBank(bool preferMisspelt)
+        {
+            if (preferMisspelt)
+            {
+                ContractPresentInidicator = ContractPresentIndicator;
+                ContractPresentIndicator = null;
+            }
+        }
+
+        public void AdjustAfterReceiveFromBank()
+        {
+            if (ContractPresentIndicator is not null &&
+                ContractPresentInidicator is not null)
+            {
+                throw new Exception("Both ContractPresentIndicator and ContractPresentInidicator received.");
+            }
+
+            if (ContractPresentInidicator is not null)
+            {
+                ContractPresentIndicator = ContractPresentInidicator;
+                ContractPresentInidicator = null;
+            }
+        }
+
+        /// <summary>
         /// Indicates if PISP has immutably prepopulated payment details in for the PSU.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("BeneficiaryPrepopulatedIndicator", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -3321,8 +3353,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagV
         /// Identifier for the Domestic VRP Consent that this payment is made under.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("ConsentId", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(128, MinimumLength = 1)]
         public required string ConsentId { get; set; }
 
         /// <summary>
@@ -3339,9 +3369,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagV
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public OBVRPInteractionTypes? PSUInteractionType { get; set; }
 
-        [Newtonsoft.Json.JsonProperty("VRPType", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public required string VRPType { get; set; }
+        [Newtonsoft.Json.JsonProperty("VRPType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string? VRPType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("Initiation", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
@@ -3392,10 +3421,13 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagV
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public required System.DateTimeOffset CreationDateTime { get; set; }
 
-        [Newtonsoft.Json.JsonProperty("Status", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        /// <summary>
+        /// Specifies the status of the payment information group. For a full list of values refer to `ExternalPaymentTransactionStatus1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Status", Required = Newtonsoft.Json.Required.Default,
+            NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public required ExternalPaymentTransactionStatus5Code Status { get; set; }
+        public ExternalPaymentTransactionStatus5Code? Status { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("StatusReason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.IList<OBStatusReason>? StatusReason { get; set; }
@@ -3422,6 +3454,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagV
         [Newtonsoft.Json.JsonProperty("ExpectedSettlementDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? ExpectedSettlementDateTime { get; set; }
 
+        /// <summary>
+        /// Only included in the response if `Data.ReadRefundAccount` is set to `Yes` in the consent.
+        /// <br/>
+        /// </summary>
+        [Newtonsoft.Json.JsonConverter(typeof(DomesticVrpRefundConverterOptionalNesting<OBDomesticRefundAccount1>))]
         [Newtonsoft.Json.JsonProperty("Refund", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OBDomesticRefundAccount1? Refund { get; set; }
 
@@ -3447,6 +3484,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagV
             get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
             set { _additionalProperties = value; }
         }
+
+        [Newtonsoft.Json.JsonProperty("V3StatusReason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string? V3StatusReason { get; set; }
 
     }
 
@@ -3476,8 +3516,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagV
         /// Unique identification as assigned by the ASPSP to uniquely identify the funds confirmation consent resource.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("ConsentId", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(128, MinimumLength = 1)]
         public required string ConsentId { get; set; }
 
         /// <summary>
@@ -3719,6 +3757,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagV
             set { _additionalProperties = value; }
         }
 
+        [Newtonsoft.Json.JsonProperty("V3Status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public V3p1p11.NSwagVrp.Models.PaymentStatusStatus? V3Status { get; set; }
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -3755,6 +3796,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagV
             set { _additionalProperties = value; }
         }
 
+        [Newtonsoft.Json.JsonProperty("V3Status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string? V3Status { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("V3StatusReason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public V3p1p11.NSwagVrp.Models.StatusDetailStatusReason? V3StatusReason { get; set; }
     }
 
 
