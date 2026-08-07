@@ -27,7 +27,7 @@
         <PackageReference Include="EFCore.NamingConventions" Version="9.0.0"/>
         <PackageReference Include="FluentValidation" Version="12.1.1"/>
         <PackageReference Include="jose-jwt" Version="5.3.0"/>
-        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.21.0"/>
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.22.0"/>
         <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.10"/>
         <PackageReference Include="MongoDB.EntityFrameworkCore" Version="9.1.2"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4"/>

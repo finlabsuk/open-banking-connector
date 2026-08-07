@@ -24,9 +24,9 @@
 
     <ItemGroup>
         <PackageReference Include="Google.Cloud.SecretManager.V1" Version="2.8.0"/>
-        <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="4.0.103.1"/>
-        <PackageReference Include="AWSSDK.SSO" Version="4.0.100.6"/>
-        <PackageReference Include="AWSSDK.SSOOIDC" Version="4.0.100.6"/>
+        <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="4.0.103.2"/>
+        <PackageReference Include="AWSSDK.SSO" Version="4.0.100.7"/>
+        <PackageReference Include="AWSSDK.SSOOIDC" Version="4.0.100.7"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10"/>
         <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.10"/>
