@@ -5,7 +5,7 @@
 // using VariableRecurringPaymentsModelsV3p1p11 =
 //     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagVrp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagVrp.Models;
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagVrp.Models;
 
 public static class Mappings
 {
@@ -124,8 +124,9 @@ public static class Mappings
                     PeriodicLimits = externalApiResponseV3.Data.ControlParameters.PeriodicLimits
                         .Select(a => a.MapToPeriodicLimits())
                         .ToList(),
-                    VRPType = externalApiResponseV3.Data.ControlParameters.VRPType,
-                    PSUAuthenticationMethods = externalApiResponseV3.Data.ControlParameters.PSUAuthenticationMethods,
+                    VRPType = externalApiResponseV3.Data.ControlParameters.VRPType.ToList(),
+                    PSUAuthenticationMethods =
+                        externalApiResponseV3.Data.ControlParameters.PSUAuthenticationMethods.ToList(),
                     PSUInteractionTypes = externalApiResponseV3.Data.ControlParameters.PSUInteractionTypes?
                         .Select(a => a.MapToPSUInteractionTypes())
                         .ToList(),
@@ -173,7 +174,7 @@ public static class Mappings
                         .StatusReason, // decision: map StatusReason to V3StatusReason to avoid mixing types
                 ExpectedExecutionDateTime = externalApiResponseV3.Data.ExpectedExecutionDateTime,
                 ExpectedSettlementDateTime = externalApiResponseV3.Data.ExpectedSettlementDateTime,
-                Refund = externalApiResponseV3.Data.Refund?.MapToDebtorAccount(),
+                Refund = externalApiResponseV3.Data.Refund?.MapToRefund(),
                 Charges = externalApiResponseV3.Data.Charges?
                     .Select(a => a.MapToCharges())
                     .ToList(),
@@ -254,26 +255,26 @@ public static class Mappings
     };
 
     private static VariableRecurringPaymentsModelsV3p1p11.PeriodicLimits MapFromPeriodicLimits(
-        this PeriodicLimits data) => new()
+        this OBDomesticVRPPeriodicLimits data) => new()
     {
         PeriodType = data.PeriodType switch
         {
-            PeriodicLimitsPeriodType.Day => VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Day,
-            PeriodicLimitsPeriodType.Week => VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Week,
-            PeriodicLimitsPeriodType.Fortnight => VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType
+            OBPeriodType1Code.Day => VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Day,
+            OBPeriodType1Code.Week => VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Week,
+            OBPeriodType1Code.Fortnight => VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType
                 .Fortnight,
-            PeriodicLimitsPeriodType.Month => VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Month,
-            PeriodicLimitsPeriodType.HalfYear => VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType
+            OBPeriodType1Code.Month => VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Month,
+            OBPeriodType1Code.HalfYear => VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType
                 .HalfYear,
-            PeriodicLimitsPeriodType.Year => VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Year,
+            OBPeriodType1Code.Year => VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Year,
             _ => throw new ArgumentOutOfRangeException()
         },
         PeriodAlignment = data.PeriodAlignment switch
         {
-            PeriodicLimitsPeriodAlignment.Consent => VariableRecurringPaymentsModelsV3p1p11
-                .PeriodicLimitsPeriodAlignment.Consent,
-            PeriodicLimitsPeriodAlignment.Calendar => VariableRecurringPaymentsModelsV3p1p11
-                .PeriodicLimitsPeriodAlignment.Calendar,
+            OBPeriodAlignment1Code.Consent => VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodAlignment
+                .Consent,
+            OBPeriodAlignment1Code.Calendar => VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodAlignment
+                .Calendar,
             _ => throw new ArgumentOutOfRangeException()
         },
         Amount = data.Amount,
@@ -281,27 +282,27 @@ public static class Mappings
         AdditionalProperties = data.AdditionalProperties
     };
 
-    private static PeriodicLimits MapToPeriodicLimits(
+    private static OBDomesticVRPPeriodicLimits MapToPeriodicLimits(
         this VariableRecurringPaymentsModelsV3p1p11.PeriodicLimits data) => new()
     {
         PeriodType = data.PeriodType switch
         {
-            VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Day => PeriodicLimitsPeriodType.Day,
-            VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Week => PeriodicLimitsPeriodType.Week,
-            VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Fortnight => PeriodicLimitsPeriodType
+            VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Day => OBPeriodType1Code.Day,
+            VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Week => OBPeriodType1Code.Week,
+            VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Fortnight => OBPeriodType1Code
                 .Fortnight,
-            VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Month => PeriodicLimitsPeriodType.Month,
-            VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.HalfYear => PeriodicLimitsPeriodType
+            VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Month => OBPeriodType1Code.Month,
+            VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.HalfYear => OBPeriodType1Code
                 .HalfYear,
-            VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Year => PeriodicLimitsPeriodType.Year,
+            VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodType.Year => OBPeriodType1Code.Year,
             _ => throw new ArgumentOutOfRangeException()
         },
         PeriodAlignment = data.PeriodAlignment switch
         {
             VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodAlignment.Consent =>
-                PeriodicLimitsPeriodAlignment.Consent,
+                OBPeriodAlignment1Code.Consent,
             VariableRecurringPaymentsModelsV3p1p11.PeriodicLimitsPeriodAlignment.Calendar =>
-                PeriodicLimitsPeriodAlignment.Calendar,
+                OBPeriodAlignment1Code.Calendar,
             _ => throw new ArgumentOutOfRangeException()
         },
         Amount = data.Amount,
@@ -344,7 +345,9 @@ public static class Mappings
         this VariableRecurringPaymentsModelsV3p1p11.PaymentStatus data) => new()
     {
         PaymentTransactionId = data.PaymentTransactionId,
-        Status = PaymentStatusStatusV4.PDNG, // decision: use PDNG (pending) as placeholder for required field
+        Status =
+            ExternalPaymentTransactionStatus1Code
+                .PDNG, // decision: use PDNG (pending) as placeholder for required field
         V3Status =
             data.Status, // decision: map Status to V3Status to avoid information loss converting between two different enums
         StatusUpdateDateTime = data.StatusUpdateDateTime,
@@ -356,7 +359,9 @@ public static class Mappings
         this VariableRecurringPaymentsModelsV3p1p11.StatusDetail data) => new()
     {
         LocalInstrument = data.LocalInstrument,
-        Status = "PDNG", // decision: use PDNG (pending) as placeholder for required field
+        Status =
+            ExternalPaymentTransactionStatus1Code
+                .PDNG, // decision: use PDNG (pending) as placeholder for required field
         V3Status = data.Status, // decision: map Status to V3Status to avoid information loss converting string to enum
         StatusReason = null, // decision: placeholder
         V3StatusReason =
@@ -365,28 +370,35 @@ public static class Mappings
         //AdditionalProperties
     };
 
-    private static DataStatus MapToStatus(this VariableRecurringPaymentsModelsV3p1p11.DataStatus data) =>
+    private static OBInternalConsentStatus1Code MapToStatus(
+        this VariableRecurringPaymentsModelsV3p1p11.DataStatus data) =>
         data switch
         {
-            VariableRecurringPaymentsModelsV3p1p11.DataStatus.Authorised => DataStatus.AUTH,
-            VariableRecurringPaymentsModelsV3p1p11.DataStatus.AwaitingAuthorisation => DataStatus.AWAU,
-            VariableRecurringPaymentsModelsV3p1p11.DataStatus.Rejected => DataStatus.RJCT,
+            VariableRecurringPaymentsModelsV3p1p11.DataStatus.Authorised => OBInternalConsentStatus1Code.AUTH,
+            VariableRecurringPaymentsModelsV3p1p11.DataStatus.AwaitingAuthorisation =>
+                OBInternalConsentStatus1Code.AWAU,
+            VariableRecurringPaymentsModelsV3p1p11.DataStatus.Rejected => OBInternalConsentStatus1Code.RJCT,
             _ => throw new ArgumentOutOfRangeException()
         };
 
-    private static Data4Status MapToStatus2(this VariableRecurringPaymentsModelsV3p1p11.Data4Status data) =>
+    private static ExternalPaymentTransactionStatus5Code MapToStatus2(
+        this VariableRecurringPaymentsModelsV3p1p11.Data4Status data) =>
         data switch
         {
-            VariableRecurringPaymentsModelsV3p1p11.Data4Status.AcceptedCreditSettlementCompleted => Data4Status.ACCC,
-            VariableRecurringPaymentsModelsV3p1p11.Data4Status.AcceptedSettlementCompleted => Data4Status.ACSC,
-            VariableRecurringPaymentsModelsV3p1p11.Data4Status.AcceptedSettlementInProcess => Data4Status.ACSP,
-            VariableRecurringPaymentsModelsV3p1p11.Data4Status.AcceptedWithoutPosting => Data4Status.ACWP,
-            VariableRecurringPaymentsModelsV3p1p11.Data4Status.Pending => Data4Status.PDNG,
-            VariableRecurringPaymentsModelsV3p1p11.Data4Status.Rejected => Data4Status.RJCT,
+            VariableRecurringPaymentsModelsV3p1p11.Data4Status.AcceptedCreditSettlementCompleted =>
+                ExternalPaymentTransactionStatus5Code.ACCC,
+            VariableRecurringPaymentsModelsV3p1p11.Data4Status.AcceptedSettlementCompleted =>
+                ExternalPaymentTransactionStatus5Code.ACSC,
+            VariableRecurringPaymentsModelsV3p1p11.Data4Status.AcceptedSettlementInProcess =>
+                ExternalPaymentTransactionStatus5Code.ACSP,
+            VariableRecurringPaymentsModelsV3p1p11.Data4Status.AcceptedWithoutPosting =>
+                ExternalPaymentTransactionStatus5Code.ACWP,
+            VariableRecurringPaymentsModelsV3p1p11.Data4Status.Pending => ExternalPaymentTransactionStatus5Code.PDNG,
+            VariableRecurringPaymentsModelsV3p1p11.Data4Status.Rejected => ExternalPaymentTransactionStatus5Code.RJCT,
             _ => throw new ArgumentOutOfRangeException(nameof(data), data, null)
         };
 
-    private static Charges MapToCharges(
+    private static OBCharge2 MapToCharges(
         this VariableRecurringPaymentsModelsV3p1p11.Charges data) => new()
     {
         ChargeBearer = data.ChargeBearer.MapToChargeBearer(),
@@ -547,11 +559,11 @@ public static class Mappings
         this VariableRecurringPaymentsModelsV3p1p11.Meta data) =>
         new() { AdditionalProperties = data.AdditionalProperties };
 
-    private static DataReadRefundAccount MapToReadRefundAccount(
+    private static OBReadRefundAccountParam MapToReadRefundAccount(
         this VariableRecurringPaymentsModelsV3p1p11.DataReadRefundAccount data) => data switch
     {
-        VariableRecurringPaymentsModelsV3p1p11.DataReadRefundAccount.No => DataReadRefundAccount.No,
-        VariableRecurringPaymentsModelsV3p1p11.DataReadRefundAccount.Yes => DataReadRefundAccount.Yes,
+        VariableRecurringPaymentsModelsV3p1p11.DataReadRefundAccount.No => OBReadRefundAccountParam.No,
+        VariableRecurringPaymentsModelsV3p1p11.DataReadRefundAccount.Yes => OBReadRefundAccountParam.Yes,
         _ => throw new ArgumentOutOfRangeException(nameof(data), data, null)
     };
 
@@ -566,7 +578,22 @@ public static class Mappings
         AdditionalProperties = data.AdditionalProperties
     };
 
-    private static DebtorAccount MapToDebtorAccount2(
+    // v4.0.1 nests Refund account fields under "Account" (OBDomesticRefundAccount1), unlike v4.0/v3 which held
+    // them directly on Refund. DomesticVrpRefundConverterOptionalNesting (on Data4.Refund) handles the
+    // corresponding deserialisation shape difference on the way in.
+    private static OBDomesticRefundAccount1 MapToRefund(
+        this VariableRecurringPaymentsModelsV3p1p11.OBCashAccountDebtorWithName data) => new()
+    {
+        Account = new Account
+        {
+            SchemeName = data.SchemeName,
+            Identification = data.Identification,
+            Name = data.Name,
+            SecondaryIdentification = data.SecondaryIdentification
+        }
+    };
+
+    private static OBCashAccountDebtorWithName MapToDebtorAccount2(
         this VariableRecurringPaymentsModelsV3p1p11.OBCashAccountDebtorWithName data) => new()
     {
         SchemeName = data.SchemeName,
@@ -608,7 +635,7 @@ public static class Mappings
         TownName = data.TownName,
         CountrySubDivision = data.CountrySubDivision,
         Country = data.Country,
-        AddressLine = data.AddressLine
+        AddressLine = data.AddressLine?.ToList()
     };
 
     private static OBPostalAddress7 MapToDeliveryAddress(
@@ -631,14 +658,14 @@ public static class Mappings
         TownName = data.TownName,
         CountrySubDivision = data.CountrySubDivision,
         Country = data.Country,
-        AddressLine = data.AddressLine
+        AddressLine = data.AddressLine?.ToList()
     };
 
     private static OBRemittanceInformation2 MapToRemittanceInformation(
         this VariableRecurringPaymentsModelsV3p1p11.RemittanceInformation data)
     {
-        ICollection<OBRemittanceInformationStructured>? structured = null;
-        ICollection<string>? unstructured = null;
+        IList<OBRemittanceInformationStructured>? structured = null;
+        IList<string>? unstructured = null;
         if (data.Reference is not null)
         {
             structured =
@@ -667,8 +694,8 @@ public static class Mappings
     private static OBRemittanceInformation2 MapToRemittanceInformation2(
         this VariableRecurringPaymentsModelsV3p1p11.OBVRPRemittanceInformation data)
     {
-        ICollection<OBRemittanceInformationStructured>? structured = null;
-        ICollection<string>? unstructured = null;
+        IList<OBRemittanceInformationStructured>? structured = null;
+        IList<string>? unstructured = null;
         if (data.Reference is not null)
         {
             structured =
@@ -828,11 +855,11 @@ public static class Mappings
     }
 
     private static VariableRecurringPaymentsModelsV3p1p11.Data2ReadRefundAccount MapFromReadRefundAccount(
-        this Data2ReadRefundAccount data) =>
+        this OBReadRefundAccountParam data) =>
         data switch
         {
-            Data2ReadRefundAccount.No => VariableRecurringPaymentsModelsV3p1p11.Data2ReadRefundAccount.No,
-            Data2ReadRefundAccount.Yes => VariableRecurringPaymentsModelsV3p1p11.Data2ReadRefundAccount.Yes,
+            OBReadRefundAccountParam.No => VariableRecurringPaymentsModelsV3p1p11.Data2ReadRefundAccount.No,
+            OBReadRefundAccountParam.Yes => VariableRecurringPaymentsModelsV3p1p11.Data2ReadRefundAccount.Yes,
             _ => throw new ArgumentOutOfRangeException(nameof(data), data, null)
         };
 
@@ -841,23 +868,15 @@ public static class Mappings
     {
         SchemeName = data.SchemeName,
         Identification = data.Identification,
-        Name = data.Name,
+        Name =
+            data.Name ??
+            throw new Exception("Name is required in DebtorAccount"), // Name optional as of v4.0.1, but required in v3
         SecondaryIdentification = data.SecondaryIdentification,
         AdditionalProperties = data.AdditionalProperties
     };
 
     private static VariableRecurringPaymentsModelsV3p1p11.OBCashAccountCreditor3 MapFromCreditorAccount(
         this OBCashAccountCreditor3 data) => new()
-    {
-        SchemeName = data.SchemeName,
-        Identification = data.Identification,
-        Name = data.Name,
-        SecondaryIdentification = data.SecondaryIdentification,
-        AdditionalProperties = data.AdditionalProperties
-    };
-
-    private static VariableRecurringPaymentsModelsV3p1p11.DebtorAccount MapFromDebtorAccount(
-        this DebtorAccount data) => new()
     {
         SchemeName = data.SchemeName,
         Identification = data.Identification,
@@ -878,7 +897,7 @@ public static class Mappings
         TownName = data.TownName,
         CountrySubDivision = data.CountrySubDivision,
         Country = data.Country,
-        AddressLine = data.AddressLine
+        AddressLine = data.AddressLine?.ToList()
     };
 
     private static VariableRecurringPaymentsModelsV3p1p11.DeliveryAddress MapFromDeliveryAddress(
@@ -890,7 +909,7 @@ public static class Mappings
         TownName = data.TownName ?? throw new Exception("TownName is required in DeliveryAddress"),
         CountrySubDivision = data.CountrySubDivision,
         Country = data.Country ?? throw new Exception("Country is required in DeliveryAddress"),
-        AddressLine = data.AddressLine
+        AddressLine = data.AddressLine?.ToList()
         //AdditionalProperties
     };
 

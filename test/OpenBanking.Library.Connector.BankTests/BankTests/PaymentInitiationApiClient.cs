@@ -177,11 +177,15 @@ public class PaymentInitiationApiClient(WebAppClient client)
             CollectionAssert.Contains(
                 new[]
                 {
-                    PaymentInitiationModelsPublic.Data4Status.ACCC, PaymentInitiationModelsPublic.Data4Status.ACCP,
-                    PaymentInitiationModelsPublic.Data4Status.ACFC, PaymentInitiationModelsPublic.Data4Status.ACSC,
-                    PaymentInitiationModelsPublic.Data4Status.ACSP, PaymentInitiationModelsPublic.Data4Status.ACTC,
-                    PaymentInitiationModelsPublic.Data4Status.ACWC, PaymentInitiationModelsPublic.Data4Status.ACWP,
-                    PaymentInitiationModelsPublic.Data4Status.PDNG
+                    PaymentInitiationModelsPublic.ExternalPaymentTransactionStatus3Code.ACCC,
+                    PaymentInitiationModelsPublic.ExternalPaymentTransactionStatus3Code.ACCP,
+                    PaymentInitiationModelsPublic.ExternalPaymentTransactionStatus3Code.ACFC,
+                    PaymentInitiationModelsPublic.ExternalPaymentTransactionStatus3Code.ACSC,
+                    PaymentInitiationModelsPublic.ExternalPaymentTransactionStatus3Code.ACSP,
+                    PaymentInitiationModelsPublic.ExternalPaymentTransactionStatus3Code.ACTC,
+                    PaymentInitiationModelsPublic.ExternalPaymentTransactionStatus3Code.ACWC,
+                    PaymentInitiationModelsPublic.ExternalPaymentTransactionStatus3Code.ACWP,
+                    PaymentInitiationModelsPublic.ExternalPaymentTransactionStatus3Code.PDNG
                 },
                 response.ExternalApiResponse.Data.Status);
         }

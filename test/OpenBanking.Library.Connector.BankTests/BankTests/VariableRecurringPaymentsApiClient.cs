@@ -178,15 +178,15 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
             CollectionAssert.Contains(
                 new[]
                 {
-                    VariableRecurringPaymentsModelsPublic.Data4Status.ACCC,
-                    VariableRecurringPaymentsModelsPublic.Data4Status.ACCP,
-                    VariableRecurringPaymentsModelsPublic.Data4Status.ACFC,
-                    VariableRecurringPaymentsModelsPublic.Data4Status.ACSC,
-                    VariableRecurringPaymentsModelsPublic.Data4Status.ACSP,
-                    VariableRecurringPaymentsModelsPublic.Data4Status.ACTC,
-                    VariableRecurringPaymentsModelsPublic.Data4Status.ACWC,
-                    VariableRecurringPaymentsModelsPublic.Data4Status.ACWP,
-                    VariableRecurringPaymentsModelsPublic.Data4Status.PDNG
+                    VariableRecurringPaymentsModelsPublic.ExternalPaymentTransactionStatus5Code.ACCC,
+                    VariableRecurringPaymentsModelsPublic.ExternalPaymentTransactionStatus5Code.ACCP,
+                    VariableRecurringPaymentsModelsPublic.ExternalPaymentTransactionStatus5Code.ACFC,
+                    VariableRecurringPaymentsModelsPublic.ExternalPaymentTransactionStatus5Code.ACSC,
+                    VariableRecurringPaymentsModelsPublic.ExternalPaymentTransactionStatus5Code.ACSP,
+                    VariableRecurringPaymentsModelsPublic.ExternalPaymentTransactionStatus5Code.ACTC,
+                    VariableRecurringPaymentsModelsPublic.ExternalPaymentTransactionStatus5Code.ACWC,
+                    VariableRecurringPaymentsModelsPublic.ExternalPaymentTransactionStatus5Code.ACWP,
+                    VariableRecurringPaymentsModelsPublic.ExternalPaymentTransactionStatus5Code.PDNG
                 },
                 response.ExternalApiResponse.Data.Status);
         }
@@ -203,14 +203,14 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
             {
                 Assert.AreEqual(
                     "UK.OBIE.SortCodeAccountNumber",
-                    response.ExternalApiResponse.Data.Refund!.SchemeName);
+                    response.ExternalApiResponse.Data.Refund!.Account.SchemeName);
             }
 
             bool responseDataRefundIdentificationMayBeWrong =
                 customBehaviour?.ResponseDataRefundIdentificationMayBeWrong ?? false;
             if (!responseDataRefundIdentificationMayBeWrong)
             {
-                Assert.AreEqual(14, response.ExternalApiResponse.Data.Refund!.Identification.Length);
+                Assert.AreEqual(14, response.ExternalApiResponse.Data.Refund!.Account.Identification.Length);
             }
         }
 
@@ -290,14 +290,14 @@ public class VariableRecurringPaymentsApiClient(WebAppClient client)
             {
                 Assert.AreEqual(
                     "UK.OBIE.SortCodeAccountNumber",
-                    response.ExternalApiResponse.Data.Refund!.SchemeName);
+                    response.ExternalApiResponse.Data.Refund!.Account.SchemeName);
             }
 
             bool responseDataRefundIdentificationMayBeWrong =
                 customBehaviour?.ResponseDataRefundIdentificationMayBeWrong ?? false;
             if (!responseDataRefundIdentificationMayBeWrong)
             {
-                Assert.AreEqual(14, response.ExternalApiResponse.Data.Refund!.Identification.Length);
+                Assert.AreEqual(14, response.ExternalApiResponse.Data.Refund!.Account.Identification.Length);
             }
         }
 

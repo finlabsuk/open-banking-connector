@@ -3180,6 +3180,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagV
         [System.Runtime.Serialization.EnumMember(Value = @"RJCT")]
         RJCT = 11,
 
+        // CANC is not part of the v4.0.1 spec for this code set but is a valid value from real v4.0 banks
+        // (VRP Data4Status). Added by hand post-generation so v4.0 VRP status responses using it can still
+        // deserialise; re-add after any NSwag regeneration of this file.
+        [System.Runtime.Serialization.EnumMember(Value = @"CANC")]
+        CANC = 12
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -3241,6 +3247,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagV
         [Newtonsoft.Json.JsonProperty("SecondaryIdentification", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(34, MinimumLength = 1)]
         public string? SecondaryIdentification { get; set; }
+
+        /// <summary>
+        /// Not part of the v4.0.1 OBDomesticRefundAccount1/Account schema. Retained here (nullable, ignored when
+        /// absent) so that v4.0 banks' flat Refund shape - which does include Proxy - is not silently truncated
+        /// when parsed via the v4.0.1 models, per DomesticVrpRefundConverterOptionalNesting.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Proxy", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OBProxy1? Proxy { get; set; }
 
     }
 

@@ -216,9 +216,9 @@ internal class
             }
             nonErrorMessages.AddRange(newNonErrorMessages);
 
-            AccountAndTransactionModelsPublic.Data5Status status = externalApiResponse.Data.Status;
+            AccountAndTransactionModelsPublic.OBInternalConsentStatus1Code status = externalApiResponse.Data.Status;
             reAuthNotInitialAuth =
-                status is not AccountAndTransactionModelsPublic.Data5Status.AWAU;
+                status is not AccountAndTransactionModelsPublic.OBInternalConsentStatus1Code.AWAU;
         }
 
         string scope = customBehaviour?.AccountAccessConsentAuthGet?.Scope ?? "accounts";

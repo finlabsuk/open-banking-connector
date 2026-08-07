@@ -437,26 +437,31 @@ internal class
                 transformedLinkUrlWithoutQuery,
                 domesticVrpConsentPostCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                 false);
-            externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
-            if (externalApiResponse.Links.First is not null)
+            // Links is optional as of v4.0.1 (was required in v4.0); skip transformation if bank omitted it.
+            if (externalApiResponse.Links is not null)
             {
-                externalApiResponse.Links.First =
-                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
-            }
-            if (externalApiResponse.Links.Prev is not null)
-            {
-                externalApiResponse.Links.Prev =
-                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
-            }
-            if (externalApiResponse.Links.Next is not null)
-            {
-                externalApiResponse.Links.Next =
-                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
-            }
-            if (externalApiResponse.Links.Last is not null)
-            {
-                externalApiResponse.Links.Last =
-                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+                externalApiResponse.Links.Self =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
+                if (externalApiResponse.Links.First is not null)
+                {
+                    externalApiResponse.Links.First =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
+                }
+                if (externalApiResponse.Links.Prev is not null)
+                {
+                    externalApiResponse.Links.Prev =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
+                }
+                if (externalApiResponse.Links.Next is not null)
+                {
+                    externalApiResponse.Links.Next =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
+                }
+                if (externalApiResponse.Links.Last is not null)
+                {
+                    externalApiResponse.Links.Last =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+                }
             }
         }
         else
@@ -652,26 +657,31 @@ internal class
                 transformedLinkUrlWithoutQuery,
                 readWriteGetCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
                 false);
-            externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
-            if (externalApiResponse.Links.First is not null)
+            // Links is optional as of v4.0.1 (was required in v4.0); skip transformation if bank omitted it.
+            if (externalApiResponse.Links is not null)
             {
-                externalApiResponse.Links.First =
-                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
-            }
-            if (externalApiResponse.Links.Prev is not null)
-            {
-                externalApiResponse.Links.Prev =
-                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
-            }
-            if (externalApiResponse.Links.Next is not null)
-            {
-                externalApiResponse.Links.Next =
-                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
-            }
-            if (externalApiResponse.Links.Last is not null)
-            {
-                externalApiResponse.Links.Last =
-                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+                externalApiResponse.Links.Self =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
+                if (externalApiResponse.Links.First is not null)
+                {
+                    externalApiResponse.Links.First =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
+                }
+                if (externalApiResponse.Links.Prev is not null)
+                {
+                    externalApiResponse.Links.Prev =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
+                }
+                if (externalApiResponse.Links.Next is not null)
+                {
+                    externalApiResponse.Links.Next =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
+                }
+                if (externalApiResponse.Links.Last is not null)
+                {
+                    externalApiResponse.Links.Last =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+                }
             }
         }
         else
@@ -864,26 +874,30 @@ internal class
             transformedLinkUrlWithoutQuery,
             domesticVrpConsentCustomBehaviour?.ResponseLinksMayHaveIncorrectUrlBeforeQuery ?? false,
             false);
-        externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
-        if (externalApiResponse.Links.First is not null)
+        // Links is optional as of v4.0.1 (was required in v4.0); skip transformation if bank omitted it.
+        if (externalApiResponse.Links is not null)
         {
-            externalApiResponse.Links.First =
-                linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
-        }
-        if (externalApiResponse.Links.Prev is not null)
-        {
-            externalApiResponse.Links.Prev =
-                linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
-        }
-        if (externalApiResponse.Links.Next is not null)
-        {
-            externalApiResponse.Links.Next =
-                linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
-        }
-        if (externalApiResponse.Links.Last is not null)
-        {
-            externalApiResponse.Links.Last =
-                linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+            externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
+            if (externalApiResponse.Links.First is not null)
+            {
+                externalApiResponse.Links.First =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
+            }
+            if (externalApiResponse.Links.Prev is not null)
+            {
+                externalApiResponse.Links.Prev =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
+            }
+            if (externalApiResponse.Links.Next is not null)
+            {
+                externalApiResponse.Links.Next =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
+            }
+            if (externalApiResponse.Links.Last is not null)
+            {
+                externalApiResponse.Links.Last =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+            }
         }
 
         // Update persisted entity and return response

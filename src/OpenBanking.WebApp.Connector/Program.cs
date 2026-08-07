@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using OpenTelemetry.Trace;
 using AccountAndTransactionModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAisp.Models;
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagAisp.Models;
 using ServiceCollectionExtensionsGenericHost =
     FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions.ServiceCollectionExtensions;
 

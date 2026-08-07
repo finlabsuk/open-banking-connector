@@ -344,7 +344,7 @@ public class DomesticPaymentConsentSubtest(
             {
                 ReadRefundAccount =
                     paymentInitiationApiSettings.UseReadRefundAccount
-                        ? PaymentInitiationModelsPublic.Data2ReadRefundAccount.Yes
+                        ? PaymentInitiationModelsPublic.OBReadRefundAccountParam.Yes
                         : null,
                 Initiation = new PaymentInitiationModelsPublic.Initiation2
                 {

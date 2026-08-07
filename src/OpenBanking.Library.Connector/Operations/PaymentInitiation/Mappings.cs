@@ -5,7 +5,7 @@
 // using PaymentInitiationModelsV3p1p11 =
 //     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagPisp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagPisp.Models;
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagPisp.Models;
 
 public static class Mappings
 {
@@ -219,7 +219,9 @@ public static class Mappings
         this PaymentInitiationModelsV3p1p11.PaymentStatus data) => new()
     {
         PaymentTransactionId = data.PaymentTransactionId,
-        Status = OBWritePaymentDetails1Status.PDNG, // decision: use PDNG (pending) as placeholder for required field
+        Status =
+            ExternalPaymentTransactionStatus1Code
+                .PDNG, // decision: use PDNG (pending) as placeholder for required field
         V3Status =
             data.Status, // decision: map Status to V3Status to avoid information loss converting between two different enums
         StatusUpdateDateTime = data.StatusUpdateDateTime,
@@ -231,7 +233,9 @@ public static class Mappings
         this PaymentInitiationModelsV3p1p11.StatusDetail data) => new()
     {
         LocalInstrument = data.LocalInstrument,
-        Status = StatusDetailStatus.PDNG, // decision: use PDNG (pending) as placeholder for required field
+        Status =
+            ExternalPaymentTransactionStatus1Code
+                .PDNG, // decision: use PDNG (pending) as placeholder for required field
         V3Status = data.Status, // decision: map Status to V3Status to avoid information loss converting string to enum
         StatusReason = null, // decision: placeholder
         V3StatusReason =
@@ -257,29 +261,34 @@ public static class Mappings
         ExpirationDateTime = data.ExpirationDateTime
     };
 
-    private static Data3Status MapToStatus(this PaymentInitiationModelsV3p1p11.Data3Status data) =>
+    private static OBInternalConsentStatus2Code MapToStatus(this PaymentInitiationModelsV3p1p11.Data3Status data) =>
         data switch
         {
-            PaymentInitiationModelsV3p1p11.Data3Status.Authorised => Data3Status.AUTH,
-            PaymentInitiationModelsV3p1p11.Data3Status.AwaitingAuthorisation => Data3Status.AWAU,
-            PaymentInitiationModelsV3p1p11.Data3Status.Consumed => Data3Status.COND,
-            PaymentInitiationModelsV3p1p11.Data3Status.Rejected => Data3Status.RJCT,
+            PaymentInitiationModelsV3p1p11.Data3Status.Authorised => OBInternalConsentStatus2Code.AUTH,
+            PaymentInitiationModelsV3p1p11.Data3Status.AwaitingAuthorisation => OBInternalConsentStatus2Code.AWAU,
+            PaymentInitiationModelsV3p1p11.Data3Status.Consumed => OBInternalConsentStatus2Code.COND,
+            PaymentInitiationModelsV3p1p11.Data3Status.Rejected => OBInternalConsentStatus2Code.RJCT,
             _ => throw new ArgumentOutOfRangeException()
         };
 
-    private static Data4Status MapToStatus2(this PaymentInitiationModelsV3p1p11.Data4Status data) =>
+    private static ExternalPaymentTransactionStatus3Code MapToStatus2(
+        this PaymentInitiationModelsV3p1p11.Data4Status data) =>
         data switch
         {
-            PaymentInitiationModelsV3p1p11.Data4Status.AcceptedCreditSettlementCompleted => Data4Status.ACCC,
-            PaymentInitiationModelsV3p1p11.Data4Status.AcceptedSettlementCompleted => Data4Status.ACSC,
-            PaymentInitiationModelsV3p1p11.Data4Status.AcceptedSettlementInProcess => Data4Status.ACSP,
-            PaymentInitiationModelsV3p1p11.Data4Status.AcceptedWithoutPosting => Data4Status.ACWP,
-            PaymentInitiationModelsV3p1p11.Data4Status.Pending => Data4Status.PDNG,
-            PaymentInitiationModelsV3p1p11.Data4Status.Rejected => Data4Status.RJCT,
+            PaymentInitiationModelsV3p1p11.Data4Status.AcceptedCreditSettlementCompleted =>
+                ExternalPaymentTransactionStatus3Code.ACCC,
+            PaymentInitiationModelsV3p1p11.Data4Status.AcceptedSettlementCompleted =>
+                ExternalPaymentTransactionStatus3Code.ACSC,
+            PaymentInitiationModelsV3p1p11.Data4Status.AcceptedSettlementInProcess =>
+                ExternalPaymentTransactionStatus3Code.ACSP,
+            PaymentInitiationModelsV3p1p11.Data4Status.AcceptedWithoutPosting => ExternalPaymentTransactionStatus3Code
+                .ACWP,
+            PaymentInitiationModelsV3p1p11.Data4Status.Pending => ExternalPaymentTransactionStatus3Code.PDNG,
+            PaymentInitiationModelsV3p1p11.Data4Status.Rejected => ExternalPaymentTransactionStatus3Code.RJCT,
             _ => throw new ArgumentOutOfRangeException(nameof(data), data, null)
         };
 
-    private static Charges MapToCharges(
+    private static OBCharge2 MapToCharges(
         this PaymentInitiationModelsV3p1p11.Charges data) => new()
     {
         ChargeBearer = data.ChargeBearer.MapToChargeBearer(),
@@ -287,7 +296,7 @@ public static class Mappings
         Amount = data.Amount.MapToAmount()
     };
 
-    private static Charges2 MapToCharges2(
+    private static OBCharge2 MapToCharges2(
         this PaymentInitiationModelsV3p1p11.Charges2 data) => new()
     {
         ChargeBearer = data.ChargeBearer.MapToChargeBearer(),
@@ -503,7 +512,7 @@ public static class Mappings
         Proxy = null // not in v3
     };
 
-    private static Refund MapToRefund(
+    private static OBDomesticRefundAccount1 MapToRefund(
         this PaymentInitiationModelsV3p1p11.Refund data) => new() { Account = data.Account.MapToAccount() };
 
     private static Account MapToAccount(
@@ -555,7 +564,7 @@ public static class Mappings
         TownName = data.TownName,
         CountrySubDivision = data.CountrySubDivision,
         Country = data.Country,
-        AddressLine = data.AddressLine
+        AddressLine = data.AddressLine?.ToList()
     };
 
     private static OBPostalAddress7 MapToDeliveryAddress(
@@ -578,14 +587,14 @@ public static class Mappings
         TownName = data.TownName,
         CountrySubDivision = data.CountrySubDivision,
         Country = data.Country,
-        AddressLine = data.AddressLine
+        AddressLine = data.AddressLine?.ToList()
     };
 
     private static OBRemittanceInformation2 MapToRemittanceInformation(
         this PaymentInitiationModelsV3p1p11.RemittanceInformation3 data)
     {
-        ICollection<OBRemittanceInformationStructured>? structured = null;
-        ICollection<string>? unstructured = null;
+        IList<OBRemittanceInformationStructured>? structured = null;
+        IList<string>? unstructured = null;
         if (data.Reference is not null)
         {
             structured =
@@ -614,8 +623,8 @@ public static class Mappings
     private static OBRemittanceInformation2 MapToRemittanceInformation2(
         this PaymentInitiationModelsV3p1p11.RemittanceInformation4 data)
     {
-        ICollection<OBRemittanceInformationStructured>? structured = null;
-        ICollection<string>? unstructured = null;
+        IList<OBRemittanceInformationStructured>? structured = null;
+        IList<string>? unstructured = null;
         if (data.Reference is not null)
         {
             structured =
@@ -762,11 +771,11 @@ public static class Mappings
     }
 
     private static PaymentInitiationModelsV3p1p11.Data2ReadRefundAccount MapFromReadRefundAccount(
-        this Data2ReadRefundAccount data) =>
+        this OBReadRefundAccountParam data) =>
         data switch
         {
-            Data2ReadRefundAccount.No => PaymentInitiationModelsV3p1p11.Data2ReadRefundAccount.No,
-            Data2ReadRefundAccount.Yes => PaymentInitiationModelsV3p1p11.Data2ReadRefundAccount.Yes,
+            OBReadRefundAccountParam.No => PaymentInitiationModelsV3p1p11.Data2ReadRefundAccount.No,
+            OBReadRefundAccountParam.Yes => PaymentInitiationModelsV3p1p11.Data2ReadRefundAccount.Yes,
             _ => throw new ArgumentOutOfRangeException(nameof(data), data, null)
         };
 
@@ -800,7 +809,7 @@ public static class Mappings
         TownName = data.TownName,
         CountrySubDivision = data.CountrySubDivision,
         Country = data.Country,
-        AddressLine = data.AddressLine
+        AddressLine = data.AddressLine?.ToList()
     };
 
     private static PaymentInitiationModelsV3p1p11.DeliveryAddress MapFromDeliveryAddress(
@@ -812,7 +821,7 @@ public static class Mappings
         TownName = data.TownName ?? throw new Exception("TownName is required in DeliveryAddress"),
         CountrySubDivision = data.CountrySubDivision,
         Country = data.Country ?? throw new Exception("Country is required in DeliveryAddress"),
-        AddressLine = data.AddressLine
+        AddressLine = data.AddressLine?.ToList()
         //AdditionalProperties
     };
 

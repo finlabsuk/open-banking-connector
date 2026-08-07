@@ -5,7 +5,7 @@
 // using AccountAndTransactionModelsV3p1p11 =
 //     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagAisp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0.NSwagAisp.Models;
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V4p0p1.NSwagAisp.Models;
 
 public static class Mappings
 {
@@ -153,13 +153,14 @@ public static class Mappings
             AdditionalProperties = data.AdditionalProperties
         };
 
-    private static Data5Status MapToData5Status(this AccountAndTransactionModelsV3p1p11.Data5Status status)
+    private static OBInternalConsentStatus1Code MapToData5Status(
+        this AccountAndTransactionModelsV3p1p11.Data5Status status)
         => status switch
         {
-            AccountAndTransactionModelsV3p1p11.Data5Status.Authorised => Data5Status.AUTH,
-            AccountAndTransactionModelsV3p1p11.Data5Status.AwaitingAuthorisation => Data5Status.AWAU,
-            AccountAndTransactionModelsV3p1p11.Data5Status.Rejected => Data5Status.RJCT,
-            AccountAndTransactionModelsV3p1p11.Data5Status.Revoked => Data5Status.EXPD,
+            AccountAndTransactionModelsV3p1p11.Data5Status.Authorised => OBInternalConsentStatus1Code.AUTH,
+            AccountAndTransactionModelsV3p1p11.Data5Status.AwaitingAuthorisation => OBInternalConsentStatus1Code.AWAU,
+            AccountAndTransactionModelsV3p1p11.Data5Status.Rejected => OBInternalConsentStatus1Code.RJCT,
+            AccountAndTransactionModelsV3p1p11.Data5Status.Revoked => OBInternalConsentStatus1Code.EXPD,
             _ => throw new ArgumentOutOfRangeException(nameof(status), status, null)
         };
 
@@ -381,7 +382,7 @@ public static class Mappings
             //AdditionalProperties
         };
 
-    private static OBActiveOrHistoricCurrencyAndAmount_0 MapToPreviousPaymentAmount(
+    private static OBActiveOrHistoricCurrencyAndAmount MapToPreviousPaymentAmount(
         this AccountAndTransactionModelsV3p1p11.OBActiveOrHistoricCurrencyAndAmount_0 amount) =>
         new()
         {
@@ -396,7 +397,7 @@ public static class Mappings
             AddressType = address.AddressType?.MapToAddressType(),
             Department = null, // not in v3
             SubDepartment = null, // not in v3
-            AddressLine = address.AddressLine,
+            AddressLine = address.AddressLine?.ToList(),
             StreetName = address.StreetName,
             BuildingNumber = address.BuildingNumber,
             BuildingName = null, // not in v3
@@ -429,7 +430,7 @@ public static class Mappings
             _ => throw new ArgumentOutOfRangeException(nameof(addressType), addressType, null)
         };
 
-    private static OBActiveOrHistoricCurrencyAndAmount_2 MapToFirstPaymentAmount(
+    private static OBActiveOrHistoricCurrencyAndAmount MapToFirstPaymentAmount(
         this AccountAndTransactionModelsV3p1p11.OBActiveOrHistoricCurrencyAndAmount_2 amount) =>
         new()
         {
@@ -438,7 +439,7 @@ public static class Mappings
             AdditionalProperties = amount.AdditionalProperties
         };
 
-    private static OBActiveOrHistoricCurrencyAndAmount_3 MapToNextPaymentAmount(
+    private static OBActiveOrHistoricCurrencyAndAmount MapToNextPaymentAmount(
         this AccountAndTransactionModelsV3p1p11.OBActiveOrHistoricCurrencyAndAmount_3 amount) =>
         new()
         {
@@ -447,7 +448,7 @@ public static class Mappings
             AdditionalProperties = amount.AdditionalProperties
         };
 
-    private static OBActiveOrHistoricCurrencyAndAmount_11 MapToLastPaymentAmount(
+    private static OBActiveOrHistoricCurrencyAndAmount MapToLastPaymentAmount(
         this AccountAndTransactionModelsV3p1p11.OBActiveOrHistoricCurrencyAndAmount_11 amount) =>
         new()
         {
@@ -456,7 +457,7 @@ public static class Mappings
             AdditionalProperties = amount.AdditionalProperties
         };
 
-    private static OBActiveOrHistoricCurrencyAndAmount_4 MapToFinalPaymentAmount(
+    private static OBActiveOrHistoricCurrencyAndAmount MapToFinalPaymentAmount(
         this AccountAndTransactionModelsV3p1p11.OBActiveOrHistoricCurrencyAndAmount_4 amount) =>
         new()
         {
@@ -522,7 +523,7 @@ public static class Mappings
             AccountId = transaction.AccountId,
             TransactionId = transaction.TransactionId,
             TransactionReference = transaction.TransactionReference,
-            StatementReference = transaction.StatementReference,
+            StatementReference = transaction.StatementReference?.ToList(),
             CreditDebitIndicator = transaction.CreditDebitIndicator.MapToCreditDebitIndicator(),
             Status = transaction.Status.MapToEntryStatus(),
             TransactionMutability = transaction.TransactionMutability?.MapToTransactionMutability(),
@@ -643,7 +644,7 @@ public static class Mappings
             _ => throw new ArgumentOutOfRangeException(nameof(mutability), mutability, null)
         };
 
-    private static OBActiveOrHistoricCurrencyAndAmount_9 MapToAmount9(
+    private static OBActiveOrHistoricCurrencyAndAmount MapToAmount9(
         this AccountAndTransactionModelsV3p1p11.OBActiveOrHistoricCurrencyAndAmount_9 amount) =>
         new()
         {
@@ -652,7 +653,7 @@ public static class Mappings
             AdditionalProperties = amount.AdditionalProperties
         };
 
-    private static OBActiveOrHistoricCurrencyAndAmount_10 MapToChargeAmount(
+    private static OBActiveOrHistoricCurrencyAndAmount MapToChargeAmount(
         this AccountAndTransactionModelsV3p1p11.OBActiveOrHistoricCurrencyAndAmount_10 amount) =>
         new()
         {
@@ -977,7 +978,7 @@ public static class Mappings
             AddressType = address.AddressType?.MapToAddressType2(),
             Department = address.Department,
             SubDepartment = address.SubDepartment,
-            AddressLine = address.AddressLine,
+            AddressLine = address.AddressLine?.ToList(),
             StreetName = address.StreetName,
             BuildingNumber = address.BuildingNumber,
             BuildingName = null, // not in v3

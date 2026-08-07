@@ -536,7 +536,7 @@ public class DomesticVrpConsentSubtest(
             {
                 Data = new VariableRecurringPaymentsModelsPublic.Data2
                 {
-                    ReadRefundAccount = VariableRecurringPaymentsModelsPublic.Data2ReadRefundAccount.Yes,
+                    ReadRefundAccount = VariableRecurringPaymentsModelsPublic.OBReadRefundAccountParam.Yes,
                     ControlParameters =
                         new VariableRecurringPaymentsModelsPublic.OBDomesticVRPControlParameters
                         {
@@ -548,11 +548,11 @@ public class DomesticVrpConsentSubtest(
                                 },
                             PeriodicLimits =
                             [
-                                new VariableRecurringPaymentsModelsPublic.PeriodicLimits
+                                new VariableRecurringPaymentsModelsPublic.OBDomesticVRPPeriodicLimits
                                 {
-                                    PeriodType = VariableRecurringPaymentsModelsPublic.PeriodicLimitsPeriodType.Month,
+                                    PeriodType = VariableRecurringPaymentsModelsPublic.OBPeriodType1Code.Month,
                                     PeriodAlignment =
-                                        VariableRecurringPaymentsModelsPublic.PeriodicLimitsPeriodAlignment.Consent,
+                                        VariableRecurringPaymentsModelsPublic.OBPeriodAlignment1Code.Consent,
                                     Amount = "50.00",
                                     Currency = "GBP"
                                 }
