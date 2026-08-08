@@ -28,7 +28,7 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
         _tokenEndpointAuthMethod = tokenEndpointAuthMethod;
     }
 
-    public async Task<(TResponse response, string? xFapiInteractionId)> PostAsync<TResponse>(
+    public async Task<(TResponse response, ExternalApiResponseHeaders responseHeaders)> PostAsync<TResponse>(
         Uri uri,
         IEnumerable<HttpHeader>? extraHeaders,
         TRequest request,
@@ -74,7 +74,7 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
         var contentType = "application/x-www-form-urlencoded";
 
         // Send request
-        (TResponse response, string? xFapiInteractionId) = await new HttpRequestBuilder()
+        (TResponse response, ExternalApiResponseHeaders responseHeaders) = await new HttpRequestBuilder()
             .SetMethod(HttpMethod.Post)
             .SetUri(uri)
             .SetHeaders(headers)
@@ -85,6 +85,6 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
                 responseJsonSerializerSettings,
                 false);
 
-        return (response, xFapiInteractionId);
+        return (response, responseHeaders);
     }
 }

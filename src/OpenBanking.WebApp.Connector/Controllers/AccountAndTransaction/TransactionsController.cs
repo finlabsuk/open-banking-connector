@@ -40,6 +40,10 @@ public class TransactionsController : ControllerBase
     ///     Transaction/BookingDateTime field
     /// </param>
     /// <param name="xFapiCustomerIpAddress"></param>
+    /// <param name="xClientId">
+    ///     Passed through to the bank. Only needed if the bank requires a client ID to return OB
+    ///     v4.0.1 rate-limit headers.
+    /// </param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
     [Route("aisp/transactions")]
@@ -57,7 +61,9 @@ public class TransactionsController : ControllerBase
         [FromQuery]
         string? toBookingDateTime,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
-        string? xFapiCustomerIpAddress)
+        string? xFapiCustomerIpAddress,
+        [FromHeader(Name = "x-client-id")]
+        string? xClientId)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
@@ -71,15 +77,16 @@ public class TransactionsController : ControllerBase
         }
 
         // Determine extra headers
-        IEnumerable<HttpHeader>? extraHeaders;
+        var extraHeadersList = new List<HttpHeader>();
         if (xFapiCustomerIpAddress is not null)
         {
-            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+            extraHeadersList.Add(new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress));
         }
-        else
+        if (xClientId is not null)
         {
-            extraHeaders = null;
+            extraHeadersList.Add(new HttpHeader("x-client-id", xClientId));
         }
+        IEnumerable<HttpHeader>? extraHeaders = extraHeadersList.Count > 0 ? extraHeadersList : null;
 
         // Operation
         TransactionsResponse fluentResponse = await _requestBuilder

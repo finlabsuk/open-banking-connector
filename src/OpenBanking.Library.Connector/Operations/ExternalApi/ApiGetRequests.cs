@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 
 internal class
     ApiGetRequests<TApiResponse, TVariantApiResponse> :
-        IApiGetRequests<TApiResponse>
+    IApiGetRequests<TApiResponse>
     where TApiResponse : class, ISupportsValidation
     where TVariantApiResponse : class
 {
@@ -27,7 +27,8 @@ internal class
     }
 
     public async
-        Task<(TApiResponse response, string? xFapiInteractionId, IList<IFluentResponseInfoOrWarningMessage>
+        Task<(TApiResponse response, ExternalApiResponseHeaders responseHeaders,
+            IList<IFluentResponseInfoOrWarningMessage>
             nonErrorMessages)> GetAsync(
             Uri uri,
             IEnumerable<HttpHeader>? extraHeaders,
@@ -39,7 +40,7 @@ internal class
         var nonErrorMessages = new List<IFluentResponseInfoOrWarningMessage>();
 
         // Process request
-        (TVariantApiResponse variantResponse, string? xFapiInteractionId) =
+        (TVariantApiResponse variantResponse, ExternalApiResponseHeaders responseHeaders) =
             await _getRequestProcessor.GetAsync<TVariantApiResponse>(
                 uri,
                 tppReportingRequestInfo,
@@ -58,6 +59,6 @@ internal class
         IEnumerable<IFluentResponseInfoOrWarningMessage> responseNonErrorMessages =
             responseValidationResult.ProcessValidationResultsAndRaiseErrors("prefix");
         nonErrorMessages.AddRange(responseNonErrorMessages);
-        return (response, xFapiInteractionId, nonErrorMessages);
+        return (response, responseHeaders, nonErrorMessages);
     }
 }

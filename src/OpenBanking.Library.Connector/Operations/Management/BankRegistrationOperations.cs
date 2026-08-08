@@ -623,7 +623,7 @@ internal class
                 BankProfile = bankProfile.BankProfileEnum
             };
 
-            (externalApiResponse, string? xFapiInteractionId,
+            (externalApiResponse, ExternalApiResponseHeaders responseHeaders,
                     IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.GetAsync(
                     externalApiUrl,
@@ -1076,7 +1076,7 @@ internal class
             BankProfile = bankProfile
         };
 
-        (externalApiResponse, string? xFapiInteractionId,
+        (externalApiResponse, ExternalApiResponseHeaders responseHeaders,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.PostAsync(
                 externalApiUrl,

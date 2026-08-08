@@ -49,7 +49,10 @@ internal record ExternalApiHttpRequestFailure(
     string RequestUrl,
     int ResponseStatusCode,
     object ParsedResponseBody,
-    string? XFapiInteractionId) : ServerError
+    string? XFapiInteractionId,
+    int? RetryAfterSeconds,
+    IReadOnlyList<string>? RateLimitPolicy,
+    IReadOnlyList<string>? RateLimit) : ServerError
 {
     public override ServerErrorType ServerErrorType => ServerErrorType.ExternalApiHttpRequestFailure;
     public override string Title => "External API HTTP request failure";
@@ -59,21 +62,34 @@ internal record ExternalApiHttpRequestFailure(
 
     public override int StatusCode => 502;
 
-    public override IReadOnlyDictionary<string, object?> Extensions { get; } =
-        XFapiInteractionId is null
-            ? new Dictionary<string, object?>
+    public override IReadOnlyDictionary<string, object?> Extensions
+    {
+        get
+        {
+            var extensions = new Dictionary<string, object?>
             {
                 ["requestUrl"] = RequestUrl,
                 ["requestHttpMethod"] = RequestHttpMethod,
                 ["responseStatusCode"] = ResponseStatusCode,
                 ["responseBody"] = ParsedResponseBody
-            }
-            : new Dictionary<string, object?>
-            {
-                ["requestUrl"] = RequestUrl,
-                ["requestHttpMethod"] = RequestHttpMethod,
-                ["responseStatusCode"] = ResponseStatusCode,
-                ["responseBody"] = ParsedResponseBody,
-                ["xFapiInteractionId"] = XFapiInteractionId
             };
+            if (XFapiInteractionId is not null)
+            {
+                extensions["xFapiInteractionId"] = XFapiInteractionId;
+            }
+            if (RetryAfterSeconds is not null)
+            {
+                extensions["retryAfterSeconds"] = RetryAfterSeconds;
+            }
+            if (RateLimitPolicy is not null)
+            {
+                extensions["rateLimitPolicy"] = RateLimitPolicy;
+            }
+            if (RateLimit is not null)
+            {
+                extensions["rateLimit"] = RateLimit;
+            }
+            return extensions;
+        }
+    }
 }

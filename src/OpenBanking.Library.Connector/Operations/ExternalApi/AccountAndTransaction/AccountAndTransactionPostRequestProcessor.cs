@@ -27,7 +27,7 @@ internal class
         _accessToken = accessToken;
     }
 
-    public async Task<(TResponse response, string? xFapiInteractionId)> PostAsync<TResponse>(
+    public async Task<(TResponse response, ExternalApiResponseHeaders responseHeaders)> PostAsync<TResponse>(
         Uri uri,
         IEnumerable<HttpHeader>? extraHeaders,
         TVariantApiRequest request,
@@ -53,7 +53,7 @@ internal class
         }
 
         // Send request
-        (TResponse response, string? xFapiInteractionId) = await new HttpRequestBuilder()
+        (TResponse response, ExternalApiResponseHeaders responseHeaders) = await new HttpRequestBuilder()
             .SetMethod(HttpMethod.Post)
             .SetUri(uri)
             .SetHeaders(headers)
@@ -64,6 +64,6 @@ internal class
                 responseJsonSerializerSettings,
                 true);
 
-        return (response, xFapiInteractionId);
+        return (response, responseHeaders);
     }
 }

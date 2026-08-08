@@ -78,7 +78,7 @@ public class HttpRequestBuilder
         return this;
     }
 
-    public async Task<(T response, string? xFapiInteractionId)> SendExpectingJsonResponseAsync<T>(
+    public async Task<(T response, ExternalApiResponseHeaders responseHeaders)> SendExpectingJsonResponseAsync<T>(
         IApiClient client,
         TppReportingRequestInfo? tppReportingRequestInfo,
         JsonSerializerSettings? jsonSerializerSettings,

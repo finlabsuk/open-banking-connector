@@ -128,7 +128,7 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, A
         };
         JsonSerializerSettings? jsonSerializerSettings = null;
         AccountAndTransactionModelsPublic.OBReadParty3 externalApiResponse;
-        string? xFapiInteractionId;
+        ExternalApiResponseHeaders responseHeaders;
         IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
         switch (accountAndTransactionApi.ApiVersion)
         {
@@ -137,7 +137,7 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, A
                     new ApiGetRequests<AccountAndTransactionModelsV3p1p11.OBReadParty3,
                         AccountAndTransactionModelsV3p1p11.OBReadParty3>(
                         new ApiGetRequestProcessor(bankFinancialId, accessToken));
-                (AccountAndTransactionModelsV3p1p11.OBReadParty3 externalApiResponseV3, xFapiInteractionId,
+                (AccountAndTransactionModelsV3p1p11.OBReadParty3 externalApiResponseV3, responseHeaders,
                         newNonErrorMessages) =
                     await apiRequestsV3.GetAsync(
                         externalApiUrl,
@@ -154,7 +154,7 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, A
                     new ApiGetRequests<AccountAndTransactionModelsPublic.OBReadParty3,
                         AccountAndTransactionModelsPublic.OBReadParty3>(
                         new ApiGetRequestProcessor(bankFinancialId, accessToken));
-                (externalApiResponse, xFapiInteractionId,
+                (externalApiResponse, responseHeaders,
                         newNonErrorMessages) =
                     await apiRequests.GetAsync(
                         externalApiUrl,
@@ -211,7 +211,12 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, A
         var response = new Parties2Response
         {
             ExternalApiResponse = externalApiResponse,
-            ExternalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId }
+            ExternalApiResponseInfo = new ExternalApiResponseInfo
+            {
+                XFapiInteractionId = responseHeaders.XFapiInteractionId,
+                RateLimitPolicy = responseHeaders.RateLimitPolicy,
+                RateLimit = responseHeaders.RateLimit
+            }
         };
 
         return (response, nonErrorMessages);

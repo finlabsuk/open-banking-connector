@@ -184,7 +184,7 @@ internal class
         JsonSerializerSettings? requestJsonSerializerSettings = null;
         JsonSerializerSettings? responseJsonSerializerSettings = null;
         VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse externalApiResponse;
-        string? xFapiInteractionId;
+        ExternalApiResponseHeaders responseHeaders;
         IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
         switch (variableRecurringPaymentsApi.ApiVersion)
         {
@@ -206,7 +206,7 @@ internal class
                             softwareStatement,
                             obSealKey));
                 (VariableRecurringPaymentsModelsV3p1p11.OBVRPFundsConfirmationResponse externalApiResponseV3,
-                        xFapiInteractionId, newNonErrorMessages) =
+                        responseHeaders, newNonErrorMessages) =
                     await apiRequestsV3.PostAsync(
                         externalApiUrl,
                         createParams.ExtraHeaders,
@@ -234,7 +234,7 @@ internal class
                             _instrumentationClient,
                             softwareStatement,
                             obSealKey));
-                (externalApiResponse, xFapiInteractionId, newNonErrorMessages) =
+                (externalApiResponse, responseHeaders, newNonErrorMessages) =
                     await apiRequests.PostAsync(
                         externalApiUrl,
                         createParams.ExtraHeaders,
@@ -250,7 +250,12 @@ internal class
                     $"VRP API version {variableRecurringPaymentsApi.ApiVersion} not supported.");
         }
         nonErrorMessages.AddRange(newNonErrorMessages);
-        var externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
+        var externalApiResponseInfo = new ExternalApiResponseInfo
+        {
+            XFapiInteractionId = responseHeaders.XFapiInteractionId,
+            RateLimitPolicy = responseHeaders.RateLimitPolicy,
+            RateLimit = responseHeaders.RateLimit
+        };
 
         // No link URLs to transform
 
@@ -349,7 +354,7 @@ internal class
             };
             JsonSerializerSettings? requestJsonSerializerSettings = null;
             JsonSerializerSettings? responseJsonSerializerSettings = null;
-            string? xFapiInteractionId;
+            ExternalApiResponseHeaders responseHeaders;
             IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
             switch (variableRecurringPaymentsApi.ApiVersion)
             {
@@ -372,7 +377,7 @@ internal class
                                 softwareStatement,
                                 obSealKey));
                     (VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPConsentResponse externalApiResponseV3,
-                            xFapiInteractionId, newNonErrorMessages) =
+                            responseHeaders, newNonErrorMessages) =
                         await apiRequestsV3.PostAsync(
                             externalApiUrl,
                             createParams.ExtraHeaders,
@@ -401,7 +406,7 @@ internal class
                                 _instrumentationClient,
                                 softwareStatement,
                                 obSealKey));
-                    (externalApiResponse, xFapiInteractionId, newNonErrorMessages) =
+                    (externalApiResponse, responseHeaders, newNonErrorMessages) =
                         await apiRequests.PostAsync(
                             externalApiUrl,
                             createParams.ExtraHeaders,
@@ -417,7 +422,12 @@ internal class
                         $"VRP API version {variableRecurringPaymentsApi.ApiVersion} not supported.");
             }
             nonErrorMessages.AddRange(newNonErrorMessages);
-            externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
+            externalApiResponseInfo = new ExternalApiResponseInfo
+            {
+                XFapiInteractionId = responseHeaders.XFapiInteractionId,
+                RateLimitPolicy = responseHeaders.RateLimitPolicy,
+                RateLimit = responseHeaders.RateLimit
+            };
             externalApiId = externalApiResponse.Data.ConsentId;
             if (!vrpUseV4)
             {
@@ -597,7 +607,7 @@ internal class
                 BankProfile = bankProfile.BankProfileEnum
             };
             JsonSerializerSettings? responseJsonSerializerSettings = null;
-            string? xFapiInteractionId;
+            ExternalApiResponseHeaders responseHeaders;
             IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
             switch (variableRecurringPaymentsApi.ApiVersion)
             {
@@ -607,7 +617,7 @@ internal class
                             VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPConsentResponse>(
                             new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken));
                     (VariableRecurringPaymentsModelsV3p1p11.OBDomesticVRPConsentResponse externalApiResponseV3,
-                            xFapiInteractionId, newNonErrorMessages) =
+                            responseHeaders, newNonErrorMessages) =
                         await apiRequestsV3.GetAsync(
                             externalApiUrl,
                             readParams.ExtraHeaders,
@@ -624,7 +634,7 @@ internal class
                         new ApiGetRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse,
                             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>(
                             new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken));
-                    (externalApiResponse, xFapiInteractionId, newNonErrorMessages) =
+                    (externalApiResponse, responseHeaders, newNonErrorMessages) =
                         await apiRequests.GetAsync(
                             externalApiUrl,
                             readParams.ExtraHeaders,
@@ -638,7 +648,12 @@ internal class
                         $"VRP API version {variableRecurringPaymentsApi.ApiVersion} not supported.");
             }
             nonErrorMessages.AddRange(newNonErrorMessages);
-            externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
+            externalApiResponseInfo = new ExternalApiResponseInfo
+            {
+                XFapiInteractionId = responseHeaders.XFapiInteractionId,
+                RateLimitPolicy = responseHeaders.RateLimitPolicy,
+                RateLimit = responseHeaders.RateLimit
+            };
             if (!vrpUseV4)
             {
                 externalApiResponse.Risk.AdjustAfterReceiveFromBank();
@@ -817,7 +832,7 @@ internal class
         }
         JsonSerializerSettings? requestJsonSerializerSettings = null;
         JsonSerializerSettings? responseJsonSerializerSettings = null;
-        string? xFapiInteractionId;
+        ExternalApiResponseHeaders responseHeaders;
         IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
 
         if (variableRecurringPaymentsApi.ApiVersion is not VariableRecurringPaymentsApiVersion.VersionPublic)
@@ -840,7 +855,7 @@ internal class
                     softwareStatement,
                     obSealKey,
                     true));
-        (VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? externalApiResponse, xFapiInteractionId,
+        (VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? externalApiResponse, responseHeaders,
                 newNonErrorMessages) =
             await apiRequests.PostAsync(
                 externalApiUrl,
@@ -853,7 +868,12 @@ internal class
                 _mapper);
 
         nonErrorMessages.AddRange(newNonErrorMessages);
-        var externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
+        var externalApiResponseInfo = new ExternalApiResponseInfo
+        {
+            XFapiInteractionId = responseHeaders.XFapiInteractionId,
+            RateLimitPolicy = responseHeaders.RateLimitPolicy,
+            RateLimit = responseHeaders.RateLimit
+        };
 
         // Check returned external API ID
         if (externalApiResponse.Data.ConsentId != externalApiConsentId)

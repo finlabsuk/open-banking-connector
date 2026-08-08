@@ -32,6 +32,10 @@ public class DomesticPaymentConsentsController : ControllerBase
     /// </summary>
     /// <param name="request"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
+    /// <param name="xClientId">
+    ///     Passed through to the bank. Only needed if the bank requires a client ID to return OB
+    ///     v4.0.1 rate-limit headers.
+    /// </param>
     /// <returns></returns>
     [HttpPost]
     [Consumes("application/json")]
@@ -41,22 +45,25 @@ public class DomesticPaymentConsentsController : ControllerBase
         [FromBody]
         DomesticPaymentConsentRequest request,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
-        string? xFapiCustomerIpAddress)
+        string? xFapiCustomerIpAddress,
+        [FromHeader(Name = "x-client-id")]
+        string? xClientId)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Determine extra headers
-        IEnumerable<HttpHeader>? extraHeaders;
+        var extraHeadersList = new List<HttpHeader>();
         if (xFapiCustomerIpAddress is not null)
         {
-            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+            extraHeadersList.Add(new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress));
         }
-        else
+        if (xClientId is not null)
         {
-            extraHeaders = null;
+            extraHeadersList.Add(new HttpHeader("x-client-id", xClientId));
         }
+        IEnumerable<HttpHeader>? extraHeaders = extraHeadersList.Count > 0 ? extraHeadersList : null;
 
         DomesticPaymentConsentCreateResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
@@ -75,6 +82,10 @@ public class DomesticPaymentConsentsController : ControllerBase
     /// <param name="domesticPaymentConsentId">ID of DomesticPaymentConsent</param>
     /// <param name="excludeExternalApiOperation"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
+    /// <param name="xClientId">
+    ///     Passed through to the bank. Only needed if the bank requires a client ID to return OB
+    ///     v4.0.1 rate-limit headers.
+    /// </param>
     /// <returns></returns>
     [HttpGet("{domesticPaymentConsentId:guid}")]
     [ActionName(nameof(GetAsync))]
@@ -85,22 +96,25 @@ public class DomesticPaymentConsentsController : ControllerBase
         [FromHeader(Name = "x-obc-exclude-external-api-operation")]
         bool? excludeExternalApiOperation,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
-        string? xFapiCustomerIpAddress)
+        string? xFapiCustomerIpAddress,
+        [FromHeader(Name = "x-client-id")]
+        string? xClientId)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Determine extra headers
-        IEnumerable<HttpHeader>? extraHeaders;
+        var extraHeadersList = new List<HttpHeader>();
         if (xFapiCustomerIpAddress is not null)
         {
-            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+            extraHeadersList.Add(new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress));
         }
-        else
+        if (xClientId is not null)
         {
-            extraHeaders = null;
+            extraHeadersList.Add(new HttpHeader("x-client-id", xClientId));
         }
+        IEnumerable<HttpHeader>? extraHeaders = extraHeadersList.Count > 0 ? extraHeadersList : null;
 
         // Operation
         DomesticPaymentConsentCreateResponse fluentResponse = await _requestBuilder
@@ -124,6 +138,10 @@ public class DomesticPaymentConsentsController : ControllerBase
     /// </summary>
     /// <param name="domesticPaymentConsentId">ID of DomesticPaymentConsent</param>
     /// <param name="xFapiCustomerIpAddress"></param>
+    /// <param name="xClientId">
+    ///     Passed through to the bank. Only needed if the bank requires a client ID to return OB
+    ///     v4.0.1 rate-limit headers.
+    /// </param>
     /// <returns></returns>
     [HttpGet("{domesticPaymentConsentId:guid}/funds-confirmation")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -131,22 +149,25 @@ public class DomesticPaymentConsentsController : ControllerBase
         DomesticPaymentConsentFundsConfirmationResponse>> GetFundsConfirmationAsync(
         Guid domesticPaymentConsentId,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
-        string? xFapiCustomerIpAddress)
+        string? xFapiCustomerIpAddress,
+        [FromHeader(Name = "x-client-id")]
+        string? xClientId)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Determine extra headers
-        IEnumerable<HttpHeader>? extraHeaders;
+        var extraHeadersList = new List<HttpHeader>();
         if (xFapiCustomerIpAddress is not null)
         {
-            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+            extraHeadersList.Add(new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress));
         }
-        else
+        if (xClientId is not null)
         {
-            extraHeaders = null;
+            extraHeadersList.Add(new HttpHeader("x-client-id", xClientId));
         }
+        IEnumerable<HttpHeader>? extraHeaders = extraHeadersList.Count > 0 ? extraHeadersList : null;
 
         // Operation
         DomesticPaymentConsentFundsConfirmationResponse fluentResponse = await _requestBuilder

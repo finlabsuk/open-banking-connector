@@ -31,6 +31,10 @@ public class DomesticPaymentsController : ControllerBase
     /// </summary>
     /// <param name="request"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
+    /// <param name="xClientId">
+    ///     Passed through to the bank. Only needed if the bank requires a client ID to return OB
+    ///     v4.0.1 rate-limit headers.
+    /// </param>
     /// <returns></returns>
     [HttpPost]
     [Consumes("application/json")]
@@ -39,22 +43,25 @@ public class DomesticPaymentsController : ControllerBase
         [FromBody]
         DomesticPaymentRequest request,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
-        string? xFapiCustomerIpAddress)
+        string? xFapiCustomerIpAddress,
+        [FromHeader(Name = "x-client-id")]
+        string? xClientId)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Determine extra headers
-        IEnumerable<HttpHeader>? extraHeaders;
+        var extraHeadersList = new List<HttpHeader>();
         if (xFapiCustomerIpAddress is not null)
         {
-            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+            extraHeadersList.Add(new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress));
         }
-        else
+        if (xClientId is not null)
         {
-            extraHeaders = null;
+            extraHeadersList.Add(new HttpHeader("x-client-id", xClientId));
         }
+        IEnumerable<HttpHeader>? extraHeaders = extraHeadersList.Count > 0 ? extraHeadersList : null;
 
         DomesticPaymentResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
@@ -81,6 +88,10 @@ public class DomesticPaymentsController : ControllerBase
     /// <param name="bankRegistrationId"></param>
     /// <param name="useV4ExternalApi"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
+    /// <param name="xClientId">
+    ///     Passed through to the bank. Only needed if the bank requires a client ID to return OB
+    ///     v4.0.1 rate-limit headers.
+    /// </param>
     /// <returns></returns>
     [HttpGet("{externalApiId}")]
     [ActionName(nameof(GetAsync))]
@@ -92,7 +103,9 @@ public class DomesticPaymentsController : ControllerBase
         [FromHeader(Name = "x-obc-use-v4-external-api")]
         bool? useV4ExternalApi,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
-        string? xFapiCustomerIpAddress)
+        string? xFapiCustomerIpAddress,
+        [FromHeader(Name = "x-client-id")]
+        string? xClientId)
     {
         if (bankRegistrationId == Guid.Empty)
         {
@@ -105,15 +118,16 @@ public class DomesticPaymentsController : ControllerBase
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Determine extra headers
-        IEnumerable<HttpHeader>? extraHeaders;
+        var extraHeadersList = new List<HttpHeader>();
         if (xFapiCustomerIpAddress is not null)
         {
-            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+            extraHeadersList.Add(new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress));
         }
-        else
+        if (xClientId is not null)
         {
-            extraHeaders = null;
+            extraHeadersList.Add(new HttpHeader("x-client-id", xClientId));
         }
+        IEnumerable<HttpHeader>? extraHeaders = extraHeadersList.Count > 0 ? extraHeadersList : null;
 
         // Operation
         DomesticPaymentResponse fluentResponse = await _requestBuilder
@@ -139,6 +153,10 @@ public class DomesticPaymentsController : ControllerBase
     /// <param name="bankRegistrationId"></param>
     /// <param name="useV4ExternalApi"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
+    /// <param name="xClientId">
+    ///     Passed through to the bank. Only needed if the bank requires a client ID to return OB
+    ///     v4.0.1 rate-limit headers.
+    /// </param>
     /// <returns></returns>
     [HttpGet("{externalApiId}/payment-details")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -149,7 +167,9 @@ public class DomesticPaymentsController : ControllerBase
         [FromHeader(Name = "x-obc-use-v4-external-api")]
         bool? useV4ExternalApi,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
-        string? xFapiCustomerIpAddress)
+        string? xFapiCustomerIpAddress,
+        [FromHeader(Name = "x-client-id")]
+        string? xClientId)
     {
         if (bankRegistrationId == Guid.Empty)
         {
@@ -162,15 +182,16 @@ public class DomesticPaymentsController : ControllerBase
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Determine extra headers
-        IEnumerable<HttpHeader>? extraHeaders;
+        var extraHeadersList = new List<HttpHeader>();
         if (xFapiCustomerIpAddress is not null)
         {
-            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+            extraHeadersList.Add(new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress));
         }
-        else
+        if (xClientId is not null)
         {
-            extraHeaders = null;
+            extraHeadersList.Add(new HttpHeader("x-client-id", xClientId));
         }
+        IEnumerable<HttpHeader>? extraHeaders = extraHeadersList.Count > 0 ? extraHeadersList : null;
 
         // Operation
         DomesticPaymentPaymentDetailsResponse fluentResponse = await _requestBuilder

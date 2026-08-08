@@ -10,7 +10,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 
 internal interface IGetRequestProcessor
 {
-    public Task<(TResponse response, string? xFapiInteractionId)> GetAsync<TResponse>(
+    public Task<(TResponse response, ExternalApiResponseHeaders responseHeaders)> GetAsync<TResponse>(
         Uri uri,
         TppReportingRequestInfo? tppReportingRequestInfo,
         JsonSerializerSettings? jsonSerializerSettings,

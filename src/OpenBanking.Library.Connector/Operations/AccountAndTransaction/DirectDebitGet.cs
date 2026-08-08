@@ -147,7 +147,7 @@ internal class
 #pragma warning restore SYSLIB0050
         }
         AccountAndTransactionModelsPublic.OBReadDirectDebit2 externalApiResponse;
-        string? xFapiInteractionId;
+        ExternalApiResponseHeaders responseHeaders;
         IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
         switch (accountAndTransactionApi.ApiVersion)
         {
@@ -157,7 +157,7 @@ internal class
                     new ApiGetRequests<AccountAndTransactionModelsV3p1p11.OBReadDirectDebit2,
                         AccountAndTransactionModelsV3p1p11.OBReadDirectDebit2>(
                         new ApiGetRequestProcessor(bankFinancialId, accessToken));
-                (AccountAndTransactionModelsV3p1p11.OBReadDirectDebit2 externalApiResponseV3, xFapiInteractionId,
+                (AccountAndTransactionModelsV3p1p11.OBReadDirectDebit2 externalApiResponseV3, responseHeaders,
                         newNonErrorMessages) =
                     await apiRequestsV3.GetAsync(
                         externalApiUrl,
@@ -174,7 +174,7 @@ internal class
                     new ApiGetRequests<AccountAndTransactionModelsPublic.OBReadDirectDebit2,
                         AccountAndTransactionModelsPublic.OBReadDirectDebit2>(
                         new ApiGetRequestProcessor(bankFinancialId, accessToken));
-                (externalApiResponse, xFapiInteractionId,
+                (externalApiResponse, responseHeaders,
                         newNonErrorMessages) =
                     await apiRequests.GetAsync(
                         externalApiUrl,
@@ -230,7 +230,12 @@ internal class
         var response = new DirectDebitsResponse
         {
             ExternalApiResponse = externalApiResponse,
-            ExternalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId }
+            ExternalApiResponseInfo = new ExternalApiResponseInfo
+            {
+                XFapiInteractionId = responseHeaders.XFapiInteractionId,
+                RateLimitPolicy = responseHeaders.RateLimitPolicy,
+                RateLimit = responseHeaders.RateLimit
+            }
         };
 
         return (response, nonErrorMessages);

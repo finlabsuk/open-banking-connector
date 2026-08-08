@@ -31,6 +31,10 @@ public class AccountsController : ControllerBase
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
     /// <param name="xFapiCustomerIpAddress"></param>
+    /// <param name="xClientId">
+    ///     Passed through to the bank. Only needed if the bank requires a client ID to return OB
+    ///     v4.0.1 rate-limit headers.
+    /// </param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
     [Route("aisp/accounts")]
@@ -42,7 +46,9 @@ public class AccountsController : ControllerBase
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
         Guid accountAccessConsentId,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
-        string? xFapiCustomerIpAddress)
+        string? xFapiCustomerIpAddress,
+        [FromHeader(Name = "x-client-id")]
+        string? xClientId)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
@@ -56,15 +62,16 @@ public class AccountsController : ControllerBase
         }
 
         // Determine extra headers
-        IEnumerable<HttpHeader>? extraHeaders;
+        var extraHeadersList = new List<HttpHeader>();
         if (xFapiCustomerIpAddress is not null)
         {
-            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+            extraHeadersList.Add(new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress));
         }
-        else
+        if (xClientId is not null)
         {
-            extraHeaders = null;
+            extraHeadersList.Add(new HttpHeader("x-client-id", xClientId));
         }
+        IEnumerable<HttpHeader>? extraHeaders = extraHeadersList.Count > 0 ? extraHeadersList : null;
 
         // Operation
         AccountsResponse fluentResponse = await _requestBuilder

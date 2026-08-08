@@ -246,7 +246,7 @@ internal class
                 : "GET {AispBaseUrl}/accounts/{AccountId}/pots",
             BankProfile = bankProfile.BankProfileEnum
         };
-        (ReadMonzoPot externalApiResponse, string? xFapiInteractionId,
+        (ReadMonzoPot externalApiResponse, ExternalApiResponseHeaders responseHeaders,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 externalApiUrl,
@@ -294,7 +294,12 @@ internal class
         var response = new MonzoPotsResponse
         {
             ExternalApiResponse = externalApiResponse,
-            ExternalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId }
+            ExternalApiResponseInfo = new ExternalApiResponseInfo
+            {
+                XFapiInteractionId = responseHeaders.XFapiInteractionId,
+                RateLimitPolicy = responseHeaders.RateLimitPolicy,
+                RateLimit = responseHeaders.RateLimit
+            }
         };
 
         return (response, nonErrorMessages);

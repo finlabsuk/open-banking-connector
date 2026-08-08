@@ -151,7 +151,7 @@ internal class
             };
             JsonSerializerSettings? requestJsonSerializerSettings = null;
             JsonSerializerSettings? responseJsonSerializerSettings = null;
-            string? xFapiInteractionId;
+            ExternalApiResponseHeaders responseHeaders;
             IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
             switch (accountAndTransactionApi.ApiVersion)
             {
@@ -170,7 +170,7 @@ internal class
                                 ccGrantAccessToken,
                                 _instrumentationClient));
                     (AccountAndTransactionModelsV3p1p11.OBReadConsentResponse1 externalApiResponseV3,
-                            xFapiInteractionId,
+                            responseHeaders,
                             newNonErrorMessages) =
                         await apiRequestsV3.PostAsync(
                             externalApiUrl,
@@ -196,7 +196,7 @@ internal class
                                 bankFinancialId,
                                 ccGrantAccessToken,
                                 _instrumentationClient));
-                    (externalApiResponse, xFapiInteractionId,
+                    (externalApiResponse, responseHeaders,
                             newNonErrorMessages) =
                         await apiRequests.PostAsync(
                             externalApiUrl,
@@ -214,7 +214,12 @@ internal class
             }
 
             nonErrorMessages.AddRange(newNonErrorMessages);
-            externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
+            externalApiResponseInfo = new ExternalApiResponseInfo
+            {
+                XFapiInteractionId = responseHeaders.XFapiInteractionId,
+                RateLimitPolicy = responseHeaders.RateLimitPolicy,
+                RateLimit = responseHeaders.RateLimit
+            };
             externalApiId = externalApiResponse.Data.ConsentId;
 
             // Transform links
@@ -390,7 +395,7 @@ internal class
             };
             JsonSerializerSettings? responseJsonSerializerSettings = null;
 
-            string? xFapiInteractionId;
+            ExternalApiResponseHeaders responseHeaders;
             IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
             switch (accountAndTransactionApi.ApiVersion)
             {
@@ -407,7 +412,7 @@ internal class
                                 ccGrantAccessToken,
                                 _instrumentationClient));
                     (AccountAndTransactionModelsV3p1p11.OBReadConsentResponse1 externalApiResponseV3,
-                            xFapiInteractionId,
+                            responseHeaders,
                             newNonErrorMessages) =
                         await apiRequestsV3.GetAsync(
                             externalApiUrl,
@@ -431,7 +436,7 @@ internal class
                                 bankFinancialId,
                                 ccGrantAccessToken,
                                 _instrumentationClient));
-                    (externalApiResponse, xFapiInteractionId,
+                    (externalApiResponse, responseHeaders,
                             newNonErrorMessages) =
                         await apiRequests.GetAsync(
                             externalApiUrl,
@@ -447,7 +452,12 @@ internal class
             }
 
             nonErrorMessages.AddRange(newNonErrorMessages);
-            externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
+            externalApiResponseInfo = new ExternalApiResponseInfo
+            {
+                XFapiInteractionId = responseHeaders.XFapiInteractionId,
+                RateLimitPolicy = responseHeaders.RateLimitPolicy,
+                RateLimit = responseHeaders.RateLimit
+            };
 
             // Transform links 
             if (externalApiResponse.Links is not null)

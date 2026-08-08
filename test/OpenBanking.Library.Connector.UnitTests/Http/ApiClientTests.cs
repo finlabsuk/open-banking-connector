@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -111,7 +112,7 @@ public class ApiClientTests
             var api = new ApiClient(
                 Substitute.For<IInstrumentationClient>(),
                 http);
-            (SerialisedEntity result, string? xFapiInteractionId) =
+            (SerialisedEntity result, ExternalApiResponseHeaders responseHeaders) =
                 await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
                     req,
                     "",
@@ -121,6 +122,250 @@ public class ApiClientTests
 
             Assert.Equal(entity.Message, result.Message);
         }
+    }
+
+    [Theory]
+    [InlineData("https://a5b2a8a9-1220-4aa4-aa83-0036a7bd1e69.com/stuff")]
+    public async Task ApiClient_RequestJsonAsync_Success_NoRateLimitHeaders_ReturnsNull(string url)
+    {
+        HttpRequestMessage req = new HttpRequestBuilder()
+            .SetMethod(HttpMethod.Get)
+            .SetUri(url)
+            .CreateHttpRequestMessage();
+
+        var entity = new SerialisedEntity { Message = "test message" };
+        string content = JsonConvert.SerializeObject(entity);
+
+        var mockHttp = new MockHttpMessageHandler();
+        mockHttp.When(HttpMethod.Get, url).Respond("application/json", content);
+
+        using var http = mockHttp.ToHttpClient();
+        var api = new ApiClient(
+            Substitute.For<IInstrumentationClient>(),
+            http);
+
+        (SerialisedEntity _, ExternalApiResponseHeaders responseHeaders) =
+            await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
+                req,
+                "",
+                null,
+                null,
+                true);
+
+        Assert.Null(responseHeaders.XFapiInteractionId);
+        Assert.Null(responseHeaders.RateLimitPolicy);
+        Assert.Null(responseHeaders.RateLimit);
+    }
+
+    [Theory]
+    [InlineData("https://a5b2a8a9-1220-4aa4-aa83-0036a7bd1e69.com/stuff")]
+    public async Task ApiClient_RequestJsonAsync_Success_CapturesRateLimitHeaders(string url)
+    {
+        HttpRequestMessage req = new HttpRequestBuilder()
+            .SetMethod(HttpMethod.Get)
+            .SetUri(url)
+            .CreateHttpRequestMessage();
+
+        var entity = new SerialisedEntity { Message = "test message" };
+        string content = JsonConvert.SerializeObject(entity);
+
+        var mockHttp = new MockHttpMessageHandler();
+        mockHttp.When(HttpMethod.Get, url).Respond(
+            _ =>
+            {
+                var response = new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(content, Encoding.UTF8, "application/json")
+                };
+                response.Headers.Add("x-fapi-interaction-id", "2b68f7eb-a4ff-439e-ad74-be529df0cd69");
+                response.Headers.Add("RateLimit-Policy", "\"tier1\";q=481;w=5");
+                response.Headers.Add("RateLimit", "\"tier1\";r=49;t=36");
+                return response;
+            });
+
+        using var http = mockHttp.ToHttpClient();
+        var api = new ApiClient(
+            Substitute.For<IInstrumentationClient>(),
+            http);
+
+        (SerialisedEntity result, ExternalApiResponseHeaders responseHeaders) =
+            await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
+                req,
+                "",
+                null,
+                null,
+                true);
+
+        Assert.Equal(entity.Message, result.Message);
+        Assert.Equal("2b68f7eb-a4ff-439e-ad74-be529df0cd69", responseHeaders.XFapiInteractionId);
+        Assert.Equal(["\"tier1\";q=481;w=5"], responseHeaders.RateLimitPolicy);
+        Assert.Equal(["\"tier1\";r=49;t=36"], responseHeaders.RateLimit);
+    }
+
+    [Theory]
+    [InlineData("https://a5b2a8a9-1220-4aa4-aa83-0036a7bd1e69.com/stuff")]
+    public async Task ApiClient_RequestJsonAsync_Success_MultipleRateLimitPolicies_CapturesAll(string url)
+    {
+        HttpRequestMessage req = new HttpRequestBuilder()
+            .SetMethod(HttpMethod.Get)
+            .SetUri(url)
+            .CreateHttpRequestMessage();
+
+        var entity = new SerialisedEntity { Message = "test message" };
+        string content = JsonConvert.SerializeObject(entity);
+
+        var mockHttp = new MockHttpMessageHandler();
+        mockHttp.When(HttpMethod.Get, url).Respond(
+            _ =>
+            {
+                var response = new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(content, Encoding.UTF8, "application/json")
+                };
+                // An ASPSP may enforce more than one quota policy at once (e.g. burst + sustained),
+                // reported as repeated header instances.
+                response.Headers.Add("RateLimit-Policy", "\"platinum\";q=400;w=30");
+                response.Headers.Add("RateLimit-Policy", "\"overflow\";q=10;w=1");
+                return response;
+            });
+
+        using var http = mockHttp.ToHttpClient();
+        var api = new ApiClient(
+            Substitute.For<IInstrumentationClient>(),
+            http);
+
+        (SerialisedEntity _, ExternalApiResponseHeaders responseHeaders) =
+            await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
+                req,
+                "",
+                null,
+                null,
+                true);
+
+        Assert.Equal(
+            ["\"platinum\";q=400;w=30", "\"overflow\";q=10;w=1"],
+            responseHeaders.RateLimitPolicy);
+    }
+
+    [Theory]
+    [InlineData("https://a5b2a8a9-1220-4aa4-aa83-0036a7bd1e69.com/stuff", 67, false)]
+    [InlineData("https://a5b2a8a9-1220-4aa4-aa83-0036a7bd1e69.com/stuff", 120, true)]
+    public async Task ApiClient_RequestJsonAsync_Failure_CapturesRetryAfterHeader(
+        string url,
+        int expectedSeconds,
+        bool useDateFormat)
+    {
+        HttpRequestMessage req = new HttpRequestBuilder()
+            .SetMethod(HttpMethod.Get)
+            .SetUri(url)
+            .CreateHttpRequestMessage();
+
+        var mockHttp = new MockHttpMessageHandler();
+        mockHttp.When(HttpMethod.Get, url).Respond(
+            _ =>
+            {
+                var response = new HttpResponseMessage(HttpStatusCode.TooManyRequests)
+                {
+                    Content = new StringContent("{}", Encoding.UTF8, "application/json")
+                };
+                response.Headers.RetryAfter = useDateFormat
+                    ? new RetryConditionHeaderValue(DateTimeOffset.UtcNow.AddSeconds(expectedSeconds))
+                    : new RetryConditionHeaderValue(TimeSpan.FromSeconds(expectedSeconds));
+                return response;
+            });
+
+        using var http = mockHttp.ToHttpClient();
+        var api = new ApiClient(
+            Substitute.For<IInstrumentationClient>(),
+            http);
+
+        Func<Task> a = async () =>
+            await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
+                req,
+                "",
+                null,
+                null,
+                true);
+
+        var exception = await Assert.ThrowsAsync<HttpResponseException>(a);
+        var failure = Assert.IsType<ExternalApiHttpRequestFailure>(exception.ServerError);
+        Assert.NotNull(failure.RetryAfterSeconds);
+        Assert.InRange(failure.RetryAfterSeconds.Value, expectedSeconds - 2, expectedSeconds + 2);
+    }
+
+    [Theory]
+    [InlineData("https://a5b2a8a9-1220-4aa4-aa83-0036a7bd1e69.com/stuff")]
+    public async Task ApiClient_RequestJsonAsync_Failure_CapturesRateLimitHeaders(string url)
+    {
+        HttpRequestMessage req = new HttpRequestBuilder()
+            .SetMethod(HttpMethod.Get)
+            .SetUri(url)
+            .CreateHttpRequestMessage();
+
+        var mockHttp = new MockHttpMessageHandler();
+        mockHttp.When(HttpMethod.Get, url).Respond(
+            _ =>
+            {
+                var response = new HttpResponseMessage(HttpStatusCode.TooManyRequests)
+                {
+                    Content = new StringContent("{}", Encoding.UTF8, "application/json")
+                };
+                response.Headers.Add("RateLimit-Policy", "\"tier1\";q=481;w=5");
+                response.Headers.Add("RateLimit", "\"tier1\";r=0;t=5");
+                return response;
+            });
+
+        using var http = mockHttp.ToHttpClient();
+        var api = new ApiClient(
+            Substitute.For<IInstrumentationClient>(),
+            http);
+
+        Func<Task> a = async () =>
+            await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
+                req,
+                "",
+                null,
+                null,
+                true);
+
+        var exception = await Assert.ThrowsAsync<HttpResponseException>(a);
+        var failure = Assert.IsType<ExternalApiHttpRequestFailure>(exception.ServerError);
+        Assert.Equal(["\"tier1\";q=481;w=5"], failure.RateLimitPolicy);
+        Assert.Equal(["\"tier1\";r=0;t=5"], failure.RateLimit);
+    }
+
+    [Theory]
+    [InlineData("https://a5b2a8a9-1220-4aa4-aa83-0036a7bd1e69.com/stuff")]
+    public async Task ApiClient_RequestJsonAsync_Failure_NoRetryAfterHeader_RetryAfterSecondsIsNull(string url)
+    {
+        HttpRequestMessage req = new HttpRequestBuilder()
+            .SetMethod(HttpMethod.Get)
+            .SetUri(url)
+            .CreateHttpRequestMessage();
+
+        var mockHttp = new MockHttpMessageHandler();
+        mockHttp.When(HttpMethod.Get, url).Respond(
+            _ => new HttpResponseMessage(HttpStatusCode.TooManyRequests)
+            {
+                Content = new StringContent("{}", Encoding.UTF8, "application/json")
+            });
+
+        using var http = mockHttp.ToHttpClient();
+        var api = new ApiClient(
+            Substitute.For<IInstrumentationClient>(),
+            http);
+
+        Func<Task> a = async () =>
+            await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
+                req,
+                "",
+                null,
+                null,
+                true);
+
+        var exception = await Assert.ThrowsAsync<HttpResponseException>(a);
+        var failure = Assert.IsType<ExternalApiHttpRequestFailure>(exception.ServerError);
+        Assert.Null(failure.RetryAfterSeconds);
     }
 
     [Theory]

@@ -32,6 +32,10 @@ public class DomesticVrpConsentsController : ControllerBase
     /// </summary>
     /// <param name="request"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
+    /// <param name="xClientId">
+    ///     Passed through to the bank. Only needed if the bank requires a client ID to return OB
+    ///     v4.0.1 rate-limit headers.
+    /// </param>
     /// <returns></returns>
     [HttpPost]
     [Consumes("application/json")]
@@ -40,22 +44,25 @@ public class DomesticVrpConsentsController : ControllerBase
         [FromBody]
         DomesticVrpConsentRequest request,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
-        string? xFapiCustomerIpAddress)
+        string? xFapiCustomerIpAddress,
+        [FromHeader(Name = "x-client-id")]
+        string? xClientId)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Determine extra headers
-        IEnumerable<HttpHeader>? extraHeaders;
+        var extraHeadersList = new List<HttpHeader>();
         if (xFapiCustomerIpAddress is not null)
         {
-            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+            extraHeadersList.Add(new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress));
         }
-        else
+        if (xClientId is not null)
         {
-            extraHeaders = null;
+            extraHeadersList.Add(new HttpHeader("x-client-id", xClientId));
         }
+        IEnumerable<HttpHeader>? extraHeaders = extraHeadersList.Count > 0 ? extraHeadersList : null;
 
         DomesticVrpConsentCreateResponse fluentResponse = await _requestBuilder
             .VariableRecurringPayments
@@ -74,6 +81,10 @@ public class DomesticVrpConsentsController : ControllerBase
     /// <param name="domesticVrpConsentId"></param>
     /// <param name="request"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
+    /// <param name="xClientId">
+    ///     Passed through to the bank. Only needed if the bank requires a client ID to return OB
+    ///     v4.0.1 rate-limit headers.
+    /// </param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
     [HttpPut("{domesticVrpConsentId:guid}")]
@@ -84,22 +95,25 @@ public class DomesticVrpConsentsController : ControllerBase
         [FromBody]
         DomesticVrpConsentRequest request,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
-        string? xFapiCustomerIpAddress)
+        string? xFapiCustomerIpAddress,
+        [FromHeader(Name = "x-client-id")]
+        string? xClientId)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Determine extra headers
-        IEnumerable<HttpHeader>? extraHeaders;
+        var extraHeadersList = new List<HttpHeader>();
         if (xFapiCustomerIpAddress is not null)
         {
-            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+            extraHeadersList.Add(new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress));
         }
-        else
+        if (xClientId is not null)
         {
-            extraHeaders = null;
+            extraHeadersList.Add(new HttpHeader("x-client-id", xClientId));
         }
+        IEnumerable<HttpHeader>? extraHeaders = extraHeadersList.Count > 0 ? extraHeadersList : null;
 
         DomesticVrpConsentCreateResponse fluentResponse = await _requestBuilder
             .VariableRecurringPayments
@@ -123,6 +137,10 @@ public class DomesticVrpConsentsController : ControllerBase
     /// <param name="domesticVrpConsentId">ID of DomesticVrpConsent</param>
     /// <param name="excludeExternalApiOperation"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
+    /// <param name="xClientId">
+    ///     Passed through to the bank. Only needed if the bank requires a client ID to return OB
+    ///     v4.0.1 rate-limit headers.
+    /// </param>
     /// <returns></returns>
     [HttpGet("{domesticVrpConsentId:guid}")]
     [ActionName(nameof(GetAsync))]
@@ -132,22 +150,25 @@ public class DomesticVrpConsentsController : ControllerBase
         [FromHeader(Name = "x-obc-exclude-external-api-operation")]
         bool? excludeExternalApiOperation,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
-        string? xFapiCustomerIpAddress)
+        string? xFapiCustomerIpAddress,
+        [FromHeader(Name = "x-client-id")]
+        string? xClientId)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Determine extra headers
-        IEnumerable<HttpHeader>? extraHeaders;
+        var extraHeadersList = new List<HttpHeader>();
         if (xFapiCustomerIpAddress is not null)
         {
-            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+            extraHeadersList.Add(new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress));
         }
-        else
+        if (xClientId is not null)
         {
-            extraHeaders = null;
+            extraHeadersList.Add(new HttpHeader("x-client-id", xClientId));
         }
+        IEnumerable<HttpHeader>? extraHeaders = extraHeadersList.Count > 0 ? extraHeadersList : null;
 
         // Operation
         DomesticVrpConsentCreateResponse fluentResponse = await _requestBuilder
@@ -172,6 +193,10 @@ public class DomesticVrpConsentsController : ControllerBase
     /// <param name="request"></param>
     /// <param name="domesticVrpConsentId">ID of DomesticVrpConsent</param>
     /// <param name="xFapiCustomerIpAddress"></param>
+    /// <param name="xClientId">
+    ///     Passed through to the bank. Only needed if the bank requires a client ID to return OB
+    ///     v4.0.1 rate-limit headers.
+    /// </param>
     /// <returns></returns>
     [HttpPost("{domesticVrpConsentId:guid}/funds-confirmation")]
     [Consumes("application/json")]
@@ -181,22 +206,25 @@ public class DomesticVrpConsentsController : ControllerBase
         DomesticVrpConsentFundsConfirmationRequest request,
         Guid domesticVrpConsentId,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
-        string? xFapiCustomerIpAddress)
+        string? xFapiCustomerIpAddress,
+        [FromHeader(Name = "x-client-id")]
+        string? xClientId)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Determine extra headers
-        IEnumerable<HttpHeader>? extraHeaders;
+        var extraHeadersList = new List<HttpHeader>();
         if (xFapiCustomerIpAddress is not null)
         {
-            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+            extraHeadersList.Add(new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress));
         }
-        else
+        if (xClientId is not null)
         {
-            extraHeaders = null;
+            extraHeadersList.Add(new HttpHeader("x-client-id", xClientId));
         }
+        IEnumerable<HttpHeader>? extraHeaders = extraHeadersList.Count > 0 ? extraHeadersList : null;
 
         // Operation
         DomesticVrpConsentFundsConfirmationResponse fluentResponse = await _requestBuilder
@@ -220,6 +248,10 @@ public class DomesticVrpConsentsController : ControllerBase
     /// <param name="domesticVrpConsentId">ID of DomesticVrpConsent</param>
     /// <param name="excludeExternalApiOperation"></param>
     /// <param name="xFapiCustomerIpAddress"></param>
+    /// <param name="xClientId">
+    ///     Passed through to the bank. Only needed if the bank requires a client ID to return OB
+    ///     v4.0.1 rate-limit headers.
+    /// </param>
     /// <returns></returns>
     [HttpDelete("{domesticVrpConsentId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -228,18 +260,21 @@ public class DomesticVrpConsentsController : ControllerBase
         [FromHeader(Name = "x-obc-exclude-external-api-operation")]
         bool? excludeExternalApiOperation,
         [FromHeader(Name = "x-fapi-customer-ip-address")]
-        string? xFapiCustomerIpAddress)
+        string? xFapiCustomerIpAddress,
+        [FromHeader(Name = "x-client-id")]
+        string? xClientId)
     {
         // Determine extra headers
-        IEnumerable<HttpHeader>? extraHeaders;
+        var extraHeadersList = new List<HttpHeader>();
         if (xFapiCustomerIpAddress is not null)
         {
-            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+            extraHeadersList.Add(new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress));
         }
-        else
+        if (xClientId is not null)
         {
-            extraHeaders = null;
+            extraHeadersList.Add(new HttpHeader("x-client-id", xClientId));
         }
+        IEnumerable<HttpHeader>? extraHeaders = extraHeadersList.Count > 0 ? extraHeadersList : null;
 
         // Operation
         BaseResponse fluentResponse = await _requestBuilder

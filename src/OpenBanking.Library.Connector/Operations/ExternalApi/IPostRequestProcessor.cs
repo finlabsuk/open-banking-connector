@@ -18,7 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 internal interface IPostRequestProcessor<in TRequest>
     where TRequest : class
 {
-    public Task<(TResponse response, string? xFapiInteractionId)> PostAsync<TResponse>(
+    public Task<(TResponse response, ExternalApiResponseHeaders responseHeaders)> PostAsync<TResponse>(
         Uri uri,
         IEnumerable<HttpHeader>? extraHeaders,
         TRequest request,

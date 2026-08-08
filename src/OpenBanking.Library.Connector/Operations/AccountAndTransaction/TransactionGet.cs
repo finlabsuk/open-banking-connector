@@ -134,7 +134,7 @@ internal class
         };
         JsonSerializerSettings? jsonSerializerSettings = null;
         AccountAndTransactionModelsPublic.OBReadTransaction6 externalApiResponse;
-        string? xFapiInteractionId;
+        ExternalApiResponseHeaders responseHeaders;
         IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
         switch (accountAndTransactionApi.ApiVersion)
         {
@@ -143,7 +143,7 @@ internal class
                     new ApiGetRequests<AccountAndTransactionModelsV3p1p11.OBReadTransaction6,
                         AccountAndTransactionModelsV3p1p11.OBReadTransaction6>(
                         new ApiGetRequestProcessor(bankFinancialId, accessToken));
-                (AccountAndTransactionModelsV3p1p11.OBReadTransaction6 externalApiResponseV3, xFapiInteractionId,
+                (AccountAndTransactionModelsV3p1p11.OBReadTransaction6 externalApiResponseV3, responseHeaders,
                         newNonErrorMessages) =
                     await apiRequestsV3.GetAsync(
                         externalApiUrl,
@@ -161,7 +161,7 @@ internal class
                     new ApiGetRequests<AccountAndTransactionModelsPublic.OBReadTransaction6,
                         AccountAndTransactionModelsPublic.OBReadTransaction6>(
                         new ApiGetRequestProcessor(bankFinancialId, accessToken));
-                (externalApiResponse, xFapiInteractionId,
+                (externalApiResponse, responseHeaders,
                         newNonErrorMessages) =
                     await apiRequests.GetAsync(
                         externalApiUrl,
@@ -217,7 +217,12 @@ internal class
         var response = new TransactionsResponse
         {
             ExternalApiResponse = externalApiResponse,
-            ExternalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId }
+            ExternalApiResponseInfo = new ExternalApiResponseInfo
+            {
+                XFapiInteractionId = responseHeaders.XFapiInteractionId,
+                RateLimitPolicy = responseHeaders.RateLimitPolicy,
+                RateLimit = responseHeaders.RateLimit
+            }
         };
         return (response, nonErrorMessages);
     }

@@ -42,7 +42,7 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
         _usePutNotPost = usePutNotPost;
     }
 
-    public async Task<(TResponse response, string? xFapiInteractionId)> PostAsync<TResponse>(
+    public async Task<(TResponse response, ExternalApiResponseHeaders responseHeaders)> PostAsync<TResponse>(
         Uri uri,
         IEnumerable<HttpHeader>? extraHeaders,
         TVariantApiRequest request,
@@ -94,7 +94,7 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
         }
 
         // Send request
-        (TResponse response, string? xFapiInteractionId) = await new HttpRequestBuilder()
+        (TResponse response, ExternalApiResponseHeaders responseHeaders) = await new HttpRequestBuilder()
             .SetMethod(_usePutNotPost ? HttpMethod.Put : HttpMethod.Post)
             .SetUri(uri)
             .SetHeaders(headers)
@@ -105,7 +105,7 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
                 responseJsonSerializerSettings,
                 true);
 
-        return (response, xFapiInteractionId);
+        return (response, responseHeaders);
     }
 
     private static Dictionary<string, object> GetJoseHeaders(

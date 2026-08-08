@@ -128,7 +128,7 @@ internal class BalanceGet : IAccountAccessConsentExternalRead<BalancesResponse, 
         };
         JsonSerializerSettings? jsonSerializerSettings = null;
         AccountAndTransactionModelsPublic.OBReadBalance1 externalApiResponse;
-        string? xFapiInteractionId;
+        ExternalApiResponseHeaders responseHeaders;
         IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
         switch (accountAndTransactionApi.ApiVersion)
         {
@@ -137,7 +137,7 @@ internal class BalanceGet : IAccountAccessConsentExternalRead<BalancesResponse, 
                     new ApiGetRequests<AccountAndTransactionModelsV3p1p11.OBReadBalance1,
                         AccountAndTransactionModelsV3p1p11.OBReadBalance1>(
                         new ApiGetRequestProcessor(bankFinancialId, accessToken));
-                (AccountAndTransactionModelsV3p1p11.OBReadBalance1 externalApiResponseV3, xFapiInteractionId,
+                (AccountAndTransactionModelsV3p1p11.OBReadBalance1 externalApiResponseV3, responseHeaders,
                         newNonErrorMessages) =
                     await apiRequestsV3.GetAsync(
                         externalApiUrl,
@@ -154,7 +154,7 @@ internal class BalanceGet : IAccountAccessConsentExternalRead<BalancesResponse, 
                     new ApiGetRequests<AccountAndTransactionModelsPublic.OBReadBalance1,
                         AccountAndTransactionModelsPublic.OBReadBalance1>(
                         new ApiGetRequestProcessor(bankFinancialId, accessToken));
-                (externalApiResponse, xFapiInteractionId, newNonErrorMessages) =
+                (externalApiResponse, responseHeaders, newNonErrorMessages) =
                     await apiRequests.GetAsync(
                         externalApiUrl,
                         readParams.ExtraHeaders,
@@ -209,7 +209,12 @@ internal class BalanceGet : IAccountAccessConsentExternalRead<BalancesResponse, 
         var response = new BalancesResponse
         {
             ExternalApiResponse = externalApiResponse,
-            ExternalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId }
+            ExternalApiResponseInfo = new ExternalApiResponseInfo
+            {
+                XFapiInteractionId = responseHeaders.XFapiInteractionId,
+                RateLimitPolicy = responseHeaders.RateLimitPolicy,
+                RateLimit = responseHeaders.RateLimit
+            }
         };
 
         return (response, nonErrorMessages);

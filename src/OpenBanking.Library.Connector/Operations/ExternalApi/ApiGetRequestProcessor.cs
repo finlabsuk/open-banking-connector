@@ -19,7 +19,7 @@ internal class ApiGetRequestProcessor : IGetRequestProcessor
         _accessToken = accessToken;
     }
 
-    public async Task<(TResponse response, string? xFapiInteractionId)> GetAsync<TResponse>(
+    public async Task<(TResponse response, ExternalApiResponseHeaders responseHeaders)> GetAsync<TResponse>(
         Uri uri,
         TppReportingRequestInfo? tppReportingRequestInfo,
         JsonSerializerSettings? jsonSerializerSettings,
@@ -42,7 +42,7 @@ internal class ApiGetRequestProcessor : IGetRequestProcessor
         }
 
         // Send request
-        (TResponse response, string? xFapiInteractionId) = await new HttpRequestBuilder()
+        (TResponse response, ExternalApiResponseHeaders responseHeaders) = await new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
             .SetUri(uri)
             .SetHeaders(headers)
@@ -52,6 +52,6 @@ internal class ApiGetRequestProcessor : IGetRequestProcessor
                 jsonSerializerSettings,
                 true);
 
-        return (response, xFapiInteractionId);
+        return (response, responseHeaders);
     }
 }

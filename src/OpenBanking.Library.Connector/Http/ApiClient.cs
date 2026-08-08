@@ -65,7 +65,7 @@ public class ApiClient(
         DateParseHandling = DateParseHandling.None
     };
 
-    public async Task<(T response, string? xFapiInteractionId)> SendExpectingJsonResponseAsync<T>(
+    public async Task<(T response, ExternalApiResponseHeaders responseHeaders)> SendExpectingJsonResponseAsync<T>(
         HttpRequestMessage request,
         string? requestContentForLog,
         TppReportingRequestInfo? tppReportingRequestInfo,
@@ -75,7 +75,7 @@ public class ApiClient(
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        (int statusCode, string? responseBody, string? xFapiInteractionId) =
+        (int statusCode, string? responseBody, ExternalApiResponseHeaders responseHeaders) =
             await SendInnerAsync(request, requestContentForLog, tppReportingRequestInfo);
 
         // Check body not null
@@ -97,7 +97,7 @@ public class ApiClient(
                 request.Method.ToString(),
                 request.RequestUri!.ToString(),
                 responseBody,
-                xFapiInteractionId,
+                responseHeaders.XFapiInteractionId,
                 ex.Message,
                 exposeSuccessResponseBodyInError);
         }
@@ -107,7 +107,7 @@ public class ApiClient(
             throw new HttpRequestException("Could not de-serialise HTTP body");
         }
 
-        return (responseBodyTyped, xFapiInteractionId);
+        return (responseBodyTyped, responseHeaders);
     }
 
     public async Task SendExpectingNoResponseAsync(
@@ -212,10 +212,11 @@ public class ApiClient(
         return clientHandler;
     }
 
-    private async Task<(int statusCode, string? responseBody, string? xFapiInteractionId)> SendInnerAsync(
-        HttpRequestMessage request,
-        string? requestContentForLog,
-        TppReportingRequestInfo? tppReportingRequestInfo)
+    private async Task<(int statusCode, string? responseBody, ExternalApiResponseHeaders responseHeaders)>
+        SendInnerAsync(
+            HttpRequestMessage request,
+            string? requestContentForLog,
+            TppReportingRequestInfo? tppReportingRequestInfo)
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -267,6 +268,30 @@ public class ApiClient(
         {
             xFapiInteractionId = values.First();
         }
+        IReadOnlyList<string>? rateLimitPolicy = response.Headers.TryGetValues(
+            "RateLimit-Policy",
+            out IEnumerable<string>? rateLimitPolicyValues)
+            ? rateLimitPolicyValues.ToList()
+            : null;
+        IReadOnlyList<string>? rateLimit = response.Headers.TryGetValues(
+            "RateLimit",
+            out IEnumerable<string>? rateLimitValues)
+            ? rateLimitValues.ToList()
+            : null;
+        // Retry-After (seconds) is typically only sent with 429 Too Many Requests, but no harm reading it
+        // regardless of status code.
+        int? retryAfterSeconds = response.Headers.RetryAfter switch
+        {
+            { Delta: { } retryAfterDelta } => (int) retryAfterDelta.TotalSeconds,
+            { Date: { } retryAfterDate } => (int) Math.Max(0, (retryAfterDate - DateTimeOffset.UtcNow).TotalSeconds),
+            _ => null
+        };
+        var responseHeaders = new ExternalApiResponseHeaders
+        {
+            XFapiInteractionId = xFapiInteractionId,
+            RateLimitPolicy = rateLimitPolicy,
+            RateLimit = rateLimit
+        };
         var statusCode = (int) response.StatusCode;
         bool isSuccess = response.IsSuccessStatusCode;
         string? responseBody;
@@ -326,10 +351,13 @@ public class ApiClient(
                     requestUri,
                     statusCode,
                     parsedResponseBody,
-                    xFapiInteractionId));
+                    xFapiInteractionId,
+                    retryAfterSeconds,
+                    rateLimitPolicy,
+                    rateLimit));
         }
 
-        return (statusCode, responseBody, xFapiInteractionId);
+        return (statusCode, responseBody, responseHeaders);
     }
 
     private void LogAndUpdateMetricsForFailure(

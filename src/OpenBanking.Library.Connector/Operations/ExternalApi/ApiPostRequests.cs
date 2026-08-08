@@ -44,7 +44,8 @@ internal class
     /// <param name="mapper"></param>
     /// <returns></returns>
     public async
-        Task<(TApiResponse response, string? xFapiInteractionId, IList<IFluentResponseInfoOrWarningMessage>
+        Task<(TApiResponse response, ExternalApiResponseHeaders responseHeaders,
+            IList<IFluentResponseInfoOrWarningMessage>
             nonErrorMessages
             )> PostAsync(
             Uri uri,
@@ -65,7 +66,7 @@ internal class
         }
 
         // Process request
-        (TVariantApiResponse variantResponse, string? xFapiInteractionId) =
+        (TVariantApiResponse variantResponse, ExternalApiResponseHeaders responseHeaders) =
             await _postRequestProcessor.PostAsync<TVariantApiResponse>(
                 uri,
                 extraHeaders,
@@ -86,6 +87,6 @@ internal class
         IEnumerable<IFluentResponseInfoOrWarningMessage> responseNonErrorMessages =
             responseValidationResult.ProcessValidationResultsAndRaiseErrors("prefix");
         nonErrorMessages.AddRange(responseNonErrorMessages);
-        return (response, xFapiInteractionId, nonErrorMessages);
+        return (response, responseHeaders, nonErrorMessages);
     }
 }

@@ -57,14 +57,15 @@ public class OpenIdConfigurationRead : IOpenIdConfigurationRead
                 """,
             BankProfile = bankProfile
         };
-        (OpenIdConfiguration openIdConfiguration, string? xFapiInteractionId) = await new HttpRequestBuilder()
-            .SetMethod(HttpMethod.Get)
-            .SetUri(openIdConfigurationUrl)
-            .SendExpectingJsonResponseAsync<OpenIdConfiguration>(
-                _apiClient,
-                tppReportingRequestInfo,
-                null,
-                true);
+        (OpenIdConfiguration openIdConfiguration, ExternalApiResponseHeaders _) =
+            await new HttpRequestBuilder()
+                .SetMethod(HttpMethod.Get)
+                .SetUri(openIdConfigurationUrl)
+                .SendExpectingJsonResponseAsync<OpenIdConfiguration>(
+                    _apiClient,
+                    tppReportingRequestInfo,
+                    null,
+                    true);
 
         // Update OpenID Provider Configuration based on overrides
         IList<OAuth2ResponseMode>? responseModesSupportedOverride =

@@ -163,7 +163,7 @@ internal class
             };
             JsonSerializerSettings? requestJsonSerializerSettings = null;
             JsonSerializerSettings? responseJsonSerializerSettings = null;
-            string? xFapiInteractionId;
+            ExternalApiResponseHeaders responseHeaders;
             IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
             switch (paymentInitiationApi.ApiVersion)
             {
@@ -185,7 +185,7 @@ internal class
                                 softwareStatement,
                                 obSealKey));
                     (PaymentInitiationModelsV3p1p11.OBWriteDomesticConsentResponse5 externalApiResponseV3,
-                            xFapiInteractionId, newNonErrorMessages) =
+                            responseHeaders, newNonErrorMessages) =
                         await apiRequestsV3.PostAsync(
                             externalApiUrl,
                             createParams.ExtraHeaders,
@@ -214,7 +214,7 @@ internal class
                                 _instrumentationClient,
                                 softwareStatement,
                                 obSealKey));
-                    (externalApiResponse, xFapiInteractionId, newNonErrorMessages) =
+                    (externalApiResponse, responseHeaders, newNonErrorMessages) =
                         await apiRequests.PostAsync(
                             externalApiUrl,
                             createParams.ExtraHeaders,
@@ -230,7 +230,12 @@ internal class
                         $"PISP API version {paymentInitiationApi.ApiVersion} not supported.");
             }
             nonErrorMessages.AddRange(newNonErrorMessages);
-            externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
+            externalApiResponseInfo = new ExternalApiResponseInfo
+            {
+                XFapiInteractionId = responseHeaders.XFapiInteractionId,
+                RateLimitPolicy = responseHeaders.RateLimitPolicy,
+                RateLimit = responseHeaders.RateLimit
+            };
             externalApiId = externalApiResponse.Data.ConsentId;
             if (!pispUseV4)
             {
@@ -408,7 +413,7 @@ internal class
                 BankProfile = bankProfile.BankProfileEnum
             };
             JsonSerializerSettings? responseJsonSerializerSettings = null;
-            string? xFapiInteractionId;
+            ExternalApiResponseHeaders responseHeaders;
             IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
             switch (paymentInitiationApi.ApiVersion)
             {
@@ -418,7 +423,7 @@ internal class
                             PaymentInitiationModelsV3p1p11.OBWriteDomesticConsentResponse5>(
                             new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken));
                     (PaymentInitiationModelsV3p1p11.OBWriteDomesticConsentResponse5 externalApiResponseV3,
-                            xFapiInteractionId,
+                            responseHeaders,
                             newNonErrorMessages) =
                         await apiRequestsV3.GetAsync(
                             externalApiUrl,
@@ -436,7 +441,7 @@ internal class
                         new ApiGetRequests<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
                             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
                             new ApiGetRequestProcessor(bankFinancialId, ccGrantAccessToken));
-                    (externalApiResponse, xFapiInteractionId,
+                    (externalApiResponse, responseHeaders,
                             newNonErrorMessages) =
                         await apiRequests.GetAsync(
                             externalApiUrl,
@@ -451,7 +456,12 @@ internal class
                         $"PISP API version {paymentInitiationApi.ApiVersion} not supported.");
             }
             nonErrorMessages.AddRange(newNonErrorMessages);
-            externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
+            externalApiResponseInfo = new ExternalApiResponseInfo
+            {
+                XFapiInteractionId = responseHeaders.XFapiInteractionId,
+                RateLimitPolicy = responseHeaders.RateLimitPolicy,
+                RateLimit = responseHeaders.RateLimit
+            };
             if (!pispUseV4)
             {
                 externalApiResponse.Risk.AdjustAfterReceiveFromBank();
@@ -594,7 +604,7 @@ internal class
         };
         JsonSerializerSettings? responseJsonSerializerSettings = null;
         PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 externalApiResponse;
-        string? xFapiInteractionId;
+        ExternalApiResponseHeaders responseHeaders;
         IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
         switch (paymentInitiationApi.ApiVersion)
         {
@@ -604,7 +614,7 @@ internal class
                         PaymentInitiationModelsV3p1p11.OBWriteFundsConfirmationResponse1>(
                         new ApiGetRequestProcessor(bankFinancialId, accessToken));
                 (PaymentInitiationModelsV3p1p11.OBWriteFundsConfirmationResponse1 externalApiResponseV3,
-                        xFapiInteractionId, newNonErrorMessages) =
+                        responseHeaders, newNonErrorMessages) =
                     await apiRequestsV3.GetAsync(
                         externalApiUrl,
                         readParams.ExtraHeaders,
@@ -621,7 +631,7 @@ internal class
                     new ApiGetRequests<PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1,
                         PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>(
                         new ApiGetRequestProcessor(bankFinancialId, accessToken));
-                (externalApiResponse, xFapiInteractionId, newNonErrorMessages) =
+                (externalApiResponse, responseHeaders, newNonErrorMessages) =
                     await apiRequests.GetAsync(
                         externalApiUrl,
                         readParams.ExtraHeaders,
@@ -635,7 +645,12 @@ internal class
                     $"PISP API version {paymentInitiationApi.ApiVersion} not supported.");
         }
         nonErrorMessages.AddRange(newNonErrorMessages);
-        var externalApiResponseInfo = new ExternalApiResponseInfo { XFapiInteractionId = xFapiInteractionId };
+        var externalApiResponseInfo = new ExternalApiResponseInfo
+        {
+            XFapiInteractionId = responseHeaders.XFapiInteractionId,
+            RateLimitPolicy = responseHeaders.RateLimitPolicy,
+            RateLimit = responseHeaders.RateLimit
+        };
 
         // Transform links 
         if (externalApiResponse.Links is not null)
