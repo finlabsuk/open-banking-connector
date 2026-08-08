@@ -1,0 +1,41 @@
+name: Run integration and unit tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      configuration:
+        description: "Build configuration to test with"
+        required: false
+        type: string
+        default: "Debug"
+
+concurrency:
+  group: tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Unit tests
+        run: dotnet test test/OpenBanking.Library.Connector.UnitTests --configuration ${{ inputs.configuration || 'Debug' }}
+
+      - name: Integration tests
+        run: dotnet test test/OpenBanking.Library.Connector.IntegrationTests --configuration ${{ inputs.configuration || 'Debug' }}

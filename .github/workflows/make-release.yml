@@ -1,0 +1,175 @@
+name: Web App - Push image and make release
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: "Release title"
+        required: true
+      version:
+        description: "Release/image version"
+        required: true
+        default: "1.0.0"
+      isLatest:
+        description: "Tag release/image as latest?"
+        required: true
+        default: true
+        type: boolean
+
+concurrency:
+  group: docker-publish
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}-web-app
+  IMAGE_PACKAGE_NAME: ${{ github.event.repository.name }}-web-app
+  VERSION: ${{ github.event.inputs.version }}
+  TITLE: ${{ github.event.inputs.title }}
+  IS_LATEST: ${{ github.event.inputs.isLatest }}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      is_prerelease: ${{ steps.check.outputs.is_prerelease }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Check version/isLatest combination and tag availability
+        id: check
+        run: |
+          is_prerelease=false
+          [[ "$VERSION" == *-* ]] && is_prerelease=true  # hyphen = semver prerelease
+          if [ "$is_prerelease" = "true" ] && [ "$IS_LATEST" = "true" ]; then
+            echo "::error::Version '$VERSION' looks like a prerelease but isLatest is true" >&2
+            exit 1
+          fi
+
+          if gh api "repos/${{ github.repository }}/git/ref/tags/web-app/$VERSION" >/dev/null 2>&1; then
+            echo "::error::Tag web-app/$VERSION already exists; bump the version, or delete the existing tag/release, before retrying" >&2
+            exit 1
+          fi
+
+          echo "is_prerelease=$is_prerelease" >> "$GITHUB_OUTPUT"
+
+  test:
+    needs: validate
+    uses: ./.github/workflows/run-tests.yml
+    with:
+      configuration: Release
+
+  build-and-push-image:
+    needs: [validate, test]
+    runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ env.GH_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          flavor: |
+            latest=${{ env.IS_LATEST }}
+          tags: |
+            type=semver,pattern={{version}},value=${{ env.VERSION }}
+          labels: |
+            org.opencontainers.image.title=Open Banking Connector Web App
+
+      - name: Set up for multi-arch build
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          file: src/OpenBanking.WebApp.Connector/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=target,annotation-index.org.opencontainers.image.description=This image contains the Open Banking Connector Web App.
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  tag-and-release:
+    needs: [validate, build-and-push-image]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: read
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Look up package version ID for image tag
+        id: package_version
+        run: |
+          id=""
+          for attempt in $(seq 10); do
+            response=$(gh api "/orgs/${{ github.repository_owner }}/packages/container/${{ env.IMAGE_PACKAGE_NAME }}/versions" --paginate 2>/dev/null || \
+                       gh api "/users/${{ github.repository_owner }}/packages/container/${{ env.IMAGE_PACKAGE_NAME }}/versions" --paginate 2>/dev/null || true)
+            [ -n "$response" ] && id=$(echo "$response" | jq --arg v "$VERSION" -r '.[]? | select(.metadata.container.tags[]? == $v) | .id' | head -n 1)
+            [ -n "$id" ] && break
+            sleep 10
+          done
+
+          # Non-fatal: fall back to a plain package link rather than block release creation.
+          base_url="https://github.com/${{ github.repository }}/pkgs/container/${{ env.IMAGE_PACKAGE_NAME }}"
+          url="$base_url"
+          if [ -n "$id" ]; then
+            url="$base_url/$id?tag=$VERSION"
+          else
+            echo "::warning::No package version found for tag $VERSION after $attempt attempts; release notes will link to the package instead"
+          fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Create and push Git tag
+        env:
+          IMAGE_URL: ${{ steps.package_version.outputs.url }}
+        run: |
+          title_msg="$TITLE"
+          [[ "$title_msg" == *. ]] || title_msg="${title_msg}."
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "web-app/${VERSION}" -m "$title_msg" -m "Release image: ${IMAGE_URL}."
+          git push origin "web-app/${VERSION}"
+
+      - name: Create GitHub release
+        env:
+          IS_PRERELEASE: ${{ needs.validate.outputs.is_prerelease }}
+          IMAGE_URL: ${{ steps.package_version.outputs.url }}
+        run: |
+          prerelease_flag=""
+          [ "$IS_PRERELEASE" = "true" ] && prerelease_flag="--prerelease"
+
+          gh release create "web-app/${VERSION}" \
+            --title "$TITLE" \
+            --notes "Release image: ${IMAGE_URL}." \
+            --latest="$IS_LATEST" \
+            --verify-tag \
+            $prerelease_flag
