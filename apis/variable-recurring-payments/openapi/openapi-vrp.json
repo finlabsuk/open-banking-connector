@@ -3,7 +3,7 @@
   "info": {
     "title": "Variable Recurring Payments API",
     "description": "Variable Recurring Payments API for Open Banking Connector Web App",
-    "version": "21.0.0"
+    "version": "22.0.0"
   },
   "paths": {
     "/vrp/domestic-vrp-consent-auth-contexts": {
@@ -102,6 +102,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -159,6 +167,14 @@
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
             "schema": {
               "type": "string"
             }
@@ -228,6 +244,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -284,6 +308,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -334,6 +366,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -381,6 +421,14 @@
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
             "schema": {
               "type": "string"
             }
@@ -460,6 +508,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -526,6 +582,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -555,6 +619,40 @@
   },
   "components": {
     "schemas": {
+      "Account": {
+        "required": [
+          "Identification",
+          "Name",
+          "SchemeName"
+        ],
+        "type": "object",
+        "properties": {
+          "SchemeName": {
+            "type": "string"
+          },
+          "Identification": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "Name": {
+            "maxLength": 350,
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the account, as assigned by the account servicing institution.\r\n\r\nUsage: The account name is the name or names of the account owner(s) represented at an account level. The account name is not the product name or the nickname of the account.\r\n\r\nOB: ASPSPs may carry out name validation for Confirmation of Payee, but it is not mandatory."
+          },
+          "SecondaryIdentification": {
+            "maxLength": 34,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "Proxy": {
+            "$ref": "#/components/schemas/OBProxy1"
+          }
+        },
+        "additionalProperties": false
+      },
       "AuthContextRequest": {
         "required": [
           "Nonce",
@@ -597,27 +695,6 @@
         },
         "additionalProperties": false
       },
-      "Charges": {
-        "required": [
-          "Amount",
-          "ChargeBearer",
-          "Type"
-        ],
-        "type": "object",
-        "properties": {
-          "ChargeBearer": {
-            "$ref": "#/components/schemas/OBInternalChargeBearerType1Code"
-          },
-          "Type": {
-            "$ref": "#/components/schemas/OBInternalPaymentChargeType1Code"
-          },
-          "Amount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount"
-          }
-        },
-        "additionalProperties": { },
-        "description": "Set of elements used to provide details of a charge for the payment initiation."
-      },
       "CreditorReferenceInformation": {
         "type": "object",
         "properties": {
@@ -653,7 +730,7 @@
         "type": "object",
         "properties": {
           "ReadRefundAccount": {
-            "$ref": "#/components/schemas/DataReadRefundAccount"
+            "$ref": "#/components/schemas/OBReadRefundAccountParam"
           },
           "ConsentId": {
             "maxLength": 128,
@@ -667,7 +744,7 @@
             "format": "date-time"
           },
           "Status": {
-            "$ref": "#/components/schemas/DataStatus"
+            "$ref": "#/components/schemas/OBInternalConsentStatus1Code"
           },
           "StatusReason": {
             "type": "array",
@@ -688,7 +765,7 @@
             "$ref": "#/components/schemas/OBDomesticVRPInitiation"
           },
           "DebtorAccount": {
-            "$ref": "#/components/schemas/DebtorAccount"
+            "$ref": "#/components/schemas/OBCashAccountDebtorWithName"
           }
         },
         "additionalProperties": { }
@@ -701,7 +778,7 @@
         "type": "object",
         "properties": {
           "ReadRefundAccount": {
-            "$ref": "#/components/schemas/Data2ReadRefundAccount"
+            "$ref": "#/components/schemas/OBReadRefundAccountParam"
           },
           "ControlParameters": {
             "$ref": "#/components/schemas/OBDomesticVRPControlParameters"
@@ -711,13 +788,6 @@
           }
         },
         "additionalProperties": { }
-      },
-      "Data2ReadRefundAccount": {
-        "enum": [
-          "Yes",
-          "No"
-        ],
-        "type": "string"
       },
       "Data3": {
         "required": [
@@ -733,8 +803,8 @@
             "description": "Identifier for the Domestic VRP Consent that this payment is made under."
           },
           "PSUAuthenticationMethod": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "description": "The authentication method that was used to authenticate the PSU."
           },
           "PSUInteractionType": {
             "$ref": "#/components/schemas/OBVRPInteractionTypes"
@@ -781,7 +851,7 @@
             "format": "date-time"
           },
           "Status": {
-            "$ref": "#/components/schemas/Data4Status"
+            "$ref": "#/components/schemas/ExternalPaymentTransactionStatus5Code"
           },
           "StatusReason": {
             "type": "array",
@@ -808,12 +878,12 @@
             "nullable": true
           },
           "Refund": {
-            "$ref": "#/components/schemas/OBCashAccountDebtorWithName"
+            "$ref": "#/components/schemas/OBDomesticRefundAccount1"
           },
           "Charges": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Charges"
+              "$ref": "#/components/schemas/OBCharge2"
             },
             "nullable": true
           },
@@ -832,24 +902,6 @@
           }
         },
         "additionalProperties": { }
-      },
-      "Data4Status": {
-        "enum": [
-          "RCVD",
-          "RJCT",
-          "CANC",
-          "PDNG",
-          "ACTC",
-          "ACCP",
-          "ACFC",
-          "ACSP",
-          "ACWC",
-          "ACSC",
-          "ACWP",
-          "ACCC",
-          "BLCK"
-        ],
-        "type": "string"
       },
       "Data5": {
         "type": "object",
@@ -927,59 +979,6 @@
           },
           "InstructedAmount": {
             "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount"
-          }
-        },
-        "additionalProperties": { }
-      },
-      "DataReadRefundAccount": {
-        "enum": [
-          "Yes",
-          "No"
-        ],
-        "type": "string"
-      },
-      "DataStatus": {
-        "enum": [
-          "AWAU",
-          "RJCT",
-          "AUTH",
-          "CANC",
-          "EXPD"
-        ],
-        "type": "string"
-      },
-      "DebtorAccount": {
-        "required": [
-          "Identification",
-          "Name",
-          "SchemeName"
-        ],
-        "type": "object",
-        "properties": {
-          "SchemeName": {
-            "type": "string"
-          },
-          "Identification": {
-            "maxLength": 256,
-            "minLength": 1,
-            "type": "string",
-            "description": "^ Identification assigned by an institution to identify an account. This identification is known by the account owner."
-          },
-          "Name": {
-            "maxLength": 70,
-            "minLength": 1,
-            "type": "string",
-            "description": "^ Name of the account, as assigned by the account servicing institution.  Usage The account name is the name or names of the account owner(s) represented at an account level. The account name is not the product name or the nickname of the account."
-          },
-          "SecondaryIdentification": {
-            "maxLength": 34,
-            "minLength": 1,
-            "type": "string",
-            "description": "^ This is secondary identification of the account, as assigned by the account servicing institution.  This can be used by building societies to additionally identify accounts with a roll number (in addition to a sort code and account number combination)",
-            "nullable": true
-          },
-          "Proxy": {
-            "$ref": "#/components/schemas/OBProxy1"
           }
         },
         "additionalProperties": { }
@@ -1380,6 +1379,22 @@
           "XFapiInteractionId": {
             "type": "string",
             "nullable": true
+          },
+          "RateLimitPolicy": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Raw value(s) of the optional OB v4.0.1 \"RateLimit-Policy\" response header, if returned by the ASPSP,\r\ne.g. \"aisp-standard\";q=325;w=5. One entry per quota policy in effect; unparsed, since policy names and\r\nsemantics are ASPSP-specific.\r\nSee\r\nhttps://openbankinguk.github.io/read-write-api-site3/v4.0.1/profiles/read-write-data-api-profile.html#rate-limit-headers",
+            "nullable": true
+          },
+          "RateLimit": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Raw value(s) of the optional OB v4.0.1 \"RateLimit\" response header, if returned by the ASPSP,\r\ne.g. \"aisp-standard\";r=26;t=2. One entry per quota policy in effect; unparsed, since policy names and\r\nsemantics are ASPSP-specific.\r\nSee\r\nhttps://openbankinguk.github.io/read-write-api-site3/v4.0.1/profiles/read-write-data-api-profile.html#rate-limit-headers",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1444,7 +1459,7 @@
           "SCOR"
         ],
         "type": "string",
-        "description": "Specifies the amount type, as published in an external referred amount code set. For a full lust of values refer to `ExternalCreditorReferenceType1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)"
+        "description": "Specifies the amount type, as published in an external referred amount code set. For a full list of values refer to `ExternalCreditorReferenceType1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)"
       },
       "ExternalDocumentType1Code": {
         "enum": [
@@ -1474,6 +1489,47 @@
         ],
         "type": "string",
         "description": "Specifies the document type as published in an external document type code list. For a full list of values refer to `ExternalDocumentType1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)"
+      },
+      "ExternalPaymentTransactionStatus1Code": {
+        "enum": [
+          "CANC",
+          "RCVD",
+          "ACTC",
+          "PATC",
+          "PDNG",
+          "RJCT",
+          "INFA",
+          "INCO",
+          "ACCP",
+          "ACFC",
+          "ACSP",
+          "ACWC",
+          "ACSC",
+          "BLCK",
+          "ACCC",
+          "ACWP"
+        ],
+        "type": "string",
+        "description": "The current status of the payment resource.\r\n\r\n\r\nFor a full list of values see `ExternalPaymentTransactionStatus1Code` in *OB_Internal_CodeSet* \r\n\r\n[here](https://github.com/OpenBankingUK/External_Internal_CodeSets)\r\n\r\n"
+      },
+      "ExternalPaymentTransactionStatus5Code": {
+        "enum": [
+          "RCVD",
+          "PDNG",
+          "ACTC",
+          "ACCP",
+          "ACFC",
+          "ACSP",
+          "ACWC",
+          "ACSC",
+          "BLCK",
+          "ACCC",
+          "ACWP",
+          "RJCT",
+          "CANC"
+        ],
+        "type": "string",
+        "description": "Specifies the status of the payment information group. \r\n\r\n\r\nFor a full list of values refer to `ExternalPaymentTransactionStatus5Code` in *OB_Internal_CodeSet* \r\n\r\n[here](https://github.com/OpenBankingUK/External_Internal_CodeSets).\r\n\r\n"
       },
       "ExternalProxyAccountType1Code": {
         "enum": [
@@ -1614,7 +1670,6 @@
       "OBCashAccountDebtorWithName": {
         "required": [
           "Identification",
-          "Name",
           "SchemeName"
         ],
         "type": "object",
@@ -1629,10 +1684,11 @@
             "description": "^ Identification assigned by an institution to identify an account. This identification is known by the account owner."
           },
           "Name": {
-            "maxLength": 70,
+            "maxLength": 350,
             "minLength": 1,
             "type": "string",
-            "description": "^ Name of the account, as assigned by the account servicing institution.  Usage The account name is the name or names of the account owner(s) represented at an account level. The account name is not the product name or the nickname of the account."
+            "description": "^ Name of the account, as assigned by the account servicing institution.  Usage The account name is the name or names of the account owner(s) represented at an account level. The account name is not the product name or the nickname of the account.",
+            "nullable": true
           },
           "SecondaryIdentification": {
             "maxLength": 34,
@@ -1646,6 +1702,40 @@
           }
         },
         "additionalProperties": { }
+      },
+      "OBCharge2": {
+        "required": [
+          "Amount",
+          "ChargeBearer",
+          "Type"
+        ],
+        "type": "object",
+        "properties": {
+          "ChargeBearer": {
+            "$ref": "#/components/schemas/OBInternalChargeBearerType1Code"
+          },
+          "Type": {
+            "$ref": "#/components/schemas/OBInternalPaymentChargeType1Code"
+          },
+          "Amount": {
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount"
+          }
+        },
+        "additionalProperties": { },
+        "description": "Set of elements used to provide details of a charge for the payment initiation."
+      },
+      "OBDomesticRefundAccount1": {
+        "required": [
+          "Account"
+        ],
+        "type": "object",
+        "properties": {
+          "Account": {
+            "$ref": "#/components/schemas/Account"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Unambiguous identification of the refund account to which a refund will be made as a result of the transaction."
       },
       "OBDomesticVRPConsentRequest": {
         "required": [
@@ -1666,7 +1756,6 @@
       "OBDomesticVRPConsentResponse": {
         "required": [
           "Data",
-          "Links",
           "Risk"
         ],
         "type": "object",
@@ -1714,7 +1803,7 @@
             "minItems": 1,
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PeriodicLimits"
+              "$ref": "#/components/schemas/OBDomesticVRPPeriodicLimits"
             }
           },
           "VRPType": {
@@ -1723,7 +1812,7 @@
             "items": {
               "type": "string"
             },
-            "description": "^ The types of payments that can be made under this VRP consent. This can be used to indicate whether this include sweeping payment or other ecommerce payments."
+            "description": "^ The types of payments that can be made under this VRP consent. This can be used to indicate whether this includes sweeping payments or other ecommerce payments."
           },
           "PSUAuthenticationMethods": {
             "minItems": 1,
@@ -1742,7 +1831,7 @@
             "nullable": true
           },
           "SupplementaryData": {
-            "description": "^ Additional information that can not be captured in the structured fields and/or any other specific block",
+            "description": "^ Additional information that cannot be captured in the structured fields and/or any other specific block",
             "nullable": true
           }
         },
@@ -1833,8 +1922,36 @@
             "$ref": "#/components/schemas/OBUltimateCreditor1"
           },
           "SupplementaryData": {
-            "description": "Additional information that can not be captured in the structured fields and/or any other specific block.\r\n\r\n",
+            "description": "Additional information that cannot be captured in the structured fields and/or any other specific block.\r\n\r\n",
             "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "OBDomesticVRPPeriodicLimits": {
+        "required": [
+          "Amount",
+          "Currency",
+          "PeriodAlignment",
+          "PeriodType"
+        ],
+        "type": "object",
+        "properties": {
+          "PeriodType": {
+            "$ref": "#/components/schemas/OBPeriodType1Code"
+          },
+          "PeriodAlignment": {
+            "$ref": "#/components/schemas/OBPeriodAlignment1Code"
+          },
+          "Amount": {
+            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
+            "type": "string"
+          },
+          "Currency": {
+            "maxLength": 3,
+            "minLength": 3,
+            "pattern": "^[A-Z]{3,3}$",
+            "type": "string"
           }
         },
         "additionalProperties": { }
@@ -1858,7 +1975,6 @@
       "OBDomesticVRPResponse": {
         "required": [
           "Data",
-          "Links",
           "Risk"
         ],
         "type": "object",
@@ -2207,7 +2323,8 @@
           "CPEN",
           "DEPD",
           "RETL",
-          "DEBT"
+          "DEBT",
+          "CRYP"
         ],
         "type": "string",
         "description": "For a full set of values refer to `ExternalPurpose1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)"
@@ -2221,6 +2338,17 @@
         ],
         "type": "string",
         "description": "Specifies which party/parties will bear the charges associated with the processing of the payment transaction."
+      },
+      "OBInternalConsentStatus1Code": {
+        "enum": [
+          "AWAU",
+          "RJCT",
+          "AUTH",
+          "CANC",
+          "EXPD"
+        ],
+        "type": "string",
+        "description": "Specifies the status of consent resource in code form. Only AWAU and RJCT can be returned on initial submission. For a full list of values see `OBInternalConsentStatus1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)"
       },
       "OBInternalExtendedAccountType1Code": {
         "enum": [
@@ -2274,6 +2402,24 @@
         "enum": [
           "Available",
           "NotAvailable"
+        ],
+        "type": "string"
+      },
+      "OBPeriodAlignment1Code": {
+        "enum": [
+          "Consent",
+          "Calendar"
+        ],
+        "type": "string"
+      },
+      "OBPeriodType1Code": {
+        "enum": [
+          "Day",
+          "Week",
+          "Fortnight",
+          "Month",
+          "Half-year",
+          "Year"
         ],
         "type": "string"
       },
@@ -2417,6 +2563,13 @@
         "additionalProperties": { },
         "description": "Specifies an alternate assumed name for the identification of the account."
       },
+      "OBReadRefundAccountParam": {
+        "enum": [
+          "Yes",
+          "No"
+        ],
+        "type": "string"
+      },
       "OBReferredDocumentInformation": {
         "type": "object",
         "properties": {
@@ -2537,8 +2690,7 @@
             "nullable": true
           },
           "ReferredDocumentAmount": {
-            "type": "integer",
-            "format": "int32",
+            "type": "string",
             "nullable": true
           },
           "CreditorReferenceInformation": {
@@ -2633,7 +2785,13 @@
           "EcommerceMerchantInitiatedPayment",
           "FaceToFacePointOfSale",
           "TransferToSelf",
-          "TransferToThirdParty"
+          "TransferToThirdParty",
+          "BillPayment",
+          "EcommerceGoods",
+          "EcommerceServices",
+          "PartyToParty",
+          "PispPayee",
+          "Other"
         ],
         "type": "string"
       },
@@ -2721,6 +2879,7 @@
           "LEI": {
             "maxLength": 20,
             "minLength": 1,
+            "pattern": "^[A-Z0-9]{18,18}[0-9]{2,2}$",
             "type": "string",
             "nullable": true
           },
@@ -2755,6 +2914,7 @@
           "LEI": {
             "maxLength": 20,
             "minLength": 1,
+            "pattern": "^[A-Z0-9]{18,18}[0-9]{2,2}$",
             "type": "string",
             "nullable": true
           },
@@ -2815,10 +2975,10 @@
             "maxLength": 210,
             "minLength": 1,
             "type": "string",
-            "description": "Unique identifier for the transaction within an servicing institution. This identifier is both unique and immutable."
+            "description": "Unique identifier for the transaction within a servicing institution. This identifier is both unique and immutable."
           },
           "Status": {
-            "$ref": "#/components/schemas/PaymentStatusStatusV4"
+            "$ref": "#/components/schemas/ExternalPaymentTransactionStatus1Code"
           },
           "StatusUpdateDateTime": {
             "type": "string",
@@ -2859,70 +3019,6 @@
         ],
         "type": "string"
       },
-      "PaymentStatusStatusV4": {
-        "enum": [
-          "RCVD",
-          "RJCT",
-          "CANC",
-          "PDNG",
-          "ACTC",
-          "ACCP",
-          "ACFC",
-          "ACSP",
-          "ACWC",
-          "ACSC",
-          "ACWP",
-          "ACCC",
-          "BLCK"
-        ],
-        "type": "string"
-      },
-      "PeriodicLimits": {
-        "required": [
-          "Amount",
-          "Currency",
-          "PeriodAlignment",
-          "PeriodType"
-        ],
-        "type": "object",
-        "properties": {
-          "PeriodType": {
-            "$ref": "#/components/schemas/PeriodicLimitsPeriodType"
-          },
-          "PeriodAlignment": {
-            "$ref": "#/components/schemas/PeriodicLimitsPeriodAlignment"
-          },
-          "Amount": {
-            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
-            "type": "string"
-          },
-          "Currency": {
-            "maxLength": 3,
-            "minLength": 3,
-            "pattern": "^[A-Z]{3,3}$",
-            "type": "string"
-          }
-        },
-        "additionalProperties": { }
-      },
-      "PeriodicLimitsPeriodAlignment": {
-        "enum": [
-          "Consent",
-          "Calendar"
-        ],
-        "type": "string"
-      },
-      "PeriodicLimitsPeriodType": {
-        "enum": [
-          "Day",
-          "Week",
-          "Fortnight",
-          "Month",
-          "Half-year",
-          "Year"
-        ],
-        "type": "string"
-      },
       "StatusDetail": {
         "required": [
           "Status"
@@ -2934,10 +3030,7 @@
             "nullable": true
           },
           "Status": {
-            "maxLength": 128,
-            "minLength": 1,
-            "type": "string",
-            "description": "Status of a transfer, as assigned by the transaction administrator."
+            "$ref": "#/components/schemas/ExternalPaymentTransactionStatus1Code"
           },
           "StatusReason": {
             "type": "string",

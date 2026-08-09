@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "21.0.0"
+    "version": "22.0.0"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -102,6 +102,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -170,6 +178,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -226,6 +242,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -273,6 +297,14 @@
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
             "schema": {
               "type": "string"
             }
@@ -335,6 +367,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -381,6 +421,14 @@
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
             "schema": {
               "type": "string"
             }
@@ -442,6 +490,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -488,6 +544,14 @@
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
             "schema": {
               "type": "string"
             }
@@ -549,6 +613,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -595,6 +667,14 @@
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
             "schema": {
               "type": "string"
             }
@@ -645,6 +725,14 @@
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
             "schema": {
               "type": "string"
             }
@@ -707,6 +795,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -766,6 +862,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -812,6 +916,14 @@
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
             "schema": {
               "type": "string"
             }
@@ -870,6 +982,14 @@
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
             "schema": {
               "type": "string"
             }
@@ -936,6 +1056,14 @@
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
             "schema": {
               "type": "string"
             }
@@ -1011,6 +1139,14 @@
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
             "schema": {
               "type": "string"
             }
@@ -1095,6 +1231,14 @@
             "name": "x-fapi-customer-ip-address",
             "in": "header",
             "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Passed through to the bank. Only needed if the bank requires a client ID to return OB\r\nv4.0.1 rate-limit headers.",
             "schema": {
               "type": "string"
             }
@@ -1822,7 +1966,7 @@
             "format": "date-time"
           },
           "Status": {
-            "$ref": "#/components/schemas/Data5Status"
+            "$ref": "#/components/schemas/OBInternalConsentStatus1Code"
           },
           "StatusReason": {
             "type": "array",
@@ -1863,16 +2007,6 @@
           }
         },
         "additionalProperties": { }
-      },
-      "Data5Status": {
-        "enum": [
-          "AWAU",
-          "RJCT",
-          "AUTH",
-          "EXPD",
-          "CANC"
-        ],
-        "type": "string"
       },
       "Data6": {
         "type": "object",
@@ -1944,7 +2078,7 @@
             "nullable": true
           },
           "PreviousPaymentAmount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount_0"
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount"
           }
         },
         "additionalProperties": { },
@@ -1997,6 +2131,22 @@
         "properties": {
           "XFapiInteractionId": {
             "type": "string",
+            "nullable": true
+          },
+          "RateLimitPolicy": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Raw value(s) of the optional OB v4.0.1 \"RateLimit-Policy\" response header, if returned by the ASPSP,\r\ne.g. \"aisp-standard\";q=325;w=5. One entry per quota policy in effect; unparsed, since policy names and\r\nsemantics are ASPSP-specific.\r\nSee\r\nhttps://openbankinguk.github.io/read-write-api-site3/v4.0.1/profiles/read-write-data-api-profile.html#rate-limit-headers",
+            "nullable": true
+          },
+          "RateLimit": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Raw value(s) of the optional OB v4.0.1 \"RateLimit\" response header, if returned by the ASPSP,\r\ne.g. \"aisp-standard\";r=26;t=2. One entry per quota policy in effect; unparsed, since policy names and\r\nsemantics are ASPSP-specific.\r\nSee\r\nhttps://openbankinguk.github.io/read-write-api-site3/v4.0.1/profiles/read-write-data-api-profile.html#rate-limit-headers",
             "nullable": true
           }
         },
@@ -2066,7 +2216,10 @@
       },
       "ExternalDocumentType1Code": {
         "enum": [
+          "AROI",
+          "BOLD",
           "CINV",
+          "CMCN",
           "CNFA",
           "CONT",
           "CREN",
@@ -2080,8 +2233,12 @@
           "PUOR",
           "QUOT",
           "SBIN",
+          "SOAC",
           "SPRR",
-          "TISH"
+          "TISH",
+          "TSUT",
+          "USAR",
+          "VCHR"
         ],
         "type": "string",
         "description": "Specifies the document type as published in an external document type code list. For more information see `ExternalDocumentType1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)"
@@ -2389,7 +2546,7 @@
           "StatementFrequencyAndFormat": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/StatementFrequencyAndFormatInner"
+              "$ref": "#/components/schemas/StatementFrequencyAndFormatElement"
             },
             "nullable": true
           },
@@ -2403,7 +2560,7 @@
         "additionalProperties": false,
         "description": "Unambiguous identification of the account to which credit and debit entries are made. The following fields are optional only for accounts that are switched:\r\n\r\n\r\n  * Data.Currency  \r\n\r\n  * Data.AccountCategory  \r\n\r\n  * Data.AccountTypeCode\r\n\r\n\r\nFor all other accounts, the fields must be populated by the ASPSP."
       },
-      "OBActiveOrHistoricCurrencyAndAmount_0": {
+      "OBActiveOrHistoricCurrencyAndAmount": {
         "required": [
           "Amount",
           "Currency"
@@ -2420,121 +2577,7 @@
           }
         },
         "additionalProperties": { },
-        "description": "The amount of the most recent direct debit collection."
-      },
-      "OBActiveOrHistoricCurrencyAndAmount_10": {
-        "required": [
-          "Amount",
-          "Currency"
-        ],
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
-            "type": "string"
-          },
-          "Currency": {
-            "pattern": "^[A-Z]{3,3}$",
-            "type": "string"
-          }
-        },
-        "additionalProperties": { },
-        "description": "Transaction charges to be paid by the charge bearer."
-      },
-      "OBActiveOrHistoricCurrencyAndAmount_11": {
-        "required": [
-          "Amount",
-          "Currency"
-        ],
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
-            "type": "string"
-          },
-          "Currency": {
-            "pattern": "^[A-Z]{3,3}$",
-            "type": "string"
-          }
-        },
-        "additionalProperties": { },
-        "description": "The amount of the last (most recent) Standing Order instruction."
-      },
-      "OBActiveOrHistoricCurrencyAndAmount_2": {
-        "required": [
-          "Amount",
-          "Currency"
-        ],
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
-            "type": "string"
-          },
-          "Currency": {
-            "pattern": "^[A-Z]{3,3}$",
-            "type": "string"
-          }
-        },
-        "additionalProperties": { },
-        "description": "The amount of the first Standing Order"
-      },
-      "OBActiveOrHistoricCurrencyAndAmount_3": {
-        "required": [
-          "Amount",
-          "Currency"
-        ],
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
-            "type": "string"
-          },
-          "Currency": {
-            "pattern": "^[A-Z]{3,3}$",
-            "type": "string"
-          }
-        },
-        "additionalProperties": { },
-        "description": "The amount of the next Standing Order."
-      },
-      "OBActiveOrHistoricCurrencyAndAmount_4": {
-        "required": [
-          "Amount",
-          "Currency"
-        ],
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
-            "type": "string"
-          },
-          "Currency": {
-            "pattern": "^[A-Z]{3,3}$",
-            "type": "string"
-          }
-        },
-        "additionalProperties": { },
-        "description": "The amount of the final Standing Order"
-      },
-      "OBActiveOrHistoricCurrencyAndAmount_9": {
-        "required": [
-          "Amount",
-          "Currency"
-        ],
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "pattern": "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$",
-            "type": "string"
-          },
-          "Currency": {
-            "pattern": "^[A-Z]{3,3}$",
-            "type": "string"
-          }
-        },
-        "additionalProperties": { },
-        "description": "Amount of money in the cash transaction entry."
+        "description": "Amount of money in a given currency."
       },
       "OBAddressType2Code": {
         "enum": [
@@ -2827,7 +2870,7 @@
           }
         },
         "additionalProperties": { },
-        "description": "Unambiguous identification of the account of the debtor, in the case of a crebit transaction."
+        "description": "Unambiguous identification of the account of the debtor, in the case of a credit transaction."
       },
       "OBCommunicationMethod": {
         "enum": [
@@ -3316,7 +3359,8 @@
           "CPEN",
           "DEPD",
           "RETL",
-          "DEBT"
+          "DEBT",
+          "CRYP"
         ],
         "type": "string",
         "description": "For a full list of enumeration values refer to `ExternalPurpose1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)"
@@ -3327,10 +3371,11 @@
           "DXML",
           "SDSH",
           "WORD",
-          "XSLT"
+          "XSLT",
+          "DCSV"
         ],
         "type": "string",
-        "description": "For a full list of enumeration values refer to `ExternalDocumentFormat1Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_internal_CodeSets)"
+        "description": "For a full list of enumeration values refer to `ExternalDocumentFormat1Code` in *ISO_External_CodeSet* [here](https://github.com/OpenBankingUK/External_internal_CodeSets)"
       },
       "OBFrequency2": {
         "enum": [
@@ -3342,7 +3387,9 @@
           "MIAN",
           "TEND",
           "MOVE",
-          "WEEK"
+          "WEEK",
+          "NONE",
+          "SLCT"
         ],
         "type": "string",
         "description": "For a full list of enumeration values refer to `OBFrequency2Code` in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_internal_CodeSets)"
@@ -3372,6 +3419,56 @@
         "additionalProperties": { },
         "description": "Regularity with which credit transfer instructions are to be created and processed"
       },
+      "OBIntermediaryAgent": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "maxLength": 140,
+            "minLength": 1,
+            "type": "string",
+            "description": "Name by which an agent is known and which is usually used to identify that agent.",
+            "nullable": true
+          },
+          "SchemeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Identification": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique and unambiguous identification of a financial institution or a branch of a financial institution.",
+            "nullable": true
+          },
+          "LEI": {
+            "maxLength": 20,
+            "minLength": 1,
+            "pattern": "^[A-Z0-9]{18,18}[0-9]{2,2}$",
+            "type": "string",
+            "nullable": true
+          },
+          "PostalAddress": {
+            "$ref": "#/components/schemas/OBPostalAddress7"
+          },
+          "ProcessingStatus": {
+            "$ref": "#/components/schemas/OBIntermediaryAgentProcessingStatus"
+          }
+        },
+        "additionalProperties": { },
+        "description": "The intermediary agent associated with this transaction."
+      },
+      "OBIntermediaryAgentProcessingStatus": {
+        "enum": [
+          "PDNG",
+          "RCVD",
+          "ACSP",
+          "ACSC",
+          "RJCT",
+          "UNKN",
+          "CANC"
+        ],
+        "type": "string"
+      },
       "OBInternalAccountStatus1Code": {
         "enum": [
           "Deleted",
@@ -3390,6 +3487,17 @@
         ],
         "type": "string",
         "description": "Specifies the type of account (personal or business). <br /> For a full list of enumeration values refer to 'OBInternalAccountType1Code' in *OB_Internal_CodeSet* [here](https://github.com/OpenBankingUK/External_Internal_CodeSets)"
+      },
+      "OBInternalConsentStatus1Code": {
+        "enum": [
+          "AWAU",
+          "RJCT",
+          "AUTH",
+          "CANC",
+          "EXPD"
+        ],
+        "type": "string",
+        "description": "Specifies the status of consent resource in code form."
       },
       "OBInternalPartyType1Code": {
         "enum": [
@@ -3901,7 +4009,7 @@
             "maxLength": 140,
             "minLength": 1,
             "type": "string",
-            "description": "dentification of the issuer of the reference document type.",
+            "description": "Identification of the issuer of the reference document type.",
             "nullable": true
           },
           "Number": {
@@ -3961,9 +4069,7 @@
             "nullable": true
           },
           "ReferredDocumentAmount": {
-            "type": "integer",
-            "description": "Provides details on the amounts of the referred document.",
-            "format": "int32",
+            "type": "string",
             "nullable": true
           },
           "CreditorReferenceInformation": {
@@ -4042,16 +4148,16 @@
             "$ref": "#/components/schemas/ExternalMandateStatus1Code"
           },
           "FirstPaymentAmount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount_2"
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount"
           },
           "NextPaymentAmount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount_3"
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount"
           },
           "LastPaymentAmount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount_11"
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount"
           },
           "FinalPaymentAmount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount_4"
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount"
           },
           "CreditorAgent": {
             "$ref": "#/components/schemas/OBBranchAndFinancialInstitutionIdentification5_1"
@@ -4168,10 +4274,10 @@
             "nullable": true
           },
           "Amount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount_9"
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount"
           },
           "ChargeAmount": {
-            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount_10"
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount"
           },
           "CurrencyExchange": {
             "$ref": "#/components/schemas/OBCurrencyExchange5"
@@ -4224,6 +4330,15 @@
           },
           "UltimateDebtor": {
             "$ref": "#/components/schemas/OBUltimateDebtor1"
+          },
+          "IntermediaryAgent1": {
+            "$ref": "#/components/schemas/OBIntermediaryAgent"
+          },
+          "IntermediaryAgent2": {
+            "$ref": "#/components/schemas/OBIntermediaryAgent"
+          },
+          "IntermediaryAgent3": {
+            "$ref": "#/components/schemas/OBIntermediaryAgent"
           }
         },
         "additionalProperties": false,
@@ -4536,7 +4651,7 @@
         "additionalProperties": false,
         "description": "Response to Standing Order read requests"
       },
-      "StatementFrequencyAndFormatInner": {
+      "StatementFrequencyAndFormatElement": {
         "type": "object",
         "properties": {
           "Frequency": {
@@ -4553,7 +4668,7 @@
           }
         },
         "additionalProperties": { },
-        "description": "Frequency and format of statments for an account"
+        "description": "Frequency and format of statements for an account"
       },
       "TotalValue4": {
         "required": [
