@@ -3,15 +3,16 @@
 </div>
 <br>
 
-Open Banking Connector is a *fully open-source*,
-*free-to-use* UK Open Banking client (connection layer) that simplifies connections to UK Open Banking APIs.
+Open Banking Connector is a *fully free-to-use*, *open-source* UK Open Banking client (connection layer) that simplifies
+connections to UK Open Banking APIs.
 
-The official documentation website is [here](https://docs.openbankingconnector.io/). It is generated from the Markdown
-source code in the docs directory of this repo.
+The official documentation website is [here](https://docs.openbankingconnector.io/), including
+a [get started guide](https://docs.openbankingconnector.io/get-started/). It is generated from the Markdown source code
+in the docs folder of this repo.
 
 Releases can be found [here](https://github.com/finlabsuk/open-banking-connector/releases).
 
-Docker images can be
+Container images for releases can be
 found [here](https://github.com/finlabsuk/open-banking-connector/pkgs/container/open-banking-connector-web-app).
 
 Open Banking Connector is maintained by Finnovation Labs. We are a Cambridge, UK-based company building technology that

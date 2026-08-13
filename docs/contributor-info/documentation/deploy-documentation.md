@@ -1,10 +1,9 @@
 # Deploy documentation
 
-Here are the steps required to:
-
-- prepare for deployment 
-
-- deploy documentation to website
+Documentation is deployed to the [docs website](https://docs.openbankingconnector.io/) automatically with each release,
+via the `deploy-docs` job in the [
+`make-release`](https://github.com/finlabsuk/open-banking-connector/blob/master/.github/workflows/make-release.yml)
+workflow. Manual deployment is only needed to preview changes locally or deploy out-of-band.
 
 ## Pre-requisites
 
@@ -25,16 +24,21 @@ pip install mkdocs-render-swagger-plugin
 ### Preview website
 
 To deploy the website locally for inspection and testing, please `cd` to the repo root and run the following command:
+
 ```
 mkdocs serve
 ```
+
 This will return the URL you can use to preview the website. Commit and push any corrections or updates required.
 
-## Deploy website 
+## Deploy website
 
-Assuming you have permissions to push to the repo `gh-pages` branch, you can update the public website on GitHub Pages using:
+Assuming you have permissions to push to the repo `gh-pages` branch, you can update the public website on GitHub Pages
+using:
+
 ```bash
 mkdocs gh-deploy -m "Message" -r publicRemote --ignore-version # adjust commit message and remote as required 
 ```
 
-N.B. The `--ignore-version` flag is used to solve the problem of Mkdocs confusing the tag version with the Mkdocs version which stops the website from being deployed.
+N.B. The `--ignore-version` flag is used to solve the problem of Mkdocs confusing the tag version with the Mkdocs
+version which stops the website from being deployed.

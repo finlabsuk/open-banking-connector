@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Open Banking Connector is a *fully open-source*, *free-to-use* UK Open Banking client (connection layer) that simplifies
+Open Banking Connector is a *fully free-to-use*, *open-source* UK Open Banking client (connection layer) that simplifies
 connections to UK Open Banking APIs.
 
 It is self-deployed (runs as a component in your backend infrastructure) and released via a Docker image built entirely
@@ -17,8 +17,8 @@ the [UK Open Banking APIs](https://standards.openbanking.org.uk/specifications/)
    non-uniform spec versions and quirks/unexpected API behaviours. This means you see a *single, unified multi-bank API*
    with these issues taken care of saving the considerable effort required for individual bank integrations. (Note: we
    do not however adjust or normalise bank data itself in order to preserve maximum processing flexibility.)
-2. security profile (auth) concerns including access token acquisition and management are taken care of transparently (
-   invisibly) isolating these from the rest of your backend and saving you the effort of implementing these.
+2. security profile (auth) concerns including access token acquisition and management are taken care of transparently
+   (invisibly) isolating these from the rest of your backend and saving you the effort of implementing these.
 
 It is designed for use in the cloud and is ideally suited for deployment in a Kubernetes cluster.
 
@@ -27,7 +27,7 @@ It is designed for use in the cloud and is ideally suited for deployment in a Ku
 Open Banking Connector can be used:
 
 - as a connectivity layer enabling your Open Banking application to connect to UK bank APIs
-- as a tool for creating and managing bank registrations (OAuth2 clients) for use by other software (perhaps your own).
+- as a tool for creating and managing bank registrations (OAuth2 clients) for use by your own or other software
 
 The Open Banking Connector repo also contains a .NET project for bank tests. This is used in the development of Open
 Banking Connector as a regression test suite. Please contact us if you are interested in using this.
@@ -45,13 +45,18 @@ more information.
 ## Philosophy and business model
 
 Open Banking Connector was conceived following difficulties encountered when integrating with different bank APIs. It
-seemed pointless that everyone should have the burden of individually integrating with each bank - why couldn't we all
-contribute to a community effort instead?
+seemed pointless that everyone should have the burden of individually integrating with each bank - why couldn't we build
+an open-source solution instead?
 
-In particular, *bank profiles* (which capture bank-specific behaviours) were created so that new ones could be added and
-existing ones updated by the community, perhaps even by the banks themselves.
+From its beginnings in 2019, multiple companies have funded the development of this project. It is fully free to use.
 
-The product is fully free-to-use but we ask customers to fund new features and bank integrations either by direct code
-contributions (please contact us) or by contracting us (Finnovation Labs) to do the work.
+We welcome new users who we hope will also invest in the project!
 
-We also offer a support and maintenance product for customers running Open Banking Connector in production as well as a sponsorship programme for those wishing to further support Open Banking Connector.
+Users can fund new features and bank integrations either by direct code contributions (please contact us) or by
+contracting us (Finnovation Labs) to do the work.
+
+For those using Open Banking Connector in production, we offer (and highly recommend) our support and maintenance
+product. This offering includes a monthly online catch-up (if desired), detailed release emails, and advice on such
+topics as initial setup, API breaking changes and database migrations.
+
+We also offer a sponsorship programme for those wishing to further support Open Banking Connector.

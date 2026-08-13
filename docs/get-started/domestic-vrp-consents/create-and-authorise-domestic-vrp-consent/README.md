@@ -1,7 +1,7 @@
 # Create and authorise a domestic VRP consent
 
-A [variable recurring payment](https://openbankinguk.github.io/read-write-api-site3/v3.1.11/profiles/vrp-profile.html) (
-VRP) is a recurring payment governed by *control parameters* and a single end-user consent. It can be used to provide
+A [variable recurring payment](https://openbankinguk.github.io/read-write-api-site3/v4.0.1/profiles/vrp-profile.html)
+(VRP) is a recurring payment governed by *control parameters* and a single end-user consent. It can be used to provide
 similar functionality to a Direct Debit but has more flexibility and fine-grained control.
 
 A [sweeping variable recurring payment](https://assets.publishing.service.gov.uk/media/622ef71fd3bf7f5a86be8fa4/Sweeping_clarification_letter_to_be_sent_14_March_2022__.pdf)
@@ -22,7 +22,7 @@ below. This request is made to the [
 endpoint and will create a domestic VRP consent object at the bank. Note that in this example the creditor (payee)
 account is specified but the debtor (payer) account is not. This allows the end-user to select a debtor account during
 consent auth. Both individual and period maximum payment amounts are specified in this example. See
-the [Open Banking spec](https://openbankinguk.github.io/read-write-api-site3/v3.1.11/resources-and-data-models/vrp/domestic-vrp-consents.html#obdomesticvrpcontrolparameters)
+the [Open Banking spec](https://openbankinguk.github.io/read-write-api-site3/v4.0.1/resources-and-data-models/vrp/domestic-vrp-consents.html#obdomesticvrpcontrolparameters)
 for other options for control parameters.
 
 ```http
@@ -115,17 +115,15 @@ for more info.*
 To start manual end-user auth (suitable for sandboxes), copy the auth URL into a browser and go through the bank's
 authorisation process.
 
-When this is complete you will be redirected back to your redirect URL, which by default will be the default fragment (
-or query)
-redirect URL from the software statement specified when creating the consent's bank registration. The bank
-redirect data will be included in the fragment (or query) of the URL. Even if no web page exists at the URL, you can
-still copy the
+When this is complete you will be redirected back to your redirect URL, which by default will be the default fragment
+(or query)
+redirect URL from the software statement specified when creating the consent's bank registration. The bank redirect data
+will be included in the fragment (or query) of the URL. Even if no web page exists at the URL, you can still copy the
 URL fragment (or query) from your browser to capture the bank redirect data.
 
-To complete end-user auth, pass to Open Banking Connector the bank redirect data supplied by the bank in the fragment (
-or query) of
-the redirect URL. This needs to be done within 10 minutes of auth context creation or you will need to create a new auth
-context and attempt auth again.
+To complete end-user auth, pass to Open Banking Connector the bank redirect data supplied by the bank in the fragment
+(or query) of the redirect URL. This needs to be done within 10 minutes of auth context creation or you will need to
+create a new auth context and attempt auth again.
 
 Upon receipt and successful validation of the bank redirect data, Open Banking Connector will obtain tokens for the
 consent in preparation for future requests.

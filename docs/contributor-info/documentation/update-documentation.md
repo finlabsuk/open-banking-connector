@@ -6,8 +6,9 @@ To update documentation:
 - update the `nav` section in the repo `./mkdocs.yml` file to specify sections and links.
 
 In the docs, please ensure links to other repo files are relative links. For example:
+
 ```markdown
 [Page](./page.md)
 ```
 
-Once docs are updated, you can [deploy the documentation.](./deploy-documentation.md)
+Once merged to `master`, docs are [deployed](./deploy-documentation.md) automatically with the next release.

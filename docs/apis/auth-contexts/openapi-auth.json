@@ -3,7 +3,7 @@
   "info": {
     "title": "Auth Contexts API",
     "description": "Auth Contexts API for Open Banking Connector Web App",
-    "version": "22.0.0"
+    "version": "23.0.0"
   },
   "paths": {
     "/auth/redirect-delegate": {
@@ -47,7 +47,7 @@
                   },
                   "redirect_uri": {
                     "type": "string",
-                    "description": "redirect URL used by post-auth redirect (for checking)"
+                    "description": "redirect URI used by post-auth redirect (for checking)"
                   },
                   "app_session_id": {
                     "type": "string",

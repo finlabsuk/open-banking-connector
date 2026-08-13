@@ -39,8 +39,9 @@ The main simplifications for these requests when using Open Banking Connector ar
   by a particular bank.
 - When retrieving AISP objects such as transactions etc, you supply the consent ID (returned when creating the consent)
   instead of a token
-- All data request and response objects are based on a single UK Open Banking spec revision and Open Banking Connector
-  is capable of converting to and from older spec revisions if required for a bank
+- All data request and response objects are based on a single UK Open Banking spec revision (currently v4.0.1) and Open
+  Banking Connector is capable of converting to and from older spec revisions (currently v4.0 and v3.1.11, including
+  v3.1.x versions that work with minor tweaks) if required for a bank
 - No bank tokens need be supplied as these are obtained, used and refreshed automatically by Open Banking Connector
   isolating them from other parts of your back-end
 
@@ -59,12 +60,11 @@ the [POST /aisp/account-access-consent-auth-contexts](../apis/account-and-transa
 creating an auth context, Open Banking Connector will return an auth URL you can redirect the user to. This URL should
 be used within 5 minutes to avoid signed object expiry.
 
-After end-user auth, the bank will redirect to a secure URL your app provides (the redirect URL can be selected from
-those in your software statement assertion (SSA) when creating a bank registration). This URL should display appropriate
-customer messaging and process the bank redirect data in the URL fragment (or query). This redirect data needs to be
-forwarded by your back-end to Open Banking Connector via
-the [POST /auth/redirect-delegate](../apis/auth-contexts/openapi.md) endpoint. This must occur within the 10-minute
-lifetime of the auth context.
+After end-user auth, the bank will redirect to a secure redirect URI your app provides (eligible redirect URIs are set
+up when creating a bank registration). This redirect URI should display appropriate customer messaging and process the
+bank redirect data in the URL fragment (or query). This redirect data needs to be forwarded by your back-end to Open
+Banking Connector via the [POST /auth/redirect-delegate](../apis/auth-contexts/openapi.md) endpoint. This must occur
+within the 10-minute lifetime of the auth context.
 
 There are many possible scenarios for end-user auth and it is strongly recommended to discuss your planned
 implementation with us so we can discuss security threat models and best practices.
@@ -80,8 +80,8 @@ transactions, balances etc.
 To host Open Banking Connector in your back-end infrastructure, you will need:
 
 - a host (e.g. VM or Kubernetes cluster) to run the Open Banking Connector Docker image
-- a relational database. Currently only PosgreSQL is supported but, as Open Banking Connector uses EF
-  Core (Microsoft's .NET ORM), other database integrations should be relatively easy to add in future.
+- a relational database. Currently only PosgreSQL is supported but, as Open Banking Connector uses EF Core (Microsoft's
+  .NET ORM), other database integrations should be relatively easy to add in future.
 - a means of supplying configuration/secrets to the Open Banking Connector container. Environment variables can be used
   and, in the case of secrets, could be e.g. dynamically pulled from a key secret vault. Parameters from AWS SSM
   Parameter Store can be used and we are open to adding other cloud sources/vaults as
