@@ -154,8 +154,8 @@ jobs:
           title_msg="$TITLE"
           [[ "$title_msg" == *. ]] || title_msg="${title_msg}."
 
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
           git tag -a "web-app/${VERSION}" -m "$title_msg" -m "Release image: ${IMAGE_URL}."
           git push origin "web-app/${VERSION}"
 
@@ -173,3 +173,30 @@ jobs:
             --latest="$IS_LATEST" \
             --verify-tag \
             $prerelease_flag
+
+  deploy-docs:
+    needs: [validate, tag-and-release]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # full history needed by mkdocs-git-revision-date-localized-plugin
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.x"
+
+      - name: Install MkDocs and plugins
+        run: python -m pip install --upgrade pip && python -m pip install mkdocs-material mkdocs-git-revision-date-localized-plugin mkdocs-render-swagger-plugin
+
+      - name: Deploy documentation to GitHub Pages
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          mkdocs gh-deploy --force --ignore-version -m "Deploy docs for web-app/${VERSION}"
