@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -25,6 +26,8 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
         string? authContextState,
         string? authContextNonce,
         string? authContextCodeVerifier,
+        Acr? authContextAcr,
+        DateTimeOffset? authContextAuthTime,
         DateTimeOffset authContextModified,
         string? authContextModifiedBy,
         string? externalApiUserId,
@@ -37,6 +40,8 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
         AuthContextState = authContextState;
         AuthContextNonce = authContextNonce;
         AuthContextCodeVerifier = authContextCodeVerifier;
+        AuthContextAcr = authContextAcr;
+        AuthContextAuthTime = authContextAuthTime;
         AuthContextModified = authContextModified;
         AuthContextModifiedBy = authContextModifiedBy;
         ExternalApiUserId = externalApiUserId;
@@ -60,6 +65,16 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
     public string? AuthContextNonce { get; private set; }
 
     public string? AuthContextCodeVerifier { get; private set; }
+
+    /// <summary>
+    ///     ID token "acr" claim: PSU authentication level (e.g. SCA) at the bank, when available.
+    /// </summary>
+    public Acr? AuthContextAcr { get; private set; }
+
+    /// <summary>
+    ///     ID token "auth_time" claim: time of PSU authentication at the bank, when available.
+    /// </summary>
+    public DateTimeOffset? AuthContextAuthTime { get; private set; }
 
     public DateTimeOffset AuthContextModified { get; private set; }
 
@@ -101,12 +116,31 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
         string state,
         string nonce,
         string? codeVerifier,
+        Acr? acr,
+        DateTimeOffset? authTime,
         DateTimeOffset modified,
         string? modifiedBy)
     {
         AuthContextState = state;
         AuthContextNonce = nonce;
         AuthContextCodeVerifier = codeVerifier;
+        AuthContextAcr = acr;
+        AuthContextAuthTime = authTime;
+        AuthContextModified = modified;
+        AuthContextModifiedBy = modifiedBy;
+    }
+
+    /// <summary>
+    ///     Updates auth context ACR and auth_time only.
+    /// </summary>
+    public void UpdateAuthContextAcrAndAuthTime(
+        Acr? acr,
+        DateTimeOffset? authTime,
+        DateTimeOffset modified,
+        string? modifiedBy)
+    {
+        AuthContextAcr = acr;
+        AuthContextAuthTime = authTime;
         AuthContextModified = modified;
         AuthContextModifiedBy = modifiedBy;
     }

@@ -396,9 +396,11 @@ internal class AuthContextUpdate :
 
         // Validate ID token including nonce
         DateTimeOffset modified = _timeProvider.GetUtcNow();
+        Acr? acr = null;
+        DateTimeOffset? authTime = null;
         if (idToken is not null)
         {
-            string? newExternalApiUserId = await _grantPost.ValidateIdTokenAuthEndpoint(
+            (string? newExternalApiUserId, acr, authTime) = await _grantPost.ValidateIdTokenAuthEndpoint(
                 idToken,
                 code,
                 state,
@@ -425,11 +427,14 @@ internal class AuthContextUpdate :
         // Valid ID token means nonce has been validated so we delete auth context to ensure nonce can only be used once
         authContext.UpdateIsDeleted(true, modified, modifiedBy);
 
-        // Update consent as auth has been successful (i.e. inputs validated)
+        // Update consent as auth has been successful. Without a front-channel ID token, ACR/auth_time
+        // are unknown here (set to null) and set later from the token endpoint ID token if present.
         consent.UpdateAuthContext(
             authContext.State,
             nonce,
             authContext.CodeVerifier,
+            acr,
+            authTime,
             modified,
             modifiedBy);
 
@@ -481,7 +486,7 @@ internal class AuthContextUpdate :
             {
                 scope = "openid " + scope;
             }
-            TokenEndpointResponse tokenEndpointResponse =
+            (TokenEndpointResponse tokenEndpointResponse, Acr? tokenAcr, DateTimeOffset? tokenAuthTime) =
                 await _grantPost.PostAuthCodeGrantAsync(
                     code,
                     redirectUri,
@@ -505,6 +510,17 @@ internal class AuthContextUpdate :
                     customBehaviour?.JwksGet,
                     apiClient,
                     customBehaviour?.BaseIdTokenProcessingCustomBehaviour);
+
+            // For auth code flow (no front-channel ID token), set ACR/auth_time from token endpoint ID token if present.
+            if (idToken is null &&
+                (tokenAcr is not null || tokenAuthTime is not null))
+            {
+                consent.UpdateAuthContextAcrAndAuthTime(
+                    tokenAcr,
+                    tokenAuthTime,
+                    modified,
+                    modifiedBy);
+            }
 
             // Cache new access token
             MemoryCacheEntryOptions cacheEntryOptions =

@@ -12,6 +12,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
@@ -302,6 +303,8 @@ internal class
             null,
             null,
             null,
+            null,
+            null,
             utcNow,
             request.CreatedBy,
             request.ExternalApiUserId,
@@ -318,6 +321,8 @@ internal class
                 authContext.State,
                 authContext.Nonce,
                 authContext.CodeVerifier,
+                null,
+                null,
                 utcNow,
                 authContext.ModifiedBy);
         }
@@ -336,6 +341,8 @@ internal class
                 BankRegistrationId = persistedConsent.BankRegistrationId,
                 ExternalApiId = persistedConsent.ExternalApiId,
                 ExternalApiUserId = persistedConsent.ExternalApiUserId,
+                AuthContextAcr = persistedConsent.AuthContextAcr.ToAuthContextAcr(),
+                AuthContextAuthTime = persistedConsent.AuthContextAuthTime,
                 AuthContextModified = persistedConsent.AuthContextModified,
                 AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
                 ExternalApiResponse = externalApiResponse,
@@ -521,6 +528,8 @@ internal class
                 BankRegistrationId = persistedConsent.BankRegistrationId,
                 ExternalApiId = persistedConsent.ExternalApiId,
                 ExternalApiUserId = persistedConsent.ExternalApiUserId,
+                AuthContextAcr = persistedConsent.AuthContextAcr.ToAuthContextAcr(),
+                AuthContextAuthTime = persistedConsent.AuthContextAuthTime,
                 AuthContextModified = persistedConsent.AuthContextModified,
                 AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
                 ExternalApiResponse = externalApiResponse,

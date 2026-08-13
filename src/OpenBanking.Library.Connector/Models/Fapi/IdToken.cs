@@ -122,7 +122,8 @@ public abstract class IdTokenBase
     public string? Nonce { get; set; }
 
     [JsonProperty(PropertyName = "auth_time")]
-    public string? AuthTime { get; set; }
+    [JsonConverter(typeof(DateTimeOffsetNullableUnixConverter))]
+    public DateTimeOffset? AuthTime { get; set; }
 
     [JsonProperty("openbanking_intent_id")]
     public string? ConsentId { get; set; }

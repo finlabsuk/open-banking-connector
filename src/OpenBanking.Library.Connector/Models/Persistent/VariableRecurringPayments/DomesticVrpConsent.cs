@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
@@ -24,6 +25,8 @@ internal class DomesticVrpConsent :
         string? authContextState,
         string? authContextNonce,
         string? authContextCodeVerifier,
+        Acr? authContextAcr,
+        DateTimeOffset? authContextAuthTime,
         DateTimeOffset authContextModified,
         string? authContextModifiedBy,
         string? externalApiUserId,
@@ -44,6 +47,8 @@ internal class DomesticVrpConsent :
         authContextState,
         authContextNonce,
         authContextCodeVerifier,
+        authContextAcr,
+        authContextAuthTime,
         authContextModified,
         authContextModifiedBy,
         externalApiUserId,

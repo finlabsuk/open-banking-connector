@@ -47,7 +47,7 @@ internal class GrantPost : IGrantPost
         _timeProvider = timeProvider;
     }
 
-    public async Task<string?> ValidateIdTokenAuthEndpoint(
+    public async Task<(string? ExternalApiUserId, Acr? Acr, DateTimeOffset? AuthTime)> ValidateIdTokenAuthEndpoint(
         string idTokenEncoded,
         string code,
         string state,
@@ -154,7 +154,7 @@ internal class GrantPost : IGrantPost
                 new IdTokenValidationError(idTokenObject, IdTokenValidationErrorType.StateHashMismatch));
         }
 
-        return outputExternalApiUserId;
+        return (outputExternalApiUserId, idTokenObject.Acr, idTokenObject.AuthTime);
     }
 
     public async Task<TokenEndpointResponse> PostClientCredentialsGrantAsync(
@@ -236,7 +236,7 @@ internal class GrantPost : IGrantPost
         return response;
     }
 
-    public async Task<TokenEndpointResponse> PostAuthCodeGrantAsync(
+    public async Task<(TokenEndpointResponse response, Acr? acr, DateTimeOffset? authTime)> PostAuthCodeGrantAsync(
         string authCode,
         string redirectUrl,
         string bankIssuerUrl,
@@ -337,6 +337,8 @@ internal class GrantPost : IGrantPost
         }
 
         // Validate response ID token
+        Acr? acr = null;
+        DateTimeOffset? authTime = null;
         if (response.IdToken is null)
         {
             // Check valid to not get ID token
@@ -354,7 +356,7 @@ internal class GrantPost : IGrantPost
             }
 
             // Perform validation
-            await ValidateIdTokenTokenEndpoint(
+            (acr, authTime) = await ValidateIdTokenTokenEndpoint(
                 response.IdToken,
                 response.AccessToken,
                 authCodeGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour,
@@ -370,7 +372,7 @@ internal class GrantPost : IGrantPost
                 externalApiUserId);
         }
 
-        return response;
+        return (response, acr, authTime);
     }
 
     public async Task<TokenEndpointResponse> PostRefreshTokenGrantAsync(
@@ -678,7 +680,7 @@ internal class GrantPost : IGrantPost
         return jwks;
     }
 
-    private async Task ValidateIdTokenTokenEndpoint(
+    private async Task<(Acr? Acr, DateTimeOffset? AuthTime)> ValidateIdTokenTokenEndpoint(
         string idTokenEncoded,
         string accessToken,
         IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour,
@@ -774,6 +776,8 @@ internal class GrantPost : IGrantPost
                     new IdTokenValidationError(idToken, IdTokenValidationErrorType.AccessTokenHashMismatch));
             }
         }
+
+        return (idToken.Acr, idToken.AuthTime);
     }
 
     private async Task<TIdToken> DeserialiseIdToken<TIdToken>(

@@ -2,6 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 public interface IConsentPublicQuery : IEntityBaseQuery
@@ -23,6 +26,14 @@ public interface IConsentPublicQuery : IEntityBaseQuery
     string ExternalApiId { get; }
 }
 
+[JsonConverter(typeof(StringEnumConverter))]
+public enum AuthContextAcr
+{
+    Ca,
+
+    Sca
+}
+
 public class ConsentBaseResponse : EntityBaseResponse, IConsentPublicQuery
 {
     /// <summary>
@@ -30,6 +41,16 @@ public class ConsentBaseResponse : EntityBaseResponse, IConsentPublicQuery
     ///     token or supplied on object creation, it will be stored here.
     /// </summary>
     public string? ExternalApiUserId { get; init; }
+
+    /// <summary>
+    ///     ID token "acr" claim: PSU authentication level (e.g. SCA) at the bank, when available.
+    /// </summary>
+    public AuthContextAcr? AuthContextAcr { get; init; }
+
+    /// <summary>
+    ///     ID token "auth_time" claim: time of PSU authentication at the bank, when available.
+    /// </summary>
+    public DateTimeOffset? AuthContextAuthTime { get; init; }
 
     public required DateTimeOffset AuthContextModified { get; init; }
 

@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Runtime.Serialization;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -16,6 +17,18 @@ public enum Acr
 
     [EnumMember(Value = "urn:openbanking:psd2:sca")]
     Sca
+}
+
+public static class AcrExtensions
+{
+    public static AuthContextAcr? ToAuthContextAcr(this Acr? acr) =>
+        acr switch
+        {
+            Acr.Ca => AuthContextAcr.Ca,
+            Acr.Sca => AuthContextAcr.Sca,
+            null => null,
+            _ => throw new ArgumentOutOfRangeException()
+        };
 }
 
 public class StringClaim

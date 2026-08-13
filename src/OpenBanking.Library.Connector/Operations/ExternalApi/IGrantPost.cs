@@ -30,7 +30,7 @@ internal interface IGrantPost
         bool includeClientIdWithPrivateKeyJwt = false,
         JwsAlgorithm? jwsAlgorithm = null);
 
-    Task<TokenEndpointResponse> PostAuthCodeGrantAsync(
+    Task<(TokenEndpointResponse response, Acr? acr, DateTimeOffset? authTime)> PostAuthCodeGrantAsync(
         string authCode,
         string redirectUrl,
         string bankIssuerUrl,
@@ -75,7 +75,7 @@ internal interface IGrantPost
         IApiClient mtlsApiClient,
         IdTokenProcessingCustomBehaviour? baseIdTokenProcessingCustomBehaviour);
 
-    Task<string?> ValidateIdTokenAuthEndpoint(
+    Task<(string? ExternalApiUserId, Acr? Acr, DateTimeOffset? AuthTime)> ValidateIdTokenAuthEndpoint(
         string idToken,
         string code,
         string state,
