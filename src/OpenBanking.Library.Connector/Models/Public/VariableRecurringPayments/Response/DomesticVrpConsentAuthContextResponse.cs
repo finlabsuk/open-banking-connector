@@ -11,6 +11,8 @@ public interface IDomesticVrpConsentAuthContextPublicQuery : IEntityBaseQuery
     public Guid DomesticVrpConsentId { get; }
 
     public string State { get; }
+
+    public string RedirectUri { get; }
 }
 
 /// <summary>
@@ -22,6 +24,11 @@ public class DomesticVrpConsentAuthContextReadResponse : EntityBaseResponse,
     public required string State { get; init; }
 
     public required Guid DomesticVrpConsentId { get; init; }
+
+    /// <summary>
+    ///     Redirect URI (redirect_uri) actually used for this auth context.
+    /// </summary>
+    public required string RedirectUri { get; init; }
 }
 
 /// <summary>

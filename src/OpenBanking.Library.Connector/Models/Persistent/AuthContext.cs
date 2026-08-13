@@ -27,7 +27,8 @@ internal class AuthContext : BaseEntity
         string state,
         string nonce,
         string? codeVerifier,
-        string appSessionId) : base(
+        string appSessionId,
+        string redirectUri) : base(
         id,
         reference,
         isDeleted,
@@ -40,6 +41,7 @@ internal class AuthContext : BaseEntity
         Nonce = nonce ?? throw new ArgumentNullException(nameof(nonce));
         CodeVerifier = codeVerifier;
         AppSessionId = appSessionId ?? throw new ArgumentNullException(nameof(appSessionId));
+        RedirectUri = redirectUri ?? throw new ArgumentNullException(nameof(redirectUri));
     }
 
     /// <summary>
@@ -61,4 +63,10 @@ internal class AuthContext : BaseEntity
     ///     App session ID.
     /// </summary>
     public string AppSessionId { get; }
+
+    /// <summary>
+    ///     Redirect URI used to obtain the authorization code, recorded so it can be reused/validated later rather than
+    ///     recomputed from (possibly since-changed) defaults.
+    /// </summary>
+    public string RedirectUri { get; }
 }

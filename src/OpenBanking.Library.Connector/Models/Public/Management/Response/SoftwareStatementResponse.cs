@@ -35,14 +35,14 @@ public interface ISoftwareStatementPublicQuery : IEntityBaseQuery
     public Guid DefaultObSealCertificateId { get; }
 
     /// <summary>
-    ///     Default redirect URL for consent authorisation when OAuth2 response_mode = query.
+    ///     Default redirect URI for consent authorisation when OAuth2 response_mode = query.
     /// </summary>
-    public string DefaultQueryRedirectUrl { get; }
+    public string DefaultQueryRedirectUri { get; }
 
     /// <summary>
-    ///     Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.
+    ///     Default redirect URI for consent authorisation when OAuth2 response_mode = fragment.
     /// </summary>
-    public string DefaultFragmentRedirectUrl { get; }
+    public string DefaultFragmentRedirectUri { get; }
 }
 
 public class SoftwareStatementResponseItem
@@ -73,14 +73,14 @@ public class SoftwareStatementResponseItem
     public required Guid DefaultObSealCertificateId { get; init; }
 
     /// <summary>
-    ///     Default redirect URL for consent authorisation when OAuth2 response_mode = query.
+    ///     Default redirect URI for consent authorisation when OAuth2 response_mode = query.
     /// </summary>
-    public required string DefaultQueryRedirectUrl { get; init; }
+    public required string DefaultQueryRedirectUri { get; init; }
 
     /// <summary>
-    ///     Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.
+    ///     Default redirect URI for consent authorisation when OAuth2 response_mode = fragment.
     /// </summary>
-    public required string DefaultFragmentRedirectUrl { get; init; }
+    public required string DefaultFragmentRedirectUri { get; init; }
 
     /// <summary>
     ///     Unique Open Banking Connector ID (used in local database).
@@ -143,12 +143,12 @@ public class SoftwareStatementResponse : EntityBaseResponse, ISoftwareStatementP
     public required Guid DefaultObSealCertificateId { get; init; }
 
     /// <summary>
-    ///     Default redirect URL for consent authorisation when OAuth2 response_mode = query.
+    ///     Default redirect URI for consent authorisation when OAuth2 response_mode = query.
     /// </summary>
-    public required string DefaultQueryRedirectUrl { get; init; }
+    public required string DefaultQueryRedirectUri { get; init; }
 
     /// <summary>
-    ///     Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.
+    ///     Default redirect URI for consent authorisation when OAuth2 response_mode = fragment.
     /// </summary>
-    public required string DefaultFragmentRedirectUrl { get; init; }
+    public required string DefaultFragmentRedirectUri { get; init; }
 }

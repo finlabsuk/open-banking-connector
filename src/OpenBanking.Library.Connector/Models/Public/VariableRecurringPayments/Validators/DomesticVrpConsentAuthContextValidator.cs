@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FluentValidation;
 
@@ -16,5 +17,10 @@ public class DomesticVrpConsentAuthContextValidator : AbstractValidator<Domestic
         CreateRules();
     }
 
-    private void CreateRules() { }
+    private void CreateRules()
+    {
+        RuleFor(x => x.RedirectUri)
+            .Must(ValidationRules.IsUrl)
+            .When(x => x.RedirectUri is not null);
+    }
 }

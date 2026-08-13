@@ -11,6 +11,8 @@ public interface IAccountAccessConsentAuthContextPublicQuery : IEntityBaseQuery
     public Guid AccountAccessConsentId { get; }
 
     public string State { get; }
+
+    public string RedirectUri { get; }
 }
 
 /// <summary>
@@ -22,6 +24,11 @@ public class AccountAccessConsentAuthContextReadResponse : EntityBaseResponse,
     public required Guid AccountAccessConsentId { get; init; }
 
     public required string State { get; init; }
+
+    /// <summary>
+    ///     Redirect URI (redirect_uri) actually used for this auth context.
+    /// </summary>
+    public required string RedirectUri { get; init; }
 }
 
 /// <summary>

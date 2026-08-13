@@ -27,6 +27,7 @@ internal partial class DomesticPaymentConsentAuthContext :
         string nonce,
         string? codeVerifier,
         string appSessionId,
+        string redirectUri,
         Guid domesticPaymentConsentId) : base(
         id,
         reference,
@@ -38,7 +39,8 @@ internal partial class DomesticPaymentConsentAuthContext :
         state,
         nonce,
         codeVerifier,
-        appSessionId)
+        appSessionId,
+        redirectUri)
     {
         DomesticPaymentConsentId = domesticPaymentConsentId;
     }
@@ -60,6 +62,7 @@ internal partial class DomesticPaymentConsentAuthContext :
             CreatedBy = CreatedBy,
             Reference = Reference,
             State = State,
-            DomesticPaymentConsentId = DomesticPaymentConsentId
+            DomesticPaymentConsentId = DomesticPaymentConsentId,
+            RedirectUri = RedirectUri
         };
 }

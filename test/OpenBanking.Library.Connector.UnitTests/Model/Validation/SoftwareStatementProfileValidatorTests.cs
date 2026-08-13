@@ -23,12 +23,12 @@ public class SoftwareStatementProfileValidatorTests
         {
             var profile = new SoftwareStatement
             {
-                DefaultFragmentRedirectUrl = "http://test.com",
+                DefaultFragmentRedirectUri = "http://test.com",
                 OrganisationId = "org",
                 SoftwareId = "software",
                 DefaultObWacCertificateId = Guid.NewGuid(),
                 DefaultObSealCertificateId = Guid.NewGuid(),
-                DefaultQueryRedirectUrl = "http://test.com"
+                DefaultQueryRedirectUri = "http://test.com"
             };
 
             List<ValidationFailure> results =
@@ -145,7 +145,7 @@ public class SoftwareStatementProfileValidatorTests
     }
 
     [Property(Arbitrary = new[] { typeof(BaseUrlArbitrary) })]
-    public Property Validate_DefaultFragmentRedirectUrl(Uri value)
+    public Property Validate_DefaultFragmentRedirectUri(Uri value)
     {
         Func<bool> rule = () =>
         {
@@ -166,18 +166,18 @@ public class SoftwareStatementProfileValidatorTests
 
 
     [Property(Arbitrary = new[] { typeof(InvalidUriArbitrary) })]
-    public Property Validate_DefaultFragmentRedirectUrl_InvalidString(string value)
+    public Property Validate_DefaultFragmentRedirectUri_InvalidString(string value)
     {
         Func<bool> rule = () =>
         {
             var profile = new SoftwareStatement
             {
-                DefaultFragmentRedirectUrl = value,
+                DefaultFragmentRedirectUri = value,
                 OrganisationId = "org",
                 SoftwareId = "software",
                 DefaultObWacCertificateId = Guid.NewGuid(),
                 DefaultObSealCertificateId = Guid.NewGuid(),
-                DefaultQueryRedirectUrl = "http://test.com"
+                DefaultQueryRedirectUri = "http://test.com"
             };
 
             List<ValidationFailure> results =

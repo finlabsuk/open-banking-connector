@@ -26,6 +26,7 @@ internal partial class AccountAccessConsentAuthContext :
         string nonce,
         string? codeVerifier,
         string appSessionId,
+        string redirectUri,
         Guid accountAccessConsentId) : base(
         id,
         reference,
@@ -37,7 +38,8 @@ internal partial class AccountAccessConsentAuthContext :
         state,
         nonce,
         codeVerifier,
-        appSessionId)
+        appSessionId,
+        redirectUri)
     {
         AccountAccessConsentId = accountAccessConsentId;
     }
@@ -59,6 +61,7 @@ internal partial class AccountAccessConsentAuthContext :
             CreatedBy = CreatedBy,
             Reference = Reference,
             AccountAccessConsentId = AccountAccessConsentId,
-            State = State
+            State = State,
+            RedirectUri = RedirectUri
         };
 }

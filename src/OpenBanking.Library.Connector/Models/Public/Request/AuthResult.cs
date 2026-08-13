@@ -19,9 +19,9 @@ public class AuthResult : ISupportsValidation
     public OAuth2ResponseMode? ResponseMode { get; init; }
 
     /// <summary>
-    ///     Redirect URL can optionally be supplied for checking.
+    ///     Redirect URI can optionally be supplied for checking.
     /// </summary>
-    public string? RedirectUrl { get; init; }
+    public string? RedirectUri { get; init; }
 
     /// <summary>
     ///     App session ID can optionally be supplied for checking

@@ -27,5 +27,9 @@ public class AuthResultValidator : AbstractValidator<AuthResult>
         RuleFor(x => x.State)
             .Must(ValidationRules.IsNotNullOrEmpty)
             .WithMessage($"Missing or invalid {nameof(AuthResult.State)}.");
+
+        RuleFor(x => x.RedirectUri)
+            .Must(ValidationRules.IsUrl)
+            .When(x => x.RedirectUri is not null);
     }
 }

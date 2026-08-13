@@ -640,10 +640,10 @@ public class AppTests
         {
             OAuth2ResponseMode.Query =>
                 registrationQueryRedirectUrl ??
-                softwareStatementResponse.DefaultQueryRedirectUrl,
+                softwareStatementResponse.DefaultQueryRedirectUri,
             OAuth2ResponseMode.Fragment =>
                 registrationFragmentRedirectUrl ??
-                softwareStatementResponse.DefaultFragmentRedirectUrl,
+                softwareStatementResponse.DefaultFragmentRedirectUri,
             //OAuth2ResponseMode.FormPost => expr,
             _ => throw new ArgumentOutOfRangeException(nameof(responseMode), responseMode, null)
         };
@@ -764,8 +764,8 @@ public class AppTests
             SandboxEnvironment = softwareStatementEnv.SandboxEnvironment,
             DefaultObWacCertificateId = obWacCertificateResponse.Id,
             DefaultObSealCertificateId = obSealCertificateResponse.Id,
-            DefaultQueryRedirectUrl = softwareStatementEnv.DefaultQueryRedirectUrl,
-            DefaultFragmentRedirectUrl = softwareStatementEnv.DefaultFragmentRedirectUrl
+            DefaultQueryRedirectUri = softwareStatementEnv.DefaultQueryRedirectUrl,
+            DefaultFragmentRedirectUri = softwareStatementEnv.DefaultFragmentRedirectUrl
         };
         SoftwareStatementResponse softwareStatementResponse =
             await managementApiClient.SoftwareStatementCreate(softwareStatementRequest);

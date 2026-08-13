@@ -33,7 +33,7 @@ public class RedirectsController : ControllerBase
     /// <param name="error"></param>
     /// <param name="responseMode">response mode used by post-auth redirect (for checking), one of {"query", "fragment"}</param>
     /// <param name="modifiedBy">user or comment for any database updates</param>
-    /// <param name="redirectUrl">redirect URL used by post-auth redirect (for checking)</param>
+    /// <param name="redirectUri">redirect URI used by post-auth redirect (for checking)</param>
     /// <param name="appSessionId">app session ID associated with post-auth redirect (for checking)</param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
@@ -54,7 +54,7 @@ public class RedirectsController : ControllerBase
         [FromForm(Name = "modified_by")]
         string? modifiedBy,
         [FromForm(Name = "redirect_uri")]
-        string? redirectUrl,
+        string? redirectUri,
         [FromForm(Name = "app_session_id")]
         string? appSessionId)
     {
@@ -76,7 +76,7 @@ public class RedirectsController : ControllerBase
             new AuthResult
             {
                 ResponseMode = oAuth2ResponseMode,
-                RedirectUrl = redirectUrl,
+                RedirectUri = redirectUri,
                 AppSessionId = appSessionId,
                 State = state,
                 OAuth2RedirectOptionalParameters = new OAuth2RedirectOptionalParameters

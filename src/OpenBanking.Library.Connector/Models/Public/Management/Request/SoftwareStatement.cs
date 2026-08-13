@@ -43,16 +43,16 @@ public class SoftwareStatement : EntityBase, ISupportsValidation
     public required Guid DefaultObSealCertificateId { get; init; }
 
     /// <summary>
-    ///     Default redirect URL for consent authorisation when OAuth2 response_mode = query.
+    ///     Default redirect URI for consent authorisation when OAuth2 response_mode = query.
     /// </summary>
     [JsonProperty(Required = Required.Always)]
-    public required string DefaultQueryRedirectUrl { get; init; }
+    public required string DefaultQueryRedirectUri { get; init; }
 
     /// <summary>
-    ///     Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.
+    ///     Default redirect URI for consent authorisation when OAuth2 response_mode = fragment.
     /// </summary>
     [JsonProperty(Required = Required.Always)]
-    public required string DefaultFragmentRedirectUrl { get; init; }
+    public required string DefaultFragmentRedirectUri { get; init; }
 
     public async Task<ValidationResult> ValidateAsync() =>
         await new SoftwareStatementValidator()

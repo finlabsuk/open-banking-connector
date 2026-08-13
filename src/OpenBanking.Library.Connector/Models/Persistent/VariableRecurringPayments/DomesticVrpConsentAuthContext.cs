@@ -27,6 +27,7 @@ internal partial class DomesticVrpConsentAuthContext :
         string nonce,
         string? codeVerifier,
         string appSessionId,
+        string redirectUri,
         Guid domesticVrpConsentId) : base(
         id,
         reference,
@@ -38,7 +39,8 @@ internal partial class DomesticVrpConsentAuthContext :
         state,
         nonce,
         codeVerifier,
-        appSessionId)
+        appSessionId,
+        redirectUri)
     {
         DomesticVrpConsentId = domesticVrpConsentId;
     }
@@ -60,6 +62,7 @@ internal partial class DomesticVrpConsentAuthContext :
             CreatedBy = CreatedBy,
             Reference = Reference,
             State = State,
-            DomesticVrpConsentId = DomesticVrpConsentId
+            DomesticVrpConsentId = DomesticVrpConsentId,
+            RedirectUri = RedirectUri
         };
 }

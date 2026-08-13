@@ -61,6 +61,7 @@ public class AuthorisationCallbackDataValidatorTests
         {
             ResponseMode = OAuth2ResponseMode.Fragment,
             State = "a",
+            RedirectUri = "https://example.com/redirect",
             OAuth2RedirectOptionalParameters = new OAuth2RedirectOptionalParameters
             {
                 IdToken = "a",
@@ -71,5 +72,27 @@ public class AuthorisationCallbackDataValidatorTests
         IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
         Assert.Empty(results);
+    }
+
+    [Fact]
+    public void Validate_InvalidRedirectUri()
+    {
+        var validator = new AuthResultValidator();
+
+        var data = new AuthResult
+        {
+            ResponseMode = OAuth2ResponseMode.Fragment,
+            State = "a",
+            RedirectUri = "invalid-url",
+            OAuth2RedirectOptionalParameters = new OAuth2RedirectOptionalParameters
+            {
+                IdToken = "a",
+                Code = "a"
+            }
+        };
+
+        IList<ValidationFailure>? results = validator.Validate(data).Errors;
+
+        Assert.Single(results);
     }
 }

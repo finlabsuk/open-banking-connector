@@ -981,21 +981,21 @@ internal class
         SsaPayload ssaPayload =
             SoftwareStatementPayloadFromBase64(ssaComponentsBase64[1]);
 
-        // Check DefaultQueryRedirectUrl
-        if (softwareStatement.DefaultQueryRedirectUrl is not null &&
-            !ssaPayload.SoftwareRedirectUris.Contains(softwareStatement.DefaultQueryRedirectUrl))
+        // Check DefaultQueryRedirectUri
+        if (softwareStatement.DefaultQueryRedirectUri is not null &&
+            !ssaPayload.SoftwareRedirectUris.Contains(softwareStatement.DefaultQueryRedirectUri))
         {
             throw new ArgumentException(
-                $"Software statement with ID {id} contains DefaultQueryRedirectUrl {softwareStatement.DefaultQueryRedirectUrl} " +
+                $"Software statement with ID {id} contains DefaultQueryRedirectUri {softwareStatement.DefaultQueryRedirectUri} " +
                 "which is not included in software statement assertion software_redirect_uris field.");
         }
 
-        // Check DefaultFragmentRedirectUrl
-        if (softwareStatement.DefaultFragmentRedirectUrl is not null &&
-            !ssaPayload.SoftwareRedirectUris.Contains(softwareStatement.DefaultFragmentRedirectUrl))
+        // Check DefaultFragmentRedirectUri
+        if (softwareStatement.DefaultFragmentRedirectUri is not null &&
+            !ssaPayload.SoftwareRedirectUris.Contains(softwareStatement.DefaultFragmentRedirectUri))
         {
             throw new ArgumentException(
-                $"Software statement with ID {id} contains DefaultFragmentRedirectUrl {softwareStatement.DefaultFragmentRedirectUrl} " +
+                $"Software statement with ID {id} contains DefaultFragmentRedirectUri {softwareStatement.DefaultFragmentRedirectUri} " +
                 "which is not included in software statement assertion software_redirect_uris field.");
         }
 
@@ -1170,15 +1170,15 @@ internal class
         }
         else
         {
-            if (!redirectUris.Contains(softwareStatement.DefaultFragmentRedirectUrl))
+            if (!redirectUris.Contains(softwareStatement.DefaultFragmentRedirectUri))
             {
                 throw new InvalidOperationException(
-                    $"Default fragment redirect URI {softwareStatement.DefaultFragmentRedirectUrl} " +
+                    $"Default fragment redirect URI {softwareStatement.DefaultFragmentRedirectUri} " +
                     $"from software statement profile not included in specified RedirectUris. " +
                     $"Please specify a different one or include this one in specified RedirectUris.");
             }
             defaultFragmentRedirectUri =
-                softwareStatement.DefaultFragmentRedirectUrl;
+                softwareStatement.DefaultFragmentRedirectUri;
         }
 
         // Determine default query redirect URI ensuring also contained in redirect URIs list
@@ -1194,15 +1194,15 @@ internal class
         }
         else
         {
-            if (!redirectUris.Contains(softwareStatement.DefaultQueryRedirectUrl))
+            if (!redirectUris.Contains(softwareStatement.DefaultQueryRedirectUri))
             {
                 throw new InvalidOperationException(
-                    $"Default query redirect URI {softwareStatement.DefaultQueryRedirectUrl} " +
+                    $"Default query redirect URI {softwareStatement.DefaultQueryRedirectUri} " +
                     $"from software statement profile not included in specified RedirectUris. " +
                     $"Please specify a different one or include this one in specified RedirectUris.");
             }
             defaultQueryRedirectUri =
-                softwareStatement.DefaultQueryRedirectUrl;
+                softwareStatement.DefaultQueryRedirectUri;
         }
 
 

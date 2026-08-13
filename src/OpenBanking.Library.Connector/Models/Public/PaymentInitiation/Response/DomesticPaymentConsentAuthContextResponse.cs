@@ -11,6 +11,8 @@ public interface IDomesticPaymentConsentAuthContextPublicQuery : IEntityBaseQuer
     public Guid DomesticPaymentConsentId { get; }
 
     public string State { get; }
+
+    public string RedirectUri { get; }
 }
 
 /// <summary>
@@ -22,6 +24,11 @@ public class DomesticPaymentConsentAuthContextReadResponse : EntityBaseResponse,
     public required string State { get; init; }
 
     public required Guid DomesticPaymentConsentId { get; init; }
+
+    /// <summary>
+    ///     Redirect URI (redirect_uri) actually used for this auth context.
+    /// </summary>
+    public required string RedirectUri { get; init; }
 }
 
 /// <summary>

@@ -30,8 +30,8 @@ internal partial class SoftwareStatementEntity :
         bool sandboxEnvironment,
         Guid defaultObWacCertificateId,
         Guid defaultObSealCertificateId,
-        string defaultQueryRedirectUrl,
-        string defaultFragmentRedirectUrl) : base(
+        string defaultQueryRedirectUri,
+        string defaultFragmentRedirectUri) : base(
         id,
         reference,
         isDeleted,
@@ -46,10 +46,10 @@ internal partial class SoftwareStatementEntity :
         SandboxEnvironment = sandboxEnvironment;
         DefaultObWacCertificateId = defaultObWacCertificateId;
         DefaultObSealCertificateId = defaultObSealCertificateId;
-        DefaultQueryRedirectUrl =
-            defaultQueryRedirectUrl ?? throw new ArgumentNullException(nameof(defaultQueryRedirectUrl));
-        DefaultFragmentRedirectUrl = defaultFragmentRedirectUrl ??
-                                     throw new ArgumentNullException(nameof(defaultFragmentRedirectUrl));
+        DefaultQueryRedirectUri =
+            defaultQueryRedirectUri ?? throw new ArgumentNullException(nameof(defaultQueryRedirectUri));
+        DefaultFragmentRedirectUri = defaultFragmentRedirectUri ??
+                                     throw new ArgumentNullException(nameof(defaultFragmentRedirectUri));
     }
 
     public ObWacCertificateEntity DefaultObWacCertificateNavigation { get; } = null!;
@@ -84,41 +84,41 @@ internal partial class SoftwareStatementEntity :
     public Guid DefaultObSealCertificateId { get; private set; }
 
     /// <summary>
-    ///     Default redirect URL for consent authorisation when OAuth2 response_mode = query.
+    ///     Default redirect URI for consent authorisation when OAuth2 response_mode = query.
     /// </summary>
-    public string DefaultQueryRedirectUrl { get; private set; }
+    public string DefaultQueryRedirectUri { get; private set; }
 
     /// <summary>
-    ///     Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.
+    ///     Default redirect URI for consent authorisation when OAuth2 response_mode = fragment.
     /// </summary>
-    public string DefaultFragmentRedirectUrl { get; private set; }
+    public string DefaultFragmentRedirectUri { get; private set; }
 
     public string GetRedirectUri(
         OAuth2ResponseMode responseMode,
-        string? registrationFragmentRedirectUrl,
-        string? registrationQueryRedirectUrl) =>
+        string? registrationFragmentRedirectUri,
+        string? registrationQueryRedirectUri) =>
         responseMode switch
         {
-            OAuth2ResponseMode.Query => registrationQueryRedirectUrl ?? DefaultQueryRedirectUrl,
-            OAuth2ResponseMode.Fragment => registrationFragmentRedirectUrl ?? DefaultFragmentRedirectUrl,
+            OAuth2ResponseMode.Query => registrationQueryRedirectUri ?? DefaultQueryRedirectUri,
+            OAuth2ResponseMode.Fragment => registrationFragmentRedirectUri ?? DefaultFragmentRedirectUri,
             //OAuth2ResponseMode.FormPost => expr,
             _ => throw new ArgumentOutOfRangeException(nameof(responseMode), responseMode, null)
         };
 
     public void Update(
-        string? defaultFragmentRedirectUrl,
-        string? defaultQueryRedirectUrl,
+        string? defaultFragmentRedirectUri,
+        string? defaultQueryRedirectUri,
         Guid? defaultObSealCertificateId,
         Guid? defaultObWacCertificateId,
         DateTimeOffset utcNow)
     {
-        if (defaultFragmentRedirectUrl is not null)
+        if (defaultFragmentRedirectUri is not null)
         {
-            DefaultFragmentRedirectUrl = defaultFragmentRedirectUrl;
+            DefaultFragmentRedirectUri = defaultFragmentRedirectUri;
         }
-        if (defaultQueryRedirectUrl is not null)
+        if (defaultQueryRedirectUri is not null)
         {
-            DefaultQueryRedirectUrl = defaultQueryRedirectUrl;
+            DefaultQueryRedirectUri = defaultQueryRedirectUri;
         }
         if (defaultObSealCertificateId is not null)
         {
@@ -146,7 +146,7 @@ internal partial class SoftwareStatementEntity :
         SandboxEnvironment = SandboxEnvironment,
         DefaultObWacCertificateId = DefaultObWacCertificateId,
         DefaultObSealCertificateId = DefaultObSealCertificateId,
-        DefaultQueryRedirectUrl = DefaultQueryRedirectUrl,
-        DefaultFragmentRedirectUrl = DefaultFragmentRedirectUrl
+        DefaultQueryRedirectUri = DefaultQueryRedirectUri,
+        DefaultFragmentRedirectUri = DefaultFragmentRedirectUri
     };
 }

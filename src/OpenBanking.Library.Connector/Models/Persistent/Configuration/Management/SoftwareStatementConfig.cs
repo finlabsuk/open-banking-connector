@@ -49,10 +49,10 @@ internal class SoftwareStatementConfig(
         if (_dbProvider is DbProvider.MongoDb)
         {
             builder.ToCollection("softwareStatement");
-            builder.Property(p => p.DefaultFragmentRedirectUrl).HasElementName("defaultFragmentRedirectUrl");
+            builder.Property(p => p.DefaultFragmentRedirectUri).HasElementName("defaultFragmentRedirectUri");
             builder.Property(p => p.DefaultObSealCertificateId).HasElementName("defaultObSealCertificateId");
             builder.Property(p => p.DefaultObWacCertificateId).HasElementName("defaultObWacCertificateId");
-            builder.Property(p => p.DefaultQueryRedirectUrl).HasElementName("defaultQueryRedirectUrl");
+            builder.Property(p => p.DefaultQueryRedirectUri).HasElementName("defaultQueryRedirectUri");
             builder.Property(p => p.Modified).HasElementName("modified");
             builder.Property(p => p.OrganisationId).HasElementName("organisationId");
             builder.Property(p => p.SandboxEnvironment).HasElementName("sandboxEnvironment");

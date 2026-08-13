@@ -20,9 +20,9 @@ public class SoftwareStatementValidator : AbstractValidator<SoftwareStatement>
             .NotEmpty();
         RuleFor(x => x.DefaultObSealCertificateId)
             .NotEmpty();
-        RuleFor(x => x.DefaultQueryRedirectUrl)
+        RuleFor(x => x.DefaultQueryRedirectUri)
             .Must(ValidationRules.IsUrl);
-        RuleFor(x => x.DefaultFragmentRedirectUrl)
+        RuleFor(x => x.DefaultFragmentRedirectUri)
             .Must(ValidationRules.IsUrl);
     }
 }

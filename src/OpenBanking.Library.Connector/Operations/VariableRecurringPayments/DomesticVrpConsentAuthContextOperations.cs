@@ -80,10 +80,25 @@ internal class
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
         OAuth2ResponseType responseType = bankProfile.DefaultResponseType;
 
-        string redirectUri = softwareStatement.GetRedirectUri(
-            bankRegistration.DefaultResponseModeOverride ?? bankProfile.DefaultResponseMode,
-            bankRegistration.DefaultFragmentRedirectUri,
-            bankRegistration.DefaultQueryRedirectUri);
+        string redirectUri;
+        if (request.RedirectUri is not null)
+        {
+            if (!bankRegistration.RedirectUris.Contains(request.RedirectUri))
+            {
+                throw new ArgumentException(
+                    $"Redirect URI {request.RedirectUri} is not one of the redirect URIs " +
+                    $"registered for bank registration with ID {bankRegistration.Id}.",
+                    nameof(request));
+            }
+            redirectUri = request.RedirectUri;
+        }
+        else
+        {
+            redirectUri = softwareStatement.GetRedirectUri(
+                bankRegistration.DefaultResponseModeOverride ?? bankProfile.DefaultResponseMode,
+                bankRegistration.DefaultFragmentRedirectUri,
+                bankRegistration.DefaultQueryRedirectUri);
+        }
 
         // Get OBSeal key
         OBSealKey obSealKey =
@@ -130,6 +145,7 @@ internal class
             nonce,
             codeVerifier,
             sessionId,
+            redirectUri,
             request.DomesticVrpConsentId);
 
         // Add entity
@@ -144,6 +160,7 @@ internal class
                 Reference = entity.Reference,
                 State = state,
                 DomesticVrpConsentId = entity.DomesticVrpConsentId,
+                RedirectUri = redirectUri,
                 AuthUrl = authUrl,
                 AppSessionId = sessionId
             };

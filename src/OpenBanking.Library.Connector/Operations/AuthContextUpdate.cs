@@ -328,10 +328,7 @@ internal class AuthContextUpdate :
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
-        string redirectUrl = softwareStatement.GetRedirectUri(
-            defaultResponseMode,
-            bankRegistration.DefaultFragmentRedirectUri,
-            bankRegistration.DefaultQueryRedirectUri);
+        string redirectUri = authContext.RedirectUri;
         OAuth2ResponseType responseType = bankProfile.DefaultResponseType;
         bool useOpenIdConnect = bankProfile.UseOpenIdConnect;
 
@@ -366,11 +363,11 @@ internal class AuthContextUpdate :
         OBSealKey obSealKey =
             (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
 
-        // Validate redirect URL
-        if (request.RedirectUrl is not null &&
-            !string.Equals(request.RedirectUrl, redirectUrl))
+        // Validate redirect URI
+        if (request.RedirectUri is not null &&
+            !string.Equals(request.RedirectUri, redirectUri))
         {
-            throw new Exception("Redirect URL supplied does not match that which was expected");
+            throw new Exception("Redirect URI supplied does not match that which was expected");
         }
 
         // Validate response mode
@@ -487,7 +484,7 @@ internal class AuthContextUpdate :
             TokenEndpointResponse tokenEndpointResponse =
                 await _grantPost.PostAuthCodeGrantAsync(
                     code,
-                    redirectUrl,
+                    redirectUri,
                     issuerUrl,
                     externalApiClientId,
                     clientSecret,

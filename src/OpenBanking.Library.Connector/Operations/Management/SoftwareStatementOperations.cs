@@ -49,8 +49,8 @@ internal class SoftwareStatementOperations(
             request.SandboxEnvironment,
             request.DefaultObWacCertificateId,
             request.DefaultObSealCertificateId,
-            request.DefaultQueryRedirectUrl,
-            request.DefaultFragmentRedirectUrl);
+            request.DefaultQueryRedirectUri,
+            request.DefaultFragmentRedirectUri);
 
         // Add entity
         await entityMethods.AddAsync(entity);
@@ -85,8 +85,8 @@ internal class SoftwareStatementOperations(
                     SandboxEnvironment = x.SandboxEnvironment,
                     DefaultObWacCertificateId = x.DefaultObWacCertificateId,
                     DefaultObSealCertificateId = x.DefaultObSealCertificateId,
-                    DefaultQueryRedirectUrl = x.DefaultQueryRedirectUrl,
-                    DefaultFragmentRedirectUrl = x.DefaultFragmentRedirectUrl,
+                    DefaultQueryRedirectUri = x.DefaultQueryRedirectUri,
+                    DefaultFragmentRedirectUri = x.DefaultFragmentRedirectUri,
                     Id = x.Id,
                     Created = x.Created,
                     CreatedBy = x.CreatedBy,
@@ -120,8 +120,8 @@ internal class SoftwareStatementOperations(
             throw new KeyNotFoundException($"No record found for SoftwareStatement with ID {readParams.Id}.");
 
         // Exit if no changes
-        if (request.DefaultFragmentRedirectUrl is null &&
-            request.DefaultQueryRedirectUrl is null &&
+        if (request.DefaultFragmentRedirectUri is null &&
+            request.DefaultQueryRedirectUri is null &&
             request.DefaultObSealCertificateId is null &&
             request.DefaultObWacCertificateId is null)
         {
@@ -131,8 +131,8 @@ internal class SoftwareStatementOperations(
         // Update entity
         DateTimeOffset utcNow = timeProvider.GetUtcNow();
         entity.Update(
-            request.DefaultFragmentRedirectUrl,
-            request.DefaultQueryRedirectUrl,
+            request.DefaultFragmentRedirectUri,
+            request.DefaultQueryRedirectUri,
             request.DefaultObSealCertificateId,
             request.DefaultObWacCertificateId,
             utcNow);

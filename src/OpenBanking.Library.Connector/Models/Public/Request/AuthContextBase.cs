@@ -11,4 +11,10 @@ public class AuthContextBase : EntityBase
     ///     is not recommended).
     /// </summary>
     public string? State { get; init; }
+
+    /// <summary>
+    ///     Optionally specify which registered redirect URI to use for this auth context. Defaults to the bank
+    ///     registration's/software statement's default for the applicable response_mode.
+    /// </summary>
+    public string? RedirectUri { get; init; }
 }

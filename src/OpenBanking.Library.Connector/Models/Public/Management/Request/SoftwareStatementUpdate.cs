@@ -20,14 +20,14 @@ public class SoftwareStatementUpdate : ISupportsValidation
     public Guid? DefaultObSealCertificateId { get; init; }
 
     /// <summary>
-    ///     Default redirect URL for consent authorisation when OAuth2 response_mode = query.
+    ///     Default redirect URI for consent authorisation when OAuth2 response_mode = query.
     /// </summary>
-    public string? DefaultQueryRedirectUrl { get; init; }
+    public string? DefaultQueryRedirectUri { get; init; }
 
     /// <summary>
-    ///     Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.
+    ///     Default redirect URI for consent authorisation when OAuth2 response_mode = fragment.
     /// </summary>
-    public string? DefaultFragmentRedirectUrl { get; init; }
+    public string? DefaultFragmentRedirectUri { get; init; }
 
     public Task<ValidationResult> ValidateAsync() =>
         Task.FromResult(new ValidationResult());

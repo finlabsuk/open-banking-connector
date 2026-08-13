@@ -34,6 +34,8 @@ internal class AuthContextConfig<TEntity>(
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.AppSessionId)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.RedirectUri)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
 
         if (_dbProvider is DbProvider.MongoDb)
         {
@@ -57,6 +59,7 @@ internal class AuthContextConfig<TEntity>(
             builder.Property(p => p.Nonce).HasElementName("nonce");
             builder.Property(p => p.Reference).HasElementName("reference");
             builder.Property(p => p.State).HasElementName("state");
+            builder.Property(p => p.RedirectUri).HasElementName("redirectUri");
         }
     }
 }
