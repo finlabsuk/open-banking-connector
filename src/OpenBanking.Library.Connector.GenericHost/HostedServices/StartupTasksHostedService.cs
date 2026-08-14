@@ -9,7 +9,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Migrations.MongoDb;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -20,7 +19,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -38,8 +36,6 @@ public class StartupTasksHostedService : IHostedService
     private readonly HttpClientSettings _httpClientSettings;
 
     private readonly IInstrumentationClient _instrumentationClient;
-
-    private readonly ILogger<StartupTasksHostedService> _logger;
 
     private readonly IMemoryCache _memoryCache;
 
@@ -61,7 +57,6 @@ public class StartupTasksHostedService : IHostedService
         ISettingsService settingsService,
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
         IInstrumentationClient instrumentationClient,
-        ILogger<StartupTasksHostedService> logger,
         IMemoryCache memoryCache,
         ISecretProvider secretProvider,
         IServiceScopeFactory serviceScopeFactory,
@@ -70,7 +65,7 @@ public class StartupTasksHostedService : IHostedService
     {
         _bankProfileService = bankProfileService ?? throw new ArgumentNullException(nameof(bankProfileService));
         _configurationRoot =
-            (IConfigurationRoot)(configuration ?? throw new ArgumentNullException(nameof(configuration)));
+            (IConfigurationRoot) (configuration ?? throw new ArgumentNullException(nameof(configuration)));
         _databaseSettingsProvider = databaseSettingsProvider ??
                                     throw new ArgumentNullException(nameof(databaseSettingsProvider));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
@@ -79,7 +74,6 @@ public class StartupTasksHostedService : IHostedService
             .GetSettings();
         _instrumentationClient =
             instrumentationClient ?? throw new ArgumentNullException(nameof(instrumentationClient));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
         _secretProvider = secretProvider ?? throw new ArgumentNullException(nameof(secretProvider));
         _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
@@ -167,9 +161,16 @@ public class StartupTasksHostedService : IHostedService
                     {
                         MongoDbDriverConfiguration.EnsureConstructorHasRun();
 
-                        // Apply migration
+                        // Apply migrations
                         await new ToVersion1()
                             .FromVersion0(
+                                mongoDatabase,
+                                _instrumentationClient,
+                                _timeProvider,
+                                cancellationToken);
+
+                        await new ToVersion2()
+                            .FromVersion1(
                                 mongoDatabase,
                                 _instrumentationClient,
                                 _timeProvider,
@@ -213,18 +214,6 @@ public class StartupTasksHostedService : IHostedService
                 _memoryCache,
                 _instrumentationClient,
                 _tppReportingMetrics);
-
-        await new BankRegistrationCleanup()
-            .Cleanup(
-                dbContext,
-                _logger);
-
-        await new AccountAccessConsentCleanup()
-            .Cleanup(
-                dbContext,
-                _logger);
-
-        //postgreSqlDbContext.ChangeTracker.DetectChanges();
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

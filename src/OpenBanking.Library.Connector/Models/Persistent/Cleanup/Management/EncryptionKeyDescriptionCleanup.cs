@@ -30,7 +30,7 @@ public class EncryptionKeyDescriptionCleanup
                 .EncryptionKeyDescription;
 
         // Check and cache encryption keys
-        foreach (EncryptionKeyDescriptionEntity encryptionKeyDescriptionEntity in encryptionKeyDescriptions.Local)
+        foreach (EncryptionKeyDescriptionEntity encryptionKeyDescriptionEntity in encryptionKeyDescriptions)
         {
             // Attempt to obtain key
             SecretResult keyResult = await secretProvider.GetSecretAsync(encryptionKeyDescriptionEntity.Key);

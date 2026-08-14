@@ -32,7 +32,7 @@ internal class SettingsEntity
 
     public static Guid SingletonId => Guid.Parse("232c4049-a77a-4dbe-b740-ce6e9f4f54cf");
 
-    public static long CurrentSchemaVersion => 1;
+    public static long CurrentSchemaVersion => 2;
 
     public Guid Id { get; }
 
