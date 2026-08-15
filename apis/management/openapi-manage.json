@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "22.0.0"
+    "version": "23.0.0"
   },
   "paths": {
     "/manage/bank-registrations": {
@@ -1517,10 +1517,10 @@
       },
       "SoftwareStatement": {
         "required": [
-          "DefaultFragmentRedirectUrl",
+          "DefaultFragmentRedirectUri",
           "DefaultObSealCertificateId",
           "DefaultObWacCertificateId",
-          "DefaultQueryRedirectUrl",
+          "DefaultQueryRedirectUri",
           "OrganisationId",
           "SoftwareId"
         ],
@@ -1548,13 +1548,13 @@
             "description": "ID of default ObSealCertificate to use for signing JWTs etc with this software statement.",
             "format": "uuid"
           },
-          "DefaultQueryRedirectUrl": {
+          "DefaultQueryRedirectUri": {
             "type": "string",
-            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = query."
+            "description": "Default redirect URI for consent authorisation when OAuth2 response_mode = query."
           },
-          "DefaultFragmentRedirectUrl": {
+          "DefaultFragmentRedirectUri": {
             "type": "string",
-            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = fragment."
+            "description": "Default redirect URI for consent authorisation when OAuth2 response_mode = fragment."
           },
           "Reference": {
             "type": "string",
@@ -1572,10 +1572,10 @@
       "SoftwareStatementResponse": {
         "required": [
           "Created",
-          "DefaultFragmentRedirectUrl",
+          "DefaultFragmentRedirectUri",
           "DefaultObSealCertificateId",
           "DefaultObWacCertificateId",
-          "DefaultQueryRedirectUrl",
+          "DefaultQueryRedirectUri",
           "Id",
           "OrganisationId",
           "SandboxEnvironment",
@@ -1607,14 +1607,14 @@
             "description": "ID of default ObSealCertificate to use for signing JWTs etc with this software statement.",
             "format": "uuid"
           },
-          "DefaultQueryRedirectUrl": {
+          "DefaultQueryRedirectUri": {
             "type": "string",
-            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = query.",
+            "description": "Default redirect URI for consent authorisation when OAuth2 response_mode = query.",
             "nullable": true
           },
-          "DefaultFragmentRedirectUrl": {
+          "DefaultFragmentRedirectUri": {
             "type": "string",
-            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.",
+            "description": "Default redirect URI for consent authorisation when OAuth2 response_mode = fragment.",
             "nullable": true
           },
           "Id": {
@@ -1652,10 +1652,10 @@
       "SoftwareStatementResponseItem": {
         "required": [
           "Created",
-          "DefaultFragmentRedirectUrl",
+          "DefaultFragmentRedirectUri",
           "DefaultObSealCertificateId",
           "DefaultObWacCertificateId",
-          "DefaultQueryRedirectUrl",
+          "DefaultQueryRedirectUri",
           "Id",
           "OrganisationId",
           "SandboxEnvironment",
@@ -1687,14 +1687,14 @@
             "description": "ID of default ObSealCertificate to use for signing JWTs etc with this software statement.",
             "format": "uuid"
           },
-          "DefaultQueryRedirectUrl": {
+          "DefaultQueryRedirectUri": {
             "type": "string",
-            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = query.",
+            "description": "Default redirect URI for consent authorisation when OAuth2 response_mode = query.",
             "nullable": true
           },
-          "DefaultFragmentRedirectUrl": {
+          "DefaultFragmentRedirectUri": {
             "type": "string",
-            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.",
+            "description": "Default redirect URI for consent authorisation when OAuth2 response_mode = fragment.",
             "nullable": true
           },
           "Id": {
@@ -1735,14 +1735,14 @@
             "format": "uuid",
             "nullable": true
           },
-          "DefaultQueryRedirectUrl": {
+          "DefaultQueryRedirectUri": {
             "type": "string",
-            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = query.",
+            "description": "Default redirect URI for consent authorisation when OAuth2 response_mode = query.",
             "nullable": true
           },
-          "DefaultFragmentRedirectUrl": {
+          "DefaultFragmentRedirectUri": {
             "type": "string",
-            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.",
+            "description": "Default redirect URI for consent authorisation when OAuth2 response_mode = fragment.",
             "nullable": true
           }
         },

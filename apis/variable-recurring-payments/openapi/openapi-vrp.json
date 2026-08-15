@@ -3,7 +3,7 @@
   "info": {
     "title": "Variable Recurring Payments API",
     "description": "Variable Recurring Payments API for Open Banking Connector Web App",
-    "version": "22.0.0"
+    "version": "23.0.0"
   },
   "paths": {
     "/vrp/domestic-vrp-consent-auth-contexts": {
@@ -653,6 +653,13 @@
         },
         "additionalProperties": false
       },
+      "AuthContextAcr": {
+        "enum": [
+          "Ca",
+          "Sca"
+        ],
+        "type": "string"
+      },
       "AuthContextRequest": {
         "required": [
           "Nonce",
@@ -998,6 +1005,11 @@
             "description": "Optionally specify OAuth2 state to use instead of one automatically created by Open Banking Connector (using this\r\nis not recommended).",
             "nullable": true
           },
+          "RedirectUri": {
+            "type": "string",
+            "description": "Optionally specify which registered redirect URI to use for this auth context. Defaults to the bank\r\nregistration's/software statement's default for the applicable response_mode.",
+            "nullable": true
+          },
           "Reference": {
             "type": "string",
             "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
@@ -1018,6 +1030,7 @@
           "Created",
           "DomesticVrpConsentId",
           "Id",
+          "RedirectUri",
           "State"
         ],
         "type": "object",
@@ -1039,6 +1052,11 @@
           "DomesticVrpConsentId": {
             "type": "string",
             "format": "uuid"
+          },
+          "RedirectUri": {
+            "type": "string",
+            "description": "Redirect URI (redirect_uri) actually used for this auth context.",
+            "nullable": true
           },
           "Id": {
             "type": "string",
@@ -1077,6 +1095,7 @@
           "Created",
           "DomesticVrpConsentId",
           "Id",
+          "RedirectUri",
           "State"
         ],
         "type": "object",
@@ -1088,6 +1107,11 @@
           "DomesticVrpConsentId": {
             "type": "string",
             "format": "uuid"
+          },
+          "RedirectUri": {
+            "type": "string",
+            "description": "Redirect URI (redirect_uri) actually used for this auth context.",
+            "nullable": true
           },
           "Id": {
             "type": "string",
@@ -1152,6 +1176,15 @@
           "ExternalApiUserId": {
             "type": "string",
             "description": "User ID at external API (bank) which may or may not be available via ID token \"sub\" claim. If retrieved from ID\r\ntoken or supplied on object creation, it will be stored here.",
+            "nullable": true
+          },
+          "AuthContextAcr": {
+            "$ref": "#/components/schemas/AuthContextAcr"
+          },
+          "AuthContextAuthTime": {
+            "type": "string",
+            "description": "ID token \"auth_time\" claim: time of PSU authentication at the bank, when available.",
+            "format": "date-time",
             "nullable": true
           },
           "AuthContextModified": {

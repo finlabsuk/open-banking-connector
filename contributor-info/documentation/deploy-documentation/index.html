@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -587,7 +587,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-started/set-up-basic-configuration/" class="md-nav__link">
+      <a href="../../../get-started/set-up-basic-configuration/README.md" class="md-nav__link">
         
   
   
@@ -615,7 +615,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-started/run-container/" class="md-nav__link">
+      <a href="../../../get-started/run-container/README.md" class="md-nav__link">
         
   
   
@@ -671,7 +671,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-started/create-bank-registration/" class="md-nav__link">
+      <a href="../../../get-started/create-bank-registration/README.md" class="md-nav__link">
         
   
   
@@ -798,7 +798,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-started/account-access-consents/get-account-data/" class="md-nav__link">
+      <a href="../../../get-started/account-access-consents/get-account-data/README.md" class="md-nav__link">
         
   
   
@@ -905,7 +905,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-started/domestic-payment-consents/create-and-authorise-domestic-payment-consent/" class="md-nav__link">
+      <a href="../../../get-started/domestic-payment-consents/create-and-authorise-domestic-payment-consent/README.md" class="md-nav__link">
         
   
   
@@ -933,7 +933,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-started/domestic-payment-consents/confirm-funds-and-make-payment/" class="md-nav__link">
+      <a href="../../../get-started/domestic-payment-consents/confirm-funds-and-make-payment/README.md" class="md-nav__link">
         
   
   
@@ -1040,7 +1040,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-started/domestic-vrp-consents/create-and-authorise-domestic-vrp-consent/" class="md-nav__link">
+      <a href="../../../get-started/domestic-vrp-consents/create-and-authorise-domestic-vrp-consent/README.md" class="md-nav__link">
         
   
   
@@ -1068,7 +1068,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-started/domestic-vrp-consents/confirm-funds-and-make-payment/" class="md-nav__link">
+      <a href="../../../get-started/domestic-vrp-consents/confirm-funds-and-make-payment/README.md" class="md-nav__link">
         
   
   
@@ -2432,15 +2432,10 @@
 
 
 <h1 id="deploy-documentation">Deploy documentation</h1>
-<p>Here are the steps required to:</p>
-<ul>
-<li>
-<p>prepare for deployment </p>
-</li>
-<li>
-<p>deploy documentation to website</p>
-</li>
-</ul>
+<p>Documentation is deployed to the <a href="https://docs.openbankingconnector.io/">docs website</a> automatically with each release,
+via the <code>deploy-docs</code> job in the <a href="https://github.com/finlabsuk/open-banking-connector/blob/master/.github/workflows/make-release.yml">
+<code>make-release</code></a>
+workflow. Manual deployment is only needed to preview changes locally or deploy out-of-band.</p>
 <h2 id="pre-requisites">Pre-requisites</h2>
 <p>To publish documentation to the website, you will need to have permission to push to the <code>gh-pages</code> branch of the repo.</p>
 <p>You will require Python 3 and Material for MkDocs (mkdocs-material).</p>
@@ -2451,15 +2446,17 @@ pip<span class="w"> </span>install<span class="w"> </span>mkdocs-render-swagger-
 </code></pre></div>
 <h2 id="prepare-for-deployment">Prepare for deployment</h2>
 <h3 id="preview-website">Preview website</h3>
-<p>To deploy the website locally for inspection and testing, please <code>cd</code> to the repo root and run the following command:
+<p>To deploy the website locally for inspection and testing, please <code>cd</code> to the repo root and run the following command:</p>
 <div class="highlight"><pre><span></span><code>mkdocs serve
 </code></pre></div>
-This will return the URL you can use to preview the website. Commit and push any corrections or updates required.</p>
+<p>This will return the URL you can use to preview the website. Commit and push any corrections or updates required.</p>
 <h2 id="deploy-website">Deploy website</h2>
-<p>Assuming you have permissions to push to the repo <code>gh-pages</code> branch, you can update the public website on GitHub Pages using:
+<p>Assuming you have permissions to push to the repo <code>gh-pages</code> branch, you can update the public website on GitHub Pages
+using:</p>
 <div class="highlight"><pre><span></span><code>mkdocs<span class="w"> </span>gh-deploy<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Message&quot;</span><span class="w"> </span>-r<span class="w"> </span>publicRemote<span class="w"> </span>--ignore-version<span class="w"> </span><span class="c1"># adjust commit message and remote as required </span>
-</code></pre></div></p>
-<p>N.B. The <code>--ignore-version</code> flag is used to solve the problem of Mkdocs confusing the tag version with the Mkdocs version which stops the website from being deployed.</p>
+</code></pre></div>
+<p>N.B. The <code>--ignore-version</code> flag is used to solve the problem of Mkdocs confusing the tag version with the Mkdocs
+version which stops the website from being deployed.</p>
 
 
 
@@ -2480,7 +2477,7 @@ This will return the URL you can use to preview the website. Commit and push any
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="September 17, 2023 10:32:21 UTC">2023-09-17</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="August 13, 2026 17:46:25 UTC">2026-08-13</span>
   </span>
 
     
@@ -2537,7 +2534,7 @@ This will return the URL you can use to preview the website. Commit and push any
       <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.indexes", "toc.follow", "search.suggest", "search.share"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

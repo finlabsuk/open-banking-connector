@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -587,7 +587,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-started/set-up-basic-configuration/" class="md-nav__link">
+      <a href="../../../get-started/set-up-basic-configuration/README.md" class="md-nav__link">
         
   
   
@@ -615,7 +615,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-started/run-container/" class="md-nav__link">
+      <a href="../../../get-started/run-container/README.md" class="md-nav__link">
         
   
   
@@ -671,7 +671,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-started/create-bank-registration/" class="md-nav__link">
+      <a href="../../../get-started/create-bank-registration/README.md" class="md-nav__link">
         
   
   
@@ -798,7 +798,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-started/account-access-consents/get-account-data/" class="md-nav__link">
+      <a href="../../../get-started/account-access-consents/get-account-data/README.md" class="md-nav__link">
         
   
   
@@ -905,7 +905,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-started/domestic-payment-consents/create-and-authorise-domestic-payment-consent/" class="md-nav__link">
+      <a href="../../../get-started/domestic-payment-consents/create-and-authorise-domestic-payment-consent/README.md" class="md-nav__link">
         
   
   
@@ -933,7 +933,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-started/domestic-payment-consents/confirm-funds-and-make-payment/" class="md-nav__link">
+      <a href="../../../get-started/domestic-payment-consents/confirm-funds-and-make-payment/README.md" class="md-nav__link">
         
   
   
@@ -1040,7 +1040,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-started/domestic-vrp-consents/create-and-authorise-domestic-vrp-consent/" class="md-nav__link">
+      <a href="../../../get-started/domestic-vrp-consents/create-and-authorise-domestic-vrp-consent/README.md" class="md-nav__link">
         
   
   
@@ -1068,7 +1068,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-started/domestic-vrp-consents/confirm-funds-and-make-payment/" class="md-nav__link">
+      <a href="../../../get-started/domestic-vrp-consents/confirm-funds-and-make-payment/README.md" class="md-nav__link">
         
   
   
@@ -2287,23 +2287,35 @@
 
 
 <h1 id="use-microsofts-secret-manager">Use Microsoft's secret manager</h1>
-<p>When running Open Banking Connector as a .NET application from source code, and when in the development environment, Microsoft's secret manager can be used to provide configuration/secrets.</p>
-<p>To use the secret manager, you will need a <code>secrets.json</code> file in the appropriate directory (if you do not have one already). The Microsoft documentation <a href="https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&amp;tabs=windows#how-the-secret-manager-tool-works">here</a> gives the path for this directory. Please note that the UserSecretsId for the app is <code>aa921213-9461-4f9e-8fec-153624ec67ad</code> as given in the web app <code>.csproj</code> file.</p>
-<p>You can then add key-value pairs to the <code>secrets.json</code> file to supply configuration to Open Banking Connector.</p>
-<p>Here is an example of what such a file might look like after configuring a software statement profile, transport certificate profile and signing certificate profile:</p>
+<p>When running Open Banking Connector as a .NET application from source code, and when in the development environment,
+Microsoft's secret manager can be used to provide configuration/secrets.</p>
+<p>To use the secret manager, you will need a <code>secrets.json</code> file in the appropriate directory (if you do not have one
+already). The Microsoft
+documentation <a href="https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&amp;tabs=windows#how-the-secret-manager-tool-works">here</a>
+gives the path for this directory. Please note that the UserSecretsId for the app is
+<code>aa921213-9461-4f9e-8fec-153624ec67ad</code> as given in the web app <code>.csproj</code> file.</p>
+<p>You can then add key-value pairs to the <code>secrets.json</code> file to supply configuration to Open Banking Connector.
+See <a href="../../../configuration/">configuration &amp; secrets</a> for the settings groups available and how setting names map
+to <code>secrets.json</code> keys.</p>
+<p>Note that software statements and OBWAC/OBSeal certificates are no longer supplied via configuration/secrets; they are
+created and managed at runtime via the <a href="../../../apis/management/">Management API</a> (e.g.
+<code>POST /manage/software-statements</code>, <code>POST /manage/obwac-certificates</code>, <code>POST /manage/obseal-certificates</code>) and stored in
+the database instead.</p>
+<p>Here is an example of what such a file might look like after configuring the database connection string and password
+secret name:</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:TransportCertificateProfiles:New1:Certificate&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;-----BEGIN CERTIFICATE-----\nabc\n-----END CERTIFICATE-----\n&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:TransportCertificateProfiles:New1:AssociatedKey&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;-----BEGIN PRIVATE KEY-----\nabc\n-----END PRIVATE KEY-----\n&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:SoftwareStatementProfiles:All:TransportCertificateProfileId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;New1&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:SoftwareStatementProfiles:All:SoftwareStatement&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a.b.c&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:SoftwareStatementProfiles:All:SigningCertificateProfileId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;New2&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:SoftwareStatementProfiles:All:DefaultFragmentRedirectUrl&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://example.com/auth/fragment-redirect&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:SigningCertificateProfiles:New2:AssociatedKeyId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;abc&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:SigningCertificateProfiles:New2:AssociatedKey&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;-----BEGIN PRIVATE KEY-----\nabc\n-----END PRIVATE KEY-----\n&quot;</span>
+<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:Database:Provider&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PostgreSql&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:Database:ConnectionStrings:PostgreSql&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Host=localhost;Database=obc;Username=postgres&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:Database:PasswordSettingNames:PostgreSql&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;obcDatabasePassword&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;obcDatabasePassword&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;abc&quot;</span>
 <span class="p">}</span>
 </code></pre></div>
-<p><strong>Important</strong>: Some settings values are very sensitive, for example keys, and should be carefully and securely stored and managed.
- They should <strong>never</strong> be stored in-repo, for example in additional or modified <code>appsettings.json</code> files, due to the risk of disclosure. The secret manager is designed to store secrets out-of-repo during code development and testing where other configuration providers may not be available.</p>
+<p>See <a href="../../../configuration/database-settings/">database settings</a> for more information on database configuration,
+including how the password secret is looked up and appended to the connection string.</p>
+<p><strong>Important</strong>: Some settings values are very sensitive, for example keys and passwords, and should be carefully and
+securely stored and managed. They should <strong>never</strong> be stored in-repo, for example in additional or modified
+<code>appsettings.json</code> files, due to the risk of disclosure. The secret manager is designed to store secrets out-of-repo
+during code development and testing where other configuration providers may not be available.</p>
 
 
 
@@ -2324,7 +2336,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="September 17, 2023 10:32:21 UTC">2023-09-17</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="August 13, 2026 17:46:25 UTC">2026-08-13</span>
   </span>
 
     
@@ -2381,7 +2393,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.indexes", "toc.follow", "search.suggest", "search.share"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -733,7 +733,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../get-started/set-up-basic-configuration/" class="md-nav__link">
+      <a href="../get-started/set-up-basic-configuration/README.md" class="md-nav__link">
         
   
   
@@ -761,7 +761,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../get-started/run-container/" class="md-nav__link">
+      <a href="../get-started/run-container/README.md" class="md-nav__link">
         
   
   
@@ -817,7 +817,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../get-started/create-bank-registration/" class="md-nav__link">
+      <a href="../get-started/create-bank-registration/README.md" class="md-nav__link">
         
   
   
@@ -944,7 +944,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../get-started/account-access-consents/get-account-data/" class="md-nav__link">
+      <a href="../get-started/account-access-consents/get-account-data/README.md" class="md-nav__link">
         
   
   
@@ -1051,7 +1051,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../get-started/domestic-payment-consents/create-and-authorise-domestic-payment-consent/" class="md-nav__link">
+      <a href="../get-started/domestic-payment-consents/create-and-authorise-domestic-payment-consent/README.md" class="md-nav__link">
         
   
   
@@ -1079,7 +1079,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../get-started/domestic-payment-consents/confirm-funds-and-make-payment/" class="md-nav__link">
+      <a href="../get-started/domestic-payment-consents/confirm-funds-and-make-payment/README.md" class="md-nav__link">
         
   
   
@@ -1186,7 +1186,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../get-started/domestic-vrp-consents/create-and-authorise-domestic-vrp-consent/" class="md-nav__link">
+      <a href="../get-started/domestic-vrp-consents/create-and-authorise-domestic-vrp-consent/README.md" class="md-nav__link">
         
   
   
@@ -1214,7 +1214,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../get-started/domestic-vrp-consents/confirm-funds-and-make-payment/" class="md-nav__link">
+      <a href="../get-started/domestic-vrp-consents/confirm-funds-and-make-payment/README.md" class="md-nav__link">
         
   
   
@@ -2543,8 +2543,9 @@ Open Banking equivalents such as the <a href="../apis/account-and-transaction/">
   by a particular bank.</li>
 <li>When retrieving AISP objects such as transactions etc, you supply the consent ID (returned when creating the consent)
   instead of a token</li>
-<li>All data request and response objects are based on a single UK Open Banking spec revision and Open Banking Connector
-  is capable of converting to and from older spec revisions if required for a bank</li>
+<li>All data request and response objects are based on a single UK Open Banking spec revision (currently v4.0.1) and Open
+  Banking Connector is capable of converting to and from older spec revisions (currently v4.0 and v3.1.11, including
+  v3.1.x versions that work with minor tweaks) if required for a bank</li>
 <li>No bank tokens need be supplied as these are obtained, used and refreshed automatically by Open Banking Connector
   isolating them from other parts of your back-end</li>
 </ul>
@@ -2559,12 +2560,11 @@ context before re-attempting auth. For an AISP consent, you can create an auth c
 the <a href="../apis/account-and-transaction/openapi/">POST /aisp/account-access-consent-auth-contexts</a> endpoint. Upon
 creating an auth context, Open Banking Connector will return an auth URL you can redirect the user to. This URL should
 be used within 5 minutes to avoid signed object expiry.</p>
-<p>After end-user auth, the bank will redirect to a secure URL your app provides (the redirect URL can be selected from
-those in your software statement assertion (SSA) when creating a bank registration). This URL should display appropriate
-customer messaging and process the bank redirect data in the URL fragment (or query). This redirect data needs to be
-forwarded by your back-end to Open Banking Connector via
-the <a href="../apis/auth-contexts/openapi/">POST /auth/redirect-delegate</a> endpoint. This must occur within the 10-minute
-lifetime of the auth context.</p>
+<p>After end-user auth, the bank will redirect to a secure redirect URI your app provides (eligible redirect URIs are set
+up when creating a bank registration). This redirect URI should display appropriate customer messaging and process the
+bank redirect data in the URL fragment (or query). This redirect data needs to be forwarded by your back-end to Open
+Banking Connector via the <a href="../apis/auth-contexts/openapi/">POST /auth/redirect-delegate</a> endpoint. This must occur
+within the 10-minute lifetime of the auth context.</p>
 <p>There are many possible scenarios for end-user auth and it is strongly recommended to discuss your planned
 implementation with us so we can discuss security threat models and best practices.</p>
 <h4 id="open-banking-connector-stores-bank-registration-and-consent-data">Open Banking Connector stores bank registration and consent data</h4>
@@ -2575,8 +2575,8 @@ transactions, balances etc.</p>
 <p>To host Open Banking Connector in your back-end infrastructure, you will need:</p>
 <ul>
 <li>a host (e.g. VM or Kubernetes cluster) to run the Open Banking Connector Docker image</li>
-<li>a relational database. Currently only PosgreSQL is supported but, as Open Banking Connector uses EF
-  Core (Microsoft's .NET ORM), other database integrations should be relatively easy to add in future.</li>
+<li>a relational database. Currently only PosgreSQL is supported but, as Open Banking Connector uses EF Core (Microsoft's
+  .NET ORM), other database integrations should be relatively easy to add in future.</li>
 <li>a means of supplying configuration/secrets to the Open Banking Connector container. Environment variables can be used
   and, in the case of secrets, could be e.g. dynamically pulled from a key secret vault. Parameters from AWS SSM
   Parameter Store can be used and we are open to adding other cloud sources/vaults as
@@ -2620,7 +2620,7 @@ unencrypted bank tokens are not usable in isolation.)</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="December 28, 2024 23:04:07 UTC">2024-12-28</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="August 13, 2026 17:46:25 UTC">2026-08-13</span>
   </span>
 
     
@@ -2677,7 +2677,7 @@ unencrypted bank tokens are not usable in isolation.)</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.indexes", "toc.follow", "search.suggest", "search.share"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

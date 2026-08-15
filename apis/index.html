@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -587,7 +587,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../get-started/set-up-basic-configuration/" class="md-nav__link">
+      <a href="../get-started/set-up-basic-configuration/README.md" class="md-nav__link">
         
   
   
@@ -615,7 +615,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../get-started/run-container/" class="md-nav__link">
+      <a href="../get-started/run-container/README.md" class="md-nav__link">
         
   
   
@@ -671,7 +671,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../get-started/create-bank-registration/" class="md-nav__link">
+      <a href="../get-started/create-bank-registration/README.md" class="md-nav__link">
         
   
   
@@ -798,7 +798,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../get-started/account-access-consents/get-account-data/" class="md-nav__link">
+      <a href="../get-started/account-access-consents/get-account-data/README.md" class="md-nav__link">
         
   
   
@@ -905,7 +905,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../get-started/domestic-payment-consents/create-and-authorise-domestic-payment-consent/" class="md-nav__link">
+      <a href="../get-started/domestic-payment-consents/create-and-authorise-domestic-payment-consent/README.md" class="md-nav__link">
         
   
   
@@ -933,7 +933,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../get-started/domestic-payment-consents/confirm-funds-and-make-payment/" class="md-nav__link">
+      <a href="../get-started/domestic-payment-consents/confirm-funds-and-make-payment/README.md" class="md-nav__link">
         
   
   
@@ -1040,7 +1040,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../get-started/domestic-vrp-consents/create-and-authorise-domestic-vrp-consent/" class="md-nav__link">
+      <a href="../get-started/domestic-vrp-consents/create-and-authorise-domestic-vrp-consent/README.md" class="md-nav__link">
         
   
   
@@ -1068,7 +1068,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../get-started/domestic-vrp-consents/confirm-funds-and-make-payment/" class="md-nav__link">
+      <a href="../get-started/domestic-vrp-consents/confirm-funds-and-make-payment/README.md" class="md-nav__link">
         
   
   
@@ -2315,7 +2315,11 @@
 
 <h1 id="apis">APIs</h1>
 <h2 id="overview">Overview</h2>
-<p>Open Banking Connector provides a set of HTTP APIs. Mostly these act as <em>outer APIs</em> providing replacement endpoints for endpoints provided by <a href="https://standards.openbanking.org.uk/api-specifications/">UK Open Banking APIs</a>. These replacement endpoints wrap calls to <em>UK Open Banking API</em> endpoints as well as extra calls for token acquisition etc. Aside from the Management and Auth Context APIs, Open Banking Connector APIs aim to mirror their UK Open Banking equivalents as much as possible.</p>
+<p>Open Banking Connector provides a set of HTTP APIs. Mostly these act as <em>outer APIs</em> providing replacement endpoints for
+endpoints provided by <a href="https://standards.openbanking.org.uk/api-specifications/">UK Open Banking APIs</a>. These
+replacement endpoints wrap calls to <em>UK Open Banking API</em> endpoints as well as extra calls for token acquisition etc.
+Aside from the Management and Auth Context APIs, Open Banking Connector APIs aim to mirror their UK Open Banking
+equivalents as much as possible.</p>
 <p>The APIs provided are as follows:</p>
 <table>
 <thead>
@@ -2331,15 +2335,15 @@
 </tr>
 <tr>
 <td><a href="account-and-transaction/">Account and Transaction</a></td>
-<td>This API aims to mirror the UK Open Banking <a href="https://openbankinguk.github.io/read-write-api-site3/v3.1.10/profiles/account-and-transaction-api-profile.html">Account and Transaction API</a>.</td>
+<td>This API aims to mirror the UK Open Banking <a href="https://openbankinguk.github.io/read-write-api-site3/v4.0.1/profiles/account-and-transaction-api-profile.html">Account and Transaction API</a></td>
 </tr>
 <tr>
 <td><a href="payment-initiation/">Payment Initiation</a></td>
-<td>This API aims to mirror the UK Open Banking <a href="https://openbankinguk.github.io/read-write-api-site3/v3.1.10/profiles/payment-initiation-api-profile.html">Payment Initiation API</a>.</td>
+<td>This API aims to mirror the UK Open Banking <a href="https://openbankinguk.github.io/read-write-api-site3/v4.0.1/profiles/payment-initiation-api-profile.html">Payment Initiation API</a></td>
 </tr>
 <tr>
 <td><a href="variable-recurring-payments/">Variable Recurring Payments</a></td>
-<td>This API aims to mirror the UK Open Banking <a href="https://openbankinguk.github.io/read-write-api-site3/v3.1.10/profiles/vrp-profile.html">Variable Recurring Payments API</a>.</td>
+<td>This API aims to mirror the UK Open Banking <a href="https://openbankinguk.github.io/read-write-api-site3/v4.0.1/profiles/vrp-profile.html">Variable Recurring Payments API</a></td>
 </tr>
 <tr>
 <td><a href="auth-contexts/">Auth Contexts API</a></td>
@@ -2347,11 +2351,22 @@
 </tr>
 </tbody>
 </table>
+<p>Data request and response objects follow the UK Open Banking v4.0.1 spec. For banks whose APIs are still on v4.0 or
+v3.1.11 (including other v3.1.x versions that work with minor tweaks), Open Banking Connector transparently converts
+to/from those revisions so you always work against a single, current API.</p>
 <h2 id="security">Security</h2>
-<p>The Open Banking Connector APIs are <em>internal (i.e. non-internet-accessible) APIs</em> for consumption within your back-end infrastructure. They should definitely not (!) be exposed to the internet in any way. This is <em>very important</em> as these endpoints provide access to Open Banking APIs.</p>
-<p>The APIs are provided as HTTP rather than HTTPS APIs as customers are expected to configure HTTPS via an outer wrapper (e.g. using Kubernetes or a reverse proxy) to enable easier certificate configuration and to set up features such as MTLS.</p>
-<p>As internal APIs, they do not require tokens but should obviously be secured as appropriate, e.g. via MTLS, firewalls, AWS security groups etc.</p>
-<p>Internally, Open Banking Connector acquires and uses tokens to access UK Open Banking APIs. As a security feature, these tokens are not retrievable via the Open Banking Connector APIs. So, for example, when reading (GETing) a consent such as an Account Access Consent, tokens will not be included in the consent payload. To inspect them (in encrypted form), you will need to query the database directly.</p>
+<p>The Open Banking Connector APIs are <em>internal (i.e. non-internet-accessible) APIs</em> for consumption within your back-end
+infrastructure. They should definitely not (!) be exposed to the internet in any way. This is <em>very important</em> as these
+endpoints provide access to Open Banking APIs.</p>
+<p>The APIs are provided as HTTP rather than HTTPS APIs as customers are expected to configure HTTPS via an outer wrapper
+(e.g. using Kubernetes or a reverse proxy) to enable easier certificate configuration and to set up features such as
+MTLS.</p>
+<p>As internal APIs, they do not require tokens but should obviously be secured as appropriate, e.g. via MTLS, firewalls,
+AWS security groups etc.</p>
+<p>Internally, Open Banking Connector acquires and uses tokens to access UK Open Banking APIs. As a security feature, these
+tokens are not retrievable via the Open Banking Connector APIs. So, for example, when reading (GETing) a consent such as
+an Account Access Consent, tokens will not be included in the consent payload. To inspect them (in encrypted form), you
+will need to query the database directly.</p>
 
 
 
@@ -2372,7 +2387,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="December 30, 2023 16:03:04 UTC">2023-12-30</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="August 13, 2026 17:46:25 UTC">2026-08-13</span>
   </span>
 
     
@@ -2429,7 +2444,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.indexes", "toc.follow", "search.suggest", "search.share"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
