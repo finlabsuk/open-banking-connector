@@ -2,8 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 
@@ -25,7 +25,7 @@ internal class DomesticPaymentConsent :
         string? authContextState,
         string? authContextNonce,
         string? authContextCodeVerifier,
-        Acr? authContextAcr,
+        AuthContextAcr? authContextAcr,
         DateTimeOffset? authContextAuthTime,
         DateTimeOffset authContextModified,
         string? authContextModifiedBy,

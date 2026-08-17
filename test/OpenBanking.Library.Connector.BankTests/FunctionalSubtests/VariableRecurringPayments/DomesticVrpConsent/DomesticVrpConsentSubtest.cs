@@ -42,6 +42,7 @@ public class DomesticVrpConsentSubtest(
         PaymentsEnv paymentsEnv,
         string testNameUnique,
         string modifiedBy,
+        string? alternativeRedirectUri,
         FilePathBuilder? vrpFluentRequestLogging,
         ConsentAuth consentAuth,
         string authUrlLeftPart,
@@ -93,7 +94,8 @@ public class DomesticVrpConsentSubtest(
                 {
                     DomesticVrpConsentId = domesticVrpConsentId,
                     Reference = testNameUnique + "_DomesticVrpConsent",
-                    CreatedBy = modifiedBy
+                    CreatedBy = modifiedBy,
+                    RedirectUri = alternativeRedirectUri
                 };
                 DomesticVrpConsentAuthContextCreateResponse authContextCreateResponse =
                     await variableRecurringPaymentsApiClient.DomesticVrpConsentAuthContextCreate(authContextRequest);

@@ -2,7 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -39,7 +39,7 @@ internal class BaseConsentConfig<TEntity>(
         builder.Property(e => e.AuthContextModifiedBy);
         builder.Property(e => e.AuthContextCodeVerifier);
         builder.Property(e => e.AuthContextAcr)
-            .HasConversion(new EnumToStringConverter<Acr>());
+            .HasConversion(new EnumToStringConverter<AuthContextAcr>());
         builder.Property(e => e.AuthContextAuthTime);
         builder.Property(e => e.ExternalApiUserId);
         builder.Property(e => e.ExternalApiUserIdModified);

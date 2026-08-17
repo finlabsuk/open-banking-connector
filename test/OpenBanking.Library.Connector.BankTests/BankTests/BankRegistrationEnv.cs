@@ -46,6 +46,9 @@ public class BankRegistrationEnv
     [JsonPropertyName("externalApiAccountAccessConsentId")]
     public string? ExternalApiAccountAccessConsentId { get; init; }
 
+    [JsonPropertyName("alternativeRedirectUri")]
+    public string? AlternativeRedirectUri { get; init; }
+
     [JsonPropertyName("aispUseV4")]
     public bool? AispUseV4 { get; init; }
 

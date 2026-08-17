@@ -36,6 +36,7 @@ public class DomesticPaymentConsentSubtest(
         PaymentsEnv paymentsEnv,
         string testNameUnique,
         string modifiedBy,
+        string? alternativeRedirectUri,
         FilePathBuilder? pispFluentRequestLogging,
         ConsentAuth consentAuth,
         string authUrlLeftPart,
@@ -93,7 +94,8 @@ public class DomesticPaymentConsentSubtest(
                 {
                     DomesticPaymentConsentId = domesticPaymentConsentId,
                     Reference = testNameUnique + "_DomesticPaymentConsent",
-                    CreatedBy = modifiedBy
+                    CreatedBy = modifiedBy,
+                    RedirectUri = alternativeRedirectUri
                 };
                 DomesticPaymentConsentAuthContextCreateResponse authContextCreateResponse =
                     await paymentInitiationApiClient.DomesticPaymentConsentAuthContextCreate(authContextRequest);

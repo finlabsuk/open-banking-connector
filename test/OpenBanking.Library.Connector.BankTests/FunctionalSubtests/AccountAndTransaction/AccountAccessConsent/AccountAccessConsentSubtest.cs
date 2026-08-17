@@ -43,6 +43,7 @@ public class AccountAccessConsentSubtest(
         bool testAuth,
         string testNameUnique,
         string modifiedBy,
+        string? alternativeRedirectUri,
         FilePathBuilder? aispFluentRequestLogging,
         ConsentAuth consentAuth,
         string authUrlLeftPart,
@@ -163,7 +164,8 @@ public class AccountAccessConsentSubtest(
                 {
                     AccountAccessConsentId = accountAccessConsentId,
                     Reference = testNameUnique + "_AccountAccessConsent",
-                    CreatedBy = modifiedBy
+                    CreatedBy = modifiedBy,
+                    RedirectUri = alternativeRedirectUri
                 };
                 AccountAccessConsentAuthContextCreateResponse accountAccessConsentAuthContextCreateResponse =
                     await accountAndTransactionApiClient.AccountAccessConsentAuthContextCreate(authContextRequest);

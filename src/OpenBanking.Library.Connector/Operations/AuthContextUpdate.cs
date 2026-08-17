@@ -433,7 +433,7 @@ internal class AuthContextUpdate :
             authContext.State,
             nonce,
             authContext.CodeVerifier,
-            acr,
+            acr.ToAuthContextAcr(),
             authTime,
             modified,
             modifiedBy);
@@ -516,7 +516,7 @@ internal class AuthContextUpdate :
                 (tokenAcr is not null || tokenAuthTime is not null))
             {
                 consent.UpdateAuthContextAcrAndAuthTime(
-                    tokenAcr,
+                    tokenAcr.ToAuthContextAcr(),
                     tokenAuthTime,
                     modified,
                     modifiedBy);

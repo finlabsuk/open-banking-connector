@@ -11,7 +11,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
@@ -322,7 +321,7 @@ internal class
                 BankRegistrationId = persistedConsent.BankRegistrationId,
                 ExternalApiId = persistedConsent.ExternalApiId,
                 ExternalApiUserId = persistedConsent.ExternalApiUserId,
-                AuthContextAcr = persistedConsent.AuthContextAcr.ToAuthContextAcr(),
+                AuthContextAcr = persistedConsent.AuthContextAcr,
                 AuthContextAuthTime = persistedConsent.AuthContextAuthTime,
                 AuthContextModified = persistedConsent.AuthContextModified,
                 AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
@@ -522,7 +521,7 @@ internal class
                 BankRegistrationId = persistedConsent.BankRegistrationId,
                 ExternalApiId = persistedConsent.ExternalApiId,
                 ExternalApiUserId = persistedConsent.ExternalApiUserId,
-                AuthContextAcr = persistedConsent.AuthContextAcr.ToAuthContextAcr(),
+                AuthContextAcr = persistedConsent.AuthContextAcr,
                 AuthContextAuthTime = persistedConsent.AuthContextAuthTime,
                 AuthContextModified = persistedConsent.AuthContextModified,
                 AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,

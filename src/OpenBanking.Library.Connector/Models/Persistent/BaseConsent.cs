@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -26,7 +25,7 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
         string? authContextState,
         string? authContextNonce,
         string? authContextCodeVerifier,
-        Acr? authContextAcr,
+        AuthContextAcr? authContextAcr,
         DateTimeOffset? authContextAuthTime,
         DateTimeOffset authContextModified,
         string? authContextModifiedBy,
@@ -69,7 +68,7 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
     /// <summary>
     ///     ID token "acr" claim: PSU authentication level (e.g. SCA) at the bank, when available.
     /// </summary>
-    public Acr? AuthContextAcr { get; private set; }
+    public AuthContextAcr? AuthContextAcr { get; private set; }
 
     /// <summary>
     ///     ID token "auth_time" claim: time of PSU authentication at the bank, when available.
@@ -116,7 +115,7 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
         string state,
         string nonce,
         string? codeVerifier,
-        Acr? acr,
+        AuthContextAcr? acr,
         DateTimeOffset? authTime,
         DateTimeOffset modified,
         string? modifiedBy)
@@ -134,7 +133,7 @@ internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
     ///     Updates auth context ACR and auth_time only.
     /// </summary>
     public void UpdateAuthContextAcrAndAuthTime(
-        Acr? acr,
+        AuthContextAcr? acr,
         DateTimeOffset? authTime,
         DateTimeOffset modified,
         string? modifiedBy)
