@@ -79,6 +79,7 @@ nav:
       - Auth Contexts API:
           - apis/auth-contexts/README.md
           - OpenAPI spec: apis/auth-contexts/openapi.md
+      - Server errors: apis/server-errors.md
   - Contributor info:
       - contributor-info/README.md
       - Documentation:

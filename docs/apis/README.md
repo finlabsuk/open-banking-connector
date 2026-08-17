@@ -22,6 +22,9 @@ Data request and response objects follow the UK Open Banking v4.0.1 spec. For ba
 v3.1.11 (including other v3.1.x versions that work with minor tweaks), Open Banking Connector transparently converts
 to/from those revisions so you always work against a single, current API.
 
+When a request cannot be fulfilled, all APIs return errors in a common format &mdash;
+see [server errors](./server-errors.md).
+
 ## Security
 
 The Open Banking Connector APIs are *internal (i.e. non-internet-accessible) APIs* for consumption within your back-end
