@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Concurrent;
 using System.Text.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
@@ -30,6 +31,13 @@ using ObSealCertificateRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.ObSealCertificate;
 using ObWacCertificateRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.ObWacCertificate;
+using SoftwareStatementCreateResult = (
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response.ObWacCertificateResponse
+    obWacCertificateResponse,
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response.ObSealCertificateResponse
+    obSealCertificateResponse,
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response.SoftwareStatementResponse
+    softwareStatementResponse);
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
@@ -39,6 +47,12 @@ public class AppTests
     private const string ModifiedBy = "Automated bank tests";
     private static AppContextFixture _appContextFixture = null!;
     private static BankTestingFixture _classLevelWebApplicationFactory = null!;
+    private static Guid _encryptionKeyDescriptionId;
+
+    // One entry per distinct SoftwareStatementName, created on first use and reused for the rest of the run.
+    // Lazy<T> ensures the create factory runs once per key even under concurrent test execution.
+    private static readonly ConcurrentDictionary<string, Lazy<Task<SoftwareStatementCreateResult>>>
+        _softwareStatementsByName = new();
 
     public static IEnumerable<object[]>
         GetDynamicClientRegistrationTestCases() =>
@@ -83,10 +97,56 @@ public class AppTests
     }
 
     [ClassCleanup]
-    public static void ClassCleanup()
+    public static async Task ClassCleanup()
     {
-        _appContextFixture.Dispose();
-        _classLevelWebApplicationFactory.Dispose();
+        try
+        {
+            using HttpClient httpClient = _classLevelWebApplicationFactory.CreateClient();
+            var webAppClient = new WebAppClient(httpClient);
+            var managementApiClient = new ManagementApiClient(webAppClient);
+
+            // Delete all software statements and certificates created during this run
+            foreach (Lazy<Task<SoftwareStatementCreateResult>> lazy in _softwareStatementsByName.Values)
+            {
+                try
+                {
+                    SoftwareStatementCreateResult softwareStatement = await lazy.Value;
+                    await SoftwareStatementDelete(
+                        softwareStatement.obWacCertificateResponse.Id,
+                        softwareStatement.obSealCertificateResponse.Id,
+                        softwareStatement.softwareStatementResponse.Id,
+                        managementApiClient);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(
+                        $"AppTest ClassCleanup: failed to delete software statement. Error: {ex.Message}");
+                }
+            }
+            Console.WriteLine(
+                $"AppTest ClassCleanup: finished software statement cleanup ({_softwareStatementsByName.Count} processed).");
+
+            // Delete the encryption key
+            if (_encryptionKeyDescriptionId != Guid.Empty)
+            {
+                try
+                {
+                    await EncryptionKeyDescriptionDelete(_encryptionKeyDescriptionId, managementApiClient);
+                    Console.WriteLine(
+                        $"AppTest ClassCleanup: deleted encryption key description (Id = {_encryptionKeyDescriptionId}).");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(
+                        $"AppTest ClassCleanup: failed to delete encryption key description (Id = {_encryptionKeyDescriptionId}). Error: {ex.Message}");
+                }
+            }
+        }
+        finally
+        {
+            _appContextFixture.Dispose();
+            await _classLevelWebApplicationFactory.DisposeAsync();
+        }
     }
 
     public static IEnumerable<object[]> GetTestCases(TestType testType)
@@ -331,7 +391,54 @@ public class AppTests
             null,
             ModifiedBy,
             managementApiClient);
-        Guid encryptionKeyDescriptionId = encryptionKeyDescriptionResponse.Id;
+        _encryptionKeyDescriptionId = encryptionKeyDescriptionResponse.Id;
+        Console.WriteLine($"Created encryption key description (Id={_encryptionKeyDescriptionId}).");
+    }
+
+    /// <summary>
+    ///     Returns the software statement and certificates for <paramref name="softwareStatementName" />, creating
+    ///     them on first use and reusing them for subsequent calls with the same name.
+    /// </summary>
+    private static async Task<SoftwareStatementCreateResult> GetOrCreateSoftwareStatement(
+        string softwareStatementName,
+        ManagementApiClient managementApiClient)
+    {
+        Lazy<Task<SoftwareStatementCreateResult>> lazy = _softwareStatementsByName.GetOrAdd(
+            softwareStatementName,
+            name => new Lazy<Task<SoftwareStatementCreateResult>>(
+                () => CreateSoftwareStatementAsync(name, managementApiClient)));
+        try
+        {
+            return await lazy.Value;
+        }
+        catch
+        {
+            // Don't leave a permanently-faulted entry cached; let the next caller retry.
+            _softwareStatementsByName.TryRemove(softwareStatementName, out _);
+            throw;
+        }
+    }
+
+    private static async Task<SoftwareStatementCreateResult> CreateSoftwareStatementAsync(
+        string softwareStatementName,
+        ManagementApiClient managementApiClient)
+    {
+        string softwareStatementEnvFile = Path.Combine(
+            AppConfiguration.RequestsDirectory,
+            "SoftwareStatement",
+            "http-client.private.env.json");
+        var softwareStatementEnvs = await DataFile.ReadFile<SoftwareStatementEnvFile>(
+            softwareStatementEnvFile,
+            new JsonSerializerOptions());
+        SoftwareStatementEnv softwareStatementEnv =
+            softwareStatementEnvs.Values.FirstOrDefault(x => x.SoftwareStatementName == softwareStatementName) ??
+            throw new InvalidOperationException($"Software statement {softwareStatementName} specified but not found.");
+
+        return await SoftwareStatementCreate(
+            softwareStatementEnv,
+            $"{softwareStatementName}_{Guid.NewGuid()}",
+            ModifiedBy,
+            managementApiClient);
     }
 
     private async Task TestAllInner(BankTestData testData)
@@ -401,27 +508,10 @@ public class AppTests
         EmailOptions emailOptions = bankTestSettings.Auth.Email;
         var consentAuth = new ConsentAuth(browserTypeLaunchOptions, emailOptions, bankProfileDefinitions);
 
-        // Create and read software statement (incl. certificates)
-        string softwareStatementEnvFile = Path.Combine(
-            AppConfiguration.RequestsDirectory,
-            "SoftwareStatement",
-            "http-client.private.env.json");
-        var softwareStatementEnvs = await DataFile.ReadFile<SoftwareStatementEnvFile>(
-            softwareStatementEnvFile,
-            new JsonSerializerOptions());
-        SoftwareStatementEnv softwareStatementEnv =
-            softwareStatementEnvs.Values.FirstOrDefault(x => x.SoftwareStatementName == testData.SoftwareStatement) ??
-            throw new InvalidOperationException(
-                $"Software statement {testData.SoftwareStatement} specified but not found.");
-        (ObWacCertificateResponse obWacCertificateResponse,
-            ObSealCertificateResponse obSealCertificateResponse,
-            SoftwareStatementResponse softwareStatementResponse) = await SoftwareStatementCreate(
-            softwareStatementEnv,
-            testNameUnique,
-            ModifiedBy,
-            managementApiClient);
-        Guid obWacCertificateId = obWacCertificateResponse.Id;
-        Guid obSealCertificateId = obSealCertificateResponse.Id;
+        // Get or create the software statement and certificates for this test's software statement name.
+        SoftwareStatementResponse softwareStatementResponse =
+            (await GetOrCreateSoftwareStatement(testData.SoftwareStatement, managementApiClient))
+            .softwareStatementResponse;
         Guid softwareStatementId = softwareStatementResponse.Id;
 
         // Create BankRegistrationRequest
@@ -622,12 +712,6 @@ public class AppTests
         // Delete BankRegistration (excludes external API delete)
         await BankRegistrationDelete(bankRegistrationId, true, managementApiClient);
 
-        await SoftwareStatementDelete(
-            obWacCertificateId,
-            obSealCertificateId,
-            softwareStatementId,
-            managementApiClient);
-
         Console.WriteLine("AppTest Finish");
     }
 
@@ -648,7 +732,7 @@ public class AppTests
             _ => throw new ArgumentOutOfRangeException(nameof(responseMode), responseMode, null)
         };
 
-    private async
+    private static async
         Task<BaseResponse> EncryptionKeyDescriptionDelete(
             Guid encryptionKeyDescriptionId,
             ManagementApiClient managementApiClient)
@@ -658,7 +742,7 @@ public class AppTests
         return encryptionKeyDescriptionResponse;
     }
 
-    private async
+    private static async
         Task<(BaseResponse obWacCertificateDeleteResponse, BaseResponse
             obSealCertificateDeleteResponse, BaseResponse
             softwareStatementDeleteResponse)> SoftwareStatementDelete(
@@ -708,14 +792,11 @@ public class AppTests
         return encryptionKeyResponse;
     }
 
-    private async
-        Task<(ObWacCertificateResponse obWacCertificateResponse,
-            ObSealCertificateResponse obSealCertificateResponse,
-            SoftwareStatementResponse softwareStatementResponse)> SoftwareStatementCreate(
-            SoftwareStatementEnv softwareStatementEnv,
-            string reference,
-            string createdBy,
-            ManagementApiClient managementApiClient)
+    private static async Task<SoftwareStatementCreateResult> SoftwareStatementCreate(
+        SoftwareStatementEnv softwareStatementEnv,
+        string reference,
+        string createdBy,
+        ManagementApiClient managementApiClient)
     {
         // Create OBWAC certificate
         var obWacRequest = new ObWacCertificateRequest
