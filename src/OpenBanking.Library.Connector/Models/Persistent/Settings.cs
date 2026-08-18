@@ -58,6 +58,12 @@ internal class SettingsEntity
         Modified = modified;
     }
 
+    public void ClearCurrentEncryptionKey(DateTimeOffset modified)
+    {
+        CurrentEncryptionKeyDescriptionId = null;
+        Modified = modified;
+    }
+
     public void UpdateDisableEncryption(bool disableEncryption, DateTimeOffset modified)
     {
         DisableEncryption = disableEncryption;

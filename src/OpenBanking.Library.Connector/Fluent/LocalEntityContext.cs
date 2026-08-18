@@ -23,7 +23,8 @@ internal class
 {
     public LocalEntityContext(
         ISharedContext sharedContext,
-        IObjectCreate<TPublicRequest, TPublicCreateLocalResponse, LocalCreateParams> postObject)
+        IObjectCreate<TPublicRequest, TPublicCreateLocalResponse, LocalCreateParams> postObject,
+        IObjectDelete<LocalDeleteParams>? deleteObject = null)
     {
         CreateLocalObject = postObject;
         ReadLocalObject =
@@ -31,7 +32,7 @@ internal class
                 sharedContext.DbService.GetDbEntityMethods<TEntity>(),
                 sharedContext.TimeProvider,
                 sharedContext.Instrumentation);
-        DeleteLocalObject = new LocalEntityDelete<TEntity, LocalDeleteParams>(
+        DeleteLocalObject = deleteObject ?? new LocalEntityDelete<TEntity, LocalDeleteParams>(
             sharedContext.DbService.GetDbEntityMethods<TEntity>(),
             sharedContext.DbService.GetDbMethods(),
             sharedContext.TimeProvider,

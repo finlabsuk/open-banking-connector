@@ -92,6 +92,13 @@ internal class ManagementContext : IManagementContext
                 _sharedContext.SecretProvider,
                 _sharedContext.EncryptionKeyInfo,
                 _sharedContext.DbService.GetDbSettingsMethods(),
+                _sharedContext.SettingsService),
+            new EncryptionKeyDescriptionDelete(
+                _sharedContext.DbService.GetDbEntityMethods<EncryptionKeyDescriptionEntity>(),
+                _sharedContext.DbService.GetDbMethods(),
+                _sharedContext.TimeProvider,
+                _sharedContext.Instrumentation,
+                _sharedContext.DbService.GetDbSettingsMethods(),
                 _sharedContext.SettingsService));
 
     public ISoftwareStatementsContext SoftwareStatements
