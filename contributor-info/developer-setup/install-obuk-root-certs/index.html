@@ -1261,6 +1261,8 @@
       
         
       
+        
+      
     
     
     
@@ -1835,6 +1837,34 @@
           </ul>
         </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../apis/server-errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -2449,15 +2479,15 @@
 <p>Root certificates should first be downloaded from OB UK.</p>
 <p>Sandbox root certificate:
 <div class="highlight"><pre><span></span><code><span class="c1"># Download sandbox cert from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/252018873/OB+Root+and+Issuing+Certificates+for+Sandbox</span>
-wget<span class="w"> </span>-O<span class="w"> </span>open-banking-sandbox-root-ca.cer<span class="w"> </span><span class="s2">&quot;https://openbanking.atlassian.net/wiki/download/attachments/252018873/OB_SandBox_PP_Root%20CA.cer?version=1&amp;modificationDate=1525354123970&amp;cacheVersion=1&amp;api=v2&quot;</span>
+wget<span class="w"> </span>-O<span class="w"> </span>open-banking-sandbox-root-ca.cer<span class="w"> </span><span class="s2">"https://openbanking.atlassian.net/wiki/download/attachments/252018873/OB_SandBox_PP_Root%20CA.cer?version=1&amp;modificationDate=1525354123970&amp;cacheVersion=1&amp;api=v2"</span>
 <span class="c1"># Check fingerprint</span>
-<span class="k">if</span><span class="w"> </span>openssl<span class="w"> </span>x509<span class="w"> </span>-inform<span class="w"> </span>DER<span class="w"> </span>-in<span class="w"> </span>./open-banking-sandbox-root-ca.cer<span class="w"> </span>-noout<span class="w"> </span>-fingerprint<span class="w"> </span>-sha1<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">&#39;3C:97:AD:3F:63:9B:21:EF:00:F3:39:93:90:61:6C:8A:7D:0D:5F:03&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+<span class="k">if</span><span class="w"> </span>openssl<span class="w"> </span>x509<span class="w"> </span>-inform<span class="w"> </span>DER<span class="w"> </span>-in<span class="w"> </span>./open-banking-sandbox-root-ca.cer<span class="w"> </span>-noout<span class="w"> </span>-fingerprint<span class="w"> </span>-sha1<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">'3C:97:AD:3F:63:9B:21:EF:00:F3:39:93:90:61:6C:8A:7D:0D:5F:03'</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"success"</span><span class="p">;</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"failure"</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">fi</span>
 </code></pre></div></p>
 <p>Production root certificate:
 <div class="highlight"><pre><span></span><code><span class="c1"># Download production cert from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/80544075/OB+Root+and+Issuing+Certificates+for+Production</span>
-wget<span class="w"> </span>-O<span class="w"> </span>open-banking-prod-root-ca.cer<span class="w"> </span><span class="s2">&quot;https://openbanking.atlassian.net/wiki/download/attachments/80544075/OpenBankingRootCA.cer?version=1&amp;modificationDate=1516021348170&amp;cacheVersion=1&amp;api=v2&quot;</span>
+wget<span class="w"> </span>-O<span class="w"> </span>open-banking-prod-root-ca.cer<span class="w"> </span><span class="s2">"https://openbanking.atlassian.net/wiki/download/attachments/80544075/OpenBankingRootCA.cer?version=1&amp;modificationDate=1516021348170&amp;cacheVersion=1&amp;api=v2"</span>
 <span class="c1"># Check fingerprint</span>
-<span class="k">if</span><span class="w"> </span>openssl<span class="w"> </span>x509<span class="w"> </span>-inform<span class="w"> </span>PEM<span class="w"> </span>-in<span class="w"> </span>./open-banking-prod-root-ca.cer<span class="w"> </span>-noout<span class="w"> </span>-fingerprint<span class="w"> </span>-sha1<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">&#39;BD:D9:DA:6C:21:B9:11:32:F8:0E:8B:09:D7:2C:43:F0:34:6B:E4:1F&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+<span class="k">if</span><span class="w"> </span>openssl<span class="w"> </span>x509<span class="w"> </span>-inform<span class="w"> </span>PEM<span class="w"> </span>-in<span class="w"> </span>./open-banking-prod-root-ca.cer<span class="w"> </span>-noout<span class="w"> </span>-fingerprint<span class="w"> </span>-sha1<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">'BD:D9:DA:6C:21:B9:11:32:F8:0E:8B:09:D7:2C:43:F0:34:6B:E4:1F'</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"success"</span><span class="p">;</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"failure"</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">fi</span>
 </code></pre></div></p>
 <h2 id="install-root-certificates">Install root certificates</h2>
 <h2 id="windows">Windows</h2>

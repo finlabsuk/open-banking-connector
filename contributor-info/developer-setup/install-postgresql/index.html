@@ -1259,6 +1259,8 @@
       
         
       
+        
+      
     
     
     
@@ -1838,6 +1840,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../apis/server-errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2406,13 +2436,13 @@ sudo service postgresql start
 </code></pre></div>
 <p>For WSL, can auto-start by adding this to <code>/etc/wsl.conf</code>:
 <div class="highlight"><pre><span></span><code>[boot]
-command = &quot;service postgresql start&quot;
+command = "service postgresql start"
 </code></pre></div></p>
 <p>If not using WSL, install using:</p>
 <div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>postgresql
 </code></pre></div>
 <p>You will need to set a password:
-<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span><span class="c1"># then use &quot;\password&quot; to change (set) password</span>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span><span class="c1"># then use "\password" to change (set) password</span>
 </code></pre></div></p>
 <h2 id="windows">Windows</h2>
 <p>We suggest to use the WSL2 installation on Windows to avoid a conflict. This can be accessed at <code>localhost</code> by tools such as JetBrains DataGrip.</p>

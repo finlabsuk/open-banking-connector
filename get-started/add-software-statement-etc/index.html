@@ -1439,6 +1439,8 @@
       
         
       
+        
+      
     
     
     
@@ -2013,6 +2015,34 @@
           </ul>
         </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/server-errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -2641,11 +2671,11 @@ endpoint. Here is an example request:</p>
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;Key&quot;: {</span>
-<span class="err">    &quot;Source&quot;: &quot;Configuration&quot;, # can alternatively use &quot;AwsSsmParameterStore&quot; or &quot;GoogleCloudSecretManagerV1&quot;</span>
-<span class="err">    &quot;Name&quot;: &quot;{{EncryptionKeyName}}&quot; # can specify environment variable if &quot;Source&quot; is &quot;Configuration&quot;. Must be in format projects/{project_id}/secrets/{secret_id}/versions/{secret_version} if &quot;Source&quot; is &quot;GoogleCloudSecretManagerV1&quot;</span>
+<span class="err">  "Key": {</span>
+<span class="err">    "Source": "Configuration", # can alternatively use "AwsSsmParameterStore" or "GoogleCloudSecretManagerV1"</span>
+<span class="err">    "Name": "{{EncryptionKeyName}}" # can specify environment variable if "Source" is "Configuration". Must be in format projects/{project_id}/secrets/{secret_id}/versions/{secret_version} if "Source" is "GoogleCloudSecretManagerV1"</span>
 <span class="err">  },</span>
-<span class="err">  &quot;SetAsCurrentEncryptionKey&quot;: true</span>
+<span class="err">  "SetAsCurrentEncryptionKey": true</span>
 <span class="err">}</span>
 </code></pre></div>
 <p>By using <code>SetAsCurrentEncryptionKey</code>, you can instruct Open Banking Connector to update its database settings table to set the encryption key as the current encryption key to use for application-level encryption. This will ensure that Open

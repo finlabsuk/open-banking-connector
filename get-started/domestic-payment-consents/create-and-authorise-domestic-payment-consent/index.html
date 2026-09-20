@@ -1255,6 +1255,8 @@
       
         
       
+        
+      
     
     
     
@@ -1834,6 +1836,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../apis/server-errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2319,30 +2349,30 @@ consent auth.</p>
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;BankRegistrationId&quot;: &quot;{{bank registration ID}}&quot;,</span>
-<span class="err">  &quot;ExternalApiRequest&quot;: {</span>
-<span class="err">    &quot;Data&quot;: {</span>
-<span class="err">      &quot;ReadRefundAccount&quot;: &quot;Yes&quot;,</span>
-<span class="err">      &quot;Initiation&quot;: {</span>
-<span class="err">        &quot;InstructionIdentification&quot;: &quot;{{instruction ID text}}&quot;,</span>
-<span class="err">        &quot;EndToEndIdentification&quot;: &quot;{{end-to-end ID text}}&quot;,</span>
-<span class="err">        &quot;InstructedAmount&quot;: {</span>
-<span class="err">          &quot;Amount&quot;: &quot;{{payment amount, e.g. 5.00}}&quot;,</span>
-<span class="err">          &quot;Currency&quot;: &quot;GBP&quot;</span>
+<span class="err">  "BankRegistrationId": "{{bank registration ID}}",</span>
+<span class="err">  "ExternalApiRequest": {</span>
+<span class="err">    "Data": {</span>
+<span class="err">      "ReadRefundAccount": "Yes",</span>
+<span class="err">      "Initiation": {</span>
+<span class="err">        "InstructionIdentification": "{{instruction ID text}}",</span>
+<span class="err">        "EndToEndIdentification": "{{end-to-end ID text}}",</span>
+<span class="err">        "InstructedAmount": {</span>
+<span class="err">          "Amount": "{{payment amount, e.g. 5.00}}",</span>
+<span class="err">          "Currency": "GBP"</span>
 <span class="err">        },</span>
-<span class="err">        &quot;CreditorAccount&quot;: {</span>
-<span class="err">          &quot;SchemeName&quot;: &quot;UK.OBIE.SortCodeAccountNumber&quot;,</span>
-<span class="err">          &quot;Identification&quot;: &quot;{{sort code followed by account number as 14-digit number}}&quot;,</span>
-<span class="err">          &quot;Name&quot;: &quot;{{account holder&#39;s name, e.g. John Smith}}&quot;</span>
+<span class="err">        "CreditorAccount": {</span>
+<span class="err">          "SchemeName": "UK.OBIE.SortCodeAccountNumber",</span>
+<span class="err">          "Identification": "{{sort code followed by account number as 14-digit number}}",</span>
+<span class="err">          "Name": "{{account holder's name, e.g. John Smith}}"</span>
 <span class="err">        },</span>
-<span class="err">        &quot;RemittanceInformation&quot;: {</span>
-<span class="err">          &quot;Reference&quot;: &quot;{{reference text}}&quot;</span>
+<span class="err">        "RemittanceInformation": {</span>
+<span class="err">          "Reference": "{{reference text}}"</span>
 <span class="err">        }</span>
 <span class="err">      }</span>
 <span class="err">    },</span>
-<span class="err">    &quot;Risk&quot;: {</span>
-<span class="err">      &quot;PaymentContextCode&quot;: &quot;TransferToSelf&quot;,</span>
-<span class="err">      &quot;ContractPresentIndicator&quot;: &quot;true&quot;</span>
+<span class="err">    "Risk": {</span>
+<span class="err">      "PaymentContextCode": "TransferToSelf",</span>
+<span class="err">      "ContractPresentIndicator": "true"</span>
 <span class="err">    }   </span>
 <span class="err">  }</span>
 <span class="err">}</span>
@@ -2362,7 +2392,7 @@ example request below made to the <a href="../../../apis/payment-initiation/open
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;DomesticPaymentConsentId&quot;: &quot;{{domestic payment consent ID}}}&quot;</span>
+<span class="err">  "DomesticPaymentConsentId": "{{domestic payment consent ID}}}"</span>
 <span class="err">}</span>
 </code></pre></div>
 <p>Upon creation, Open Banking Connector will provide you with an auth URL for end-user auth.</p>

@@ -1255,6 +1255,8 @@
       
         
       
+        
+      
     
     
     
@@ -1834,6 +1836,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/server-errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2324,7 +2354,7 @@ used. So the configuration setting <code>OpenBankingConnector:Database:Provider<
 <div class="highlight"><pre><span></span><code><span class="c1"># Database settings</span>
 <span class="nv">OpenBankingConnector__Database__Provider</span><span class="o">=</span>PostgreSql<span class="w"> </span><span class="c1"># currently unnecessary as this is the default but recommended for future-proofing</span>
 <span class="nv">OpenBankingConnector__Database__EnsureDatabaseCreated</span><span class="o">=</span><span class="nb">true</span><span class="w"> </span><span class="c1"># suggest initially true to allow Open Banking Connector to create database on first use, then later false</span>
-<span class="nv">OpenBankingConnector__Database__ConnectionStrings__PostgreSql</span><span class="o">=</span><span class="s2">&quot;Host=localhost;Database=test;Username=postgres&quot;</span><span class="w"> </span><span class="c1"># substitute your connection string without password</span>
+<span class="nv">OpenBankingConnector__Database__ConnectionStrings__PostgreSql</span><span class="o">=</span><span class="s2">"Host=localhost;Database=test;Username=postgres"</span><span class="w"> </span><span class="c1"># substitute your connection string without password</span>
 <span class="nv">OpenBankingConnector__Database__PasswordSettingNames__PostgreSql</span><span class="o">=</span>OpenBankingConnector:Custom:PostgreSqlPassword<span class="w"> </span><span class="c1"># substitute name of environment variable providing database password</span>
 <span class="nv">OpenBankingConnector__Custom__PostgreSqlPassword</span><span class="o">=</span>placeholder<span class="w"> </span><span class="c1"># example arbitrary environment variable that supplies database password</span>
 </code></pre></div>

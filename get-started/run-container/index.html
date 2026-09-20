@@ -1255,6 +1255,8 @@
       
         
       
+        
+      
     
     
     
@@ -1834,6 +1836,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/server-errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2268,7 +2298,7 @@ Docker images are produced from the Dockerfile in the source code repo and are n
 associated image.</p>
 <p>You can pull and run the Open Banking Connector container using a command such as:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Substitute .env file location and Open Banking Connector version in this command</span>
-docker<span class="w"> </span>run<span class="w"> </span>-dt<span class="w"> </span>--env-file<span class="w"> </span><span class="s2">&quot;&lt;path to .env file&gt;&quot;</span><span class="w"> </span>-p<span class="w"> </span><span class="m">50000</span>:8080<span class="w"> </span>--name<span class="w"> </span><span class="s2">&quot;open_banking_connector&quot;</span><span class="w"> </span>ghcr.io/finlabsuk/open-banking-connector-web-app:x.y.z<span class="w"> </span><span class="c1"># substitute version for x.y.z</span>
+docker<span class="w"> </span>run<span class="w"> </span>-dt<span class="w"> </span>--env-file<span class="w"> </span><span class="s2">"&lt;path to .env file&gt;"</span><span class="w"> </span>-p<span class="w"> </span><span class="m">50000</span>:8080<span class="w"> </span>--name<span class="w"> </span><span class="s2">"open_banking_connector"</span><span class="w"> </span>ghcr.io/finlabsuk/open-banking-connector-web-app:x.y.z<span class="w"> </span><span class="c1"># substitute version for x.y.z</span>
 </code></pre></div>
 <p>where a <em>.env file</em> is used to supply environment variables (basic configuration).</p>
 

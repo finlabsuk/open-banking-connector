@@ -1263,6 +1263,8 @@
       
         
       
+        
+      
     
     
     
@@ -1862,6 +1864,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2421,8 +2451,8 @@ properties. This means the creation of a new <code>BankRegistration</code>/OAuth
 <div class="highlight"><pre><span></span><code><span class="nf">POST</span> <span class="nn">/manage/bank-registrations</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="err">#</span> <span class="l">standard headers omitted</span>
 <span class="err">{</span>
-  &quot;BankProfile&quot;: &quot;{{bankProfile}}&quot;,
-  &quot;SoftwareStatementId&quot;: &quot;{{softwareStatementId}}&quot;
+  "BankProfile": "{{bankProfile}}",
+  "SoftwareStatementId": "{{softwareStatementId}}"
 }
 </code></pre></div>
 <p>where only the bank's <em>bank profile</em> and ID of the <code>SoftwareStatement</code> record are required. Other optional properties
