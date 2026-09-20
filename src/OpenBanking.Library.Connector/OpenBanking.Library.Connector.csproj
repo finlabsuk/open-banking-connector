@@ -24,14 +24,14 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="16.2.0"/>
-        <PackageReference Include="EFCore.NamingConventions" Version="9.0.0"/>
+        <PackageReference Include="EFCore.NamingConventions" Version="10.0.1"/>
         <PackageReference Include="FluentValidation" Version="12.1.1"/>
         <PackageReference Include="jose-jwt" Version="5.3.0"/>
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.23.0"/>
         <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.12"/>
-        <PackageReference Include="MongoDB.EntityFrameworkCore" Version="9.1.4"/>
+        <PackageReference Include="MongoDB.EntityFrameworkCore" Version="10.0.4"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4"/>
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3"/>
         <PackageReference Include="OpenTelemetry" Version="1.19.0"/>
     </ItemGroup>
 
