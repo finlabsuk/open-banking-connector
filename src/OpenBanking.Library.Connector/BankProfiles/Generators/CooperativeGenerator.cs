@@ -6,11 +6,14 @@ using System.Collections.Concurrent;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 
@@ -30,7 +33,7 @@ public class CooperativeGenerator : BankProfileGeneratorBase<CooperativeBank>
             GetFinancialId(bank),
             GetAccountAndTransactionApi(bank),
             null,
-            null,
+            bank is CooperativeBank.CooperativeSandbox ? null : GetPaymentInitiationApi(bank),
             null,
             null,
             null,
@@ -50,7 +53,7 @@ public class CooperativeGenerator : BankProfileGeneratorBase<CooperativeBank>
                     {
                         Issuer = GetIssuer(bank),
                         ResponseTypesSupported = ["code"],
-                        ScopesSupported = ["accounts offline"],
+                        ScopesSupported = ["accounts", "offline", "payments"],
                         ResponseModesSupported = [OAuth2ResponseMode.Query],
                         TokenEndpoint = GetTokenEndpoint(bank),
                         AuthorizationEndpoint = GetAuthorisationEndpoint(bank),
@@ -73,13 +76,7 @@ public class CooperativeGenerator : BankProfileGeneratorBase<CooperativeBank>
                         {
                             var concurrentDictionary = new ConcurrentDictionary<string, string>
                             {
-                                ["login_hint"] = bank switch
-                                {
-                                    CooperativeBank.Cooperative => "coop",
-                                    CooperativeBank.CooperativeSandbox => "coop",
-                                    CooperativeBank.Smile => "smile",
-                                    _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
-                                }
+                                ["login_hint"] = GetLoginHint(bank)
                             };
                             if (reAuthNotInitialAuth)
                             {
@@ -92,18 +89,62 @@ public class CooperativeGenerator : BankProfileGeneratorBase<CooperativeBank>
                         DoNotUseUrlPathEncoding = true,
                         SingleBase64EncodedParameterName = "data"
                     },
+                DomesticPaymentConsentAuthGet =
+                    new DomesticPaymentConsentAuthGetCustomBehaviour
+                    {
+                        UsePkce = true,
+                        // from: https://www.developer.co-operativebank.co.uk/apis/general-specifications/
+                        GetExtraParameters = request =>
+                        {
+                            DomesticPaymentConsentAuthContextCooperativeOnly cooperativeOnly =
+                                request.CooperativeOnly ??
+                                throw new ArgumentException(
+                                    $"{nameof(request.CooperativeOnly)} must be specified for bank group {BankGroup.Cooperative}.",
+                                    nameof(request));
+                            if (cooperativeOnly.CreditorAccountName.Contains('&'))
+                            {
+                                throw new ArgumentException(
+                                    $"{nameof(cooperativeOnly.CreditorAccountName)} must not contain '&' for bank group {BankGroup.Cooperative} " +
+                                    "as auth URL parameters are not URL-encoded.",
+                                    nameof(request));
+                            }
+                            return new ConcurrentDictionary<string, string>
+                            {
+                                ["login_hint"] = GetLoginHint(bank),
+                                ["jrn_typ"] = "DP",
+                                ["ben_name"] = cooperativeOnly.CreditorAccountName,
+                                ["amount"] = cooperativeOnly.InstructedAmountAmount
+                            };
+                        },
+                        ExtraConsentParameterName = "display",
+                        DoNotUseUrlPathEncoding = true,
+                        SingleBase64EncodedParameterName = "data"
+                    },
                 AccountAccessConsentAuthCodeGrantPost =
                     new AuthCodeGrantPostCustomBehaviour
                     {
                         ResponseTokenTypeCaseMayBeIncorrect = true,
                         Scope = "accounts offline"
                     },
+                DomesticPaymentConsentAuthCodeGrantPost =
+                    new AuthCodeGrantPostCustomBehaviour
+                    {
+                        ResponseTokenTypeCaseMayBeIncorrect = true,
+                        ExpectedResponseRefreshTokenMayBeAbsent = true
+                    },
                 AccountAccessConsentRefreshTokenGrantPost =
                     new RefreshTokenGrantPostCustomBehaviour
                     {
                         ResponseTokenTypeCaseMayBeIncorrect = true,
                         Scope = "accounts offline"
-                    }
+                    },
+                DomesticPaymentConsent =
+                    new DomesticPaymentConsentCustomBehaviour { PreferMisspeltContractPresentIndicator = true },
+                DomesticPayment = new DomesticPaymentCustomBehaviour
+                {
+                    PreferMisspeltContractPresentIndicator = true,
+                    ResponseDataDebtorMayBeMissingOrWrong = true
+                }
             },
             DefaultResponseType = OAuth2ResponseType.Code,
             UseOpenIdConnect = false,
@@ -137,6 +178,15 @@ public class CooperativeGenerator : BankProfileGeneratorBase<CooperativeBank>
             }
         };
 
+    private static string GetLoginHint(CooperativeBank bank) =>
+        bank switch
+        {
+            CooperativeBank.Cooperative => "coop",
+            CooperativeBank.CooperativeSandbox => "coop",
+            CooperativeBank.Smile => "smile",
+            _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+        }; // from: https://www.developer.co-operativebank.co.uk/apis/general-specifications/
+
     private static string GetIssuer(CooperativeBank bank) =>
         bank switch
         {
@@ -144,7 +194,7 @@ public class CooperativeGenerator : BankProfileGeneratorBase<CooperativeBank>
             CooperativeBank.Cooperative => "https://openbanking-retail.apis.co-operativebank.co.uk",
             CooperativeBank.Smile => "https://openbanking-retail.apis.co-operativebank.co.uk",
             _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
-        }; // Not used, so set to first part of AISP API base URL
+        }; // Not used, so set to first part of API base URL
 
     private static string GetTokenEndpoint(CooperativeBank bank) =>
         bank switch
@@ -183,5 +233,19 @@ public class CooperativeGenerator : BankProfileGeneratorBase<CooperativeBank>
                     "https://openbanking-retail.apis.co-operativebank.co.uk", // from https://www.developer.co-operativebank.co.uk/apis/aisp/endpoints-and-errors/index
                 _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
             } + "/apis/retail/open-banking/v3.1/aisp"
+        };
+
+    private static PaymentInitiationApi GetPaymentInitiationApi(CooperativeBank bank) =>
+        new()
+        {
+            BaseUrl = bank switch
+                      {
+                          CooperativeBank.Cooperative =>
+                              "https://openbanking-retail.apis.co-operativebank.co.uk", // from: https://www.developer.co-operativebank.co.uk/apis/pisp/endpoints-and-errors/index
+                          CooperativeBank.Smile =>
+                              "https://openbanking-retail.apis.co-operativebank.co.uk", // from: https://www.developer.co-operativebank.co.uk/apis/pisp/endpoints-and-errors/index
+                          _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+                      } +
+                      "/apis/retail/open-banking/v3.1/pisp" // from: https://www.developer.co-operativebank.co.uk/apis/pisp/endpoints-and-errors/index
         };
 }

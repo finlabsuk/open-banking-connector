@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
@@ -59,6 +60,9 @@ public class DomesticPaymentConsentSubtest(
             referenceName,
             paymentsEnv,
             bankProfile.PaymentInitiationApiSettings);
+        PaymentInitiationModelsPublic.OBWriteDomesticConsent4 consentExternalApiRequest =
+            domesticPaymentConsentRequest.ExternalApiRequest ??
+            throw new InvalidOperationException("ExternalApiRequest not set.");
         DomesticPaymentConsentCreateResponse domesticPaymentConsentCreateResponse =
             await paymentInitiationApiClient.DomesticPaymentConsentCreate(
                 domesticPaymentConsentRequest,
@@ -93,6 +97,15 @@ public class DomesticPaymentConsentSubtest(
                 var authContextRequest = new DomesticPaymentConsentAuthContext
                 {
                     DomesticPaymentConsentId = domesticPaymentConsentId,
+                    CooperativeOnly =
+                        bankProfile.BankProfileEnum.GetBankGroup() is BankGroup.Cooperative
+                            ? new DomesticPaymentConsentAuthContextCooperativeOnly
+                            {
+                                CreditorAccountName = consentExternalApiRequest.Data.Initiation.CreditorAccount.Name,
+                                InstructedAmountAmount =
+                                    consentExternalApiRequest.Data.Initiation.InstructedAmount.Amount
+                            }
+                            : null,
                     Reference = testNameUnique + "_DomesticPaymentConsent",
                     CreatedBy = modifiedBy,
                     RedirectUri = alternativeRedirectUri
