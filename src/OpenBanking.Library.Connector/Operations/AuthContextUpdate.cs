@@ -449,6 +449,11 @@ internal class AuthContextUpdate :
         // successful auth persist even if token retrieval fails)
         try
         {
+            // Get current encryption key (this happens before request to token endpoint so that failure does not
+            // result in loss of new tokens)
+            Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
+            byte[] currentKey = await _encryptionKeyInfo.GetEncryptionKey(currentKeyId);
+
             // Get client secret if required
             string? clientSecret = null;
             if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.ClientSecretBasic
@@ -576,11 +581,10 @@ internal class AuthContextUpdate :
                                 domesticVrpConsent.Id),
                     _ => throw new ArgumentOutOfRangeException(nameof(consent))
                 };
-                Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newAccessTokenObject.UpdateAccessToken(
                     newAccessToken,
                     consentAssociatedData,
-                    await _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
+                    currentKey,
                     modified,
                     modifiedBy,
                     currentKeyId);
@@ -627,11 +631,10 @@ internal class AuthContextUpdate :
                                 domesticVrpConsent.Id),
                     _ => throw new ArgumentOutOfRangeException(nameof(consent))
                 };
-                Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newRefreshTokenObject.UpdateRefreshToken(
                     tokenEndpointResponse.RefreshToken,
                     consentAssociatedData,
-                    await _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
+                    currentKey,
                     modified,
                     modifiedBy,
                     currentKeyId);

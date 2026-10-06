@@ -173,6 +173,11 @@ internal class ConsentAccessTokenGet
                         consentAssociatedData,
                         await _encryptionKeyInfo.GetEncryptionKey(storedRefreshTokenEntity.EncryptionKeyDescriptionId));
 
+            // Get current encryption key (this happens before refresh token grant so that failure does not
+            // result in loss of new tokens)
+            Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
+            byte[] currentKey = await _encryptionKeyInfo.GetEncryptionKey(currentKeyId);
+
             // POST refresh token grant
             string externalApiClientId = bankRegistration.ExternalApiId;
             JsonSerializerSettings? jsonSerializerSettings = null;
@@ -219,11 +224,10 @@ internal class ConsentAccessTokenGet
                     modified,
                     modifiedBy,
                     consent.Id);
-                Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newAccessTokenObject.UpdateAccessToken(
                     newAccessToken,
                     consentAssociatedData,
-                    await _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
+                    currentKey,
                     modified,
                     modifiedBy,
                     currentKeyId);
@@ -245,11 +249,10 @@ internal class ConsentAccessTokenGet
                     modified,
                     modifiedBy,
                     consent.Id);
-                Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newRefreshTokenObject.UpdateRefreshToken(
                     tokenEndpointResponse.RefreshToken,
                     consentAssociatedData,
-                    await _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
+                    currentKey,
                     modified,
                     modifiedBy,
                     currentKeyId);

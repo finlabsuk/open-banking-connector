@@ -45,46 +45,27 @@ public class SettingsCleanup
         // Encryption-related checks (only perform when encryption not disabled)
         if (!settings.DisableEncryption)
         {
-            // Different checks depending on whether encryption key descriptions are available
-            if (encryptionKeyDescriptionDbSet.Any())
+            // Warn if no current encryption key specified.
+            // Note: attempts to write encrypted objects will fail until one is specified.
+            if (settings.CurrentEncryptionKeyDescriptionId is null)
             {
-                // Check when encryption key descriptions have been specified that one is used.
-                // Note: if no encryption key descriptions are specified, attempts to write encrypted objects will still fail
-                // if encryption not disabled.
-                if (settings.CurrentEncryptionKeyDescriptionId is null)
-                {
-                    // Automatically populate value if possible
-                    EncryptionKeyDescriptionEntity singleValue =
-                        encryptionKeyDescriptionDbSet.Single()
-                        ?? throw new InvalidOperationException(
-                            "Settings error: " + "No CurrentEncryptionKeyDescription ID specified in database " +
-                            "settings table (encryption is not disabled and more than one EncryptionKeyDescription exists).");
-                    settings.UpdateCurrentEncryptionKey(singleValue.Id, utcNow);
-                }
-
-                // Check CurrentEncryptionKeyDescription ID is valid
-                else
-                {
-                    EncryptionKeyDescriptionEntity _ =
-                        encryptionKeyDescriptionDbSet.SingleOrDefault(
-                            x => x.Id == settings.CurrentEncryptionKeyDescriptionId) ??
-                        throw new InvalidOperationException(
-                            "Settings error: " +
-                            $"EncryptionKeyDescription with ID {settings.CurrentEncryptionKeyDescriptionId} " +
-                            "specified in database settings table not found.");
-                }
-
-                // NB: Previous checks have ensured CurrentEncryptionKeyDescription exists or have thrown
+                instrumentationClient.Warning(
+                    "Settings warning: " +
+                    "No CurrentEncryptionKeyDescription ID specified in database settings table " +
+                    "and encryption not disabled. Objects requiring encryption cannot be created until an " +
+                    "EncryptionKeyDescription is created with SetAsCurrentEncryptionKey = true.");
             }
+
+            // Check CurrentEncryptionKeyDescription ID is valid
             else
             {
-                if (settings.CurrentEncryptionKeyDescriptionId is not null)
-                {
+                EncryptionKeyDescriptionEntity _ =
+                    encryptionKeyDescriptionDbSet.SingleOrDefault(
+                        x => x.Id == settings.CurrentEncryptionKeyDescriptionId) ??
                     throw new InvalidOperationException(
                         "Settings error: " +
                         $"EncryptionKeyDescription with ID {settings.CurrentEncryptionKeyDescriptionId} " +
-                        "specified in database settings table not found.");
-                }
+                        "specified in CurrentEncryptionKeyDescriptionId in database settings table not found.");
             }
         }
 

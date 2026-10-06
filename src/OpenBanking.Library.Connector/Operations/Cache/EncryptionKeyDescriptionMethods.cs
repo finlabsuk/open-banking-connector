@@ -43,9 +43,10 @@ public class EncryptionKeyDescriptionMethods(
         if (settingsService.CurrentEncryptionKeyId is null)
         {
             throw new ArgumentException(
-                "Configuration or key secrets warning: " +
-                "No encryption key specified by CurrentEncryptionKeyId. If you haven't done so, " +
-                "please create an EncryptionKeyDescription and specify its ID as CurrentEncryptionKeyId.");
+                "Settings error: " +
+                "No CurrentEncryptionKeyDescription ID specified in database settings table " +
+                "and encryption not disabled. Objects requiring encryption cannot be created until an " +
+                "EncryptionKeyDescription is created with SetAsCurrentEncryptionKey = true.");
         }
         return settingsService.CurrentEncryptionKeyId;
     }

@@ -302,6 +302,11 @@ internal class
             _bankProfileService);
         nonErrorMessages.AddRange(nonErrorMessages2);
 
+        // Get current encryption key (this happens before obtaining external (bank) API registration so that
+        // failure does not leave a registration at the bank which cannot be stored)
+        Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
+        byte[] currentKey = await _encryptionKeyInfo.GetEncryptionKey(currentKeyId);
+
         // Obtain external (bank) API registration
         string externalApiId;
         string? externalApiSecret;
@@ -408,7 +413,6 @@ internal class
         await _entityMethods.AddAsync(entity);
 
         // Add external API secret
-        Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
         if (externalApiSecret is not null)
         {
             var externalApiSecretEntity =
@@ -424,7 +428,7 @@ internal class
             externalApiSecretEntity.UpdateClientSecret(
                 externalApiSecret,
                 entity.GetAssociatedData(),
-                await _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
+                currentKey,
                 utcNow,
                 request.CreatedBy,
                 currentKeyId);
@@ -447,7 +451,7 @@ internal class
             registrationAccessTokenEntity.UpdateRegistrationAccessToken(
                 registrationAccessToken,
                 entity.GetAssociatedData(),
-                await _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
+                currentKey,
                 utcNow,
                 request.CreatedBy,
                 currentKeyId);
