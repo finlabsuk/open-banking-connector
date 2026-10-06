@@ -398,9 +398,10 @@ internal class AuthContextUpdate :
         DateTimeOffset modified = _timeProvider.GetUtcNow();
         Acr? acr = null;
         DateTimeOffset? authTime = null;
+        string? newExternalApiUserId = consent.ExternalApiUserId;
         if (idToken is not null)
         {
-            (string? newExternalApiUserId, acr, authTime) = await _grantPost.ValidateIdTokenAuthEndpoint(
+            (newExternalApiUserId, acr, authTime) = await _grantPost.ValidateIdTokenAuthEndpoint(
                 idToken,
                 code,
                 state,
@@ -415,20 +416,47 @@ internal class AuthContextUpdate :
                 supportsSca,
                 bankProfile.BankProfileEnum,
                 consent.ExternalApiUserId);
-            if (newExternalApiUserId != consent.ExternalApiUserId)
-            {
-                consent.UpdateExternalApiUserId(
-                    newExternalApiUserId,
-                    modified,
-                    modifiedBy);
-            }
         }
 
-        // Valid ID token means nonce has been validated so we delete auth context to ensure nonce can only be used once
-        authContext.UpdateIsDeleted(true, modified, modifiedBy);
+        // Delete auth context now redirect is validated (replay protection: state and nonce are single-use).
+        // Redirects failing validation above do not delete it, so it stays usable until expiry; a token request
+        // failure below does not restore it. This atomic conditional update is the first DB write or entity change
+        // in this method, so only one request per auth context can make DB writes (here and beyond).
+        // The IsDeleted condition is the concurrency guard: keep it despite being redundant (global query filter
+        // also applies) so that guard does not depend on filter.
+        Guid authContextId = authContext.Id;
+        int authContextsDeleted =
+            await _authContextMethods
+                .DbSet
+                .Where(x => x.Id == authContextId && !x.IsDeleted)
+                .ExecuteUpdateAsync(
+                    s => s
+                        .SetProperty(x => x.IsDeleted, true)
+                        .SetProperty(x => x.IsDeletedModified, modified)
+                        .SetProperty(x => x.IsDeletedModifiedBy, modifiedBy));
+        if (authContextsDeleted != 1)
+        {
+            // Deleted by a concurrent request since read above. Same error as for any later re-use of state.
+            throw new HttpResponseException(new AuthContextNotFoundServerError(state));
+        }
 
-        // Update consent as auth has been successful. Without a front-channel ID token, ACR/auth_time
-        // are unknown here (set to null) and set later from the token endpoint ID token if present.
+        // Sync tracked entity with DB (above bypasses change tracking) and mark unchanged to avoid a second write.
+        // Safe as entity has no other pending changes and no concurrency token.
+        authContext.UpdateIsDeleted(true, modified, modifiedBy);
+        _authContextMethods.DbSet.Entry(authContext).State = EntityState.Unchanged;
+
+        // Update user ID if ID token gave a new one
+        if (newExternalApiUserId != consent.ExternalApiUserId)
+        {
+            consent.UpdateExternalApiUserId(
+                newExternalApiUserId,
+                modified,
+                modifiedBy);
+        }
+
+        // Update consent as auth has been successful. Auth context values are kept for later use (e.g. nonce to
+        // validate ID tokens from refresh token grants). Without a front-channel ID token, ACR/auth_time are null
+        // here and set later from the token endpoint ID token if present.
         consent.UpdateAuthContext(
             authContext.State,
             nonce,
@@ -438,19 +466,15 @@ internal class AuthContextUpdate :
             modified,
             modifiedBy);
 
-        // Delete old cached/stored access token if exists
+        // Delete old cached/stored tokens if they exist (assumed invalidated at bank by successful auth)
         _memoryCache.Remove(consent.GetCacheKey());
         storedAccessToken?.UpdateIsDeleted(true, modified, modifiedBy);
-
-        // Delete old stored refresh token if exists
         storedRefreshToken?.UpdateIsDeleted(true, modified, modifiedBy);
 
-        // Get new tokens (wrapped in try block to ensure DB changes relating to
-        // successful auth persist even if token retrieval fails)
+        // Get new tokens (try block ensures above DB changes are saved even if this fails)
         try
         {
-            // Get current encryption key (this happens before request to token endpoint so that failure does not
-            // result in loss of new tokens)
+            // Get current encryption key (before token request so that failure does not lose new tokens)
             Guid? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
             byte[] currentKey = await _encryptionKeyInfo.GetEncryptionKey(currentKeyId);
 
