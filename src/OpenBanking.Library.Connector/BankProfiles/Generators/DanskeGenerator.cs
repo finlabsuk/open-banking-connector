@@ -58,7 +58,7 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
                         OAuth2ResponseMode.Fragment
                     }
                 },
-                DomesticPaymentConsentAuthGet = new ConsentAuthGetCustomBehaviour
+                DomesticPaymentConsentAuthGet = new DomesticPaymentConsentAuthGetCustomBehaviour
                 {
                     IdTokenProcessingCustomBehaviour =
                         new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }

@@ -142,7 +142,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                     : null,
                 AccountAccessConsentAuthGet = bank is LloydsBank.Sandbox
                     ? null
-                    : new ConsentAuthGetCustomBehaviour { AddRedundantOAuth2NonceRequestParameter = true },
+                    : new AccountAccessConsentAuthGetCustomBehaviour { AddRedundantOAuth2NonceRequestParameter = true },
                 AccountAccessConsentPost = bank is LloydsBank.Sandbox
                     ? null
                     : new ReadWritePostCustomBehaviour

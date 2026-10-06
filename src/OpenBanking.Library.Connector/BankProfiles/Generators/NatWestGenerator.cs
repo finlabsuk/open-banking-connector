@@ -171,7 +171,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                             ? DelimitedStringConverterOptions.JsonIsStringArrayNotString
                             : null
                 },
-                AccountAccessConsentAuthGet = new ConsentAuthGetCustomBehaviour
+                AccountAccessConsentAuthGet = new AccountAccessConsentAuthGetCustomBehaviour
                 {
                     AudClaim = GetAudClaim(bank),
                     IdTokenProcessingCustomBehaviour =
@@ -227,7 +227,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 TransactionGet = bank is NatWestBank.Coutts
                     ? new ReadWriteGetCustomBehaviour { ResponseLinksMayHaveIncorrectUrlBeforeQuery = true }
                     : null,
-                DomesticPaymentConsentAuthGet = new ConsentAuthGetCustomBehaviour
+                DomesticPaymentConsentAuthGet = new DomesticPaymentConsentAuthGetCustomBehaviour
                 {
                     AudClaim = GetAudClaim(bank),
                     IdTokenProcessingCustomBehaviour =

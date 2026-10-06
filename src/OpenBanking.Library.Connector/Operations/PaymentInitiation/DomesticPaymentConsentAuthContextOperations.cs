@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Concurrent;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -121,6 +122,10 @@ internal class
             throw new InvalidOperationException("Re-auth is not supported for domestic payment consents.");
         }
 
+        // Get extra parameters
+        ConcurrentDictionary<string, string>? extraParameters =
+            customBehaviour?.DomesticPaymentConsentAuthGet?.GetExtraParameters?.Invoke(request);
+
         (string authUrl, string state, string nonce, string? codeVerifier, string sessionId) = CreateAuthUrl.Create(
             domesticPaymentConsent.ExternalApiId,
             request.State,
@@ -134,7 +139,7 @@ internal class
             redirectUri,
             scope,
             responseType,
-            reAuthNotInitialAuth,
+            extraParameters,
             _instrumentationClient);
 
         // Create persisted entity

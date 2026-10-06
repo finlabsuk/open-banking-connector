@@ -5,6 +5,7 @@
 using System.Collections.Concurrent;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
@@ -64,7 +65,7 @@ public class CooperativeGenerator : BankProfileGeneratorBase<CooperativeBank>
                 ClientCredentialsGrantPost =
                     new ClientCredentialsGrantPostCustomBehaviour { ResponseTokenTypeCaseMayBeIncorrect = true },
                 AccountAccessConsentAuthGet =
-                    new ConsentAuthGetCustomBehaviour
+                    new AccountAccessConsentAuthGetCustomBehaviour
                     {
                         UsePkce = true,
                         Scope = "accounts+offline",

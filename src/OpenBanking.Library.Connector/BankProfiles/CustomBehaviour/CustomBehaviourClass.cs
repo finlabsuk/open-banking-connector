@@ -32,8 +32,8 @@ public class CustomBehaviourClass
 
     // Consent auth endpoints
     public JwksGetCustomBehaviour? JwksGet { get; set; }
-    public ConsentAuthGetCustomBehaviour? AccountAccessConsentAuthGet { get; set; }
-    public ConsentAuthGetCustomBehaviour? DomesticPaymentConsentAuthGet { get; set; }
+    public AccountAccessConsentAuthGetCustomBehaviour? AccountAccessConsentAuthGet { get; set; }
+    public DomesticPaymentConsentAuthGetCustomBehaviour? DomesticPaymentConsentAuthGet { get; set; }
     public ConsentAuthGetCustomBehaviour? DomesticVrpConsentAuthGet { get; set; }
 
     public AuthCodeGrantPostCustomBehaviour? AccountAccessConsentAuthCodeGrantPost { get; set; }

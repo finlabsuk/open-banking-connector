@@ -49,7 +49,7 @@ public class ZopaGenerator : BankProfileGeneratorBase<ZopaBank>
                         ClientIdIssuedAtClaimResponseJsonConverter =
                             DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
                     },
-                    DomesticPaymentConsentAuthGet = new ConsentAuthGetCustomBehaviour
+                    DomesticPaymentConsentAuthGet = new DomesticPaymentConsentAuthGetCustomBehaviour
                     {
                         AuthorizationEndpoint =
                             "zopa://open-banking/pis-single-payment-consent" // from https://developer.openbanking-sandbox.zopa.com/perry/developer/documentation?resource=euhub-zopa-portal&document=docs/API%20Overview/pis.md

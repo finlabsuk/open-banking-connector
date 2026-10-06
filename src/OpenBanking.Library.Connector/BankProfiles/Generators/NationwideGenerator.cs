@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.VariableRecurringPayments;
@@ -112,7 +113,7 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                     }
                 },
                 AccountAccessConsentAuthGet =
-                    new ConsentAuthGetCustomBehaviour
+                    new AccountAccessConsentAuthGetCustomBehaviour
                     {
                         IdTokenProcessingCustomBehaviour = new IdTokenProcessingCustomBehaviour
                         {
@@ -173,7 +174,7 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                         }
                     }
                     : null,
-                DomesticPaymentConsentAuthGet = new ConsentAuthGetCustomBehaviour
+                DomesticPaymentConsentAuthGet = new DomesticPaymentConsentAuthGetCustomBehaviour
                 {
                     IdTokenProcessingCustomBehaviour = new IdTokenProcessingCustomBehaviour
                     {

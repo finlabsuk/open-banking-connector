@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
@@ -45,7 +46,7 @@ public class StarlingGenerator : BankProfileGeneratorBase<StarlingBank>
             {
                 BankRegistrationPut = new BankRegistrationPutCustomBehaviour { GetCustomTokenScope = _ => "openid" },
                 AccountAccessConsentAuthGet =
-                    new ConsentAuthGetCustomBehaviour
+                    new AccountAccessConsentAuthGetCustomBehaviour
                     {
                         IdTokenProcessingCustomBehaviour =
                             new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAcrClaim = true }
@@ -59,7 +60,7 @@ public class StarlingGenerator : BankProfileGeneratorBase<StarlingBank>
                     },
                 AccountAccessConsentRefreshTokenGrantPost =
                     new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
-                DomesticPaymentConsentAuthGet = new ConsentAuthGetCustomBehaviour
+                DomesticPaymentConsentAuthGet = new DomesticPaymentConsentAuthGetCustomBehaviour
                 {
                     IdTokenProcessingCustomBehaviour =
                         new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAcrClaim = true }

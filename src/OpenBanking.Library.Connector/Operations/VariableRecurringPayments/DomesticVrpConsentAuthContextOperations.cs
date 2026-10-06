@@ -128,7 +128,7 @@ internal class
             redirectUri,
             scope,
             responseType,
-            reAuthNotInitialAuth,
+            null,
             _instrumentationClient);
 
         // Create persisted entity

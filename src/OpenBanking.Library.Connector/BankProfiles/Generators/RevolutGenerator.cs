@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -47,7 +48,7 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                         "https://oba.revolut.com/openid-configuration" // from https://developer.revolut.com/docs/guides/build-banking-apps/register-your-application-using-dcr/open-id-configuration-urls
                 },
                 AccountAccessConsentAuthGet =
-                    new ConsentAuthGetCustomBehaviour
+                    new AccountAccessConsentAuthGetCustomBehaviour
                     {
                         AddRedundantOAuth2NonceRequestParameter = true,
                         IdTokenProcessingCustomBehaviour =
@@ -68,7 +69,7 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                     },
                 AccountAccessConsentRefreshTokenGrantPost =
                     new RefreshTokenGrantPostCustomBehaviour { IdTokenMayBeAbsent = true },
-                DomesticPaymentConsentAuthGet = new ConsentAuthGetCustomBehaviour
+                DomesticPaymentConsentAuthGet = new DomesticPaymentConsentAuthGetCustomBehaviour
                 {
                     AddRedundantOAuth2NonceRequestParameter = true,
                     IdTokenProcessingCustomBehaviour =
