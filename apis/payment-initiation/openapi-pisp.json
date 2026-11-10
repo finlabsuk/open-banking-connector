@@ -3,7 +3,7 @@
   "info": {
     "title": "Payment Initiation API",
     "description": "Payment Initiation API for Open Banking Connector Web App",
-    "version": "24.0.0"
+    "version": "25.0.0"
   },
   "paths": {
     "/pisp/domestic-payment-consent-auth-contexts": {
@@ -1307,6 +1307,9 @@
             "type": "string",
             "format": "uuid"
           },
+          "CooperativeOnly": {
+            "$ref": "#/components/schemas/DomesticPaymentConsentAuthContextCooperativeOnly"
+          },
           "State": {
             "type": "string",
             "description": "Optionally specify OAuth2 state to use instead of one automatically created by Open Banking Connector (using this\r\nis not recommended).",
@@ -1329,6 +1332,25 @@
           }
         },
         "additionalProperties": false
+      },
+      "DomesticPaymentConsentAuthContextCooperativeOnly": {
+        "required": [
+          "CreditorAccountName",
+          "InstructedAmountAmount"
+        ],
+        "type": "object",
+        "properties": {
+          "CreditorAccountName": {
+            "type": "string",
+            "description": "Creditor account name (Data.Initiation.CreditorAccount.Name) as sent in the consent request."
+          },
+          "InstructedAmountAmount": {
+            "type": "string",
+            "description": "Instructed amount (Data.Initiation.InstructedAmount.Amount) as sent in the consent request."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Values included in auth URL by Co-operative bank group.\r\nFrom: https://www.developer.co-operativebank.co.uk/apis/general-specifications/"
       },
       "DomesticPaymentConsentAuthContextCreateResponse": {
         "required": [

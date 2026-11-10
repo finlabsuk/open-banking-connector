@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
     
     
       
@@ -27,10 +27,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -2297,7 +2297,10 @@
   <h1>Bank integrations</h1>
 
 <p>The table below shows the banks which have been integrated with Open Banking Connector.</p>
-<p>UK Open Banking uses the <a href="https://openid.net/specs/openid-financial-api-part-2-1_0.html">Financial-grade API</a> security profile. In this profile, APIs are provided by an <em>OIDC Issuer</em>. In general, a bank will provision an OIDC Issuer per banking brand but sometimes also per mobile app to allow for different auth URLs (which can then redirect to different mobile apps).</p>
+<p>UK Open Banking uses the <a href="https://openid.net/specs/openid-financial-api-part-2-1_0.html">Financial-grade API</a> security
+profile. In this profile, APIs are provided by an <em>OIDC Issuer</em>. In general, a bank will provision an OIDC Issuer per
+banking brand but sometimes also per mobile app to allow for different auth URLs (which can then redirect to different
+mobile apps).</p>
 <p>In Open Banking Connector banks are identified by bank profiles. These are also given below.</p>
 <table>
 <thead>
@@ -2328,21 +2331,21 @@
 <td>Co-operative</td>
 <td>Sandbox<br>Co-operative<br>Smile</td>
 <td style="text-align: center;"><img alt="✅" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2705.svg" title=":white_check_mark:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /></td>
-<td>Cooperative_CooperativeSandbox<br>Cooperative_Cooperative<br>Cooperative_Smile</td>
-<td>AISP</td>
+<td>Cooperative_CooperativeSandbox <em>(AISP only)</em><br>Cooperative_Cooperative<br>Cooperative_Smile</td>
+<td>AISP,<br>PISP (domestic payments)</td>
 </tr>
 <tr>
 <td>HSBC</td>
-<td>FirstDirect<br>UK Personal<br>UK Business<br>UK Kinetic<br>HSBCnet UK<br>M&amp;S Bank</td>
-<td style="text-align: center;"><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /></td>
-<td>Hsbc_FirstDirect<br>Hsbc_UkPersonal<br>Hsbc_UkBusiness<br>Hsbc_UkKinetic<br>Hsbc_HsbcNetUk<br>Hsbc_MAndS <em>(AISP only)</em></td>
+<td>FirstDirect<br>UK Personal<br>UK Business<br>HSBCnet UK<br>M&amp;S Bank</td>
+<td style="text-align: center;"><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /></td>
+<td>Hsbc_FirstDirect<br>Hsbc_UkPersonal<br>Hsbc_UkBusiness<br>Hsbc_HsbcNetUk <em>(no VRPs)</em><br>Hsbc_MAndS <em>(AISP only)</em></td>
 <td>AISP,<br>PISP (domestic payments),<br>VRP</td>
 </tr>
 <tr>
 <td>Lloyds</td>
-<td>Lloyds Personal<br>Lloyds Business<br>Lloyds Commercial<br>Halifax Personal<br>Bank&nbsp;of&nbsp;Scotland&nbsp;Personal<br>Bank&nbsp;of&nbsp;Scotland&nbsp;Business<br>Bank&nbsp;of&nbsp;Scotland&nbsp;Commercial<br>MBNA Personal</td>
-<td style="text-align: center;"><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /></td>
-<td>Lloyds_LloydsPersonal<br>Lloyds_LloydsBusiness<br>Lloyds_LloydsCommerical<br>Lloyds_HalifaxPersonal<br>Lloyds_BankOfScotlandPersonal<br>Lloyds_BankOfScotlandBusiness<br>Lloyds_BankOfScotlandCommerical<br>Lloyds_MbnaPersonal <em>(no VRPs)</em></td>
+<td>Lloyds Personal<br>Lloyds Business<br>Lloyds Commercial<br>Bank&nbsp;of&nbsp;Scotland&nbsp;Personal<br>Bank&nbsp;of&nbsp;Scotland&nbsp;Business<br>Bank&nbsp;of&nbsp;Scotland&nbsp;Commercial<br>MBNA Personal</td>
+<td style="text-align: center;"><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /><br><img alt="⬜" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b1c.svg" title=":white_large_square:" /></td>
+<td>Lloyds_LloydsPersonal<br>Lloyds_LloydsBusiness<br>Lloyds_LloydsCommerical<br>Lloyds_BankOfScotlandPersonal<br>Lloyds_BankOfScotlandBusiness<br>Lloyds_BankOfScotlandCommerical<br>Lloyds_MbnaPersonal <em>(no VRPs)</em></td>
 <td>AISP,<br>PISP (domestic payments),<br>VRP</td>
 </tr>
 <tr>
@@ -2444,7 +2447,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 14, 2026 21:38:47 UTC">2026-06-14</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 10, 2026 22:04:25 UTC">2026-11-10</span>
   </span>
 
     
@@ -2498,10 +2501,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.indexes", "toc.follow", "search.suggest", "search.share"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.indexes", "toc.follow", "search.suggest", "search.share"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
     
   </body>

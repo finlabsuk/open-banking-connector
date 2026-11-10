@@ -3,7 +3,7 @@
   "info": {
     "title": "Variable Recurring Payments API",
     "description": "Variable Recurring Payments API for Open Banking Connector Web App",
-    "version": "24.0.0"
+    "version": "25.0.0"
   },
   "paths": {
     "/vrp/domestic-vrp-consent-auth-contexts": {
@@ -1864,8 +1864,7 @@
             "nullable": true
           },
           "SupplementaryData": {
-            "description": "^ Additional information that cannot be captured in the structured fields and/or any other specific block",
-            "nullable": true
+            "description": "^ Additional information that cannot be captured in the structured fields and/or any other specific block"
           }
         },
         "additionalProperties": { }
@@ -1955,8 +1954,7 @@
             "$ref": "#/components/schemas/OBUltimateCreditor1"
           },
           "SupplementaryData": {
-            "description": "Additional information that cannot be captured in the structured fields and/or any other specific block.\r\n\r\n",
-            "nullable": true
+            "description": "Additional information that cannot be captured in the structured fields and/or any other specific block.\r\n\r\n"
           }
         },
         "additionalProperties": { }
