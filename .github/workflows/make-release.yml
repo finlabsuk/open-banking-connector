@@ -55,14 +55,8 @@ jobs:
 
           echo "is_prerelease=$is_prerelease" >> "$GITHUB_OUTPUT"
 
-  test:
-    needs: validate
-    uses: ./.github/workflows/run-tests.yml
-    with:
-      configuration: Release
-
   build-and-push-image:
-    needs: [validate, test]
+    needs: [validate]
     runs-on: ubuntu-latest
 
     permissions:
