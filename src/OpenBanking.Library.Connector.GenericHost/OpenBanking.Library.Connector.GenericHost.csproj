@@ -24,19 +24,19 @@
 
     <ItemGroup>
         <PackageReference Include="Google.Cloud.SecretManager.V1" Version="3.0.0"/>
-        <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="4.0.105"/>
-        <PackageReference Include="AWSSDK.SSO" Version="4.0.100.26"/>
-        <PackageReference Include="AWSSDK.SSOOIDC" Version="4.0.100.25"/>
+        <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="4.1.0"/>
+        <PackageReference Include="AWSSDK.SSO" Version="4.1.0"/>
+        <PackageReference Include="AWSSDK.SSOOIDC" Version="4.1.0"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.15"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.15"/>
         <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.15"/>
         <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.15"/>
         <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.15"/>
-        <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.20.1"/>
-        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.20.1"/>
-        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.20.1"/>
+        <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.21.0"/>
+        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.21.0"/>
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.21.0"/>
         <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.0.0-beta.8"/>
-        <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.20.2"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.21.0"/>
     </ItemGroup>
 
     <ItemGroup>

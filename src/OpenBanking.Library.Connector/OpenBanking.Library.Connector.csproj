@@ -23,7 +23,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="16.3.0"/>
+        <PackageReference Include="AutoMapper" Version="17.0.0"/>
         <PackageReference Include="EFCore.NamingConventions" Version="10.0.1"/>
         <PackageReference Include="FluentValidation" Version="12.2.0"/>
         <PackageReference Include="jose-jwt" Version="5.3.0"/>
@@ -32,7 +32,7 @@
         <PackageReference Include="MongoDB.EntityFrameworkCore" Version="10.0.5"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3"/>
-        <PackageReference Include="OpenTelemetry" Version="1.20.1"/>
+        <PackageReference Include="OpenTelemetry" Version="1.21.0"/>
     </ItemGroup>
 
     <ItemGroup>
