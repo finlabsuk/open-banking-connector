@@ -82,7 +82,12 @@ public class ChaseGenerator : BankProfileGeneratorBase<ChaseBank>
                 AccountAccessConsentAuthCodeGrantPost =
                     new AuthCodeGrantPostCustomBehaviour { ResponseScopeMayIncludeExtraValues = true },
                 AccountAccessConsentRefreshTokenGrantPost =
-                    new RefreshTokenGrantPostCustomBehaviour { ResponseScopeMayIncludeExtraValues = true },
+                    new RefreshTokenGrantPostCustomBehaviour
+                    {
+                        ResponseScopeMayIncludeExtraValues = true,
+                        IdTokenProcessingCustomBehaviour =
+                            new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveNonceClaim = true }
+                    },
                 DomesticPaymentConsentAuthCodeGrantPost =
                     new AuthCodeGrantPostCustomBehaviour { ResponseScopeMayIncludeExtraValues = true },
                 DomesticPaymentConsent =
