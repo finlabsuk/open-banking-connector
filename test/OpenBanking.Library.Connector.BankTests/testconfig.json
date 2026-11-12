@@ -1,0 +1,7 @@
+{
+  "//": "Used when running with Microsoft.Testing.Platform (UseVSTest=false). Keep in sync with .runsettings (used with VSTest).",
+  "environmentVariables": {
+    "DOTNET_ENVIRONMENT": "Development",
+    "DOTNET_URLS": "https://localhost:5501;http://localhost:5500"
+  }
+}

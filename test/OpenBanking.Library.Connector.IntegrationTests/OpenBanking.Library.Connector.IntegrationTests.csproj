@@ -9,12 +9,12 @@
         <Copyright>Finnovation Labs Limited and Contributors</Copyright>
         <Company>Finnovation Labs Limited</Company>
         <IsPackable>false</IsPackable>
-        <DisableTestingPlatformServerCapability>true</DisableTestingPlatformServerCapability>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="FsCheck.Xunit.v3" Version="3.6.0"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.15"/>
+        <!-- Not needed by Microsoft.Testing.Platform but kept for Rider test discovery (see RIDER-129745) -->
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0"/>
         <PackageReference Include="NSubstitute" Version="6.2.0"/>
         <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.17">
@@ -24,10 +24,6 @@
         <PackageReference Include="RichardSzalay.MockHttp" Version="7.1.0"/>
         <PackageReference Include="WireMock.Net" Version="2.30.0"/>
         <PackageReference Include="xunit.v3" Version="4.0.3"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Used when running with VSTest (UseVSTest=true). Keep in sync with testconfig.json (used with MTP). -->
 <RunSettings>
 	<RunConfiguration>
 		<EnvironmentVariables>

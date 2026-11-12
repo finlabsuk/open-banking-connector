@@ -27,4 +27,5 @@ of local development and testing. The `development` environment should not be us
 Environment selection is not configured by Open Banking Connector settings but normally via the Microsoft
 `DOTNET_ENVIRONMENT` or `ASPNETCORE_ENVIRONMENT` environment variables. These are used to configure the `development`
 environment for local app running (in `<repo>\src\OpenBanking.WebApp.Connector\Properties\launchSettings.json`) and
-local app testing (in `<repo>\.runsettings`).
+for local bank tests (in `<repo>\test\OpenBanking.Library.Connector.BankTests\.runsettings` when using VSTest and
+`<repo>\test\OpenBanking.Library.Connector.BankTests\testconfig.json` when using Microsoft.Testing.Platform).

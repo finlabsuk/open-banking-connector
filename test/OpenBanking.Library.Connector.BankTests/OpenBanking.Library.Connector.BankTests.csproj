@@ -11,7 +11,9 @@
         <Company>Finnovation Labs Limited</Company>
         <IsPackable>false</IsPackable>
         <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+        <!-- VSTest supports VS remote testing (WSL2) without a Linux pre-build; set to false to run with Microsoft.Testing.Platform -->
         <UseVSTest>true</UseVSTest>
+        <RunSettingsFilePath>$(MSBuildProjectDirectory)/.runsettings</RunSettingsFilePath>
     </PropertyGroup>
 
     <ItemGroup>
