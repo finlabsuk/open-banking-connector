@@ -4,6 +4,7 @@
 
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using FinnovationLabs.OpenBanking.Library.Connector.Security;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Http;
 
@@ -38,8 +39,9 @@ internal static class TestCertificates
         request.CertificateExtensions.Add(
             new X509EnhancedKeyUsageExtension(new OidCollection { new Oid(enhancedKeyUsageOid) }, false));
 
-        return request.CreateSelfSigned(
+        X509Certificate2 cert = request.CreateSelfSigned(
             DateTimeOffset.UtcNow.AddMinutes(-5),
             DateTimeOffset.UtcNow.AddYears(1));
+        return CertificateFactories.MakeTlsCompatible(cert); // no-op except on Windows
     }
 }
